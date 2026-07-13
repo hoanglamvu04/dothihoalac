@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import * as c from './lead.controller.js';
+import { optionalAuth } from '../../middlewares/auth.middleware.js';
+import { validate } from '../../middlewares/validate.middleware.js';
+import { createSchema, referralSchema } from './lead.validation.js';
+import asyncHandler from '../../utils/asyncHandler.js';
+const r = Router();
+r.post('/', optionalAuth, validate(createSchema), asyncHandler(c.create));
+r.post('/referrals', optionalAuth, validate(referralSchema), asyncHandler(c.referral));
+export default r;

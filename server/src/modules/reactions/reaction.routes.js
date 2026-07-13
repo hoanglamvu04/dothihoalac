@@ -1,0 +1,10 @@
+import { Router } from 'express';
+import * as c from './reaction.controller.js';
+import { requireAuth } from '../../middlewares/auth.middleware.js';
+import { validate } from '../../middlewares/validate.middleware.js';
+import { putSchema, deleteSchema } from './reaction.validation.js';
+import asyncHandler from '../../utils/asyncHandler.js';
+const r = Router();
+r.put('/:targetType/:targetId', requireAuth, validate(putSchema), asyncHandler(c.put));
+r.delete('/:targetType/:targetId', requireAuth, validate(deleteSchema), asyncHandler(c.remove));
+export default r;

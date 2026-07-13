@@ -1,0 +1,16 @@
+export const PERMISSIONS = Object.freeze({
+  CREATE_ARTICLE: 'create_article',
+  EDIT_ARTICLE: 'edit_article',
+  APPROVE_ARTICLE: 'approve_article',
+  PUBLISH_ARTICLE: 'publish_article',
+  MODERATE_COMMUNITY: 'moderate_community',
+  MODERATE_PROPERTY: 'moderate_property',
+  MODERATE_JOB: 'moderate_job',
+  MODERATE_COMMENT: 'moderate_comment',
+  MANAGE_USERS: 'manage_users',
+  MANAGE_TAXONOMY: 'manage_taxonomy',
+  MANAGE_MEDIA: 'manage_media',
+  MANAGE_LEADS: 'manage_leads',
+  MANAGE_SYSTEM: 'manage_system',
+  VIEW_AUDIT_LOG: 'view_audit_log',
+});

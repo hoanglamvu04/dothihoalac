@@ -1,0 +1,13 @@
+node_modules/
+.env
+.env.*
+!.env.example
+dist/
+uploads/*
+!uploads/.gitkeep
+logs/*
+!logs/.gitkeep
+coverage/
+.DS_Store
+Thumbs.db
+npm-debug.log*

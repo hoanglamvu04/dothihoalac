@@ -1,0 +1,38 @@
+@baseUrl = http://localhost:5000/api/v1
+
+### Health
+GET {{baseUrl}}/health
+
+### Register
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "demo@example.com",
+  "username": "demo.user",
+  "displayName": "Demo User",
+  "password": "DemoPassword123!",
+  "confirmPassword": "DemoPassword123!",
+  "acceptTerms": true
+}
+
+### Login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "identifier": "demo@example.com",
+  "password": "DemoPassword123!"
+}
+
+### Me
+GET {{baseUrl}}/auth/me
+
+### Community feed
+GET {{baseUrl}}/community?page=1&limit=20
+
+### Articles
+GET {{baseUrl}}/articles?page=1&limit=20
+
+### Properties
+GET {{baseUrl}}/properties?page=1&limit=20

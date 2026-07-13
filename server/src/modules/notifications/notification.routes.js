@@ -1,0 +1,16 @@
+import { Router } from 'express';
+import * as c from './notification.controller.js';
+import { requireAuth } from '../../middlewares/auth.middleware.js';
+import asyncHandler from '../../utils/asyncHandler.js';
+const n = Router();
+n.use(requireAuth);
+n.get('/', asyncHandler(c.list));
+n.get('/unread-count', asyncHandler(c.count));
+n.patch('/read-all', asyncHandler(c.readAll));
+n.patch('/:id/read', asyncHandler(c.read));
+n.delete('/:id', asyncHandler(c.remove));
+const p = Router();
+p.use(requireAuth);
+p.get('/', asyncHandler(c.prefs));
+p.patch('/', asyncHandler(c.updatePrefs));
+export { n as notificationRoutes, p as preferenceRoutes };
