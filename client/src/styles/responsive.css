@@ -1,0 +1,72 @@
+@media (max-width: 1120px) {
+  .desktop-nav { display: none; }
+  .header-search { margin-left: auto; width: min(320px, 32vw); }
+  .mobile-menu-button { display: grid; }
+  .mobile-nav { display: block; }
+  .article-grid, .property-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .area-chip-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .dashboard-layout, .dashboard-layout--admin { grid-template-columns: 210px minmax(0, 1fr); }
+  .admin-stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 900px) {
+  .site-header__top { display: none; }
+  .header-search, .header-post-button, .user-menu__trigger > span { display: none; }
+  .brand { min-width: 0; margin-right: auto; }
+  .home-hero__inner, .featured-news-layout, .community-home-grid, .ecosystem-cta__grid, .article-layout, .property-detail__layout, .job-detail-layout, .contact-layout { grid-template-columns: 1fr; }
+  .home-hero__inner { min-height: auto; padding: 58px 0; }
+  .home-hero__panel { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .hero-stat { grid-column: 1 / -1; }
+  .news-side-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .article-sidebar, .property-contact-card, .job-apply-card { position: static; }
+  .dashboard-layout, .dashboard-layout--admin { grid-template-columns: 1fr; }
+  .dashboard-sidebar { position: static; display: flex; overflow-x: auto; padding: 8px; scrollbar-width: none; }
+  .dashboard-sidebar a { flex: 0 0 auto; }
+  .site-footer__grid { grid-template-columns: 1.4fr 1fr 1fr; }
+  .site-footer__grid > div:last-child { grid-column: 2 / 4; }
+  .property-facts-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 680px) {
+  :root { --header-height: 64px; }
+  .container, .container--wide { width: min(calc(100% - 24px), var(--container)); }
+  .page-section { padding: 42px 0; }
+  .site-header__main-inner { gap: 9px; }
+  .brand img { width: 34px; height: 34px; }
+  .brand strong { font-size: .9rem; }
+  .brand small { font-size: .58rem; }
+  .auth-links > a:first-child { display: none; }
+  .user-menu__panel { position: fixed; left: 12px; right: 12px; top: 72px; width: auto; }
+  .page-header, .section-header, .panel-heading { align-items: flex-start; flex-direction: column; }
+  .page-header h1 { font-size: 2.15rem; }
+  .page-header__actions, .inline-form { width: 100%; }
+  .inline-form { flex-wrap: wrap; }
+  .inline-form input, .inline-form select { min-width: 0; flex: 1 1 150px; }
+  .form-grid--2, .form-grid--3, .article-grid, .property-grid, .job-grid, .area-chip-grid, .create-option-grid, .quick-action-grid, .verification-grid, .admin-overview-grid, .people-grid { grid-template-columns: 1fr; }
+  .home-hero__copy h1 { font-size: 2.5rem; }
+  .hero-search, .search-page-form { flex-direction: column; }
+  .home-hero__panel, .news-side-grid { grid-template-columns: 1fr; }
+  .hero-stat { grid-template-columns: repeat(3, 1fr); }
+  .news-side-grid .content-card { grid-template-columns: 115px 1fr; }
+  .site-footer__grid { grid-template-columns: 1fr 1fr; gap: 28px 18px; padding: 44px 0 30px; }
+  .site-footer__brand { grid-column: 1 / -1; }
+  .site-footer__grid > div:last-child { grid-column: auto; }
+  .site-footer__bottom { flex-direction: column; }
+  .article-detail h1, .community-detail h1, .property-detail__header h1, .job-detail h1 { font-size: 2.2rem; }
+  .reaction-bar { align-items: flex-start; flex-direction: column; }
+  .property-facts-grid, .job-facts { grid-template-columns: 1fr 1fr; }
+  .job-card { padding: 16px; }
+  .editor-card, .dashboard-content, .auth-card { padding: 20px; border-radius: var(--radius-md); }
+  .public-profile-card__main { padding: 0 18px 20px; flex-wrap: wrap; }
+  .profile-meta { flex: 1 1 220px; }
+  .admin-stat-grid { grid-template-columns: 1fr 1fr; }
+  .setting-row { grid-template-columns: 1fr; }
+  .toast-stack { right: 12px; bottom: 12px; width: calc(100% - 24px); }
+}
+
+@media (max-width: 420px) {
+  .auth-links .btn { padding-inline: 10px; }
+  .hero-stat, .admin-stat-grid, .property-facts-grid, .job-facts { grid-template-columns: 1fr; }
+  .form-actions { flex-direction: column-reverse; }
+  .form-actions .btn { width: 100%; }
+}
