@@ -467,7 +467,7 @@ export default function HomePage() {
               </span>
 
               <h1>
-                Hòa Lạc hôm nay có gì đáng chú ý?
+                Review Hòa Lạc?
               </h1>
 
               <p>
@@ -487,7 +487,7 @@ export default function HomePage() {
                 value={query}
                 aria-label="Tìm kiếm trên Đô Thị Hòa Lạc"
                 autoComplete="off"
-                placeholder="Tìm quy hoạch, nhà đất, việc làm..."
+                placeholder="Thông tin quy hoạch, BĐS, việc làm..."
                 onChange={(event) =>
                   setQuery(event.target.value)
                 }
