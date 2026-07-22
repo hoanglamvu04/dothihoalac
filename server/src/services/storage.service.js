@@ -1,51 +1,283 @@
-import path from 'node:path';
-import fs from 'node:fs/promises';
 import crypto from 'node:crypto';
-import sharp from 'sharp';
-import { uploadRoot } from '../config/storage.js';
+import path from 'node:path';
+import { Readable } from 'node:stream';
 
-function safeBaseName(originalName = 'file') {
-  return path
-    .basename(originalName)
-    .replace(/[^a-zA-Z0-9._-]/g, '-')
-    .slice(-100);
+import cloudinary from '../config/cloudinary.js';
+
+const ROOT_FOLDER =
+  process.env.CLOUDINARY_FOLDER?.trim() || 'dothihoalac';
+
+function sanitizeFolderPart(value = '') {
+  return String(value)
+    .trim()
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/[^a-z0-9_-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
 }
 
-export async function saveImageBuffer(
+function removeExtension(filename = '') {
+  return path.parse(filename).name || 'media';
+}
+
+function createPublicId(originalName = 'media') {
+  const filenameWithoutExtension =
+    removeExtension(originalName);
+
+  const safeName =
+    sanitizeFolderPart(filenameWithoutExtension) || 'media';
+
+  return `${safeName}-${crypto.randomUUID()}`;
+}
+
+function buildTargetFolder(folder = 'general') {
+  const safeFolder =
+    sanitizeFolderPart(folder) || 'general';
+
+  return `${ROOT_FOLDER}/${safeFolder}`;
+}
+
+function uploadBuffer({
   buffer,
-  originalName,
-  { ownerId, width = 1920, quality = 82 } = {},
+  folder,
+  publicId,
+  resourceType = 'image',
+  format,
+  transformation,
+}) {
+  return new Promise((resolve, reject) => {
+    if (!buffer) {
+      reject(
+        new Error('Không tìm thấy buffer của tệp tải lên.'),
+      );
+      return;
+    }
+
+    const uploadOptions = {
+      folder,
+      public_id: publicId,
+      resource_type: resourceType,
+      overwrite: false,
+      unique_filename: false,
+      use_filename: false,
+    };
+
+    if (format) {
+      uploadOptions.format = format;
+    }
+
+    if (transformation) {
+      uploadOptions.transformation = transformation;
+    }
+
+    const uploadStream =
+      cloudinary.uploader.upload_stream(
+        uploadOptions,
+        (error, result) => {
+          if (error) {
+            reject(error);
+            return;
+          }
+
+          if (!result?.public_id || !result?.secure_url) {
+            reject(
+              new Error(
+                'Cloudinary không trả về đầy đủ thông tin tệp.',
+              ),
+            );
+            return;
+          }
+
+          resolve(result);
+        },
+      );
+
+    Readable.from(buffer).pipe(uploadStream);
+  });
+}
+
+export async function uploadImage(
+  file,
+  {
+    folder = 'general',
+    maxWidth = 2000,
+    maxHeight = 2000,
+    quality = 'auto:good',
+  } = {},
 ) {
-  const date = new Date();
-  const folder = path.join(
-    String(date.getFullYear()),
-    String(date.getMonth() + 1).padStart(2, '0'),
-  );
-  const absoluteFolder = path.join(uploadRoot, folder);
-  await fs.mkdir(absoluteFolder, { recursive: true });
-  const fileName = `${ownerId || 'anonymous'}-${crypto.randomUUID()}.webp`;
-  const absolutePath = path.join(absoluteFolder, fileName);
-  const image = sharp(buffer, { animated: true })
-    .rotate()
-    .resize({ width, withoutEnlargement: true });
-  const metadata = await image.metadata();
-  await image.webp({ quality }).toFile(absolutePath);
-  const outputMetadata = await sharp(absolutePath).metadata();
+  if (!file?.buffer) {
+    throw new Error(
+      'Không tìm thấy dữ liệu ảnh để tải lên.',
+    );
+  }
+
+  const result = await uploadBuffer({
+    buffer: file.buffer,
+    folder: buildTargetFolder(folder),
+    publicId: createPublicId(file.originalname),
+    resourceType: 'image',
+
+    // Ép ảnh lưu trên Cloudinary thành WebP.
+    format: 'webp',
+
+    transformation: [
+      {
+        width: maxWidth,
+        height: maxHeight,
+        crop: 'limit',
+      },
+      {
+        quality,
+      },
+    ],
+  });
+
   return {
-    originalName: safeBaseName(originalName),
-    fileName,
-    relativePath: path.posix.join(folder.split(path.sep).join('/'), fileName),
-    absolutePath,
-    mimeType: 'image/webp',
-    width: outputMetadata.width ?? metadata.width,
-    height: outputMetadata.height ?? metadata.height,
-    size: (await fs.stat(absolutePath)).size,
+    provider: 'cloudinary',
+
+    publicId: result.public_id,
+    assetId: result.asset_id,
+
+    url: result.secure_url,
+    secureUrl: result.secure_url,
+
+    resourceType: result.resource_type,
+    format: result.format,
+
+    width: result.width,
+    height: result.height,
+    bytes: result.bytes,
+
+    originalFilename: file.originalname,
+    originalMimeType: file.mimetype,
   };
 }
 
-export async function removeStoredFile(relativePath) {
-  if (!relativePath) return;
-  const resolved = path.resolve(uploadRoot, relativePath);
-  if (!resolved.startsWith(uploadRoot)) return;
-  await fs.rm(resolved, { force: true });
+export async function uploadMultipleImages(
+  files,
+  options = {},
+) {
+  if (!Array.isArray(files) || files.length === 0) {
+    throw new Error(
+      'Không có ảnh nào được gửi lên.',
+    );
+  }
+
+  return Promise.all(
+    files.map((file) => uploadImage(file, options)),
+  );
+}
+
+export async function uploadVideo(
+  file,
+  {
+    folder = 'videos',
+  } = {},
+) {
+  if (!file?.buffer) {
+    throw new Error(
+      'Không tìm thấy dữ liệu video để tải lên.',
+    );
+  }
+
+  const result = await uploadBuffer({
+    buffer: file.buffer,
+    folder: buildTargetFolder(folder),
+    publicId: createPublicId(file.originalname),
+    resourceType: 'video',
+  });
+
+  return {
+    provider: 'cloudinary',
+
+    publicId: result.public_id,
+    assetId: result.asset_id,
+
+    url: result.secure_url,
+    secureUrl: result.secure_url,
+
+    resourceType: result.resource_type,
+    format: result.format,
+
+    width: result.width,
+    height: result.height,
+    duration: result.duration,
+    bytes: result.bytes,
+
+    originalFilename: file.originalname,
+    originalMimeType: file.mimetype,
+  };
+}
+
+export async function deleteCloudinaryAsset({
+  publicId,
+  resourceType = 'image',
+} = {}) {
+  if (!publicId) {
+    return {
+      result: 'not_found',
+    };
+  }
+
+  return cloudinary.uploader.destroy(publicId, {
+    resource_type: resourceType,
+    invalidate: true,
+  });
+}
+
+/**
+ * Hàm tương thích với các controller/service cũ đang import
+ * removeStoredFile.
+ *
+ * Hỗ trợ:
+ * removeStoredFile('dothihoalac/articles/abc')
+ *
+ * removeStoredFile({
+ *   publicId: 'dothihoalac/articles/abc',
+ *   resourceType: 'image'
+ * })
+ *
+ * removeStoredFile({
+ *   public_id: 'dothihoalac/articles/abc',
+ *   resource_type: 'image'
+ * })
+ */
+export async function removeStoredFile(
+  fileOrPublicId,
+  resourceType = 'image',
+) {
+  if (!fileOrPublicId) {
+    return {
+      result: 'not_found',
+    };
+  }
+
+  if (typeof fileOrPublicId === 'string') {
+    return deleteCloudinaryAsset({
+      publicId: fileOrPublicId,
+      resourceType,
+    });
+  }
+
+  const publicId =
+    fileOrPublicId.publicId ||
+    fileOrPublicId.public_id;
+
+  const resolvedResourceType =
+    fileOrPublicId.resourceType ||
+    fileOrPublicId.resource_type ||
+    resourceType;
+
+  if (!publicId) {
+    return {
+      result: 'not_found',
+    };
+  }
+
+  return deleteCloudinaryAsset({
+    publicId,
+    resourceType: resolvedResourceType,
+  });
 }

@@ -2,87 +2,415 @@ import 'dotenv/config';
 import { z } from 'zod';
 
 const boolFromString = z.preprocess((value) => {
-  if (typeof value === 'boolean') return value;
-  if (typeof value !== 'string') return value;
-  return ['true', '1', 'yes', 'on'].includes(value.toLowerCase());
+  if (typeof value === 'boolean') {
+    return value;
+  }
+
+  if (typeof value !== 'string') {
+    return value;
+  }
+
+  return ['true', '1', 'yes', 'on'].includes(
+    value.trim().toLowerCase(),
+  );
 }, z.boolean());
+
+const optionalUrl = z.preprocess(
+  (value) => {
+    if (typeof value !== 'string') {
+      return value;
+    }
+
+    const trimmed = value.trim();
+    return trimmed === '' ? undefined : trimmed;
+  },
+  z.string().url().optional(),
+);
 
 const schema = z
   .object({
-    NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
-    PORT: z.coerce.number().int().positive().default(5000),
-    CLIENT_URL: z.string().default('http://localhost:5173'),
-    APP_URL: z.string().default('http://localhost:5173'),
-    MONGO_URI: z.string().min(1).default('mongodb://127.0.0.1:27017/dothihoalac'),
-    JWT_ACCESS_SECRET: z.string().min(16).default('dev_access_secret_change_me_123456789'),
-    JWT_REFRESH_SECRET: z.string().min(16).default('dev_refresh_secret_change_me_123456789'),
-    JWT_ACCESS_EXPIRES: z.string().default('15m'),
-    JWT_REFRESH_EXPIRES: z.string().default('30d'),
+    // =====================================================
+    // APPLICATION
+    // =====================================================
+
+    NODE_ENV: z
+      .enum(['development', 'test', 'production'])
+      .default('development'),
+
+    PORT: z.coerce
+      .number()
+      .int()
+      .positive()
+      .default(5000),
+
+    CLIENT_URL: z
+      .string()
+      .url()
+      .default('http://localhost:5173'),
+
+    APP_URL: z
+      .string()
+      .url()
+      .default('http://localhost:5000'),
+
+    CORS_ORIGINS: z
+      .string()
+      .default('http://localhost:5173'),
+
+    // =====================================================
+    // DATABASE
+    // =====================================================
+
+    MONGO_URI: z
+      .string()
+      .min(1)
+      .default(
+        'mongodb://127.0.0.1:27017/dothihoalac',
+      ),
+
+    // =====================================================
+    // JWT
+    // =====================================================
+
+    JWT_ACCESS_SECRET: z
+      .string()
+      .min(32, 'JWT_ACCESS_SECRET must have at least 32 characters.'),
+
+    JWT_REFRESH_SECRET: z
+      .string()
+      .min(32, 'JWT_REFRESH_SECRET must have at least 32 characters.'),
+
+    JWT_ACCESS_EXPIRES: z
+      .string()
+      .default('15m'),
+
+    JWT_REFRESH_EXPIRES: z
+      .string()
+      .default('30d'),
+
+    // =====================================================
+    // COOKIE
+    // =====================================================
+
     COOKIE_SECURE: boolFromString.default(false),
-    COOKIE_SAME_SITE: z.enum(['lax', 'strict', 'none']).default('lax'),
-    COOKIE_DOMAIN: z.string().optional().default(''),
-    SMTP_HOST: z.string().optional().default(''),
-    SMTP_PORT: z.coerce.number().int().positive().default(587),
+
+    COOKIE_SAME_SITE: z
+      .enum(['lax', 'strict', 'none'])
+      .default('lax'),
+
+    COOKIE_DOMAIN: z
+      .string()
+      .optional()
+      .default(''),
+
+    ACCESS_COOKIE_NAME: z
+      .string()
+      .default('dthl_access_token'),
+
+    REFRESH_COOKIE_NAME: z
+      .string()
+      .default('dthl_refresh_token'),
+
+    // =====================================================
+    // EMAIL
+    // =====================================================
+
+    SMTP_HOST: z
+      .string()
+      .optional()
+      .default(''),
+
+    SMTP_PORT: z.coerce
+      .number()
+      .int()
+      .positive()
+      .default(587),
+
     SMTP_SECURE: boolFromString.default(false),
-    SMTP_USER: z.string().optional().default(''),
-    SMTP_PASS: z.string().optional().default(''),
-    MAIL_FROM: z.string().default('no-reply@dothihoalac.vn'),
-    SMS_PROVIDER: z.string().default('none'),
-    SMS_API_KEY: z.string().optional().default(''),
-    SMS_BRANDNAME: z.string().optional().default(''),
-    UPLOAD_PROVIDER: z.enum(['local']).default('local'),
-    UPLOAD_DIR: z.string().default('uploads'),
-    MAX_IMAGE_SIZE_MB: z.coerce.number().positive().default(10),
-    MAX_VIDEO_SIZE_MB: z.coerce.number().positive().default(100),
-    ADMIN_EMAIL: z.string().email().default('admin@dothihoalac.vn'),
-    ADMIN_PASSWORD: z.string().min(8).default('change_me_admin_password'),
-    EXPOSE_DEV_TOKENS: boolFromString.default(true),
-    USERNAME_CHANGE_COOLDOWN_DAYS: z.coerce.number().int().min(0).default(30),
-    PROPERTY_DEFAULT_EXPIRE_DAYS: z.coerce.number().int().positive().default(30),
-    JOB_DEFAULT_EXPIRE_DAYS: z.coerce.number().int().positive().default(30),
+
+    SMTP_USER: z
+      .string()
+      .optional()
+      .default(''),
+
+    SMTP_PASS: z
+      .string()
+      .optional()
+      .default(''),
+
+    MAIL_FROM_NAME: z
+      .string()
+      .default('Do Thi Hoa Lac'),
+
+    MAIL_FROM: z
+      .string()
+      .email()
+      .default('no-reply@dothihoalac.vn'),
+
+    // =====================================================
+    // SMS
+    // =====================================================
+
+    SMS_PROVIDER: z
+      .string()
+      .default('none'),
+
+    SMS_API_KEY: z
+      .string()
+      .optional()
+      .default(''),
+
+    SMS_SECRET_KEY: z
+      .string()
+      .optional()
+      .default(''),
+
+    SMS_BRANDNAME: z
+      .string()
+      .optional()
+      .default(''),
+
+    // =====================================================
+    // STORAGE / CLOUDINARY
+    // =====================================================
+
+    UPLOAD_PROVIDER: z
+      .enum(['local', 'cloudinary'])
+      .default('cloudinary'),
+
+    UPLOAD_DIR: z
+      .string()
+      .default('uploads'),
+
+    UPLOAD_BASE_URL: optionalUrl,
+
+    CLOUDINARY_URL: z
+      .string()
+      .optional()
+      .default(''),
+
+    CLOUDINARY_FOLDER: z
+      .string()
+      .min(1)
+      .default('dothihoalac'),
+
+    MAX_IMAGE_SIZE_MB: z.coerce
+      .number()
+      .positive()
+      .default(10),
+
+    MAX_VIDEO_SIZE_MB: z.coerce
+      .number()
+      .positive()
+      .default(100),
+
+    MAX_IMAGES_PER_CONTENT: z.coerce
+      .number()
+      .int()
+      .positive()
+      .max(50)
+      .default(20),
+
+    // =====================================================
+    // ADMIN
+    // =====================================================
+
+    ADMIN_EMAIL: z
+      .string()
+      .email()
+      .default('admin@dothihoalac.vn'),
+
+    ADMIN_PASSWORD: z
+      .string()
+      .min(12, 'ADMIN_PASSWORD must have at least 12 characters.'),
+
+    // =====================================================
+    // DEVELOPMENT / LOGGING
+    // =====================================================
+
+    EXPOSE_DEV_TOKENS: boolFromString.default(false),
+
+    LOG_LEVEL: z
+      .enum([
+        'fatal',
+        'error',
+        'warn',
+        'info',
+        'debug',
+        'trace',
+        'silent',
+      ])
+      .default('info'),
+
+    TRUST_PROXY: boolFromString.default(false),
+
+    // =====================================================
+    // RATE LIMIT
+    // =====================================================
+
+    RATE_LIMIT_WINDOW_MINUTES: z.coerce
+      .number()
+      .int()
+      .positive()
+      .default(15),
+
+    RATE_LIMIT_MAX_REQUESTS: z.coerce
+      .number()
+      .int()
+      .positive()
+      .default(300),
+
+    AUTH_RATE_LIMIT_MAX_REQUESTS: z.coerce
+      .number()
+      .int()
+      .positive()
+      .default(20),
+
+    OTP_RATE_LIMIT_MAX_REQUESTS: z.coerce
+      .number()
+      .int()
+      .positive()
+      .default(5),
+
+    // =====================================================
+    // BUSINESS RULES
+    // =====================================================
+
+    USERNAME_CHANGE_COOLDOWN_DAYS: z.coerce
+      .number()
+      .int()
+      .min(0)
+      .default(30),
+
+    PROPERTY_DEFAULT_EXPIRE_DAYS: z.coerce
+      .number()
+      .int()
+      .positive()
+      .default(30),
+
+    JOB_DEFAULT_EXPIRE_DAYS: z.coerce
+      .number()
+      .int()
+      .positive()
+      .default(30),
+
     SCHEDULER_ENABLED: boolFromString.default(true),
   })
   .superRefine((value, ctx) => {
+    if (
+      value.UPLOAD_PROVIDER === 'cloudinary' &&
+      !value.CLOUDINARY_URL
+    ) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['CLOUDINARY_URL'],
+        message:
+          'CLOUDINARY_URL is required when UPLOAD_PROVIDER=cloudinary.',
+      });
+    }
+
+    if (
+      value.COOKIE_SAME_SITE === 'none' &&
+      !value.COOKIE_SECURE
+    ) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['COOKIE_SECURE'],
+        message:
+          'COOKIE_SECURE must be true when COOKIE_SAME_SITE=none.',
+      });
+    }
+
     if (value.NODE_ENV === 'production') {
-      if (
-        value.JWT_ACCESS_SECRET.includes('change_me') ||
-        value.JWT_ACCESS_SECRET.includes('dev_')
-      ) {
+      const unsafeSecretPatterns = [
+        'change_me',
+        'dev_',
+        'replace_with',
+      ];
+
+      const hasUnsafePattern = (secret) =>
+        unsafeSecretPatterns.some((pattern) =>
+          secret.toLowerCase().includes(pattern),
+        );
+
+      if (hasUnsafePattern(value.JWT_ACCESS_SECRET)) {
         ctx.addIssue({
           code: 'custom',
           path: ['JWT_ACCESS_SECRET'],
           message: 'Production access secret is unsafe.',
         });
       }
-      if (
-        value.JWT_REFRESH_SECRET.includes('change_me') ||
-        value.JWT_REFRESH_SECRET.includes('dev_')
-      ) {
+
+      if (hasUnsafePattern(value.JWT_REFRESH_SECRET)) {
         ctx.addIssue({
           code: 'custom',
           path: ['JWT_REFRESH_SECRET'],
           message: 'Production refresh secret is unsafe.',
         });
       }
+
+      if (hasUnsafePattern(value.ADMIN_PASSWORD)) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['ADMIN_PASSWORD'],
+          message: 'Production admin password is unsafe.',
+        });
+      }
+
       if (!value.COOKIE_SECURE) {
         ctx.addIssue({
           code: 'custom',
           path: ['COOKIE_SECURE'],
-          message: 'COOKIE_SECURE must be true in production.',
+          message:
+            'COOKIE_SECURE must be true in production.',
+        });
+      }
+
+      if (value.EXPOSE_DEV_TOKENS) {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['EXPOSE_DEV_TOKENS'],
+          message:
+            'EXPOSE_DEV_TOKENS must be false in production.',
+        });
+      }
+
+      if (value.UPLOAD_PROVIDER === 'local') {
+        ctx.addIssue({
+          code: 'custom',
+          path: ['UPLOAD_PROVIDER'],
+          message:
+            'Local uploads are not recommended in production. Use cloudinary.',
         });
       }
     }
   });
 
 const result = schema.safeParse(process.env);
+
 if (!result.success) {
   const details = result.error.issues
-    .map((issue) => `${issue.path.join('.')}: ${issue.message}`)
+    .map((issue) => {
+      const path = issue.path.length
+        ? issue.path.join('.')
+        : 'environment';
+
+      return `${path}: ${issue.message}`;
+    })
     .join('\n');
-  throw new Error(`Invalid environment configuration:\n${details}`);
+
+  throw new Error(
+    `Invalid environment configuration:\n${details}`,
+  );
 }
 
 export const env = Object.freeze(result.data);
-export const isProduction = env.NODE_ENV === 'production';
-export const isDevelopment = env.NODE_ENV === 'development';
-export const isTest = env.NODE_ENV === 'test';
+
+export const isProduction =
+  env.NODE_ENV === 'production';
+
+export const isDevelopment =
+  env.NODE_ENV === 'development';
+
+export const isTest =
+  env.NODE_ENV === 'test';

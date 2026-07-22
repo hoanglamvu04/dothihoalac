@@ -1,0 +1,139 @@
+.account-center-page {
+  --account-green: #1fa34b;
+  --account-green-dark: #116a32;
+  --account-green-soft: #eaf8ef;
+  --account-border: #dce7e0;
+  --account-ink: #10261a;
+  --account-muted: #738079;
+
+  min-height: 100vh;
+  padding: 28px 0 72px;
+
+  color: var(--account-ink);
+
+  background:
+    radial-gradient(
+      circle at 4% 2%,
+      rgb(31 163 75 / 0.08),
+      transparent 22%
+    ),
+    radial-gradient(
+      circle at 96% 88%,
+      rgb(31 163 75 / 0.055),
+      transparent 28%
+    ),
+    #f0f3f1;
+}
+
+.account-center-page *,
+.account-center-page *::before,
+.account-center-page *::after {
+  box-sizing: border-box;
+}
+
+/* Giới hạn chiều rộng toàn bộ khu vực tài khoản */
+.account-center-container {
+  width: calc(100% - 32px);
+  max-width: 1180px;
+  margin-inline: auto;
+}
+
+/* Cảnh báo xác thực hoặc trạng thái tài khoản */
+.account-center-warning {
+  display: flex;
+  align-items: center;
+
+  min-height: 48px;
+  padding: 9px 12px;
+  margin-top: 14px;
+  gap: 9px;
+
+  border: 1px solid #ead59e;
+  border-radius: 12px;
+
+  color: #77581c;
+  background: #fff9e9;
+
+  font-size: 0.76rem;
+}
+
+.account-center-warning > span {
+  flex: 1;
+  min-width: 0;
+}
+
+.account-center-warning button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 34px;
+  padding: 0 10px;
+  gap: 6px;
+
+  border: 0;
+  border-radius: 9px;
+
+  color: #77581c;
+  background: rgb(119 88 28 / 0.09);
+
+  font: inherit;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 160ms ease,
+    transform 160ms ease;
+}
+
+.account-center-warning button:hover {
+  background: rgb(119 88 28 / 0.15);
+  transform: translateY(-1px);
+}
+
+.account-center-warning button:active {
+  transform: translateY(0);
+}
+
+/* Nội dung thay đổi theo từng route tài khoản */
+.account-center-content {
+  width: 100%;
+  min-width: 0;
+  max-width: 100%;
+
+  margin-top: 18px;
+}
+
+/* Tablet */
+@media (max-width: 900px) {
+  .account-center-page {
+    padding-top: 18px;
+  }
+
+  .account-center-container {
+    width: calc(100% - 24px);
+    max-width: 1180px;
+  }
+}
+
+/* Mobile */
+@media (max-width: 520px) {
+  .account-center-page {
+    padding: 10px 0 48px;
+  }
+
+  .account-center-container {
+    width: calc(100% - 14px);
+    max-width: 1180px;
+  }
+
+  .account-center-warning {
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .account-center-warning button {
+    margin-left: auto;
+  }
+}

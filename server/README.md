@@ -281,3 +281,26 @@ Trước khi deploy:
 8. Bật backup MongoDB.
 9. Dùng process manager hoặc container orchestration.
 10. Thiết lập giám sát log và cảnh báo lỗi.
+
+## Dữ liệu seed phát triển
+
+Bộ seed mới tạo đầy đủ dữ liệu mẫu cho tài khoản, phân quyền, taxonomy, tin tức, cộng đồng, bất động sản, việc làm, tương tác, thông báo, kiểm duyệt, lead và cấu hình hệ thống.
+
+```bash
+# Seed idempotent: chạy lại không tạo dữ liệu trùng
+npm run seed
+
+# Chỉ seed dữ liệu lõi: quyền, vai trò, admin và taxonomy
+npm run seed:core
+
+# Xóa toàn bộ dữ liệu trong database development rồi seed lại
+npm run seed:reset
+```
+
+`seed:reset` bị chặn hoàn toàn khi `NODE_ENV=production`.
+
+Mật khẩu mặc định cho các tài khoản demo là `Demo@123456`. Có thể thay bằng biến môi trường:
+
+```env
+SEED_USER_PASSWORD=MatKhauDemoManhCuaBan
+```

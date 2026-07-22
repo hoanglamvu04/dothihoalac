@@ -1,20 +1,29 @@
 import { connectDatabase, disconnectDatabase } from '../config/database.js';
 import { logger } from '../config/logger.js';
-import { seedRoles } from './seedRoles.js';
-import { seedAdmin } from './seedAdmin.js';
-import { seedCategories } from './seedCategories.js';
-import { seedAreas } from './seedAreas.js';
+import { env } from '../config/env.js';
+import { runSeed } from './seedRunner.js';
+
 async function run() {
+  const coreOnly = process.argv.includes('--core-only');
+  const includeDemo = !coreOnly && env.NODE_ENV !== 'production';
+
   await connectDatabase();
-  await seedRoles();
-  await seedAdmin();
-  await seedCategories();
-  await seedAreas();
-  logger.info('Seed completed');
+  const result = await runSeed({ includeDemo });
+
+  logger.info(
+    {
+      includeDemo,
+      summary: result.summary,
+      demoAccounts: result.demoAccounts,
+      demoPassword: result.demoPassword,
+    },
+    'Seed completed',
+  );
   await disconnectDatabase();
 }
+
 run().catch(async (error) => {
   logger.error({ err: error }, 'Seed failed');
-  await disconnectDatabase();
+  await disconnectDatabase().catch(() => null);
   process.exit(1);
 });

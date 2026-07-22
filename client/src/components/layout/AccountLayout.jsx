@@ -1,44 +1,117 @@
-import { NavLink, Outlet } from 'react-router-dom';
 import {
-  Bell,
-  Bookmark,
-  FileText,
-  Home,
-  ListChecks,
-  Lock,
-  MonitorSmartphone,
-  UserRound,
-} from 'lucide-react';
-import PageHeader from '../common/PageHeader';
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
+import { Outlet } from 'react-router-dom';
+import { RefreshCw, TriangleAlert } from 'lucide-react';
 
-const links = [
-  ['/tai-khoan', 'Tổng quan', Home],
-  ['/tai-khoan/ho-so', 'Hồ sơ cá nhân', UserRound],
-  ['/tai-khoan/bao-mat', 'Bảo mật', Lock],
-  ['/tai-khoan/phien-dang-nhap', 'Phiên đăng nhập', MonitorSmartphone],
-  ['/tai-khoan/thong-bao', 'Thông báo', Bell],
-  ['/tai-khoan/bai-viet', 'Bài viết của tôi', FileText],
-  ['/tai-khoan/tin-nha-dat', 'Tin bất động sản', ListChecks],
-  ['/tai-khoan/da-luu', 'Nội dung đã lưu', Bookmark],
-  ['/tai-khoan/bao-cao', 'Báo cáo đã gửi', ListChecks],
-];
+import Seo from '../common/Seo';
+import AccountProfileHeader from '../account/AccountProfileHeader';
+import { userApi } from '../../api/user.api';
+import { apiErrorMessage } from '../../api/http';
+import { useAuth } from '../../context/AuthContext';
+
+import './AccountLayout.css';
+
+function buildProfile(user, profile) {
+  return {
+    displayName:
+      profile?.displayName ||
+      user?.displayName ||
+      '',
+    fullName: profile?.fullName || '',
+    bio: profile?.bio || '',
+    occupation: profile?.occupation || '',
+    areaId: profile?.areaId || null,
+    website: profile?.website || '',
+    publicProfile:
+      profile?.publicProfile !== false,
+    avatarMediaId:
+      profile?.avatarMediaId ||
+      user?.profile?.avatarMediaId ||
+      null,
+    coverMediaId:
+      profile?.coverMediaId ||
+      user?.profile?.coverMediaId ||
+      null,
+  };
+}
 
 export default function AccountLayout() {
+  const { user } = useAuth();
+
+  const [accountProfile, setAccountProfile] =
+    useState(() => buildProfile(user, user?.profile));
+  const [profileLoading, setProfileLoading] = useState(true);
+  const [profileError, setProfileError] = useState('');
+
+  const reloadAccountProfile = useCallback(async () => {
+    setProfileLoading(true);
+    setProfileError('');
+
+    try {
+      const profile = await userApi.myProfile();
+      const nextProfile = buildProfile(user, profile);
+      setAccountProfile(nextProfile);
+      return nextProfile;
+    } catch (error) {
+      const fallbackProfile = buildProfile(user, user?.profile);
+      setAccountProfile(fallbackProfile);
+      setProfileError(
+        apiErrorMessage(
+          error,
+          'Không thể tải đầy đủ thông tin hồ sơ.',
+        ),
+      );
+      return fallbackProfile;
+    } finally {
+      setProfileLoading(false);
+    }
+  }, [user]);
+
+  useEffect(() => {
+    reloadAccountProfile();
+  }, [reloadAccountProfile]);
+
   return (
-    <section className="page-section account-section">
-      <div className="container">
-        <PageHeader eyebrow="Tài khoản" title="Quản lý tài khoản" description="Cập nhật hồ sơ, nội dung và các thiết lập bảo mật." />
-        <div className="dashboard-layout">
-          <aside className="dashboard-sidebar">
-            {links.map(([to, label, Icon]) => (
-              <NavLink key={to} to={to} end={to === '/tai-khoan'}>
-                <Icon size={18} /> {label}
-              </NavLink>
-            ))}
-          </aside>
-          <div className="dashboard-content"><Outlet /></div>
-        </div>
+    <main className="account-center-page">
+      <Seo
+        title="Trung tâm tài khoản"
+        description="Quản lý hồ sơ, bảo mật, thông báo và nội dung của bạn."
+      />
+
+      <div className="account-center-container">
+        <AccountProfileHeader
+          profile={accountProfile}
+          onProfileChange={setAccountProfile}
+        />
+
+        {profileError ? (
+          <div className="account-center-warning" role="status">
+            <TriangleAlert size={18} />
+            <span>{profileError}</span>
+            <button type="button" onClick={reloadAccountProfile}>
+              <RefreshCw size={16} />
+              Tải lại
+            </button>
+          </div>
+        ) : null}
+
+        <section
+          className="account-center-content"
+          aria-busy={profileLoading}
+        >
+          <Outlet
+            context={{
+              accountProfile,
+              setAccountProfile,
+              reloadAccountProfile,
+              profileLoading,
+            }}
+          />
+        </section>
       </div>
-    </section>
+    </main>
   );
 }

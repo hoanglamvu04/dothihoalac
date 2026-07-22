@@ -1,11 +1,15 @@
-import { Router } from 'express';
-import * as c from './media.controller.js';
-import { requireAuth } from '../../middlewares/auth.middleware.js';
-import { uploadSingleImage } from '../../middlewares/upload.middleware.js';
-import asyncHandler from '../../utils/asyncHandler.js';
-const r = Router();
-r.use(requireAuth);
-r.get('/mine', asyncHandler(c.mine));
-r.post('/images', uploadSingleImage, asyncHandler(c.upload));
-r.delete('/:id', asyncHandler(c.remove));
-export default r;
+import { Router } from "express";
+import { requireAuth } from "../../middlewares/auth.middleware.js";
+import { uploadSingleImage } from "../../middlewares/upload.middleware.js";
+import { uploadMedia } from "./media.controller.js";
+
+const router = Router();
+
+router.post(
+  "/images",
+  requireAuth,
+  uploadSingleImage,
+  uploadMedia,
+);
+
+export default router;

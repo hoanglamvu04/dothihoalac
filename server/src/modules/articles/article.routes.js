@@ -1,11 +1,34 @@
 import { Router } from 'express';
-import * as c from './article.controller.js';
+
+import * as controller from './article.controller.js';
 import { optionalAuth } from '../../middlewares/auth.middleware.js';
 import { validate } from '../../middlewares/validate.middleware.js';
-import { listArticlesSchema, slugSchema, tipSchema } from './article.validation.js';
+import {
+  listArticlesSchema,
+  slugSchema,
+  tipSchema,
+} from './article.validation.js';
 import asyncHandler from '../../utils/asyncHandler.js';
-const r = Router();
-r.get('/', validate(listArticlesSchema), asyncHandler(c.list));
-r.post('/tips', optionalAuth, validate(tipSchema), asyncHandler(c.tip));
-r.get('/:slug', validate(slugSchema), asyncHandler(c.detail));
-export default r;
+
+const router = Router();
+
+router.get(
+  '/',
+  validate(listArticlesSchema),
+  asyncHandler(controller.list),
+);
+
+router.post(
+  '/tips',
+  optionalAuth,
+  validate(tipSchema),
+  asyncHandler(controller.tip),
+);
+
+router.get(
+  '/:slug',
+  validate(slugSchema),
+  asyncHandler(controller.detail),
+);
+
+export default router;

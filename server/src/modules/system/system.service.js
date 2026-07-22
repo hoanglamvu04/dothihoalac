@@ -21,7 +21,7 @@ export async function banners(position) {
       { $or: [{ endAt: null }, { endAt: { $gte: now } }] },
     ],
   })
-    .populate('imageMediaId', 'publicUrl altText')
+    .populate('imageMediaId', 'url secureUrl altText width height')
     .sort({ displayOrder: 1 })
     .lean();
 }
@@ -55,7 +55,7 @@ export async function savePage(userId, d, id) {
 }
 export async function listBanners() {
   return Banner.find()
-    .populate('imageMediaId', 'publicUrl')
+    .populate('imageMediaId', 'url secureUrl')
     .sort({ position: 1, displayOrder: 1 })
     .lean();
 }

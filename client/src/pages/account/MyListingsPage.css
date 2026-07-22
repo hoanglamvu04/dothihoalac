@@ -1,0 +1,994 @@
+.my-listings-page {
+  --listing-green: #1fa34b;
+  --listing-green-hover: #188a3e;
+  --listing-green-dark: #116a32;
+  --listing-green-soft: #eaf8ef;
+  --listing-green-border: #cde9d6;
+
+  --listing-ink: #10261a;
+  --listing-text: #405147;
+  --listing-muted: #748078;
+  --listing-border: #dce7e0;
+  --listing-background: #f5f8f6;
+  --listing-surface: #fff;
+
+  display: grid;
+  min-width: 0;
+  gap: 20px;
+
+  color: var(--listing-ink);
+}
+
+.my-listings-page *,
+.my-listings-page *::before,
+.my-listings-page *::after {
+  box-sizing: border-box;
+}
+
+.my-listings-page a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.my-listings-page button,
+.my-listings-page input {
+  font: inherit;
+}
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.my-listings-hero {
+  position: relative;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  min-height: 156px;
+  padding: 28px 30px;
+  gap: 24px;
+
+  overflow: hidden;
+
+  border: 1px solid
+    var(--listing-green-border);
+
+  border-radius: 21px;
+
+  background:
+    radial-gradient(
+      circle at 88% 16%,
+      rgb(31 163 75 / 0.16),
+      transparent 29%
+    ),
+    linear-gradient(
+      135deg,
+      #fff,
+      #f1faf4
+    );
+
+  box-shadow:
+    0 13px 36px
+    rgb(8 61 32 / 0.075);
+}
+
+.my-listings-hero::after {
+  position: absolute;
+  top: -72px;
+  right: -45px;
+
+  width: 210px;
+  height: 210px;
+
+  border: 1px solid
+    rgb(31 163 75 / 0.07);
+
+  border-radius: 50%;
+
+  box-shadow:
+    0 0 0 35px
+      rgb(31 163 75 / 0.025),
+    0 0 0 75px
+      rgb(31 163 75 / 0.016);
+
+  content: '';
+}
+
+.my-listings-hero__content,
+.my-listings-create-button {
+  position: relative;
+  z-index: 1;
+}
+
+.my-listings-hero__content {
+  min-width: 0;
+}
+
+.my-listings-eyebrow {
+  display: inline-flex;
+  align-items: center;
+
+  margin-bottom: 9px;
+  gap: 7px;
+
+  color: var(--listing-green);
+
+  font-size: 0.7rem;
+  font-weight: 750;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.my-listings-hero h2 {
+  margin: 0;
+
+  color: var(--listing-ink);
+
+  font-size: clamp(
+    1.85rem,
+    3.5vw,
+    2.65rem
+  );
+
+  font-weight: 770;
+  letter-spacing: -0.045em;
+  line-height: 1.12;
+}
+
+.my-listings-hero p {
+  max-width: 690px;
+  margin: 10px 0 0;
+
+  color: var(--listing-muted);
+
+  font-size: 0.8rem;
+  line-height: 1.6;
+}
+
+.my-listings-create-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  flex: 0 0 auto;
+
+  min-height: 47px;
+  padding: 0 17px;
+  gap: 8px;
+
+  border-radius: 12px;
+
+  color: #fff !important;
+
+  background:
+    linear-gradient(
+      135deg,
+      var(--listing-green),
+      #178a3f
+    );
+
+  font-size: 0.77rem;
+  font-weight: 750;
+
+  box-shadow:
+    0 10px 25px
+    rgb(31 163 75 / 0.24);
+
+  transition:
+    background 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.my-listings-create-button:hover {
+  background:
+    linear-gradient(
+      135deg,
+      var(--listing-green-hover),
+      #137537
+    );
+
+  box-shadow:
+    0 13px 30px
+    rgb(31 163 75 / 0.29);
+
+  transform: translateY(-1px);
+}
+
+/* =========================================================
+   STATISTICS
+========================================================= */
+
+.my-listings-stats {
+  display: grid;
+  grid-template-columns:
+    repeat(4, minmax(0, 1fr));
+
+  gap: 14px;
+}
+
+.my-listings-stat {
+  position: relative;
+
+  display: grid;
+  grid-template-columns:
+    52px minmax(0, 1fr);
+
+  align-items: center;
+
+  min-width: 0;
+  min-height: 116px;
+  padding: 18px;
+  gap: 14px;
+
+  overflow: hidden;
+
+  border: 1px solid
+    var(--listing-border);
+
+  border-radius: 17px;
+
+  background: #fff;
+
+  box-shadow:
+    0 8px 25px
+    rgb(8 61 32 / 0.055);
+
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.my-listings-stat:hover {
+  border-color:
+    var(--listing-green-border);
+
+  box-shadow:
+    0 13px 31px
+    rgb(8 61 32 / 0.09);
+
+  transform: translateY(-2px);
+}
+
+.my-listings-stat::after {
+  position: absolute;
+  top: -43px;
+  right: -43px;
+
+  width: 110px;
+  height: 110px;
+
+  border-radius: 50%;
+
+  background:
+    rgb(31 163 75 / 0.04);
+
+  pointer-events: none;
+
+  content: '';
+}
+
+.my-listings-stat__icon {
+  position: relative;
+  z-index: 1;
+
+  display: grid;
+  place-items: center;
+
+  width: 52px;
+  height: 52px;
+
+  border-radius: 16px;
+
+  color: var(--listing-green-dark);
+
+  background:
+    var(--listing-green-soft);
+}
+
+.my-listings-stat > div {
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  min-width: 0;
+}
+
+.my-listings-stat strong,
+.my-listings-stat span,
+.my-listings-stat small {
+  margin: 0;
+}
+
+.my-listings-stat strong {
+  color: var(--listing-ink);
+
+  font-size: 1.48rem;
+  font-weight: 780;
+  letter-spacing: -0.035em;
+  line-height: 1;
+}
+
+.my-listings-stat span {
+  margin-top: 8px;
+
+  color: var(--listing-ink);
+
+  font-size: 0.73rem;
+  font-weight: 750;
+  line-height: 1.25;
+}
+
+.my-listings-stat small {
+  margin-top: 6px;
+
+  overflow: hidden;
+
+  color: var(--listing-muted);
+
+  font-size: 1rem;
+  line-height: 1.4;
+
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.my-listings-stat.is-pending
+  .my-listings-stat__icon {
+  color: #986918;
+  background: #fff3d5;
+}
+
+.my-listings-stat.is-action
+  .my-listings-stat__icon {
+  color: #ad4141;
+  background: #fff0f0;
+}
+
+/* =========================================================
+   MAIN PANEL
+========================================================= */
+
+.my-listings-panel {
+  min-width: 0;
+  overflow: visible;
+
+  border: 1px solid
+    var(--listing-border);
+
+  border-radius: 19px;
+
+  background:
+    var(--listing-surface);
+
+  box-shadow:
+    0 10px 31px
+    rgb(8 61 32 / 0.065);
+}
+
+.my-listings-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  min-height: 88px;
+  padding: 17px 19px;
+  gap: 18px;
+
+  border-bottom: 1px solid
+    var(--listing-border);
+}
+
+.my-listings-toolbar > div {
+  min-width: 0;
+}
+
+.my-listings-toolbar h3 {
+  margin: 0;
+
+  color: var(--listing-ink);
+
+  font-size: 0.94rem;
+  font-weight: 760;
+}
+
+.my-listings-toolbar p {
+  margin: 4px 0 0;
+
+  color: var(--listing-muted);
+
+  font-size: 0.65rem;
+  line-height: 1.45;
+}
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.my-listings-search {
+  display: flex;
+  align-items: center;
+
+  flex: 0 1 390px;
+
+  min-width: 260px;
+  min-height: 46px;
+  padding: 0 12px;
+  gap: 9px;
+
+  border: 1px solid
+    var(--listing-border);
+
+  border-radius: 12px;
+
+  background: #f7f9f8;
+
+  transition:
+    border-color 150ms ease,
+    background 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.my-listings-search:focus-within {
+  border-color:
+    var(--listing-green);
+
+  background: #fff;
+
+  box-shadow:
+    0 0 0 4px
+    rgb(31 163 75 / 0.1);
+}
+
+.my-listings-search > svg {
+  flex: 0 0 auto;
+
+  color:
+    var(--listing-green-dark);
+}
+
+.my-listings-search input {
+  width: 100%;
+  min-width: 0;
+  height: 44px;
+
+  border: 0;
+  outline: 0;
+
+  color: var(--listing-ink);
+  background: transparent;
+
+  font-size: 0.73rem;
+}
+
+.my-listings-search input::placeholder {
+  color: #99a49e;
+}
+
+.my-listings-search input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.my-listings-search button {
+  display: grid;
+  place-items: center;
+
+  flex: 0 0 auto;
+
+  width: 30px;
+  height: 30px;
+  padding: 0;
+
+  border: 0;
+  border-radius: 50%;
+
+  color: var(--listing-muted);
+  background: transparent;
+
+  cursor: pointer;
+}
+
+.my-listings-search button:hover {
+  color: var(--listing-ink);
+  background: #e8ece9;
+}
+
+/* =========================================================
+   RESULTS BAR
+========================================================= */
+
+.my-listings-result-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  min-height: 67px;
+  padding: 13px 18px;
+  gap: 16px;
+
+  border-bottom: 1px solid
+    var(--listing-border);
+
+  background:
+    linear-gradient(
+      180deg,
+      #fff,
+      #fbfdfb
+    );
+}
+
+.my-listings-result-bar strong,
+.my-listings-result-bar span {
+  display: block;
+}
+
+.my-listings-result-bar strong {
+  color: var(--listing-ink);
+
+  font-size: 0.76rem;
+  font-weight: 750;
+}
+
+.my-listings-result-bar span {
+  margin-top: 3px;
+
+  color: var(--listing-muted);
+
+  font-size: 0.62rem;
+}
+
+.my-listings-reload {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 38px;
+  padding: 0 11px;
+  gap: 6px;
+
+  border: 1px solid
+    var(--listing-border);
+
+  border-radius: 9px;
+
+  color: var(--listing-text);
+  background: #fff;
+
+  font-size: 0.66rem;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.my-listings-reload:hover:not(
+    :disabled
+  ) {
+  color:
+    var(--listing-green-dark);
+
+  border-color:
+    var(--listing-green-border);
+
+  background:
+    var(--listing-green-soft);
+}
+
+.my-listings-reload:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+/* =========================================================
+   LIST
+========================================================= */
+
+.my-listings-content {
+  min-height: 280px;
+  padding: 16px;
+}
+
+.my-listings-list {
+  display: grid;
+  gap: 14px;
+}
+
+.my-listings-item {
+  min-width: 0;
+  padding: 3px;
+
+  border: 1px solid
+    var(--listing-border);
+
+  border-radius: 16px;
+
+  background: #fff;
+
+  box-shadow:
+    0 5px 18px
+    rgb(8 61 32 / 0.045);
+
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease,
+    transform 160ms ease;
+}
+
+.my-listings-item:hover {
+  border-color:
+    var(--listing-green-border);
+
+  box-shadow:
+    0 11px 28px
+    rgb(8 61 32 / 0.085);
+
+  transform: translateY(-1px);
+}
+
+/*
+ * Giảm viền lồng nhau nếu GenericContentCard
+ * đang có card nền riêng.
+ */
+.my-listings-item
+  :is(
+    .generic-content-card,
+    .content-card,
+    .content-list-card
+  ) {
+  border: 0;
+  box-shadow: none;
+}
+
+/* =========================================================
+   CARD ACTIONS
+========================================================= */
+
+.my-listings-item__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.my-listing-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 38px;
+  padding: 0 11px;
+  gap: 6px;
+
+  border-radius: 9px;
+
+  font-size: 0.65rem;
+  font-weight: 710;
+
+  white-space: nowrap;
+  cursor: pointer;
+
+  transition:
+    border-color 150ms ease,
+    color 150ms ease,
+    background 150ms ease,
+    transform 150ms ease,
+    opacity 150ms ease;
+}
+
+.my-listing-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.52;
+}
+
+.my-listing-button--secondary {
+  border: 1px solid
+    var(--listing-border);
+
+  color: var(--listing-text);
+  background: #fff;
+}
+
+.my-listing-button--secondary:hover:not(
+    :disabled
+  ) {
+  color:
+    var(--listing-green-dark);
+
+  border-color:
+    var(--listing-green-border);
+
+  background:
+    var(--listing-green-soft);
+}
+
+.my-listing-button--primary {
+  border: 1px solid
+    var(--listing-green);
+
+  color: #fff;
+
+  background:
+    var(--listing-green);
+}
+
+.my-listing-button--primary:hover:not(
+    :disabled
+  ) {
+  background:
+    var(--listing-green-hover);
+
+  transform: translateY(-1px);
+}
+
+.my-listing-button--success {
+  border: 1px solid
+    var(--listing-green-border);
+
+  color:
+    var(--listing-green-dark);
+
+  background:
+    var(--listing-green-soft);
+}
+
+.my-listing-button--success:hover:not(
+    :disabled
+  ) {
+  border-color:
+    var(--listing-green);
+
+  background: #daf2e2;
+}
+
+/* =========================================================
+   EMPTY STATE
+========================================================= */
+
+.my-listings-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 360px;
+  padding: 42px 24px;
+
+  text-align: center;
+}
+
+.my-listings-empty > span {
+  display: grid;
+  place-items: center;
+
+  width: 80px;
+  height: 80px;
+  margin-bottom: 18px;
+
+  border-radius: 23px;
+
+  color:
+    var(--listing-green-dark);
+
+  background:
+    var(--listing-green-soft);
+
+  box-shadow:
+    0 13px 29px
+    rgb(31 163 75 / 0.13);
+}
+
+.my-listings-empty h3 {
+  margin: 0;
+
+  color: var(--listing-ink);
+
+  font-size: 1.12rem;
+  font-weight: 760;
+}
+
+.my-listings-empty p {
+  max-width: 500px;
+  margin: 9px 0 21px;
+
+  color: var(--listing-muted);
+
+  font-size: 0.72rem;
+  line-height: 1.6;
+}
+
+.my-listings-empty a,
+.my-listings-empty button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 43px;
+  padding: 0 14px;
+  gap: 7px;
+
+  border: 0;
+  border-radius: 10px;
+
+  color: #fff;
+  background:
+    var(--listing-green);
+
+  font-size: 0.7rem;
+  font-weight: 710;
+
+  cursor: pointer;
+}
+
+.my-listings-empty a:hover,
+.my-listings-empty button:hover {
+  background:
+    var(--listing-green-hover);
+}
+
+/* =========================================================
+   PAGINATION
+========================================================= */
+
+.my-listings-pagination {
+  display: flex;
+  justify-content: center;
+}
+
+.my-listings-note {
+  margin: 0;
+
+  color: var(--listing-muted);
+
+  font-size: 0.63rem;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.is-spinning {
+  animation:
+    my-listings-spin
+    700ms linear infinite;
+}
+
+@keyframes my-listings-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1050px) {
+  .my-listings-stats {
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .my-listings-hero {
+    align-items: flex-start;
+    flex-direction: column;
+
+    padding: 23px;
+  }
+
+  .my-listings-create-button {
+    width: 100%;
+  }
+
+  .my-listings-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .my-listings-search {
+    flex-basis: auto;
+
+    width: 100%;
+    min-width: 0;
+  }
+}
+
+@media (max-width: 600px) {
+  .my-listings-stats {
+    display: flex;
+
+    overflow-x: auto;
+    padding-bottom: 5px;
+    gap: 10px;
+
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .my-listings-stats::-webkit-scrollbar {
+    display: none;
+  }
+
+  .my-listings-stat {
+    flex: 0 0 250px;
+
+    min-height: 110px;
+
+    scroll-snap-align: start;
+  }
+
+  .my-listings-content {
+    padding: 11px;
+  }
+
+  .my-listings-result-bar {
+    align-items: flex-start;
+  }
+
+  .my-listings-item__actions {
+    display: grid;
+    grid-template-columns:
+      repeat(2, minmax(0, 1fr));
+
+    width: 100%;
+  }
+
+  .my-listing-button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 430px) {
+  .my-listings-hero {
+    padding: 19px;
+
+    border-radius: 16px;
+  }
+
+  .my-listings-hero h2 {
+    font-size: 1.75rem;
+  }
+
+  .my-listings-panel {
+    border-radius: 15px;
+  }
+
+  .my-listings-toolbar {
+    padding: 14px;
+  }
+
+  .my-listings-result-bar {
+    padding: 12px;
+  }
+
+  .my-listings-reload {
+    padding-inline: 9px;
+  }
+
+  .my-listings-item__actions {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (
+  prefers-reduced-motion: reduce
+) {
+  .my-listings-page *,
+  .my-listings-page *::before,
+  .my-listings-page *::after {
+    animation-duration:
+      0.01ms !important;
+
+    animation-iteration-count:
+      1 !important;
+
+    transition-duration:
+      0.01ms !important;
+  }
+}

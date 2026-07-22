@@ -1,27 +1,131 @@
 import mongoose from 'mongoose';
-import { getOrCreateModel } from '../../utils/modelHelpers.js';
-const schema = new mongoose.Schema(
+
+const mediaSchema = new mongoose.Schema(
   {
-    ownerId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
-    fileName: { type: String, required: true },
-    originalName: { type: String, required: true },
-    fileType: { type: String, enum: ['image', 'video', 'document'], required: true, index: true },
-    mimeType: { type: String, required: true },
-    fileSize: { type: Number, required: true, min: 0 },
-    storagePath: { type: String, required: true, unique: true },
-    publicUrl: { type: String, required: true },
-    width: { type: Number, default: null },
-    height: { type: Number, default: null },
-    duration: { type: Number, default: null },
-    altText: { type: String, default: '', maxlength: 300 },
+    ownerId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+      index: true,
+    },
+
+    provider: {
+      type: String,
+      enum: ['local', 'cloudinary'],
+      default: 'cloudinary',
+      index: true,
+    },
+
+    publicId: {
+      type: String,
+      trim: true,
+      default: null,
+    },
+
+    assetId: {
+      type: String,
+      trim: true,
+      default: null,
+    },
+
+    url: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+
+    secureUrl: {
+      type: String,
+      trim: true,
+      default: null,
+    },
+
+    resourceType: {
+      type: String,
+      enum: ['image', 'video', 'raw'],
+      default: 'image',
+    },
+
+    originalFilename: {
+      type: String,
+      trim: true,
+      default: '',
+    },
+
+    format: {
+      type: String,
+      trim: true,
+      default: null,
+    },
+
+    fileSize: {
+      type: Number,
+      min: 0,
+      default: 0,
+    },
+
+    width: {
+      type: Number,
+      min: 0,
+      default: null,
+    },
+
+    height: {
+      type: Number,
+      min: 0,
+      default: null,
+    },
+
+    duration: {
+      type: Number,
+      min: 0,
+      default: null,
+    },
+
+    altText: {
+      type: String,
+      trim: true,
+      maxlength: 300,
+      default: '',
+    },
+
     status: {
       type: String,
-      enum: ['active', 'blocked', 'pending_delete'],
+      enum: [
+        'active',
+        'pending_delete',
+        'deleted',
+        'blocked',
+      ],
       default: 'active',
       index: true,
     },
-    deletedAt: { type: Date, default: null },
+
+    deletedAt: {
+      type: Date,
+      default: null,
+    },
   },
-  { timestamps: true, collection: 'media' },
+  {
+    timestamps: true,
+  },
 );
-export default getOrCreateModel('Media', schema, 'media');
+
+mediaSchema.index(
+  { publicId: 1 },
+  {
+    unique: true,
+    partialFilterExpression: {
+      publicId: {
+        $type: 'string',
+      },
+    },
+  },
+);
+
+const Media = mongoose.model(
+  'Media',
+  mediaSchema,
+);
+
+export default Media;

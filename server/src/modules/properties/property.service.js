@@ -1,7 +1,10 @@
 import Content from '../contents/content.model.js';
+
 import PropertyListing from './propertyListing.model.js';
+import PropertyFeature from './propertyFeature.model.js';
 import PropertyPriceHistory from './propertyPriceHistory.model.js';
 import PropertyContact from './propertyContact.model.js';
+
 import {
   createContentWithBody,
   getPublishedContentBySlug,
@@ -9,149 +12,449 @@ import {
   assertEditable,
   updateContentWithBody,
 } from '../contents/content.service.js';
+
 import { env } from '../../config/env.js';
 import { normalizePhone } from '../../utils/normalizePhone.js';
-import { parsePagination, buildPaginationMeta } from '../../utils/pagination.js';
+import {
+  parsePagination,
+  buildPaginationMeta,
+} from '../../utils/pagination.js';
 import ApiError from '../../utils/ApiError.js';
-export async function list(q) {
-  const { page, limit, skip } = parsePagination(q);
-  const pf = {};
-  for (const k of ['transactionType', 'propertyType', 'ownerType', 'legalStatus'])
-    if (q[k]) pf[k] = q[k];
-  if (q.minPrice || q.maxPrice)
-    pf.price = {
-      ...(q.minPrice ? { $gte: Number(q.minPrice) } : {}),
-      ...(q.maxPrice ? { $lte: Number(q.maxPrice) } : {}),
+
+/**
+ * Lấy danh sách tin bất động sản đã xuất bản.
+ */
+export async function list(query) {
+  const { page, limit, skip } = parsePagination(query);
+
+  const propertyFilter = {};
+
+  for (const key of [
+    'transactionType',
+    'propertyType',
+    'ownerType',
+    'legalStatus',
+  ]) {
+    if (query[key]) {
+      propertyFilter[key] = query[key];
+    }
+  }
+
+  if (query.minPrice || query.maxPrice) {
+    propertyFilter.price = {
+      ...(query.minPrice
+        ? { $gte: Number(query.minPrice) }
+        : {}),
+      ...(query.maxPrice
+        ? { $lte: Number(query.maxPrice) }
+        : {}),
     };
-  if (q.minArea || q.maxArea)
-    pf.landArea = {
-      ...(q.minArea ? { $gte: Number(q.minArea) } : {}),
-      ...(q.maxArea ? { $lte: Number(q.maxArea) } : {}),
+  }
+
+  if (query.minArea || query.maxArea) {
+    propertyFilter.landArea = {
+      ...(query.minArea
+        ? { $gte: Number(query.minArea) }
+        : {}),
+      ...(query.maxArea
+        ? { $lte: Number(query.maxArea) }
+        : {}),
     };
-  let ids = (await PropertyListing.find(pf).select('contentId').lean()).map((x) => x.contentId);
-  const f = { _id: { $in: ids }, contentType: 'property', status: 'published', deletedAt: null };
-  if (q.area) f.primaryAreaId = q.area;
+  }
+
+  const contentIds = (
+    await PropertyListing.find(propertyFilter)
+      .select('contentId')
+      .lean()
+  ).map((item) => item.contentId);
+
+  const contentFilter = {
+    _id: {
+      $in: contentIds,
+    },
+    contentType: 'property',
+    status: 'published',
+    deletedAt: null,
+  };
+
+  if (query.area) {
+    contentFilter.primaryAreaId = query.area;
+  }
+
   const sort =
-    q.sort === 'price_asc'
-      ? { createdAt: -1 }
-      : q.sort === 'price_desc'
-        ? { createdAt: -1 }
-        : { publishedAt: -1 };
+    query.sort === 'oldest'
+      ? { publishedAt: 1 }
+      : { publishedAt: -1 };
+
   const [items, total] = await Promise.all([
-    Content.find(f)
+    Content.find(contentFilter)
       .populate('primaryAreaId', 'name slug')
-      .populate('thumbnailMediaId', 'publicUrl altText')
+      .populate(
+        'thumbnailMediaId',
+        'url secureUrl altText width height',
+      )
       .sort(sort)
       .skip(skip)
       .limit(limit)
       .lean(),
-    Content.countDocuments(f),
+
+    Content.countDocuments(contentFilter),
   ]);
-  const details = await PropertyListing.find({
-    contentId: { $in: items.map((i) => i._id) },
+
+  const propertyDetails = await PropertyListing.find({
+    contentId: {
+      $in: items.map((item) => item._id),
+    },
   }).lean();
-  const map = new Map(details.map((d) => [String(d.contentId), d]));
+
+  const propertyMap = new Map(
+    propertyDetails.map((property) => [
+      String(property.contentId),
+      property,
+    ]),
+  );
+
   return {
-    items: items.map((i) => ({ ...i, property: map.get(String(i._id)) })),
-    meta: buildPaginationMeta({ page, limit, total }),
+    items: items.map((item) => ({
+      ...item,
+      property: propertyMap.get(String(item._id)) || null,
+    })),
+
+    meta: buildPaginationMeta({
+      page,
+      limit,
+      total,
+    }),
   };
 }
+
+/**
+ * Lấy chi tiết tin bất động sản theo slug.
+ */
 export async function detail(slug) {
-  const base = await getPublishedContentBySlug(slug, 'property');
-  const property = await PropertyListing.findOne({ contentId: base._id })
-    .populate('featureIds')
+  const base = await getPublishedContentBySlug(
+    slug,
+    'property',
+  );
+
+  const property = await PropertyListing.findOne({
+    contentId: base._id,
+  })
+    .populate({
+      path: 'featureIds',
+      model: PropertyFeature,
+      select: 'name slug featureGroup isActive',
+    })
     .lean();
-  return { ...base, property };
+
+  if (!property) {
+    throw new ApiError(
+      404,
+      'Không tìm thấy dữ liệu bất động sản.',
+      'PROPERTY_NOT_FOUND',
+    );
+  }
+
+  return {
+    ...base,
+    property,
+  };
 }
-export async function create(user, d) {
-  if (!user.phoneVerifiedAt)
+
+/**
+ * Tạo tin bất động sản mới.
+ */
+export async function create(user, data) {
+  if (!user.phoneVerifiedAt) {
     throw new ApiError(
       403,
       'Bạn phải xác thực số điện thoại trước khi đăng tin.',
       'PHONE_VERIFICATION_REQUIRED',
     );
-  if (normalizePhone(d.contactPhone) !== user.phone) {
+  }
+
+  const normalizedContactPhone = normalizePhone(
+    data.contactPhone,
+  );
+
+  if (normalizedContactPhone !== user.phone) {
     throw new ApiError(
       422,
       'Số liên hệ phải là số điện thoại đã xác thực của tài khoản.',
       'CONTACT_PHONE_NOT_VERIFIED',
     );
   }
-  if (!d.isNegotiable && d.price <= 0)
-    throw new ApiError(422, 'Giá phải lớn hơn 0 hoặc chọn giá thỏa thuận.', 'PRICE_INVALID');
-  const c = await createContentWithBody({
+
+  if (!data.isNegotiable && data.price <= 0) {
+    throw new ApiError(
+      422,
+      'Giá phải lớn hơn 0 hoặc chọn giá thỏa thuận.',
+      'PRICE_INVALID',
+    );
+  }
+
+  const content = await createContentWithBody({
     authorId: user._id,
     contentType: 'property',
-    ...d,
+    ...data,
     status: 'draft',
   });
+
   const location =
-    d.longitude !== undefined && d.latitude !== undefined
-      ? { type: 'Point', coordinates: [d.longitude, d.latitude] }
+    data.longitude !== undefined &&
+    data.latitude !== undefined
+      ? {
+          type: 'Point',
+          coordinates: [
+            data.longitude,
+            data.latitude,
+          ],
+        }
       : undefined;
+
   await PropertyListing.create({
-    contentId: c._id,
-    ...d,
-    contactPhone: normalizePhone(d.contactPhone),
+    contentId: content._id,
+    ...data,
+    contactPhone: normalizedContactPhone,
     location,
-    expiresAt: new Date(Date.now() + env.PROPERTY_DEFAULT_EXPIRE_DAYS * 86400000),
+    expiresAt: new Date(
+      Date.now() +
+        env.PROPERTY_DEFAULT_EXPIRE_DAYS *
+          24 *
+          60 *
+          60 *
+          1000,
+    ),
   });
-  return c;
+
+  return content;
 }
-export async function update(id, userId, d) {
-  const c = await getOwnedContentOrThrow(id, userId, 'property');
-  assertEditable(c);
-  const p = await PropertyListing.findOne({ contentId: id });
-  if (!p) throw new ApiError(404, 'Không tìm thấy dữ liệu BĐS.', 'PROPERTY_NOT_FOUND');
-  if (d.price !== undefined && d.price !== p.price)
+
+/**
+ * Cập nhật tin bất động sản.
+ */
+export async function update(
+  id,
+  userId,
+  data,
+) {
+  const content = await getOwnedContentOrThrow(
+    id,
+    userId,
+    'property',
+  );
+
+  assertEditable(content);
+
+  const property = await PropertyListing.findOne({
+    contentId: id,
+  });
+
+  if (!property) {
+    throw new ApiError(
+      404,
+      'Không tìm thấy dữ liệu bất động sản.',
+      'PROPERTY_NOT_FOUND',
+    );
+  }
+
+  if (
+    data.price !== undefined &&
+    data.price !== property.price
+  ) {
     await PropertyPriceHistory.create({
       contentId: id,
-      oldPrice: p.price,
-      newPrice: d.price,
+      oldPrice: property.price,
+      newPrice: data.price,
       changedBy: userId,
     });
-  await updateContentWithBody(c, d, userId, 'Property edit');
-  Object.assign(p, d);
-  if (d.contactPhone) p.contactPhone = normalizePhone(d.contactPhone);
-  if (d.longitude !== undefined && d.latitude !== undefined)
-    p.location = { type: 'Point', coordinates: [d.longitude, d.latitude] };
-  await p.save();
-  return c;
-}
-export async function submit(id, userId) {
-  const c = await getOwnedContentOrThrow(id, userId, 'property');
-  if (!['draft', 'needs_revision', 'rejected'].includes(c.status))
-    throw new ApiError(409, 'Tin không thể gửi duyệt.', 'INVALID_STATUS');
-  c.status = 'pending_review';
-  await c.save();
-  return c;
-}
-export async function renew(id, userId) {
-  const c = await getOwnedContentOrThrow(id, userId, 'property');
-  const p = await PropertyListing.findOne({ contentId: id });
-  p.expiresAt = new Date(Date.now() + env.PROPERTY_DEFAULT_EXPIRE_DAYS * 86400000);
-  if (c.status === 'expired') c.status = 'pending_review';
-  await Promise.all([p.save(), c.save()]);
-  return p;
-}
-async function mark(id, userId, type) {
-  const c = await getOwnedContentOrThrow(id, userId, 'property');
-  const p = await PropertyListing.findOne({ contentId: id });
-  if (type === 'sold') {
-    p.soldAt = new Date();
-    p.rentedAt = null;
-  } else {
-    p.rentedAt = new Date();
-    p.soldAt = null;
   }
-  c.status = 'archived';
-  await Promise.all([p.save(), c.save()]);
-  return p;
+
+  await updateContentWithBody(
+    content,
+    data,
+    userId,
+    'Property edit',
+  );
+
+  Object.assign(property, data);
+
+  if (data.contactPhone) {
+    property.contactPhone = normalizePhone(
+      data.contactPhone,
+    );
+  }
+
+  if (
+    data.longitude !== undefined &&
+    data.latitude !== undefined
+  ) {
+    property.location = {
+      type: 'Point',
+      coordinates: [
+        data.longitude,
+        data.latitude,
+      ],
+    };
+  }
+
+  await property.save();
+
+  return content;
 }
-export const markSold = (id, u) => mark(id, u, 'sold');
-export const markRented = (id, u) => mark(id, u, 'rented');
-export async function recordContact(id, userId, type, ip) {
-  const exists = await Content.exists({ _id: id, contentType: 'property', status: 'published' });
-  if (!exists) throw new ApiError(404, 'Không tìm thấy tin.', 'PROPERTY_NOT_FOUND');
-  return PropertyContact.create({ contentId: id, userId, contactType: type, ipAddress: ip });
+
+/**
+ * Gửi tin đi kiểm duyệt.
+ */
+export async function submit(id, userId) {
+  const content = await getOwnedContentOrThrow(
+    id,
+    userId,
+    'property',
+  );
+
+  const allowedStatuses = [
+    'draft',
+    'needs_revision',
+    'rejected',
+  ];
+
+  if (!allowedStatuses.includes(content.status)) {
+    throw new ApiError(
+      409,
+      'Tin không thể gửi duyệt.',
+      'INVALID_STATUS',
+    );
+  }
+
+  content.status = 'pending_review';
+
+  await content.save();
+
+  return content;
+}
+
+/**
+ * Gia hạn tin.
+ */
+export async function renew(id, userId) {
+  const content = await getOwnedContentOrThrow(
+    id,
+    userId,
+    'property',
+  );
+
+  const property = await PropertyListing.findOne({
+    contentId: id,
+  });
+
+  if (!property) {
+    throw new ApiError(
+      404,
+      'Không tìm thấy dữ liệu bất động sản.',
+      'PROPERTY_NOT_FOUND',
+    );
+  }
+
+  property.expiresAt = new Date(
+    Date.now() +
+      env.PROPERTY_DEFAULT_EXPIRE_DAYS *
+        24 *
+        60 *
+        60 *
+        1000,
+  );
+
+  if (content.status === 'expired') {
+    content.status = 'pending_review';
+  }
+
+  await Promise.all([
+    property.save(),
+    content.save(),
+  ]);
+
+  return property;
+}
+
+/**
+ * Đánh dấu tin đã bán hoặc đã cho thuê.
+ */
+async function mark(
+  id,
+  userId,
+  type,
+) {
+  const content = await getOwnedContentOrThrow(
+    id,
+    userId,
+    'property',
+  );
+
+  const property = await PropertyListing.findOne({
+    contentId: id,
+  });
+
+  if (!property) {
+    throw new ApiError(
+      404,
+      'Không tìm thấy dữ liệu bất động sản.',
+      'PROPERTY_NOT_FOUND',
+    );
+  }
+
+  if (type === 'sold') {
+    property.soldAt = new Date();
+    property.rentedAt = null;
+  } else {
+    property.rentedAt = new Date();
+    property.soldAt = null;
+  }
+
+  content.status = 'archived';
+
+  await Promise.all([
+    property.save(),
+    content.save(),
+  ]);
+
+  return property;
+}
+
+export const markSold = (id, userId) =>
+  mark(id, userId, 'sold');
+
+export const markRented = (id, userId) =>
+  mark(id, userId, 'rented');
+
+/**
+ * Ghi nhận hành động liên hệ với tin.
+ */
+export async function recordContact(
+  id,
+  userId,
+  type,
+  ip,
+) {
+  const exists = await Content.exists({
+    _id: id,
+    contentType: 'property',
+    status: 'published',
+    deletedAt: null,
+  });
+
+  if (!exists) {
+    throw new ApiError(
+      404,
+      'Không tìm thấy tin.',
+      'PROPERTY_NOT_FOUND',
+    );
+  }
+
+  return PropertyContact.create({
+    contentId: id,
+    userId: userId || null,
+    contactType: type,
+    ipAddress: ip,
+  });
 }

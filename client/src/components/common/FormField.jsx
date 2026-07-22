@@ -1,12 +1,33 @@
-export default function FormField({ label, error, hint, required: isRequired, children, className = '' }) {
+export default function FormField({
+  label,
+  error,
+  hint,
+  required: isRequired,
+  children,
+  className = '',
+}) {
   return (
-    <label className={`form-field ${className}`.trim()}>
+    <div
+      className={`form-field ${className}`.trim()}
+    >
       <span className="form-field__label">
-        {label} {isRequired ? <em>*</em> : null}
+        {label}
+        {isRequired ? <em>*</em> : null}
       </span>
+
       {children}
-      {hint ? <small className="form-field__hint">{hint}</small> : null}
-      {error ? <small className="form-field__error">{error}</small> : null}
-    </label>
+
+      {hint ? (
+        <small className="form-field__hint">
+          {hint}
+        </small>
+      ) : null}
+
+      {error ? (
+        <small className="form-field__error">
+          {error}
+        </small>
+      ) : null}
+    </div>
   );
 }
