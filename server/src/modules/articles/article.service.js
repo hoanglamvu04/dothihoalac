@@ -10,6 +10,7 @@ import Category from '../taxonomy/category.model.js';
 import Area from '../taxonomy/area.model.js';
 import Tag from '../taxonomy/tag.model.js';
 import Media from '../media/media.model.js';
+import ContentMedia from '../media/contentMedia.model.js';
 
 import {
   createContentWithBody,
@@ -763,6 +764,10 @@ export async function adminCreate(
      */
     await Promise.allSettled([
       Article.deleteMany({
+        contentId: content._id,
+      }),
+
+      ContentMedia.deleteMany({
         contentId: content._id,
       }),
 

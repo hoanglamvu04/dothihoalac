@@ -131,6 +131,7 @@ export async function upsertContent({
         bodyText: stats.bodyText,
         wordCount: stats.wordCount,
         readingTime: stats.readingTime,
+        inlineMediaIds: [],
       },
     },
     { upsert: true, new: true, runValidators: true, setDefaultsOnInsert: true },

@@ -1,57 +1,42 @@
-import {
-  uploadImage,
-  deleteCloudinaryAsset,
-} from "../../services/storage.service.js";
-import Media from "./media.model.js";
+import * as mediaService from './media.service.js';
 
-export const uploadMedia = async (req, res, next) => {
-  try {
-    if (!req.file) {
-      return res.status(400).json({
-        success: false,
-        message: "Vui lòng chọn ảnh",
-      });
-    }
+export async function uploadMedia(req, res) {
+  const media = await mediaService.uploadImage(
+    req.user,
+    req.file,
+    {
+      altText: req.body?.altText,
+      folder: req.body?.folder || 'general',
+    },
+  );
 
-    const uploaded = await uploadImage(req.file, {
-      folder: req.body.folder || "general",
-    });
+  return res.status(201).json({
+    success: true,
+    message: 'Tải ảnh thành công.',
+    data: media,
+  });
+}
 
-    let media;
+export async function listOwnMedia(req, res) {
+  const items = await mediaService.listOwn(
+    req.user._id,
+  );
 
-    try {
-      media = await Media.create({
-        ownerId: req.user._id,
-        provider: uploaded.provider,
-        publicId: uploaded.publicId,
-        assetId: uploaded.assetId,
-        url: uploaded.secureUrl,
-        secureUrl: uploaded.secureUrl,
-        resourceType: uploaded.resourceType,
-        format: uploaded.format,
-        width: uploaded.width,
-        height: uploaded.height,
-        fileSize: uploaded.bytes,
-        originalFilename: uploaded.originalFilename,
-        status: "active",
-      });
-    } catch (databaseError) {
-      // Nếu Cloudinary upload thành công nhưng lưu DB thất bại,
-      // xóa asset để tránh file rác.
-      await deleteCloudinaryAsset({
-        publicId: uploaded.publicId,
-        resourceType: uploaded.resourceType,
-      }).catch(() => null);
+  return res.json({
+    success: true,
+    data: items,
+  });
+}
 
-      throw databaseError;
-    }
+export async function deleteMedia(req, res) {
+  const media = await mediaService.remove(
+    req.user._id,
+    req.params.id,
+  );
 
-    return res.status(201).json({
-      success: true,
-      message: "Tải ảnh thành công",
-      data: media,
-    });
-  } catch (error) {
-    next(error);
-  }
-};
+  return res.json({
+    success: true,
+    message: 'Đã xóa ảnh.',
+    data: media,
+  });
+}

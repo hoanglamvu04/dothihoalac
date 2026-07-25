@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 import Content from './content.model.js';
 import ContentBody from './contentBody.model.js';
 import ContentRevision from './contentRevision.model.js';
+import ContentMedia from '../media/contentMedia.model.js';
 
 import User from '../users/user.model.js';
 import Category from '../taxonomy/category.model.js';
@@ -17,6 +18,10 @@ import {
 } from '../../utils/sanitizeHtml.js';
 
 import ApiError from '../../utils/ApiError.js';
+import {
+  syncInlineMediaLinks,
+  validateInlineMediaHtml,
+} from '../media/inlineMedia.service.js';
 
 const WORDS_PER_MINUTE = 220;
 
@@ -78,9 +83,17 @@ function calculateBodyStats(bodyText = '') {
 }
 
 function sanitizeBody(bodyHtml = '') {
-  const sanitizedHtml = cleanHtml(
-    String(bodyHtml || ''),
-  );
+  const sourceHtml = String(bodyHtml || '');
+
+  if (/src\s*=\s*["']data:image\//i.test(sourceHtml)) {
+    throw new ApiError(
+      422,
+      'Không được nhúng ảnh base64 vào nội dung. Hãy tải ảnh lên thư viện Media.',
+      'BASE64_IMAGE_NOT_ALLOWED',
+    );
+  }
+
+  const sanitizedHtml = cleanHtml(sourceHtml);
 
   const bodyText =
     htmlToPlainText(sanitizedHtml);
@@ -99,6 +112,7 @@ function defaultBody(contentId = null) {
     bodyText: '',
     readingTime: 1,
     wordCount: 0,
+    inlineMediaIds: [],
   };
 }
 
@@ -253,6 +267,15 @@ export async function createContentWithBody({
 
   const body = sanitizeBody(bodyHtml);
 
+  const inlineMedia =
+    contentType === 'article'
+      ? await validateInlineMediaHtml(body.bodyHtml)
+      : [];
+
+  const inlineMediaIds = inlineMedia.map(
+    (item) => item.mediaId,
+  );
+
   const slug = await createUniqueSlug(
     Content,
     normalizedTitle,
@@ -307,7 +330,15 @@ export async function createContentWithBody({
       bodyText: body.bodyText,
       wordCount: body.wordCount,
       readingTime: body.readingTime,
+      inlineMediaIds,
     });
+
+    if (contentType === 'article') {
+      await syncInlineMediaLinks(
+        content._id,
+        inlineMedia,
+      );
+    }
 
     return content;
   } catch (error) {
@@ -317,6 +348,9 @@ export async function createContentWithBody({
      */
     if (content?._id) {
       await Promise.allSettled([
+        ContentMedia.deleteMany({
+          contentId: content._id,
+        }),
         ContentBody.deleteMany({
           contentId: content._id,
         }),
@@ -348,6 +382,25 @@ export async function updateContentWithBody(
     await ContentBody.findOne({
       contentId: content._id,
     }).lean();
+
+  let nextBody = null;
+  let inlineMedia = null;
+
+  if (changes.bodyHtml !== undefined) {
+    nextBody = sanitizeBody(changes.bodyHtml);
+
+    if (content.contentType === 'article') {
+      inlineMedia = await validateInlineMediaHtml(
+        nextBody.bodyHtml,
+      );
+
+      nextBody.inlineMediaIds = inlineMedia.map(
+        (item) => item.mediaId,
+      );
+    } else {
+      nextBody.inlineMediaIds = [];
+    }
+  }
 
   await createContentRevision({
     content,
@@ -442,11 +495,7 @@ export async function updateContentWithBody(
       Boolean(changes.isSponsored);
   }
 
-  let nextBody = null;
-
-  if (changes.bodyHtml !== undefined) {
-    nextBody = sanitizeBody(changes.bodyHtml);
-
+  if (nextBody) {
     /*
      * Đồng bộ bodyText trong Content để text index
      * luôn có dữ liệu mới nhất.
@@ -467,6 +516,8 @@ export async function updateContentWithBody(
           bodyText: nextBody.bodyText,
           wordCount: nextBody.wordCount,
           readingTime: nextBody.readingTime,
+          inlineMediaIds:
+            nextBody.inlineMediaIds || [],
         },
 
         $setOnInsert: {
@@ -480,6 +531,13 @@ export async function updateContentWithBody(
         runValidators: true,
       },
     );
+
+    if (content.contentType === 'article') {
+      await syncInlineMediaLinks(
+        content._id,
+        inlineMedia || [],
+      );
+    }
   }
 
   return content;

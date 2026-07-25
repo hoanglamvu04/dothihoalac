@@ -41,7 +41,18 @@ export const articleBodySchema = z.object({
   body: z.object({
     title: z.string().min(5).max(250),
     summary: z.string().max(1000).optional(),
-    bodyHtml: z.string().min(1),
+    bodyHtml: z
+      .string()
+      .min(1)
+      .max(500000)
+      .refine(
+        (value) =>
+          !/src\s*=\s*["']data:image\//i.test(value),
+        {
+          message:
+            'Không được nhúng ảnh base64 vào nội dung.',
+        },
+      ),
     articleType: z
       .enum(['news', 'analysis', 'guide', 'interview', 'photo', 'sponsored'])
       .default('news'),
