@@ -31,6 +31,13 @@ const connectionSchema = new mongoose.Schema(
     connectedAt: { type: Date, default: null },
     lastCheckedAt: { type: Date, default: null },
     lastError: { type: String, default: '' },
+    credentialSource: {
+      type: String,
+      enum: ['own', 'kthl_shared'],
+      default: 'own',
+      index: true,
+    },
+    sharedSourceDb: { type: String, default: '' },
     rootDriveId: { type: String, default: '' },
     rootFolderId: { type: String, default: '' },
     rootFolderName: { type: String, default: '' },
