@@ -31,6 +31,14 @@ const FOLDER_KEYS = [
   'publishedFolderId',
   'archiveFolderId',
 ];
+const articleGuard = [
+  requireAuth,
+  requirePermission(
+    PERMISSIONS.CREATE_ARTICLE,
+    PERMISSIONS.EDIT_ARTICLE,
+    PERMISSIONS.MANAGE_SYSTEM,
+  ),
+];
 
 function withTimeout(promise, timeoutMs, message) {
   let timer;
@@ -194,17 +202,9 @@ async function ensureArticleDocument(contentId) {
   };
 }
 
-router.use(
-  requireAuth,
-  requirePermission(
-    PERMISSIONS.CREATE_ARTICLE,
-    PERMISSIONS.EDIT_ARTICLE,
-    PERMISSIONS.MANAGE_SYSTEM,
-  ),
-);
-
 router.post(
   '/posts/create-draft',
+  ...articleGuard,
   asyncHandler(async (req, res) => {
     const draftToken = normalizedDraftToken(req.body?.draftToken);
 
@@ -255,6 +255,7 @@ router.post(
 
 router.post(
   '/posts/:postId/ensure-doc',
+  ...articleGuard,
   asyncHandler(async (req, res) => {
     return sendSuccess(res, {
       data: await ensureArticleDocument(req.params.postId),
