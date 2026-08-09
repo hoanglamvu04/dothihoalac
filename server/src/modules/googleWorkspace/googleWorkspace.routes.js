@@ -17,16 +17,15 @@ import {
   GoogleWorkspaceConnection,
 } from './googleWorkspace.model.js';
 import {
+  GOOGLE_WORKSPACE_SCOPES,
   GoogleWorkspaceError,
   assertAllowedGoogleAccount,
   createArticleGoogleDoc,
-  createGoogleAuthorizationUrl,
   createGoogleOAuthState,
   decryptGoogleSecret,
   documentStatusForContent,
   encryptGoogleSecret,
   ensureWorkspaceFolders,
-  exchangeGoogleAuthorizationCode,
   findGoogleDriveDocumentByArticle,
   folderIdForDocumentStatus,
   getGoogleDocsDocument,
@@ -38,7 +37,6 @@ import {
   loadConnectedGoogle,
   moveGoogleDriveFile,
   parseGoogleDocsArticle,
-  refreshGoogleAccessToken,
   revokeGoogleToken,
   safeConnection,
   verifyGoogleOAuthState,
@@ -46,6 +44,8 @@ import {
 
 const router = Router();
 const CONNECTION_KEY = 'primary';
+const GOOGLE_AUTHORIZATION_ENDPOINT = 'https://accounts.google.com/o/oauth2/v2/auth';
+const GOOGLE_TOKEN_ENDPOINT = 'https://oauth2.googleapis.com/token';
 
 function cleanClientOrigin(value) {
   try { return new URL(value || env.CLIENT_URL).origin; } catch { return new URL(env.CLIENT_URL).origin; }
@@ -57,6 +57,112 @@ function oauthRedirect(clientOrigin, params = {}) {
     if (value !== undefined && value !== null && value !== '') url.searchParams.set(key, String(value));
   });
   return url.toString();
+}
+
+function activeGoogleRedirectUri() {
+  const configured = String(env.GOOGLE_OAUTH_REDIRECT_URI || '').trim();
+  if (!configured) return '';
+
+  try {
+    const url = new URL(configured);
+    const isLocalHost = ['localhost', '127.0.0.1', '::1'].includes(url.hostname);
+    const activePort = Number(process.env.DTHL_ACTIVE_PORT || 0);
+
+    if (
+      env.NODE_ENV === 'development'
+      && isLocalHost
+      && Number.isInteger(activePort)
+      && activePort > 0
+      && activePort <= 65535
+    ) {
+      url.port = String(activePort);
+    }
+
+    return url.toString();
+  } catch {
+    return configured;
+  }
+}
+
+function assertGoogleOAuthRuntimeConfig() {
+  const status = getGoogleWorkspaceConfigStatus();
+  const redirectUri = activeGoogleRedirectUri();
+
+  if (!status.configured || !redirectUri) {
+    const missing = [...(status.missing || [])];
+    if (!redirectUri && !missing.includes('GOOGLE_OAUTH_REDIRECT_URI')) {
+      missing.push('GOOGLE_OAUTH_REDIRECT_URI');
+    }
+
+    throw new GoogleWorkspaceError(
+      `Google Workspace chưa được cấu hình đầy đủ: ${missing.join(', ')}`,
+      'GOOGLE_WORKSPACE_NOT_CONFIGURED',
+      503,
+    );
+  }
+
+  return {
+    clientId: String(env.GOOGLE_OAUTH_CLIENT_ID || '').trim(),
+    clientSecret: String(env.GOOGLE_OAUTH_CLIENT_SECRET || '').trim(),
+    redirectUri,
+    allowedDomain: String(env.GOOGLE_WORKSPACE_ALLOWED_DOMAIN || '').trim().toLowerCase(),
+  };
+}
+
+function createRuntimeGoogleAuthorizationUrl(state) {
+  const config = assertGoogleOAuthRuntimeConfig();
+  const url = new URL(GOOGLE_AUTHORIZATION_ENDPOINT);
+
+  url.searchParams.set('client_id', config.clientId);
+  url.searchParams.set('redirect_uri', config.redirectUri);
+  url.searchParams.set('response_type', 'code');
+  url.searchParams.set('scope', GOOGLE_WORKSPACE_SCOPES.join(' '));
+  url.searchParams.set('access_type', 'offline');
+  url.searchParams.set('include_granted_scopes', 'true');
+  url.searchParams.set('prompt', 'consent');
+  url.searchParams.set('state', state);
+  if (config.allowedDomain) url.searchParams.set('hd', config.allowedDomain);
+
+  return url.toString();
+}
+
+async function exchangeRuntimeGoogleAuthorizationCode(code) {
+  const config = assertGoogleOAuthRuntimeConfig();
+
+  if (!code) {
+    throw new GoogleWorkspaceError(
+      'Google không trả về authorization code.',
+      'GOOGLE_OAUTH_CODE_MISSING',
+      400,
+    );
+  }
+
+  const response = await fetch(GOOGLE_TOKEN_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+    body: new URLSearchParams({
+      code: String(code),
+      client_id: config.clientId,
+      client_secret: config.clientSecret,
+      redirect_uri: config.redirectUri,
+      grant_type: 'authorization_code',
+    }),
+  });
+
+  const payload = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    throw new GoogleWorkspaceError(
+      String(
+        payload?.error_description
+        || payload?.error
+        || 'Không thể đổi authorization code lấy Google token.',
+      ).slice(0, 500),
+      'GOOGLE_API_REQUEST_FAILED',
+      response.status >= 400 && response.status < 500 ? 400 : 502,
+    );
+  }
+
+  return payload;
 }
 
 function normalizeId(value) {
@@ -158,7 +264,7 @@ router.get(
         throw new GoogleWorkspaceError(`Google từ chối kết nối: ${req.query.error}`, 'GOOGLE_OAUTH_DENIED', 400);
       }
 
-      const tokenData = await exchangeGoogleAuthorizationCode(req.query.code);
+      const tokenData = await exchangeRuntimeGoogleAuthorizationCode(req.query.code);
       if (!tokenData?.access_token) {
         throw new GoogleWorkspaceError('Google không trả về access token.', 'GOOGLE_ACCESS_TOKEN_MISSING', 502);
       }
@@ -213,6 +319,7 @@ router.get('/status', asyncHandler(async (_req, res) => {
   return sendSuccess(res, {
     data: {
       ...config,
+      redirectUri: activeGoogleRedirectUri(),
       connection: safeConnection(connection),
     },
   });
@@ -220,7 +327,7 @@ router.get('/status', asyncHandler(async (_req, res) => {
 
 router.get('/connect-url', asyncHandler(async (req, res) => {
   const state = createGoogleOAuthState(req.user._id, req.get('origin') || env.CLIENT_URL);
-  return sendSuccess(res, { data: { url: createGoogleAuthorizationUrl(state) } });
+  return sendSuccess(res, { data: { url: createRuntimeGoogleAuthorizationUrl(state) } });
 }));
 
 router.post('/setup', asyncHandler(async (req, res) => {
