@@ -28,11 +28,26 @@ api.interceptors.response.use(
   (response) => response,
   async (error) => {
     const config = error.config || {};
+    const errorCode = String(error?.code || '');
+    const isTimeout =
+      errorCode === 'ECONNABORTED' ||
+      errorCode === 'ETIMEDOUT' ||
+      /timeout/i.test(String(error?.message || ''));
+    const isCanceled =
+      axios.isCancel(error) ||
+      errorCode === 'ERR_CANCELED';
 
+    /*
+     * Chỉ rediscover backend khi thực sự mất kết nối.
+     * Timeout của một API chậm (đặc biệt Google Docs) không có nghĩa là
+     * backend đã đổi port; retry nguyên request sẽ khiến UI chờ gấp đôi
+     * và có thể tạo tác vụ trùng.
+     */
     if (
       import.meta.env.DEV &&
       !error.response &&
-      !axios.isCancel(error) &&
+      !isCanceled &&
+      !isTimeout &&
       !config.__backendRediscovered
     ) {
       config.__backendRediscovered = true;
