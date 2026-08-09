@@ -65,6 +65,7 @@ const AdminLeadsPage = lazy(() => import('../pages/admin/AdminLeadsPage'));
 const AdminTaxonomyPage = lazy(() => import('../pages/admin/AdminTaxonomyPage'));
 const AdminSystemPage = lazy(() => import('../pages/admin/AdminSystemPage'));
 const AdminLogsPage = lazy(() => import('../pages/admin/AdminLogsPage'));
+const GoogleWorkspacePage = lazy(() => import('../pages/admin/GoogleWorkspacePage'));
 
 function Protected({ children }) {
   return <ProtectedRoute>{children}</ProtectedRoute>;
@@ -243,27 +244,29 @@ const router = createBrowserRouter(
           <Route path="bao-cao" element={<ReportsPage />} />
         </Route>
 
-        <Route
-          path="quan-tri"
-          element={
-            <AdminOnly>
-              <AdminLayout />
-            </AdminOnly>
-          }
-        >
-          <Route index element={<AdminDashboardPage />} />
-          <Route path="kiem-duyet" element={<ModerationQueuePage />} />
-          <Route path="bai-viet" element={<AdminArticlesPage />} />
-          <Route path="bai-viet/moi" element={<ArticleEditorPage />} />
-          <Route path="nguoi-dung" element={<AdminUsersPage />} />
-          <Route path="bao-cao" element={<AdminReportsPage />} />
-          <Route path="khach-hang" element={<AdminLeadsPage />} />
-          <Route path="phan-loai" element={<AdminTaxonomyPage />} />
-          <Route path="he-thong" element={<AdminSystemPage />} />
-          <Route path="nhat-ky" element={<AdminLogsPage />} />
-        </Route>
-
         <Route path="*" element={<NotFoundPage />} />
+      </Route>
+
+      <Route
+        path="quan-tri"
+        element={
+          <AdminOnly>
+            <AdminLayout />
+          </AdminOnly>
+        }
+      >
+        <Route index element={<AdminDashboardPage />} />
+        <Route path="kiem-duyet" element={<ModerationQueuePage />} />
+        <Route path="bai-viet" element={<AdminArticlesPage />} />
+        <Route path="bai-viet/moi" element={<ArticleEditorPage />} />
+        <Route path="bai-viet/:id" element={<ArticleEditorPage />} />
+        <Route path="nguoi-dung" element={<AdminUsersPage />} />
+        <Route path="bao-cao" element={<AdminReportsPage />} />
+        <Route path="khach-hang" element={<AdminLeadsPage />} />
+        <Route path="phan-loai" element={<AdminTaxonomyPage />} />
+        <Route path="google-workspace" element={<GoogleWorkspacePage />} />
+        <Route path="he-thong" element={<AdminSystemPage />} />
+        <Route path="nhat-ky" element={<AdminLogsPage />} />
       </Route>
     </Route>,
   ),
