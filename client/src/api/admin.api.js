@@ -1,6 +1,6 @@
 import { api, unwrap, unwrapList } from './http';
 
-const GOOGLE_DOCS_TIMEOUT_MS = 40000;
+const GOOGLE_DOCS_TIMEOUT_MS = 25000;
 
 export const adminApi = {
   dashboard: async () => unwrap(await api.get('/admin/dashboard')),
