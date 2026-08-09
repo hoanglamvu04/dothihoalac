@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Cloud, Save, Send, X } from 'lucide-react';
+import { Cloud, RefreshCw, Save, Send, X } from 'lucide-react';
 
 import Seo from '../../components/common/Seo';
 import TaxonomyFields from '../../components/forms/TaxonomyFields';
@@ -22,6 +22,9 @@ const emptyForm = () => ({
   status: 'draft',
   scheduledAt: '',
   sourceNote: '',
+  googleDocId: '',
+  googleDocUrl: '',
+  googleDocSyncedAt: null,
 });
 
 function idOf(value) {
@@ -50,6 +53,9 @@ function formFromArticle(item) {
     status: item?.status || 'draft',
     scheduledAt: localDateTime(item?.scheduledAt),
     sourceNote: item?.article?.sourceNote || '',
+    googleDocId: item?.article?.googleDocId || '',
+    googleDocUrl: item?.article?.googleDocUrl || '',
+    googleDocSyncedAt: item?.article?.googleDocSyncedAt || null,
   };
 }
 
@@ -188,7 +194,11 @@ export default function ArticleEditorPage() {
         ? await adminApi.updateArticle(serverIdRef.current, payload)
         : await adminApi.createArticle(payload);
       const savedId = String(item?._id || serverIdRef.current || '');
-      const next = { ...current, ...formFromArticle(item), thumbnailMediaId: item?.thumbnailMediaId || current.thumbnailMediaId };
+      const next = {
+        ...current,
+        ...formFromArticle(item),
+        thumbnailMediaId: item?.thumbnailMediaId || current.thumbnailMediaId,
+      };
 
       formRef.current = next;
       setForm(next);
@@ -242,6 +252,29 @@ export default function ArticleEditorPage() {
     if (id) navigate(`/quan-tri/bai-viet/${id}/docs`);
   };
 
+  const syncDocs = async () => {
+    const id = serverIdRef.current;
+    if (!id || !formRef.current.googleDocId || savingRef.current) return;
+    savingRef.current = true;
+    setSaveState({ kind: 'saving', time: '', message: 'Đang đọc nội dung Google Docs…' });
+    try {
+      const item = await adminApi.syncGoogleDoc(id);
+      const next = formFromArticle(item);
+      formRef.current = next;
+      setForm(next);
+      writeDraft(id, next);
+      const time = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+      setSaveState({ kind: 'server', time, message: 'Đã đồng bộ Google Docs về website.' });
+      toast.success('Đã đồng bộ nội dung mới nhất từ Google Docs.');
+    } catch (error) {
+      const message = apiErrorMessage(error);
+      setSaveState({ kind: 'error', time: '', message });
+      toast.error(message);
+    } finally {
+      savingRef.current = false;
+    }
+  };
+
   const metaDescription = useMemo(
     () => `${String(form.summary || '').length}/160 ký tự gợi ý`,
     [form.summary],
@@ -258,6 +291,7 @@ export default function ArticleEditorPage() {
         <button type="button" className="admin-article-studio-back" onClick={() => navigate('/quan-tri/bai-viet')}><X size={15} /> Đóng phòng soạn</button>
         <div className={`admin-article-save-state ${saveState.kind}`}><span />{saveLabel(saveState)}</div>
         <div className="admin-article-studio-actions">
+          {form.googleDocId ? <button type="button" className="admin-secondary" onClick={syncDocs}><RefreshCw size={14} /> Đồng bộ Docs</button> : null}
           <button type="button" className="admin-secondary" onClick={openDocs}><Cloud size={14} /> Google Docs</button>
           <button type="button" className="admin-secondary" disabled={saveState.kind === 'saving'} onClick={() => saveToServer({ status: 'draft', manual: true })}><Save size={14} /> Lưu nháp</button>
           <button type="button" className="admin-primary" disabled={saveState.kind === 'saving'} onClick={() => saveToServer({ status: 'published', manual: true })}><Send size={14} /> {form.status === 'published' ? 'Cập nhật' : 'Xuất bản'}</button>

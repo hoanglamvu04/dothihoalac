@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { getOrCreateModel } from '../../utils/modelHelpers.js';
+
 const schema = new mongoose.Schema(
   {
     contentId: {
@@ -20,7 +21,22 @@ const schema = new mongoose.Schema(
     factCheckedAt: { type: Date, default: null },
     factCheckedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
     originalPublishedAt: { type: Date, default: null },
+
+    documentCode: { type: String, default: '', index: true },
+    googleDocId: { type: String, default: '', index: true },
+    googleDocUrl: { type: String, default: '' },
+    googleDocFileName: { type: String, default: '' },
+    googleDocFolderId: { type: String, default: '' },
+    googleDocStatus: {
+      type: String,
+      enum: ['', 'draft', 'review', 'published', 'archive'],
+      default: '',
+      index: true,
+    },
+    googleDocYear: { type: Number, default: null, index: true },
+    googleDocSyncedAt: { type: Date, default: null },
   },
   { timestamps: true, collection: 'articles' },
 );
+
 export default getOrCreateModel('Article', schema, 'articles');
