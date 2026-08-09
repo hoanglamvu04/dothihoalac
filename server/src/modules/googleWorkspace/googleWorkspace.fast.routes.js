@@ -10,9 +10,9 @@ import Article from '../articles/article.model.js';
 import Content from '../contents/content.model.js';
 import ContentBody from '../contents/contentBody.model.js';
 import { GoogleDocumentCounter } from './googleWorkspace.model.js';
+import { createArticleGoogleDocFast } from './googleWorkspace.document.service.js';
 import {
   GoogleWorkspaceError,
-  createArticleGoogleDoc,
   documentStatusForContent,
   ensureWorkspaceFolders,
   folderIdForDocumentStatus,
@@ -162,14 +162,14 @@ async function ensureArticleDocument(contentId) {
     ].filter(Boolean).join('\n\n');
 
     file = await withTimeout(
-      createArticleGoogleDoc(accessToken, {
+      createArticleGoogleDocFast(accessToken, {
         articleId: content._id,
         folderId: targetFolderId,
         fileName,
         initialText,
       }),
-      28000,
-      'Google Docs phản hồi quá chậm khi tạo tài liệu. Yêu cầu đã được giữ an toàn; hãy thử lại sau vài giây.',
+      20000,
+      'Google Docs phản hồi quá chậm khi tạo tài liệu. Hãy thử lại; hệ thống sẽ tìm lại tài liệu đã tạo thay vì tạo trùng.',
     );
   } else if (targetFolderId) {
     file = (
