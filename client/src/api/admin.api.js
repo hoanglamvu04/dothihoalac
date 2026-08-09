@@ -17,8 +17,17 @@ export const adminApi = {
   updateLead: async (id, payload) => unwrap(await api.patch(`/admin/leads/${id}`, payload)),
 
   articles: async (params = {}) => unwrapList(await api.get('/admin/articles', { params })),
+  articleDetail: async (id) => unwrap(await api.get(`/admin/articles/${id}`)),
   createArticle: async (payload) => unwrap(await api.post('/admin/articles', payload)),
   updateArticle: async (id, payload) => unwrap(await api.patch(`/admin/articles/${id}`, payload)),
+
+  googleWorkspaceStatus: async () => unwrap(await api.get('/admin/google-workspace/status')),
+  connectGoogleWorkspace: async () => unwrap(await api.post('/admin/google-workspace/connect')),
+  disconnectGoogleWorkspace: async () => unwrap(await api.post('/admin/google-workspace/disconnect')),
+  setupGoogleWorkspace: async (year) => unwrap(await api.post('/admin/google-workspace/setup', { year })),
+  googleWorkspaceFolders: async (year) => unwrap(await api.get('/admin/google-workspace/folders', { params: { year } })),
+  ensureArticleGoogleDoc: async (id) => unwrap(await api.post(`/admin/google-workspace/articles/${id}/ensure-doc`)),
+  syncArticleGoogleDoc: async (id) => unwrap(await api.post(`/admin/google-workspace/articles/${id}/sync`)),
 
   createTaxonomy: async (type, payload) =>
     unwrap(await api.post(`/admin/taxonomy/${type}`, payload)),
