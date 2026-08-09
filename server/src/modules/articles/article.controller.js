@@ -29,12 +29,18 @@ export async function adminDetail(req, res) {
 }
 
 export async function adminCreate(req, res) {
-  return sendCreated(res, await s.adminCreate(req.user._id, req.body), 'Đã tạo bài viết.');
+  const created = await s.adminCreate(req.user._id, req.body);
+  return sendCreated(
+    res,
+    await adminArticleDetail(created._id),
+    'Đã tạo bài viết.',
+  );
 }
 
 export async function adminUpdate(req, res) {
+  const updated = await s.adminUpdate(req.params.id, req.user._id, req.body);
   return sendSuccess(res, {
-    data: await s.adminUpdate(req.params.id, req.user._id, req.body),
+    data: await adminArticleDetail(updated._id),
     message: 'Đã cập nhật bài viết.',
   });
 }
