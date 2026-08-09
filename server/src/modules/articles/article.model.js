@@ -23,6 +23,7 @@ const schema = new mongoose.Schema(
     originalPublishedAt: { type: Date, default: null },
 
     documentCode: { type: String, default: '', index: true },
+    googleDraftToken: { type: String, default: '', maxlength: 180, index: true },
     googleDocId: { type: String, default: '', index: true },
     googleDocUrl: { type: String, default: '' },
     googleDocFileName: { type: String, default: '' },

@@ -1,5 +1,7 @@
 import { api, unwrap, unwrapList } from './http';
 
+const GOOGLE_DOCS_TIMEOUT_MS = 40000;
+
 export const adminApi = {
   dashboard: async () => unwrap(await api.get('/admin/dashboard')),
   moderationQueue: async (params = {}) =>
@@ -26,8 +28,16 @@ export const adminApi = {
   googleWorkspaceConnectUrl: async () => unwrap(await api.get('/admin/google-workspace/connect-url')),
   googleWorkspaceSetup: async (payload = {}) => unwrap(await api.post('/admin/google-workspace/setup', payload)),
   googleWorkspaceDisconnect: async () => unwrap(await api.post('/admin/google-workspace/disconnect')),
-  createGoogleDraft: async (payload = {}) => unwrap(await api.post('/admin/google-workspace/posts/create-draft', payload)),
-  ensureGoogleDoc: async (id) => unwrap(await api.post(`/admin/google-workspace/posts/${id}/ensure-doc`)),
+  createGoogleDraft: async (payload = {}) => unwrap(await api.post(
+    '/admin/google-workspace/posts/create-draft',
+    payload,
+    { timeout: GOOGLE_DOCS_TIMEOUT_MS },
+  )),
+  ensureGoogleDoc: async (id) => unwrap(await api.post(
+    `/admin/google-workspace/posts/${id}/ensure-doc`,
+    undefined,
+    { timeout: GOOGLE_DOCS_TIMEOUT_MS },
+  )),
   syncGoogleDoc: async (id) => unwrap(await api.post(`/admin/google-workspace/posts/${id}/sync-from-doc`)),
 
   createTaxonomy: async (type, payload) =>

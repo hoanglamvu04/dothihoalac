@@ -15,8 +15,10 @@ function numberFromEnv(value, fallback, { min = 1, max = 65535 } = {}) {
   return parsed;
 }
 
-const configuredApiUrl = normalizeUrl(import.meta.env.VITE_API_URL);
-const configuredServerUrl = normalizeUrl(import.meta.env.VITE_SERVER_URL);
+const discoveredApiUrl = normalizeUrl(import.meta.env.VITE_DISCOVERED_API_URL);
+const discoveredServerUrl = normalizeUrl(import.meta.env.VITE_DISCOVERED_SERVER_URL);
+const envApiUrl = normalizeUrl(import.meta.env.VITE_API_URL);
+const envServerUrl = normalizeUrl(import.meta.env.VITE_SERVER_URL);
 
 function serverFromApiUrl(apiUrl) {
   if (!apiUrl) return '';
@@ -39,7 +41,10 @@ function serverFromApiUrl(apiUrl) {
   }
 }
 
-const configuredServer = configuredServerUrl || serverFromApiUrl(configuredApiUrl);
+const configuredApiUrl = discoveredApiUrl || envApiUrl;
+const configuredServer =
+  discoveredServerUrl || envServerUrl || serverFromApiUrl(configuredApiUrl);
+const hasViteDiscoveredBackend = Boolean(discoveredApiUrl || discoveredServerUrl);
 
 function configuredPortFallback() {
   if (!configuredServer) return 5000;
@@ -68,6 +73,7 @@ const PROBE_TIMEOUT_MS = numberFromEnv(import.meta.env.VITE_API_PROBE_TIMEOUT_MS
 let resolvedServerUrl = '';
 let resolvedApiUrl = '';
 let discoveryPromise = null;
+let forceRuntimeDiscovery = false;
 
 function isLocalHttpUrl(value) {
   if (!value) return false;
@@ -82,6 +88,8 @@ function isLocalHttpUrl(value) {
 
 function shouldAutoDiscover() {
   if (!import.meta.env.DEV) return false;
+  if (forceRuntimeDiscovery) return true;
+  if (hasViteDiscoveredBackend) return false;
   if (!configuredServer && !configuredApiUrl) return true;
   return isLocalHttpUrl(configuredServer || serverFromApiUrl(configuredApiUrl));
 }
@@ -156,6 +164,7 @@ async function discoverLocalBackend() {
 
   resolvedServerUrl = winner;
   resolvedApiUrl = `${winner}${API_PATH}`;
+  forceRuntimeDiscovery = false;
 
   if (import.meta.env.VITE_DEBUG_API === 'true') {
     console.info(`[DTHL API] Backend: ${resolvedApiUrl}`);
@@ -207,8 +216,9 @@ export function getResolvedServerBaseUrl() {
 }
 
 export function resetBackendDiscovery() {
-  if (!shouldAutoDiscover()) return;
+  if (!import.meta.env.DEV) return;
   resolvedServerUrl = '';
   resolvedApiUrl = '';
   discoveryPromise = null;
+  forceRuntimeDiscovery = true;
 }

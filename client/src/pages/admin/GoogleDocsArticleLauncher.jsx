@@ -23,6 +23,17 @@ function launchKey() {
   return value;
 }
 
+function launcherError(error) {
+  if (
+    error?.code === 'ECONNABORTED' ||
+    /timeout/i.test(String(error?.message || ''))
+  ) {
+    return 'Google phản hồi quá chậm nên yêu cầu đã dừng để tránh màn hình treo. Bản nháp được giữ bằng mã phiên; bấm “Thử lại” sẽ tiếp tục đúng bản nháp thay vì tạo trùng.';
+  }
+
+  return apiErrorMessage(error);
+}
+
 export default function GoogleDocsArticleLauncher() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -42,10 +53,20 @@ export default function GoogleDocsArticleLauncher() {
     if (started.current) return;
     started.current = true;
     let active = true;
+    let slowTimer;
 
     const run = async () => {
       try {
         let result;
+
+        slowTimer = window.setTimeout(() => {
+          if (!active) return;
+          setState((current) => ({
+            ...current,
+            message: 'Google đang phản hồi chậm hơn bình thường… hệ thống vẫn giữ nguyên bản nháp.',
+          }));
+        }, 8000);
+
         if (postId === 'new') {
           setState({ phase: 'creating', message: 'Đang tạo bản nháp và Google Docs trong 01_ĐANG_SOẠN…', error: '' });
           result = await adminApi.createGoogleDraft({
@@ -64,12 +85,17 @@ export default function GoogleDocsArticleLauncher() {
         window.location.replace(result.docUrl);
       } catch (error) {
         if (!active) return;
-        setState({ phase: 'error', message: 'Không mở được Google Docs.', error: apiErrorMessage(error) });
+        setState({ phase: 'error', message: 'Không mở được Google Docs.', error: launcherError(error) });
+      } finally {
+        window.clearTimeout(slowTimer);
       }
     };
 
     run();
-    return () => { active = false; };
+    return () => {
+      active = false;
+      window.clearTimeout(slowTimer);
+    };
   }, [postId]);
 
   return (

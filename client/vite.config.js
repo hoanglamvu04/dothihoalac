@@ -5,7 +5,10 @@ import react from '@vitejs/plugin-react';
 
 const CLIENT_START_PORT = 5173;
 const CLIENT_PORT_SCAN_LIMIT = 20;
+const API_START_PORT = 5000;
+const API_PORT_SCAN_LIMIT = 20;
 const PORT_PROBE_TIMEOUT_MS = 250;
+const API_PROBE_TIMEOUT_MS = 450;
 const LOCAL_PROBE_HOSTS = ['127.0.0.1', '::1'];
 
 function canConnectToPort(port, host) {
@@ -53,11 +56,80 @@ async function findAvailablePort(startPort, attempts = CLIENT_PORT_SCAN_LIMIT) {
   throw new Error(`Không tìm thấy cổng frontend trống trong dải ${startPort}-${endPort}.`);
 }
 
+async function probeDthlApiPort(port) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), API_PROBE_TIMEOUT_MS);
+
+  try {
+    const response = await fetch(`http://127.0.0.1:${port}/api/v1/health`, {
+      method: 'GET',
+      headers: { Accept: 'application/json' },
+      cache: 'no-store',
+      signal: controller.signal,
+    });
+
+    if (!response.ok) return false;
+
+    const payload = await response.json().catch(() => null);
+    return (
+      payload?.success === true &&
+      payload?.data?.service === 'dothihoalac-api' &&
+      payload?.data?.status === 'ok'
+    );
+  } catch {
+    return false;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+async function findDthlBackendPort() {
+  const ports = [];
+
+  for (let offset = 0; offset < API_PORT_SCAN_LIMIT; offset += 1) {
+    const port = API_START_PORT + offset;
+    if (port > 65535) break;
+    ports.push(port);
+  }
+
+  const matches = await Promise.all(
+    ports.map(async (port) => ((await probeDthlApiPort(port)) ? port : null)),
+  );
+
+  return matches.find(Boolean) || null;
+}
+
 export default defineConfig(async ({ command }) => {
-  const port = command === 'serve' ? await findAvailablePort(CLIENT_START_PORT) : CLIENT_START_PORT;
+  const [port, backendPort] = await Promise.all([
+    command === 'serve'
+      ? findAvailablePort(CLIENT_START_PORT)
+      : Promise.resolve(CLIENT_START_PORT),
+    command === 'serve'
+      ? findDthlBackendPort()
+      : Promise.resolve(null),
+  ]);
+
+  const discoveredServerUrl = backendPort
+    ? `http://localhost:${backendPort}`
+    : '';
+  const discoveredApiUrl = discoveredServerUrl
+    ? `${discoveredServerUrl}/api/v1`
+    : '';
+
+  if (backendPort) {
+    console.info(`[DTHL CLIENT] Backend được phát hiện tại ${discoveredApiUrl}.`);
+  } else if (command === 'serve') {
+    console.warn(
+      `[DTHL CLIENT] Chưa thấy DTHL API trong dải ${API_START_PORT}-${API_START_PORT + API_PORT_SCAN_LIMIT - 1}. Frontend sẽ dùng runtime discovery khi có request.`,
+    );
+  }
 
   return {
     plugins: [react()],
+    define: {
+      'import.meta.env.VITE_DISCOVERED_API_URL': JSON.stringify(discoveredApiUrl),
+      'import.meta.env.VITE_DISCOVERED_SERVER_URL': JSON.stringify(discoveredServerUrl),
+    },
     server: {
       port,
       strictPort: false,
