@@ -1,4 +1,5 @@
 import http from 'node:http';
+import net from 'node:net';
 
 import app from './app.js';
 import { env } from './config/env.js';
@@ -11,6 +12,35 @@ let server = null;
 let activePort = null;
 
 const DEV_PORT_SCAN_LIMIT = 20;
+const PORT_PROBE_TIMEOUT_MS = 250;
+const LOCAL_PROBE_HOSTS = ['127.0.0.1', '::1'];
+
+function canConnectToPort(port, host) {
+  return new Promise((resolve) => {
+    const socket = net.createConnection({ port, host });
+    let settled = false;
+
+    const finish = (inUse) => {
+      if (settled) return;
+      settled = true;
+      socket.destroy();
+      resolve(inUse);
+    };
+
+    socket.setTimeout(PORT_PROBE_TIMEOUT_MS);
+    socket.once('connect', () => finish(true));
+    socket.once('timeout', () => finish(false));
+    socket.once('error', () => finish(false));
+  });
+}
+
+async function isLocalPortInUse(port) {
+  const results = await Promise.all(
+    LOCAL_PROBE_HOSTS.map((host) => canConnectToPort(port, host)),
+  );
+
+  return results.some(Boolean);
+}
 
 function listenOnPort(port) {
   return new Promise((resolve, reject) => {
@@ -45,6 +75,16 @@ async function startHttpServer(startPort) {
     const port = startPort + offset;
 
     if (port > 65535) break;
+
+    if (env.NODE_ENV === 'development' && (await isLocalPortInUse(port))) {
+      if (offset < attempts - 1) {
+        logger.warn(
+          { port, nextPort: port + 1 },
+          `Port ${port} already has a local service. Trying port ${port + 1}...`,
+        );
+      }
+      continue;
+    }
 
     const result = await listenOnPort(port);
 
