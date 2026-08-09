@@ -17,8 +17,17 @@ export const adminApi = {
   updateLead: async (id, payload) => unwrap(await api.patch(`/admin/leads/${id}`, payload)),
 
   articles: async (params = {}) => unwrapList(await api.get('/admin/articles', { params })),
+  articleDetail: async (id) => unwrap(await api.get(`/admin/articles/${id}`)),
   createArticle: async (payload) => unwrap(await api.post('/admin/articles', payload)),
   updateArticle: async (id, payload) => unwrap(await api.patch(`/admin/articles/${id}`, payload)),
+
+  googleWorkspaceStatus: async () => unwrap(await api.get('/admin/google-workspace/status')),
+  googleWorkspaceConnectUrl: async () => unwrap(await api.get('/admin/google-workspace/connect-url')),
+  googleWorkspaceSetup: async (payload = {}) => unwrap(await api.post('/admin/google-workspace/setup', payload)),
+  googleWorkspaceDisconnect: async () => unwrap(await api.post('/admin/google-workspace/disconnect')),
+  createGoogleDraft: async (payload = {}) => unwrap(await api.post('/admin/google-workspace/posts/create-draft', payload)),
+  ensureGoogleDoc: async (id) => unwrap(await api.post(`/admin/google-workspace/posts/${id}/ensure-doc`)),
+  syncGoogleDoc: async (id) => unwrap(await api.post(`/admin/google-workspace/posts/${id}/sync-from-doc`)),
 
   createTaxonomy: async (type, payload) =>
     unwrap(await api.post(`/admin/taxonomy/${type}`, payload)),
