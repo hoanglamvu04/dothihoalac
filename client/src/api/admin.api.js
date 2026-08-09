@@ -22,6 +22,7 @@ export const adminApi = {
   updateArticle: async (id, payload) => unwrap(await api.patch(`/admin/articles/${id}`, payload)),
 
   googleWorkspaceStatus: async () => unwrap(await api.get('/admin/google-workspace/status')),
+  googleWorkspaceReuseKthl: async () => unwrap(await api.post('/admin/google-workspace/reuse-kthl')),
   googleWorkspaceConnectUrl: async () => unwrap(await api.get('/admin/google-workspace/connect-url')),
   googleWorkspaceSetup: async (payload = {}) => unwrap(await api.post('/admin/google-workspace/setup', payload)),
   googleWorkspaceDisconnect: async () => unwrap(await api.post('/admin/google-workspace/disconnect')),
