@@ -1,0 +1,128 @@
+/* Vietnamese-safe newspaper typography overrides.
+ * Loaded after ArticleNewsroomTheme.css so legacy article-body rules cannot
+ * enlarge or mis-shape Google Docs text.
+ */
+
+.article-view-page .article-view-header h1,
+.article-view-page .article-view-lead,
+.article-view-page .article-view-body,
+.article-view-page .article-view-body .article-body,
+.article-view-page .article-view-body .article-body :is(p, li, h2, h3, h4, blockquote, figcaption) {
+  font-family: "Times New Roman", "Noto Serif", serif;
+  font-kerning: normal;
+  font-variant-ligatures: common-ligatures;
+  text-rendering: optimizeLegibility;
+  letter-spacing: normal;
+  word-spacing: normal;
+}
+
+.article-view-page .article-view-header h1 {
+  font-size: clamp(40px, 3.6vw, 58px);
+  font-weight: 700;
+  line-height: 1.08;
+}
+
+.article-view-page .article-view-lead {
+  font-size: clamp(19px, 1.35vw, 23px);
+  font-weight: 700;
+  line-height: 1.55;
+}
+
+.article-view-page .article-view-body,
+.article-view-page .article-view-body .article-body {
+  color: #181818;
+  font-size: 21px;
+  font-weight: 400;
+  line-height: 1.68;
+}
+
+.article-view-page .article-view-body .article-body :is(p, ul, ol) {
+  margin-top: 0;
+  margin-bottom: 1.08em;
+  font-size: inherit;
+  font-weight: 400;
+  line-height: inherit;
+}
+
+.article-view-page .article-view-body .article-body li {
+  margin-bottom: 0.35em;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.article-view-page .article-view-body .article-body :is(strong, b) {
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 700;
+  letter-spacing: normal;
+  word-spacing: normal;
+}
+
+.article-view-page .article-view-body .article-body h2 {
+  margin: 1.6em 0 0.55em;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.28;
+}
+
+.article-view-page .article-view-body .article-body h3 {
+  margin: 1.45em 0 0.5em;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.3;
+}
+
+.article-view-page .article-view-body .article-body h4 {
+  margin: 1.35em 0 0.45em;
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 1.35;
+}
+
+.article-view-page .article-view-body .article-body blockquote {
+  font-size: 21px;
+  line-height: 1.62;
+}
+
+.article-view-page .article-view-body .article-body figcaption {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.45;
+}
+
+.article-view-page .article-popular-sidebar__header h2,
+.article-view-page .article-popular-sidebar__copy h3,
+.article-view-page .article-popular-sidebar__item::before {
+  font-family: "Times New Roman", "Noto Serif", serif;
+  letter-spacing: normal;
+  word-spacing: normal;
+}
+
+@media (max-width: 680px) {
+  .article-view-page .article-view-header h1 {
+    font-size: 36px;
+    line-height: 1.1;
+  }
+
+  .article-view-page .article-view-lead {
+    font-size: 19px;
+  }
+
+  .article-view-page .article-view-body,
+  .article-view-page .article-view-body .article-body {
+    font-size: 19px;
+    line-height: 1.66;
+  }
+
+  .article-view-page .article-view-body .article-body h2 {
+    font-size: 27px;
+  }
+
+  .article-view-page .article-view-body .article-body h3 {
+    font-size: 24px;
+  }
+
+  .article-view-page .article-view-body .article-body h4 {
+    font-size: 21px;
+  }
+}
