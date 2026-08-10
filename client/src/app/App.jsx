@@ -58,7 +58,6 @@ const ReportsPage = lazy(() => import('../pages/account/ReportsPage'));
 const AdminDashboardPage = lazy(() => import('../pages/admin/AdminDashboardPage'));
 const ModerationQueuePage = lazy(() => import('../pages/admin/ModerationQueuePage'));
 const AdminArticlesPage = lazy(() => import('../pages/admin/AdminArticlesPage'));
-const ArticleEditorPage = lazy(() => import('../pages/admin/ArticleEditorPage'));
 const GoogleDocsArticleLauncher = lazy(() => import('../pages/admin/GoogleDocsArticleLauncher'));
 const GoogleWorkspacePage = lazy(() => import('../pages/admin/GoogleWorkspacePage'));
 const AdminJobsPage = lazy(() => import('../pages/admin/AdminJobsPage'));
@@ -100,10 +99,13 @@ const router = createBrowserRouter(
         <Route index element={<AdminDashboardPage />} />
         <Route path="kiem-duyet" element={<ModerationQueuePage />} />
         <Route path="bai-viet" element={<AdminArticlesPage />} />
-        <Route path="bai-viet/moi" element={<ArticleEditorPage />} />
+
+        {/* Google Docs là trình soạn chính; giữ URL cũ nhưng không còn mở TipTap. */}
+        <Route path="bai-viet/moi" element={<GoogleDocsArticleLauncher />} />
         <Route path="bai-viet/docs/moi" element={<GoogleDocsArticleLauncher />} />
-        <Route path="bai-viet/:id/sua" element={<ArticleEditorPage />} />
+        <Route path="bai-viet/:id/sua" element={<GoogleDocsArticleLauncher />} />
         <Route path="bai-viet/:id/docs" element={<GoogleDocsArticleLauncher />} />
+
         <Route path="viec-lam" element={<AdminJobsPage />} />
         <Route path="nguoi-dung" element={<AdminUsersPage />} />
         <Route path="bao-cao" element={<AdminReportsPage />} />

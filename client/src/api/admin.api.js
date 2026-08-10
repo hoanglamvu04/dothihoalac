@@ -1,6 +1,7 @@
 import { api, unwrap, unwrapList } from './http';
 
 const GOOGLE_DOCS_TIMEOUT_MS = 25000;
+const GOOGLE_DOCS_SYNC_TIMEOUT_MS = 120000;
 
 export const adminApi = {
   dashboard: async () => unwrap(await api.get('/admin/dashboard')),
@@ -38,7 +39,16 @@ export const adminApi = {
     undefined,
     { timeout: GOOGLE_DOCS_TIMEOUT_MS },
   )),
-  syncGoogleDoc: async (id) => unwrap(await api.post(`/admin/google-workspace/posts/${id}/sync-from-doc`)),
+  syncGoogleDoc: async (id) => unwrap(await api.post(
+    `/admin/google-workspace/posts/${id}/sync`,
+    undefined,
+    { timeout: GOOGLE_DOCS_SYNC_TIMEOUT_MS },
+  )),
+  publishGoogleDoc: async (id) => unwrap(await api.post(
+    `/admin/google-workspace/posts/${id}/publish`,
+    undefined,
+    { timeout: GOOGLE_DOCS_SYNC_TIMEOUT_MS },
+  )),
 
   createTaxonomy: async (type, payload) =>
     unwrap(await api.post(`/admin/taxonomy/${type}`, payload)),
