@@ -58,6 +58,7 @@ const ReportsPage = lazy(() => import('../pages/account/ReportsPage'));
 const AdminDashboardPage = lazy(() => import('../pages/admin/AdminDashboardPage'));
 const ModerationQueuePage = lazy(() => import('../pages/admin/ModerationQueuePage'));
 const AdminArticlesPage = lazy(() => import('../pages/admin/AdminArticlesPage'));
+const AdminSourceWatchPage = lazy(() => import('../pages/admin/AdminSourceWatchPage'));
 const ArticleMetadataPage = lazy(() => import('../pages/admin/ArticleMetadataPage'));
 const GoogleDocsArticleLauncher = lazy(() => import('../pages/admin/GoogleDocsArticleLauncher'));
 const GoogleWorkspacePage = lazy(() => import('../pages/admin/GoogleWorkspacePage'));
@@ -100,6 +101,7 @@ const router = createBrowserRouter(
         <Route index element={<AdminDashboardPage />} />
         <Route path="kiem-duyet" element={<ModerationQueuePage />} />
         <Route path="bai-viet" element={<AdminArticlesPage />} />
+        <Route path="theo-doi-nguon" element={<AdminSourceWatchPage />} />
 
         {/* Google Docs soạn nội dung; trang Sửa chỉ quản lý metadata CMS. */}
         <Route path="bai-viet/moi" element={<GoogleDocsArticleLauncher />} />
