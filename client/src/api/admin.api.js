@@ -30,6 +30,8 @@ export const adminApi = {
     unwrap(await api.post('/admin/articles/bulk-delete', { ids })),
 
   newsroomOverview: async () => unwrap(await api.get('/admin/newsroom/overview')),
+  newsroomTasks: async (params = {}) =>
+    unwrapList(await api.get('/admin/newsroom/tasks', { params })),
   newsroomStories: async (params = {}) =>
     unwrapList(await api.get('/admin/newsroom/stories', { params })),
   newsroomStory: async (id) => unwrap(await api.get(`/admin/newsroom/stories/${id}`)),

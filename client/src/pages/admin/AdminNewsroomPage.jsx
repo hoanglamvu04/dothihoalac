@@ -1,7 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
+  AlertTriangle,
   Bot,
   CheckCircle2,
+  Clock3,
   ExternalLink,
   Play,
   Radar,
@@ -30,6 +32,23 @@ const STATUS_LABELS = {
   error: 'Lỗi',
 };
 
+const TASK_LABELS = {
+  SCOUT: 'Săn tin · Google Search',
+  RESEARCH: 'Nghiên cứu · Search + URL Context',
+  EDITOR: 'Tổng biên tập AI',
+  WRITE: 'Phóng viên AI',
+  FACT_CHECK: 'Fact check AI',
+  CREATE_PENDING_REVIEW: 'Tạo bài chờ duyệt',
+};
+
+const TASK_STATUS_LABELS = {
+  queued: 'Đang chờ worker',
+  running: 'Đang xử lý',
+  completed: 'Hoàn tất',
+  failed: 'Thất bại',
+  cancelled: 'Đã hủy',
+};
+
 function scoreClass(score) {
   if (score >= 8) return 'is-high';
   if (score >= 5) return 'is-medium';
@@ -40,10 +59,94 @@ function statusCount(overview, key) {
   return Number(overview?.statusCounts?.[key] || 0);
 }
 
+function elapsedLabel(task) {
+  const startRaw = task?.lockedAt || task?.createdAt;
+  if (!startRaw) return '—';
+
+  const start = new Date(startRaw).getTime();
+  const end = task?.finishedAt
+    ? new Date(task.finishedAt).getTime()
+    : Date.now();
+
+  const seconds = Math.max(0, Math.floor((end - start) / 1000));
+  if (seconds < 60) return `${seconds} giây`;
+
+  const minutes = Math.floor(seconds / 60);
+  const remain = seconds % 60;
+  if (minutes < 60) return `${minutes} phút ${remain} giây`;
+
+  const hours = Math.floor(minutes / 60);
+  return `${hours} giờ ${minutes % 60} phút`;
+}
+
+function taskResultSummary(task) {
+  const result = task?.result;
+  if (!result || typeof result !== 'object') return '';
+
+  if (task.type === 'SCOUT') {
+    return [
+      `${Number(result.candidates || 0)} candidate`,
+      `${Number(result.stories || 0)} story`,
+      `${Number(result.researchQueued || 0)} đưa vào nghiên cứu`,
+    ].join(' · ');
+  }
+
+  if (task.type === 'EDITOR') {
+    return [result.decision, result.reason].filter(Boolean).join(' · ');
+  }
+
+  if (task.type === 'WRITE') {
+    return result.title || '';
+  }
+
+  if (task.type === 'FACT_CHECK') {
+    return [
+      result.STATUS,
+      result.FACT_SCORE !== undefined ? `Fact ${result.FACT_SCORE}` : '',
+      result.ORIGINALITY_SCORE !== undefined ? `Originality ${result.ORIGINALITY_SCORE}` : '',
+      result.EDITORIAL_SCORE !== undefined ? `Editorial ${result.EDITORIAL_SCORE}` : '',
+    ].filter(Boolean).join(' · ');
+  }
+
+  if (task.type === 'CREATE_PENDING_REVIEW') {
+    return result.contentId
+      ? `CMS ${result.contentId} · ${result.status || 'pending_review'}`
+      : '';
+  }
+
+  return [result.storyCode, result.status].filter(Boolean).join(' · ');
+}
+
+function runningDescription(task) {
+  if (!task) return '';
+
+  if (task.status === 'queued') {
+    return 'Task đã nằm trong MongoDB và đang chờ worker backend nhận. Bình thường worker nhận trong vài giây.';
+  }
+
+  switch (task.type) {
+    case 'SCOUT':
+      return 'Gemini đang chạy các truy vấn Google Search và sau đó gom/chống trùng candidate. Bước này thường lâu nhất của lượt săn tin.';
+    case 'RESEARCH':
+      return 'Gemini đang đọc sâu story bằng Google Search và URL Context để tạo Research Packet.';
+    case 'EDITOR':
+      return 'Tổng biên tập AI đang quyết định IGNORE / MONITOR / WRITE và tạo Article Brief.';
+    case 'WRITE':
+      return 'Phóng viên AI đang viết draft từ Research Packet và Article Brief.';
+    case 'FACT_CHECK':
+      return 'AI đang đối chiếu lại nguồn, dữ kiện, logic và tính nguyên bản trước khi chuyển bài sang chờ duyệt.';
+    case 'CREATE_PENDING_REVIEW':
+      return 'Backend đang tạo bài pending_review trong CMS DTHL.';
+    default:
+      return 'Worker backend đang xử lý task Newsroom AI.';
+  }
+}
+
 export default function AdminNewsroomPage() {
   const toast = useToast();
   const [overview, setOverview] = useState(null);
   const [stories, setStories] = useState([]);
+  const [tasks, setTasks] = useState([]);
   const [meta, setMeta] = useState(null);
   const [status, setStatus] = useState('');
   const [keyword, setKeyword] = useState('');
@@ -53,17 +156,19 @@ export default function AdminNewsroomPage() {
   const load = useCallback(async ({ silent = false } = {}) => {
     if (!silent) setLoading(true);
     try {
-      const [nextOverview, nextStories] = await Promise.all([
+      const [nextOverview, nextStories, nextTasks] = await Promise.all([
         adminApi.newsroomOverview(),
         adminApi.newsroomStories({
           ...(status ? { status } : {}),
           ...(keyword.trim() ? { q: keyword.trim() } : {}),
           limit: 50,
         }),
+        adminApi.newsroomTasks({ limit: 12 }),
       ]);
       setOverview(nextOverview);
       setStories(nextStories.items || []);
       setMeta(nextStories.meta || null);
+      setTasks(nextTasks.items || []);
     } catch (error) {
       toast.error(apiErrorMessage(error, 'Không tải được Newsroom AI.'));
     } finally {
@@ -76,7 +181,7 @@ export default function AdminNewsroomPage() {
   }, [load]);
 
   useEffect(() => {
-    const timer = window.setInterval(() => load({ silent: true }), 10000);
+    const timer = window.setInterval(() => load({ silent: true }), 3000);
     return () => window.clearInterval(timer);
   }, [load]);
 
@@ -89,11 +194,29 @@ export default function AdminNewsroomPage() {
     return [...new Set(values)].join(' · ');
   }, [overview]);
 
+  const activeTasks = useMemo(
+    () => tasks.filter((task) => ['queued', 'running'].includes(task.status)),
+    [tasks],
+  );
+
+  const activeTask = useMemo(
+    () => activeTasks.find((task) => task.status === 'running') || activeTasks[0] || null,
+    [activeTasks],
+  );
+
+  const hasActiveScout = activeTasks.some((task) => task.type === 'SCOUT');
+
+  const queuedTooLong = Boolean(
+    activeTask?.status === 'queued' &&
+    activeTask?.createdAt &&
+    Date.now() - new Date(activeTask.createdAt).getTime() > 30000,
+  );
+
   const triggerScout = async () => {
     setBusy('scout');
     try {
       await adminApi.triggerNewsroomScout();
-      toast.success('Đã đưa lượt săn tin vào hàng đợi.');
+      toast.success('Đã đưa lượt săn tin vào hàng đợi. Newsroom sẽ tự chạy ở backend.');
       await load({ silent: true });
     } catch (error) {
       toast.error(apiErrorMessage(error, 'Không khởi động được lượt săn tin.'));
@@ -133,9 +256,14 @@ export default function AdminNewsroomPage() {
             type="button"
             className="newsroom-btn newsroom-btn--primary"
             onClick={triggerScout}
-            disabled={busy === 'scout' || !overview?.enabled || !overview?.geminiConfigured}
+            disabled={busy === 'scout' || hasActiveScout || !overview?.enabled || !overview?.geminiConfigured}
           >
-            <Radar size={18} /> {busy === 'scout' ? 'Đang xếp hàng...' : 'Săn tin ngay'}
+            <Radar size={18} />
+            {hasActiveScout
+              ? 'Scout đang chạy...'
+              : busy === 'scout'
+                ? 'Đang xếp hàng...'
+                : 'Săn tin ngay'}
           </button>
         </div>
       </header>
@@ -163,7 +291,65 @@ export default function AdminNewsroomPage() {
         <span>Scout mỗi {overview?.scoutIntervalMinutes || '—'} phút</span>
         <span>Worker {overview?.workerIntervalSeconds || '—'} giây</span>
         <span title={modelSummary}>Model: {modelSummary || '—'}</span>
+        <span>Tự cập nhật tiến trình mỗi 3 giây</span>
       </div>
+
+      <section className="newsroom-task-monitor">
+        <div className="newsroom-task-monitor__head">
+          <div>
+            <span>TIẾN TRÌNH BACKEND</span>
+            <strong>{activeTask ? TASK_LABELS[activeTask.type] || activeTask.type : 'Không có task đang chạy'}</strong>
+          </div>
+          {activeTask ? (
+            <span className={`newsroom-task-status is-${activeTask.status}`}>
+              {TASK_STATUS_LABELS[activeTask.status] || activeTask.status}
+            </span>
+          ) : (
+            <span className="newsroom-task-status is-idle">Rảnh</span>
+          )}
+        </div>
+
+        {activeTask ? (
+          <div className="newsroom-task-monitor__active">
+            <div className="newsroom-task-monitor__copy">
+              <p>{runningDescription(activeTask)}</p>
+              <span>
+                <Clock3 size={14} /> {elapsedLabel(activeTask)} · lần thử {activeTask.attempts || 0}/{activeTask.maxAttempts || 3}
+              </span>
+              {queuedTooLong ? (
+                <div className="newsroom-task-monitor__warning">
+                  <AlertTriangle size={15} />
+                  Task đã chờ hơn 30 giây mà chưa được worker nhận. Sau khi pull bản mới hãy restart backend để worker Newsroom khởi động với ENV hiện tại.
+                </div>
+              ) : null}
+            </div>
+            <div className={`newsroom-task-progress is-${activeTask.status}`} aria-label={TASK_STATUS_LABELS[activeTask.status]}>
+              <i />
+            </div>
+          </div>
+        ) : (
+          <p className="newsroom-task-monitor__idle">
+            Worker không có task đang chạy. Bấm “Săn tin ngay” để tạo một lượt Scout mới.
+          </p>
+        )}
+
+        <div className="newsroom-task-history">
+          {tasks.slice(0, 6).map((task) => (
+            <article key={task._id} className={`is-${task.status}`}>
+              <div>
+                <strong>{TASK_LABELS[task.type] || task.type}</strong>
+                <span>{TASK_STATUS_LABELS[task.status] || task.status} · {elapsedLabel(task)}</span>
+              </div>
+              <p>
+                {task.error
+                  ? task.error
+                  : taskResultSummary(task) || (task.status === 'running' ? runningDescription(task) : 'Chưa có kết quả.')}
+              </p>
+            </article>
+          ))}
+          {!tasks.length ? <span className="newsroom-muted">Chưa có lịch sử task.</span> : null}
+        </div>
+      </section>
 
       <div className="newsroom-admin__toolbar">
         <div className="newsroom-admin__filters">
@@ -278,7 +464,7 @@ export default function AdminNewsroomPage() {
             {!loading && !stories.length ? (
               <tr>
                 <td colSpan="7" className="newsroom-admin__empty">
-                  Chưa có story phù hợp. Bấm “Săn tin ngay” để tạo lượt Scout đầu tiên.
+                  Chưa có story phù hợp. Nếu Scout đang chạy, story sẽ tự xuất hiện ở đây ngay sau khi Gemini hoàn tất bước gom/chống trùng.
                 </td>
               </tr>
             ) : null}

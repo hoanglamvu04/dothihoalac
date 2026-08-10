@@ -5,6 +5,7 @@ import { requireAuth } from '../../middlewares/auth.middleware.js';
 import { requirePermission } from '../../middlewares/role.middleware.js';
 import asyncHandler from '../../utils/asyncHandler.js';
 import * as controller from './newsroom.controller.js';
+import * as taskController from './newsroom.task.controller.js';
 
 const router = Router();
 
@@ -19,6 +20,7 @@ router.use(
 );
 
 router.get('/overview', asyncHandler(controller.overview));
+router.get('/tasks', asyncHandler(taskController.listTasks));
 router.get('/stories', asyncHandler(controller.listStories));
 router.get('/stories/:id', asyncHandler(controller.storyDetail));
 router.post('/scout', asyncHandler(controller.triggerScout));

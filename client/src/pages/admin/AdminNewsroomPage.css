@@ -124,6 +124,191 @@
   font-size: 0.73rem;
 }
 
+.newsroom-task-monitor {
+  display: grid;
+  gap: 14px;
+  padding: 17px;
+  border: 1px solid #dce6df;
+  border-radius: 15px;
+  background: #fff;
+}
+
+.newsroom-task-monitor__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+}
+
+.newsroom-task-monitor__head > div {
+  display: grid;
+  gap: 3px;
+}
+
+.newsroom-task-monitor__head > div > span {
+  color: #7a877e;
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 0.11em;
+}
+
+.newsroom-task-monitor__head strong {
+  color: #153322;
+  font-size: 1rem;
+}
+
+.newsroom-task-status {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 9px;
+  border-radius: 999px;
+  background: #edf2ee;
+  color: #5d6a61;
+  font-size: 0.69rem;
+  font-weight: 800;
+}
+
+.newsroom-task-status.is-running {
+  background: #dcf5e5;
+  color: #0f6933;
+}
+
+.newsroom-task-status.is-queued {
+  background: #fff1d7;
+  color: #815a0c;
+}
+
+.newsroom-task-status.is-idle {
+  background: #eef2ef;
+  color: #68756c;
+}
+
+.newsroom-task-monitor__active {
+  display: grid;
+  gap: 12px;
+}
+
+.newsroom-task-monitor__copy p,
+.newsroom-task-monitor__idle {
+  margin: 0;
+  color: #506057;
+  font-size: 0.82rem;
+  line-height: 1.55;
+}
+
+.newsroom-task-monitor__copy > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 7px;
+  color: #7b877f;
+  font-size: 0.72rem;
+}
+
+.newsroom-task-monitor__warning {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  margin-top: 10px;
+  padding: 10px 12px;
+  border: 1px solid #efd5a6;
+  border-radius: 10px;
+  background: #fff8eb;
+  color: #755412;
+  font-size: 0.74rem;
+  line-height: 1.5;
+}
+
+.newsroom-task-progress {
+  position: relative;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e7eee9;
+}
+
+.newsroom-task-progress i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 14%;
+  border-radius: inherit;
+  background: #17723c;
+}
+
+.newsroom-task-progress.is-running i {
+  width: 34%;
+  animation: newsroomTaskProgress 1.35s ease-in-out infinite;
+}
+
+.newsroom-task-progress.is-queued i {
+  width: 9%;
+  background: #c99228;
+}
+
+@keyframes newsroomTaskProgress {
+  0% { transform: translateX(-110%); }
+  55% { transform: translateX(185%); }
+  100% { transform: translateX(330%); }
+}
+
+.newsroom-task-history {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.newsroom-task-history article {
+  min-width: 0;
+  padding: 10px 11px;
+  border: 1px solid #e3eae5;
+  border-radius: 10px;
+  background: #fafcfb;
+}
+
+.newsroom-task-history article.is-running {
+  border-color: #b9dcc6;
+  background: #f4fbf6;
+}
+
+.newsroom-task-history article.is-failed {
+  border-color: #efcaca;
+  background: #fff7f7;
+}
+
+.newsroom-task-history article > div {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.newsroom-task-history strong {
+  color: #1a3826;
+  font-size: 0.72rem;
+}
+
+.newsroom-task-history span {
+  flex: 0 0 auto;
+  color: #849087;
+  font-size: 0.62rem;
+}
+
+.newsroom-task-history p {
+  display: -webkit-box;
+  margin: 6px 0 0;
+  overflow: hidden;
+  color: #657269;
+  font-size: 0.68rem;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+}
+
+.newsroom-task-history article.is-failed p {
+  color: #963636;
+}
+
 .newsroom-admin__toolbar {
   display: flex;
   align-items: center;
@@ -345,6 +530,10 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .newsroom-task-history {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
   .newsroom-admin__search {
     width: 100%;
     min-width: 0;
@@ -352,7 +541,8 @@
 }
 
 @media (max-width: 620px) {
-  .newsroom-admin__stats {
+  .newsroom-admin__stats,
+  .newsroom-task-history {
     grid-template-columns: 1fr;
   }
 
@@ -362,5 +552,10 @@
 
   .newsroom-btn {
     flex: 1;
+  }
+
+  .newsroom-task-monitor__head {
+    align-items: flex-start;
+    flex-direction: column;
   }
 }

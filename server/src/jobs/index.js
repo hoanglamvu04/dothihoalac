@@ -13,7 +13,16 @@ import {
 let timer = null;
 
 export function startJobs() {
-  if (!env.SCHEDULER_ENABLED || env.NODE_ENV === 'test') return;
+  // Newsroom AI có cờ bật/tắt riêng. Không để SCHEDULER_ENABLED của
+  // các job housekeeping làm task Scout nằm queue mãi.
+  startNewsroomWorker();
+
+  if (!env.SCHEDULER_ENABLED || env.NODE_ENV === 'test') {
+    if (!env.SCHEDULER_ENABLED && env.NODE_ENV !== 'test') {
+      logger.info('Housekeeping scheduler disabled; Newsroom worker remains independently controlled.');
+    }
+    return;
+  }
 
   const run = async () => {
     try {
@@ -31,7 +40,6 @@ export function startJobs() {
   timer.unref?.();
   setTimeout(run, 3000).unref?.();
 
-  startNewsroomWorker();
   logger.info('Background jobs started');
 }
 
