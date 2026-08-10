@@ -1,8 +1,11 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 
 import { adminApi } from '../../api/admin.api';
 import { apiErrorMessage } from '../../api/http';
+
+const launchTasks = new Map();
+const LAUNCH_TASK_CACHE_MS = 5000;
 
 function newDraftSeed() {
   try {
@@ -16,11 +19,33 @@ function newDraftSeed() {
 function launchKey() {
   const storageKey = 'dthl-google-docs-launch-key';
   let value = window.sessionStorage.getItem(storageKey);
+
   if (!value) {
-    value = window.crypto?.randomUUID?.() || `docs-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    value =
+      window.crypto?.randomUUID?.() ||
+      `docs-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     window.sessionStorage.setItem(storageKey, value);
   }
+
   return value;
+}
+
+function sharedLaunchTask(key, factory) {
+  const cached = launchTasks.get(key);
+  if (cached) return cached;
+
+  const task = Promise.resolve().then(factory);
+  launchTasks.set(key, task);
+
+  task.finally(() => {
+    window.setTimeout(() => {
+      if (launchTasks.get(key) === task) {
+        launchTasks.delete(key);
+      }
+    }, LAUNCH_TASK_CACHE_MS);
+  });
+
+  return task;
 }
 
 function launcherError(error) {
@@ -37,10 +62,12 @@ function launcherError(error) {
 export default function GoogleDocsArticleLauncher() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const started = useRef(false);
   const postId = id || 'new';
   const fallbackUrl = useMemo(
-    () => postId === 'new' ? '/quan-tri/bai-viet/moi' : `/quan-tri/bai-viet/${postId}/sua`,
+    () =>
+      postId === 'new'
+        ? '/quan-tri/bai-viet/moi'
+        : `/quan-tri/bai-viet/${postId}/sua`,
     [postId],
   );
   const [state, setState] = useState({
@@ -50,10 +77,14 @@ export default function GoogleDocsArticleLauncher() {
   });
 
   useEffect(() => {
-    if (started.current) return;
-    started.current = true;
     let active = true;
     let slowTimer;
+
+    const draftToken = postId === 'new' ? launchKey() : '';
+    const taskKey =
+      postId === 'new'
+        ? `new:${draftToken}`
+        : `post:${postId}`;
 
     const run = async () => {
       try {
@@ -61,37 +92,77 @@ export default function GoogleDocsArticleLauncher() {
 
         slowTimer = window.setTimeout(() => {
           if (!active) return;
+
           setState((current) => ({
             ...current,
-            message: 'Google đang phản hồi chậm hơn bình thường… hệ thống vẫn giữ nguyên bản nháp.',
+            message:
+              'Google đang phản hồi chậm hơn bình thường… hệ thống vẫn giữ nguyên bản nháp.',
           }));
         }, 8000);
 
         if (postId === 'new') {
-          setState({ phase: 'creating', message: 'Đang tạo bản nháp và Google Docs trong 01_ĐANG_SOẠN…', error: '' });
-          result = await adminApi.createGoogleDraft({
-            draftToken: launchKey(),
-            seed: newDraftSeed(),
+          setState({
+            phase: 'creating',
+            message:
+              'Đang tạo bản nháp và Google Docs trong 01_ĐANG_SOẠN…',
+            error: '',
           });
-          window.sessionStorage.removeItem('dthl-google-docs-launch-key');
+
+          result = await sharedLaunchTask(taskKey, () =>
+            adminApi.createGoogleDraft({
+              draftToken,
+              seed: newDraftSeed(),
+            }),
+          );
         } else {
-          setState({ phase: 'opening', message: 'Đang tìm hoặc tạo Google Docs của bài viết…', error: '' });
-          result = await adminApi.ensureGoogleDoc(postId);
+          setState({
+            phase: 'opening',
+            message: 'Đang tìm hoặc tạo Google Docs của bài viết…',
+            error: '',
+          });
+
+          result = await sharedLaunchTask(taskKey, () =>
+            adminApi.ensureGoogleDoc(postId),
+          );
         }
 
         if (!active) return;
-        if (!result?.docUrl) throw new Error('Backend chưa trả về đường dẫn Google Docs.');
-        setState({ phase: 'redirecting', message: 'Đã sẵn sàng. Đang mở phòng soạn Google Docs…', error: '' });
+
+        if (!result?.docUrl) {
+          throw new Error(
+            'Backend chưa trả về đường dẫn Google Docs.',
+          );
+        }
+
+        if (postId === 'new') {
+          window.sessionStorage.removeItem(
+            'dthl-google-docs-launch-key',
+          );
+        }
+
+        setState({
+          phase: 'redirecting',
+          message:
+            'Đã sẵn sàng. Đang mở phòng soạn Google Docs…',
+          error: '',
+        });
+
         window.location.replace(result.docUrl);
       } catch (error) {
         if (!active) return;
-        setState({ phase: 'error', message: 'Không mở được Google Docs.', error: launcherError(error) });
+
+        setState({
+          phase: 'error',
+          message: 'Không mở được Google Docs.',
+          error: launcherError(error),
+        });
       } finally {
         window.clearTimeout(slowTimer);
       }
     };
 
     run();
+
     return () => {
       active = false;
       window.clearTimeout(slowTimer);
@@ -102,20 +173,49 @@ export default function GoogleDocsArticleLauncher() {
     <main className="admin-doc-launcher">
       <section className="admin-doc-launcher-card">
         <div className="admin-doc-launcher-orb">G</div>
-        <p className="admin-kicker">Google Docs · DTHL Content Studio</p>
+        <p className="admin-kicker">
+          Google Docs · DTHL Content Studio
+        </p>
         <h1>{state.message}</h1>
+
         {state.phase !== 'error' ? (
           <>
-            <p>{postId === 'new' ? 'Bản nháp được tạo trên máy chủ trước, sau đó tài liệu được đặt vào đúng thư mục nội dung năm hiện tại.' : 'Nếu bài đã có tài liệu Google Docs, hệ thống mở lại đúng tài liệu đó; nếu chưa có, hệ thống tạo mới từ nội dung hiện tại.'}</p>
-            <div className="admin-doc-launcher-progress"><span /></div>
+            <p>
+              {postId === 'new'
+                ? 'Bản nháp được tạo trên máy chủ trước, sau đó tài liệu được đặt vào đúng thư mục nội dung năm hiện tại.'
+                : 'Nếu bài đã có tài liệu Google Docs, hệ thống mở lại đúng tài liệu đó; nếu chưa có, hệ thống tạo mới từ nội dung hiện tại.'}
+            </p>
+            <div className="admin-doc-launcher-progress">
+              <span />
+            </div>
           </>
         ) : (
           <>
             <div className="admin-alert error">{state.error}</div>
             <div className="admin-doc-launcher-actions">
-              <button type="button" className="admin-primary" onClick={() => window.location.reload()}>Thử lại</button>
-              <button type="button" className="admin-secondary" onClick={() => navigate(fallbackUrl)}>Mở trình soạn trên web</button>
-              <button type="button" className="admin-secondary" onClick={() => navigate('/quan-tri/google-workspace')}>Kiểm tra Google Workspace</button>
+              <button
+                type="button"
+                className="admin-primary"
+                onClick={() => window.location.reload()}
+              >
+                Thử lại
+              </button>
+              <button
+                type="button"
+                className="admin-secondary"
+                onClick={() => navigate(fallbackUrl)}
+              >
+                Mở trình soạn trên web
+              </button>
+              <button
+                type="button"
+                className="admin-secondary"
+                onClick={() =>
+                  navigate('/quan-tri/google-workspace')
+                }
+              >
+                Kiểm tra Google Workspace
+              </button>
             </div>
           </>
         )}
