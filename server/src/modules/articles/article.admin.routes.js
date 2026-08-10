@@ -32,7 +32,7 @@ r.post('/', validate(articleBodySchema), asyncHandler(c.adminCreate));
 r.patch(
   '/:id/metadata',
   validate(articleMetadataSchema),
-  asyncHandler(c.adminUpdate),
+  asyncHandler(c.adminUpdateMetadata),
 );
 
 r.patch('/:id', validate(articleBodySchema), asyncHandler(c.adminUpdate));
