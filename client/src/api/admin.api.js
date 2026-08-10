@@ -23,6 +23,8 @@ export const adminApi = {
   articleDetail: async (id) => unwrap(await api.get(`/admin/articles/${id}`)),
   createArticle: async (payload) => unwrap(await api.post('/admin/articles', payload)),
   updateArticle: async (id, payload) => unwrap(await api.patch(`/admin/articles/${id}`, payload)),
+  updateArticleMetadata: async (id, payload) =>
+    unwrap(await api.patch(`/admin/articles/${id}/metadata`, payload)),
 
   googleWorkspaceStatus: async () => unwrap(await api.get('/admin/google-workspace/status')),
   googleWorkspaceReuseKthl: async () => unwrap(await api.post('/admin/google-workspace/reuse-kthl')),

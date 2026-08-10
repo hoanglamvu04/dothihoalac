@@ -4,7 +4,10 @@ import { requireAuth } from '../../middlewares/auth.middleware.js';
 import { requirePermission } from '../../middlewares/role.middleware.js';
 import { PERMISSIONS } from '../../constants/permissions.js';
 import { validate } from '../../middlewares/validate.middleware.js';
-import { articleBodySchema } from './article.validation.js';
+import {
+  articleBodySchema,
+  articleMetadataSchema,
+} from './article.validation.js';
 import asyncHandler from '../../utils/asyncHandler.js';
 
 const r = Router();
@@ -21,6 +24,17 @@ r.use(
 r.get('/', asyncHandler(c.adminList));
 r.get('/:id', asyncHandler(c.adminDetail));
 r.post('/', validate(articleBodySchema), asyncHandler(c.adminCreate));
+
+/*
+ * Google Docs giữ nội dung; endpoint này chỉ cập nhật metadata CMS
+ * như loại tin, taxonomy, hiển thị, lịch đăng và ghi chú biên tập.
+ */
+r.patch(
+  '/:id/metadata',
+  validate(articleMetadataSchema),
+  asyncHandler(c.adminUpdate),
+);
+
 r.patch('/:id', validate(articleBodySchema), asyncHandler(c.adminUpdate));
 
 export default r;

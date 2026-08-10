@@ -1,6 +1,23 @@
 import { z } from 'zod';
+
 const oid = z.string().regex(/^[0-9a-fA-F]{24}$/);
 const empty = z.object({}).passthrough();
+const articleType = z.enum([
+  'news',
+  'analysis',
+  'guide',
+  'interview',
+  'photo',
+  'sponsored',
+]);
+const articleStatus = z.enum([
+  'draft',
+  'pending_review',
+  'approved',
+  'scheduled',
+  'published',
+]);
+
 export const listArticlesSchema = z.object({
   body: empty,
   params: empty,
@@ -16,11 +33,15 @@ export const listArticlesSchema = z.object({
     })
     .passthrough(),
 });
+
 export const slugSchema = z.object({
   body: empty,
-  params: z.object({ slug: z.string().min(1).max(300) }),
+  params: z.object({
+    slug: z.string().min(1).max(300),
+  }),
   query: empty,
 });
+
 export const tipSchema = z.object({
   body: z.object({
     title: z.string().trim().min(10).max(250),
@@ -37,6 +58,7 @@ export const tipSchema = z.object({
   params: empty,
   query: empty,
 });
+
 export const articleBodySchema = z.object({
   body: z.object({
     title: z.string().min(5).max(250),
@@ -46,26 +68,52 @@ export const articleBodySchema = z.object({
       .min(1)
       .max(500000)
       .refine(
-        (value) =>
-          !/src\s*=\s*["']data:image\//i.test(value),
+        (value) => !/src\s*=\s*["']data:image\//i.test(value),
         {
-          message:
-            'Không được nhúng ảnh base64 vào nội dung.',
+          message: 'Không được nhúng ảnh base64 vào nội dung.',
         },
       ),
-    articleType: z
-      .enum(['news', 'analysis', 'guide', 'interview', 'photo', 'sponsored'])
-      .default('news'),
+    articleType: articleType.default('news'),
     primaryCategoryId: oid.nullable().optional(),
     primaryAreaId: oid.nullable().optional(),
     categoryIds: z.array(oid).optional(),
     tagIds: z.array(oid).optional(),
     areaIds: z.array(oid).optional(),
     thumbnailMediaId: oid.nullable().optional(),
-    status: z.enum(['draft', 'pending_review', 'approved', 'scheduled', 'published']).optional(),
+    status: articleStatus.optional(),
     scheduledAt: z.coerce.date().nullable().optional(),
     sourceNote: z.string().max(2000).optional(),
   }),
-  params: empty,
+  // POST không có id, PATCH có id. Giữ id để validate middleware không xóa req.params.id.
+  params: z.object({
+    id: oid.optional(),
+  }),
+  query: empty,
+});
+
+export const articleMetadataSchema = z.object({
+  body: z.object({
+    articleType: articleType.optional(),
+    primaryCategoryId: oid.nullable().optional(),
+    primaryAreaId: oid.nullable().optional(),
+    categoryIds: z.array(oid).max(20).optional(),
+    tagIds: z.array(oid).max(50).optional(),
+    areaIds: z.array(oid).max(20).optional(),
+    thumbnailMediaId: oid.nullable().optional(),
+    status: articleStatus.optional(),
+    scheduledAt: z.coerce.date().nullable().optional(),
+    sourceNote: z.string().max(2000).optional(),
+    visibility: z.enum(['public', 'members', 'private']).optional(),
+    allowComments: z.boolean().optional(),
+    isFeatured: z.boolean().optional(),
+    isSponsored: z.boolean().optional(),
+    factCheckedAt: z.coerce.date().nullable().optional(),
+    factCheckedBy: oid.nullable().optional(),
+    originalPublishedAt: z.coerce.date().nullable().optional(),
+    changeNote: z.string().max(500).optional(),
+  }),
+  params: z.object({
+    id: oid,
+  }),
   query: empty,
 });
