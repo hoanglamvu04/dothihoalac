@@ -6,6 +6,7 @@ import {
   FilePlus2,
   RefreshCw,
   Search,
+  Trash2,
 } from 'lucide-react';
 
 import Seo from '../../components/common/Seo';
@@ -73,6 +74,9 @@ export default function AdminArticlesPage() {
   const [loading, setLoading] = useState(true);
   const [syncingId, setSyncingId] = useState('');
   const [publishingId, setPublishingId] = useState('');
+  const [selectedIds, setSelectedIds] = useState([]);
+  const [deleting, setDeleting] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     setLoading(true);
@@ -87,12 +91,13 @@ export default function AdminArticlesPage() {
       .then((result) => {
         setItems(result.items);
         setMeta(result.meta);
+        setSelectedIds([]);
       })
       .catch((error) =>
         toast.error(apiErrorMessage(error)),
       )
       .finally(() => setLoading(false));
-  }, [appliedQuery, page, status, toast]);
+  }, [appliedQuery, page, reloadKey, status, toast]);
 
   const submitSearch = (event) => {
     event.preventDefault();
@@ -113,6 +118,89 @@ export default function AdminArticlesPage() {
     );
   };
 
+  const pageIds = items.map((item) => String(item._id));
+  const allPageSelected =
+    pageIds.length > 0 &&
+    pageIds.every((id) => selectedIds.includes(id));
+
+  const toggleSelected = (id) => {
+    const normalizedId = String(id || '');
+    if (!normalizedId || deleting) return;
+
+    setSelectedIds((current) =>
+      current.includes(normalizedId)
+        ? current.filter((value) => value !== normalizedId)
+        : [...current, normalizedId],
+    );
+  };
+
+  const togglePageSelection = () => {
+    if (deleting || !pageIds.length) return;
+
+    setSelectedIds(
+      allPageSelected ? [] : pageIds,
+    );
+  };
+
+  const deleteSelected = async () => {
+    if (
+      !selectedIds.length ||
+      deleting ||
+      syncingId ||
+      publishingId
+    ) {
+      return;
+    }
+
+    const selectedSet = new Set(selectedIds);
+    const publishedCount = items.filter(
+      (item) =>
+        selectedSet.has(String(item._id)) &&
+        item.status === 'published',
+    ).length;
+
+    const warning = publishedCount
+      ? `\n\nCó ${publishedCount} bài đang xuất bản. Các bài này sẽ biến mất khỏi website ngay.`
+      : '';
+
+    const accepted = window.confirm(
+      `Xóa ${selectedIds.length} bài viết đã chọn?${warning}\n\nThao tác sẽ ẩn các bài khỏi website và danh sách quản trị hiện tại.`,
+    );
+
+    if (!accepted) return;
+
+    setDeleting(true);
+
+    try {
+      const result = await adminApi.bulkDeleteArticles(
+        selectedIds,
+      );
+
+      const deletedCount = Number(
+        result?.deletedCount || 0,
+      );
+
+      toast.success(
+        `Đã xóa ${deletedCount} bài viết.`,
+      );
+
+      const removedWholePage =
+        selectedIds.length >= items.length;
+
+      setSelectedIds([]);
+
+      if (removedWholePage && page > 1) {
+        setPage((current) => Math.max(1, current - 1));
+      } else {
+        setReloadKey((current) => current + 1);
+      }
+    } catch (error) {
+      toast.error(apiErrorMessage(error));
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   const syncArticle = async (item) => {
     const id = String(item?._id || '');
 
@@ -120,7 +208,8 @@ export default function AdminArticlesPage() {
       !id ||
       !item?.article?.googleDocId ||
       syncingId ||
-      publishingId
+      publishingId ||
+      deleting
     ) {
       return;
     }
@@ -150,7 +239,8 @@ export default function AdminArticlesPage() {
       !id ||
       !item?.article?.googleDocId ||
       syncingId ||
-      publishingId
+      publishingId ||
+      deleting
     ) {
       return;
     }
@@ -265,6 +355,41 @@ export default function AdminArticlesPage() {
         </form>
       </div>
 
+      {!loading && items.length ? (
+        <div className="admin-article-bulk-toolbar">
+          <label className="admin-article-select-page">
+            <input
+              type="checkbox"
+              checked={allPageSelected}
+              onChange={togglePageSelection}
+              disabled={deleting}
+            />
+            <span>
+              {selectedIds.length
+                ? `${selectedIds.length} bài đã chọn`
+                : `Chọn ${items.length} bài trên trang`}
+            </span>
+          </label>
+
+          <button
+            type="button"
+            className="admin-article-bulk-delete"
+            disabled={
+              !selectedIds.length ||
+              deleting ||
+              Boolean(syncingId) ||
+              Boolean(publishingId)
+            }
+            onClick={deleteSelected}
+          >
+            <Trash2 size={14} />
+            {deleting
+              ? 'Đang xóa…'
+              : `Xóa đã chọn${selectedIds.length ? ` (${selectedIds.length})` : ''}`}
+          </button>
+        </div>
+      ) : null}
+
       {loading ? (
         <LoadingBlock />
       ) : items.length ? (
@@ -272,6 +397,15 @@ export default function AdminArticlesPage() {
           <table className="admin-table admin-article-list-table">
             <thead>
               <tr>
+                <th className="admin-article-select-col">
+                  <input
+                    type="checkbox"
+                    checked={allPageSelected}
+                    onChange={togglePageSelection}
+                    disabled={deleting}
+                    aria-label="Chọn tất cả bài trên trang"
+                  />
+                </th>
                 <th>Ảnh bìa</th>
                 <th>Tiêu đề</th>
                 <th>Danh mục</th>
@@ -307,11 +441,29 @@ export default function AdminArticlesPage() {
                   publishingId === itemId;
 
                 const busy = Boolean(
-                  syncingId || publishingId,
+                  syncingId ||
+                  publishingId ||
+                  deleting,
                 );
 
+                const selected =
+                  selectedIds.includes(itemId);
+
                 return (
-                  <tr key={item._id}>
+                  <tr
+                    key={item._id}
+                    className={selected ? 'is-selected' : ''}
+                  >
+                    <td className="admin-article-select-col">
+                      <input
+                        type="checkbox"
+                        checked={selected}
+                        onChange={() => toggleSelected(itemId)}
+                        disabled={deleting}
+                        aria-label={`Chọn bài ${item.title}`}
+                      />
+                    </td>
+
                     <td>
                       <div className="admin-article-cover-cell">
                         {imageUrl ? (
