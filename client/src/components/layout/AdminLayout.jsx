@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
   BarChart3,
+  Bot,
   BriefcaseBusiness,
   ChevronLeft,
   ChevronRight,
@@ -27,6 +28,7 @@ const links = [
   ['/quan-tri', 'Tổng quan', LayoutDashboard, true],
   ['/quan-tri/kiem-duyet', 'Hàng chờ kiểm duyệt', MessageSquareWarning],
   ['/quan-tri/bai-viet', 'Bài viết / Tin tức', FileText],
+  ['/quan-tri/newsroom', 'Newsroom AI', Bot],
   ['/quan-tri/viec-lam', 'Việc làm', BriefcaseBusiness],
   ['/quan-tri/nguoi-dung', 'Người dùng', Users],
   ['/quan-tri/bao-cao', 'Báo cáo vi phạm', Flag],
