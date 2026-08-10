@@ -1,6 +1,10 @@
 import * as s from './article.service.js';
 import { adminArticleDetail } from './article.admin.detail.service.js';
 import { adminUpdateMetadata as updateMetadata } from './article.metadata.service.js';
+import {
+  adminDeleteArticle as deleteArticle,
+  adminDeleteArticles as deleteArticles,
+} from './article.admin.delete.service.js';
 import { sendCreated, sendSuccess } from '../../utils/apiResponse.js';
 
 export async function list(req, res) {
@@ -48,6 +52,24 @@ export async function adminUpdateMetadata(req, res) {
   return sendSuccess(res, {
     data: updated,
     message: 'Đã lưu thuộc tính bài viết.',
+  });
+}
+
+export async function adminDelete(req, res) {
+  const result = await deleteArticle(req.params.id);
+
+  return sendSuccess(res, {
+    data: result,
+    message: 'Đã xóa bài viết.',
+  });
+}
+
+export async function adminBulkDelete(req, res) {
+  const result = await deleteArticles(req.body.ids);
+
+  return sendSuccess(res, {
+    data: result,
+    message: `Đã xóa ${result.deletedCount} bài viết.`,
   });
 }
 
