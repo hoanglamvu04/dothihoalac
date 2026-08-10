@@ -117,3 +117,19 @@ export const articleMetadataSchema = z.object({
   }),
   query: empty,
 });
+
+export const articleDeleteSchema = z.object({
+  body: empty,
+  params: z.object({
+    id: oid,
+  }),
+  query: empty,
+});
+
+export const articleBulkDeleteSchema = z.object({
+  body: z.object({
+    ids: z.array(oid).min(1).max(100),
+  }),
+  params: empty,
+  query: empty,
+});
