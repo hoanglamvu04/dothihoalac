@@ -1,9 +1,9 @@
-/* Final editorial layout overrides for the public newsroom.
- * Loaded after responsive.css so these rules intentionally win over legacy page skins.
+/* Final public editorial overrides.
+ * Loaded after the shared responsive stylesheet.
  */
 
 /* =========================================================
-   ARTICLE DETAIL — tighter newspaper proportions
+   ARTICLE DETAIL
 ========================================================= */
 
 @media (min-width: 981px) {
@@ -65,62 +65,57 @@
 }
 
 /* =========================================================
-   HOME — clearer newsroom hierarchy
+   HOME — EDITORIAL HIERARCHY
 ========================================================= */
 
-.dth-home {
+.dth-home--six-areas {
   display: flex;
   flex-direction: column;
 }
 
-.dth-home > .dth-trending {
+.dth-home--six-areas > .dth-area-ribbon {
   order: 1;
 }
 
-.dth-home > .dth-newsroom {
+.dth-home--six-areas > .dth-newsroom {
   order: 2;
 }
 
-/* Put the six focus communes immediately after the lead-news block. */
-.dth-home > .dth-section--areas {
+.dth-home--six-areas > .dth-focus-areas {
   order: 3;
 }
 
-.dth-home > .dth-quick-nav {
+.dth-home--six-areas > .dth-data-warning {
   order: 4;
 }
 
-.dth-home > .dth-data-warning {
+.dth-home--six-areas > .dth-home-latest {
   order: 5;
 }
 
-.dth-home > .dth-section--white:has(.dth-latest-news) {
+.dth-home--six-areas > .dth-home-community-jobs {
   order: 6;
 }
 
-.dth-home > .dth-section--soft {
+.dth-home--six-areas > .dth-home-property {
   order: 7;
 }
 
-.dth-home > .dth-section--white:has(.dth-property-grid) {
+.dth-home--six-areas > .dth-home-contribute {
   order: 8;
 }
 
-.dth-home > .dth-ecosystem {
+.dth-home--six-areas > .dth-system-note {
   order: 9;
 }
 
-.dth-home > .dth-contribute {
-  order: 10;
+.dth-area-ribbon .dth-trending__links {
+  gap: 2px;
 }
 
-.dth-home > .dth-system-note {
-  order: 11;
-}
-
-/* The old local counters made the homepage unnecessarily long. */
-.dth-home > .dth-pulse {
-  display: none;
+.dth-area-ribbon .dth-trending__links a {
+  padding: 0 14px;
+  font-weight: 650;
 }
 
 .dth-newsroom {
@@ -133,46 +128,19 @@
   gap: 30px;
 }
 
-/* Replace the old "Review Hòa Lạc?" visual label with the actual editorial scope. */
-.dth-newsroom__header .dth-eyebrow {
-  font-size: 0;
-}
-
-.dth-newsroom__header .dth-eyebrow::after {
-  font-size: 12px;
-  letter-spacing: 0.09em;
-  content: 'TIN MỚI 6 XÃ';
-}
-
 .dth-newsroom__header h1 {
   max-width: 720px;
   margin-top: 6px;
-  font-size: 0;
-  letter-spacing: normal;
-  line-height: 1;
-}
-
-.dth-newsroom__header h1::after {
-  display: block;
-  color: var(--dth-ink);
   font-size: clamp(30px, 3vw, 42px);
-  font-weight: 800;
   letter-spacing: -0.035em;
   line-height: 1.1;
-  content: 'Tin mới khu vực Đô Thị Hòa Lạc';
 }
 
 .dth-newsroom__header p {
   max-width: 760px;
   margin-top: 10px;
-  font-size: 0;
-}
-
-.dth-newsroom__header p::after {
-  color: var(--dth-muted);
   font-size: 14.5px;
   line-height: 1.6;
-  content: 'Cập nhật theo 6 xã trọng tâm: Hòa Lạc, Thạch Thất, Tây Phương, Hạ Bằng, Yên Xuân và Phú Cát.';
 }
 
 .dth-newsroom-search {
@@ -245,166 +213,124 @@
   display: none;
 }
 
-.dth-newsroom__side .content-card__labels {
-  margin-bottom: 2px;
-}
-
 .dth-newsroom__quick-searches {
   padding-top: 12px;
 }
 
 /* =========================================================
-   SIX-COMMUNE FOCUS
+   SIX FOCUS AREAS
 ========================================================= */
 
-.dth-section--areas {
+.dth-focus-areas {
   padding: 30px 0 34px;
   border-top: 1px solid var(--dth-border);
   border-bottom: 1px solid var(--dth-border);
   background: #fff;
 }
 
-.dth-section--areas .dth-section-heading {
+.dth-focus-areas .dth-section-heading {
   margin-bottom: 18px;
 }
 
-.dth-section--areas .dth-section-heading small,
-.dth-section--areas .dth-section-heading h2,
-.dth-section--areas .dth-section-heading p {
-  font-size: 0;
-}
-
-.dth-section--areas .dth-section-heading small::after {
-  color: var(--dth-green);
-  font-size: 12px;
-  font-weight: 800;
-  letter-spacing: 0.08em;
-  content: '6 XÃ TRỌNG TÂM';
-}
-
-.dth-section--areas .dth-section-heading h2::after {
-  color: var(--dth-ink);
+.dth-focus-areas .dth-section-heading h2 {
   font-size: 28px;
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  line-height: 1.15;
-  content: 'Tin theo địa bàn';
 }
 
-.dth-section--areas .dth-section-heading p::after {
-  color: var(--dth-muted);
-  font-size: 14px;
-  line-height: 1.55;
-  content: 'Hòa Lạc · Thạch Thất · Tây Phương · Hạ Bằng · Yên Xuân · Phú Cát';
-}
-
-.dth-section--areas .dth-section-heading > a {
-  min-height: 38px;
-}
-
-.dth-section--areas .dth-area-grid {
+.dth-focus-areas__grid {
   display: grid;
   grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 9px;
 }
 
-/* The homepage is editorially scoped to these six communes only. */
-.dth-section--areas .dth-area-card {
-  display: none;
-  min-height: 112px;
+.dth-focus-area-card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  min-width: 0;
+  min-height: 116px;
   padding: 14px;
+  gap: 10px;
+  border: 1px solid var(--dth-border);
   border-radius: 10px;
+  background: #fff;
   box-shadow: none;
 }
 
-.dth-section--areas .dth-area-card[href*='/khu-vuc/hoa-lac'] {
+.dth-focus-area-card > span {
   display: grid;
-  order: 1;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 9px;
+  color: var(--dth-green-dark);
+  background: var(--dth-green-soft);
 }
 
-.dth-section--areas .dth-area-card[href*='/khu-vuc/thach-that'] {
-  display: grid;
-  order: 2;
+.dth-focus-area-card small {
+  display: block;
+  margin-bottom: 4px;
+  color: var(--dth-muted);
+  font-size: 11px;
+  font-weight: 650;
+  text-transform: uppercase;
 }
 
-.dth-section--areas .dth-area-card[href*='/khu-vuc/tay-phuong'] {
-  display: grid;
-  order: 3;
+.dth-focus-area-card strong {
+  display: block;
+  color: var(--dth-ink);
+  font-size: 15px;
+  line-height: 1.25;
 }
 
-.dth-section--areas .dth-area-card[href*='/khu-vuc/ha-bang'] {
-  display: grid;
-  order: 4;
-}
-
-.dth-section--areas .dth-area-card[href*='/khu-vuc/yen-xuan'] {
-  display: grid;
-  order: 5;
-}
-
-.dth-section--areas .dth-area-card[href*='/khu-vuc/phu-cat'] {
-  display: grid;
-  order: 6;
-}
-
-.dth-section--areas .dth-area-card p {
+.dth-focus-area-card p {
   display: none;
 }
 
-.dth-section--areas .dth-area-card strong {
-  font-size: 15px;
+.dth-focus-area-card > svg {
+  color: #9ba69f;
 }
 
-.dth-section--areas .dth-area-card small {
-  margin-top: 3px;
-  font-size: 12px;
+.dth-focus-area-card:hover {
+  border-color: var(--dth-green-border);
+  background: #f8fcf9;
 }
 
 /* =========================================================
    HOME CONTENT DENSITY
 ========================================================= */
 
-.dth-quick-nav {
-  padding: 24px 0 28px;
-}
-
-.dth-quick-nav__item {
-  min-height: 78px;
-  padding: 11px 12px;
-}
-
-.dth-section {
+.dth-home--six-areas .dth-section {
   padding-top: 46px;
   padding-bottom: 46px;
 }
 
-.dth-section-heading {
+.dth-home--six-areas .dth-section-heading {
   margin-bottom: 20px;
 }
 
-.dth-section-heading h2 {
+.dth-home--six-areas .dth-section-heading h2 {
   font-size: clamp(25px, 2.4vw, 32px);
 }
 
-.dth-latest-news {
+.dth-home--six-areas .dth-latest-news {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 12px;
 }
 
-.dth-latest-news__item:first-child {
+.dth-home--six-areas .dth-latest-news__item:first-child {
   grid-column: auto;
 }
 
-.dth-latest-news__item {
+.dth-home--six-areas .dth-latest-news__item {
   border-radius: 11px;
   box-shadow: none;
 }
 
-.dth-latest-news__item .content-card__body {
+.dth-home--six-areas .dth-latest-news__item .content-card__body {
   padding: 14px 15px 16px;
 }
 
-.dth-latest-news__item .article-card h3 {
+.dth-home--six-areas .dth-latest-news__item .article-card h3 {
   display: -webkit-box;
   overflow: hidden;
   font-size: 17px;
@@ -413,7 +339,7 @@
   -webkit-line-clamp: 3;
 }
 
-.dth-latest-news__item .article-card p {
+.dth-home--six-areas .dth-latest-news__item .article-card p {
   display: -webkit-box;
   overflow: hidden;
   font-size: 13.5px;
@@ -422,10 +348,15 @@
   -webkit-line-clamp: 2;
 }
 
-.dth-community-panel,
-.dth-jobs-panel {
+.dth-home--six-areas .dth-community-panel,
+.dth-home--six-areas .dth-jobs-panel {
   border-radius: 12px;
   box-shadow: none;
+}
+
+.dth-home--six-areas .dth-contribute {
+  padding-top: 34px;
+  padding-bottom: 34px;
 }
 
 @media (max-width: 1180px) {
@@ -433,7 +364,7 @@
     grid-template-columns: minmax(0, 1.25fr) minmax(320px, 0.75fr);
   }
 
-  .dth-section--areas .dth-area-grid {
+  .dth-focus-areas__grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
@@ -462,7 +393,7 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
-  .dth-latest-news {
+  .dth-home--six-areas .dth-latest-news {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
@@ -487,7 +418,7 @@
     line-height: 1.68;
   }
 
-  .dth-newsroom__header h1::after {
+  .dth-newsroom__header h1 {
     font-size: 30px;
   }
 
@@ -495,12 +426,12 @@
     grid-template-columns: 1fr;
   }
 
-  .dth-section--areas .dth-area-grid,
-  .dth-latest-news {
+  .dth-focus-areas__grid,
+  .dth-home--six-areas .dth-latest-news {
     grid-template-columns: 1fr;
   }
 
-  .dth-section--areas .dth-area-card {
+  .dth-focus-area-card {
     min-height: 88px;
   }
 }
