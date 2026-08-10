@@ -5,6 +5,7 @@ import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import pinoHttp from 'pino-http';
 
+import { env } from './config/env.js';
 import { corsOptions } from './config/cors.js';
 import { logger } from './config/logger.js';
 import apiRoutes from './routes/index.js';
@@ -31,6 +32,25 @@ export function createApp() {
     pinoHttp({
       logger,
       genReqId: (req) => req.id,
+
+      /*
+       * Development đã có errorMiddleware ghi lỗi thật kèm stack.
+       * Tắt auto request log để terminal không bị spam bởi toàn bộ
+       * headers/request/response của pino-http sau mỗi request.
+       */
+      autoLogging:
+        env.NODE_ENV !== 'development',
+
+      serializers: {
+        req: (req) => ({
+          id: req.id,
+          method: req.method,
+          url: req.url,
+        }),
+        res: (res) => ({
+          statusCode: res.statusCode,
+        }),
+      },
     }),
   );
 
