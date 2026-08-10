@@ -1,5 +1,6 @@
 import * as s from './article.service.js';
 import { adminArticleDetail } from './article.admin.detail.service.js';
+import { adminUpdateMetadata as updateMetadata } from './article.metadata.service.js';
 import { sendCreated, sendSuccess } from '../../utils/apiResponse.js';
 
 export async function list(req, res) {
@@ -35,6 +36,19 @@ export async function adminCreate(req, res) {
     await adminArticleDetail(created._id),
     'Đã tạo bài viết.',
   );
+}
+
+export async function adminUpdateMetadata(req, res) {
+  const updated = await updateMetadata(
+    req.params.id,
+    req.user._id,
+    req.body,
+  );
+
+  return sendSuccess(res, {
+    data: updated,
+    message: 'Đã lưu thuộc tính bài viết.',
+  });
 }
 
 export async function adminUpdate(req, res) {
