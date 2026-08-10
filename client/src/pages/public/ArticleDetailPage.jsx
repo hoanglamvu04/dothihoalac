@@ -147,9 +147,9 @@ function getArticleId(article) {
   );
 }
 
-function mergeSidebarArticles(
+function selectSidebarArticles(
   currentItem,
-  ...collections
+  articles = [],
 ) {
   const currentId = getArticleId(currentItem);
   const currentSlug = String(
@@ -158,27 +158,25 @@ function mergeSidebarArticles(
   const seen = new Set();
   const result = [];
 
-  for (const collection of collections) {
-    for (const article of collection || []) {
-      const id = getArticleId(article);
-      const slug = String(article?.slug || '');
+  for (const article of articles) {
+    const id = getArticleId(article);
+    const slug = String(article?.slug || '');
 
-      if (
-        !id ||
-        !slug ||
-        id === currentId ||
-        slug === currentSlug ||
-        seen.has(id)
-      ) {
-        continue;
-      }
+    if (
+      !id ||
+      !slug ||
+      id === currentId ||
+      slug === currentSlug ||
+      seen.has(id)
+    ) {
+      continue;
+    }
 
-      seen.add(id);
-      result.push(article);
+    seen.add(id);
+    result.push(article);
 
-      if (result.length === 5) {
-        return result;
-      }
+    if (result.length === 4) {
+      break;
     }
   }
 
@@ -264,33 +262,21 @@ export default function ArticleDetailPage() {
       setSidebarLoading(true);
 
       try {
-        const [popular, recent] =
-          await Promise.allSettled([
-            articleApi.list({
-              sort: 'popular',
-              limit: 10,
-            }),
-            articleApi.list({
-              limit: 10,
-            }),
-          ]);
-
-        const popularItems =
-          popular.status === 'fulfilled'
-            ? popular.value?.items || []
-            : [];
-
-        const recentItems =
-          recent.status === 'fulfilled'
-            ? recent.value?.items || []
-            : [];
+        /*
+         * API sort=popular dùng viewCount thật giảm dần và publishedAt
+         * mới nhất làm tie-breaker. Vì vậy bài 0 view tự động rơi về
+         * thứ tự mới nhất mà không cần trộn một danh sách giả khác.
+         */
+        const result = await articleApi.list({
+          sort: 'popular',
+          limit: 8,
+        });
 
         if (active) {
           setSidebarArticles(
-            mergeSidebarArticles(
+            selectSidebarArticles(
               item,
-              popularItems,
-              recentItems,
+              result?.items || [],
             ),
           );
         }
@@ -797,7 +783,7 @@ export default function ArticleDetailPage() {
 
                 <div className="article-popular-sidebar__list">
                   {sidebarLoading
-                    ? Array.from({ length: 5 }).map((_, index) => (
+                    ? Array.from({ length: 4 }).map((_, index) => (
                         <div
                           className="article-popular-sidebar__skeleton"
                           key={`popular-loading-${index}`}
