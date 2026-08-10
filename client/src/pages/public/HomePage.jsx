@@ -57,12 +57,30 @@ const INITIAL_ERRORS = {
 };
 
 const FOCUS_AREAS = [
-  'Hòa Lạc',
-  'Thạch Thất',
-  'Tây Phương',
-  'Hạ Bằng',
-  'Yên Xuân',
-  'Phú Cát',
+  {
+    name: 'Hòa Lạc',
+    description: 'Tin tức, hạ tầng và đời sống quanh khu vực Hòa Lạc.',
+  },
+  {
+    name: 'Thạch Thất',
+    description: 'Cập nhật dân sinh, quy hoạch và hoạt động địa phương.',
+  },
+  {
+    name: 'Tây Phương',
+    description: 'Theo dõi văn hóa, đời sống và những thay đổi quanh khu vực.',
+  },
+  {
+    name: 'Hạ Bằng',
+    description: 'Tin mới về cộng đồng, hạ tầng và sinh hoạt địa phương.',
+  },
+  {
+    name: 'Yên Xuân',
+    description: 'Cập nhật đời sống, giao thông và các thông tin đáng chú ý.',
+  },
+  {
+    name: 'Phú Cát',
+    description: 'Theo dõi tin tức, phát triển đô thị và đời sống khu vực.',
+  },
 ];
 
 const TOPIC_LINKS = [
@@ -290,10 +308,10 @@ export default function HomePage() {
           <div className="dth-trending__links">
             {FOCUS_AREAS.map((area) => (
               <Link
-                key={area}
-                to={areaSearchUrl(area)}
+                key={area.name}
+                to={areaSearchUrl(area.name)}
               >
-                {area}
+                {area.name}
               </Link>
             ))}
           </div>
@@ -418,16 +436,16 @@ export default function HomePage() {
         <div className="container">
           <HomeSectionHeading
             icon={MapPin}
-            eyebrow="6 xã trọng tâm"
-            title="Chọn địa bàn bạn muốn theo dõi"
-            description="Mỗi địa bàn dẫn tới luồng tìm kiếm riêng để người đọc nhanh chóng lọc tin, cộng đồng và thông tin liên quan."
+            eyebrow="Tin theo địa bàn"
+            title="Bạn đang sinh sống ở khu vực nào?"
+            description="Chọn khu vực gần bạn để theo dõi những tin tức, thay đổi và câu chuyện địa phương phù hợp hơn mỗi ngày."
           />
 
           <div className="dth-area-grid dth-focus-areas__grid">
-            {FOCUS_AREAS.map((area, index) => (
+            {FOCUS_AREAS.map((area) => (
               <Link
-                key={area}
-                to={areaSearchUrl(area)}
+                key={area.name}
+                to={areaSearchUrl(area.name)}
                 className="dth-area-card dth-focus-area-card"
               >
                 <span>
@@ -435,11 +453,9 @@ export default function HomePage() {
                 </span>
 
                 <div>
-                  <small>
-                    Địa bàn {String(index + 1).padStart(2, '0')}
-                  </small>
-                  <strong>{area}</strong>
-                  <p>Tin tức · cộng đồng · dữ liệu địa phương</p>
+                  <small>Theo dõi khu vực</small>
+                  <strong>{area.name}</strong>
+                  <p>{area.description}</p>
                 </div>
 
                 <ArrowRight size={17} />
