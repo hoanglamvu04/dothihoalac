@@ -110,7 +110,7 @@ export async function updateSource(id, payload) {
 
   const data = await normalizedSourcePayload(payload, { partial: true });
   Object.assign(source, data);
-  if (payload.enabled === true && !source.nextCheckAt) {
+  if (payload.enabled === true) {
     source.nextCheckAt = new Date();
   }
   await source.save();
@@ -163,9 +163,11 @@ export async function updateItemStatus(id, status) {
   ).lean();
 
   if (before.status === 'new' && status !== 'new') {
-    await SourceWatchSource.findByIdAndUpdate(before.sourceId, {
-      $inc: { 'stats.newItems': -1 },
-    });
+    const source = await SourceWatchSource.findById(before.sourceId);
+    if (source) {
+      source.stats.newItems = Math.max(0, Number(source.stats?.newItems || 0) - 1);
+      await source.save();
+    }
   } else if (before.status !== 'new' && status === 'new') {
     await SourceWatchSource.findByIdAndUpdate(before.sourceId, {
       $inc: { 'stats.newItems': 1 },
@@ -198,7 +200,12 @@ async function saveCandidate(source, candidate, baseline) {
   });
   if (existing) return { created: false, item: null };
 
-  const enriched = await enrichWebCandidate(source, candidate);
+  // Lần kiểm tra đầu chỉ lập mốc link/title để không tải hàng chục bài cũ.
+  // Từ lần sau, bài mới của nguồn web mới được tải snapshot nội dung đầy đủ.
+  const enriched = source.type === 'web' && baseline
+    ? candidate
+    : await enrichWebCandidate(source, candidate);
+
   try {
     const item = await SourceWatchItem.create({
       sourceId: source._id,
