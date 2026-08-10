@@ -79,10 +79,21 @@
 
 .article-popular-sidebar__list {
   display: grid;
-  grid-template-rows: repeat(5, minmax(0, 1fr));
+  grid-template-rows: repeat(4, minmax(0, 1fr));
   flex: 1 1 auto;
   min-height: 0;
   padding: 7px 18px 10px;
+}
+
+/*
+ * Sidebar desktop luôn cố định đúng 4 slot. Dữ liệu phía API đã được
+ * sắp xếp theo viewCount thật; các bài 0 view đứng sau theo thời gian
+ * xuất bản mới nhất. JSX cũ có thể trả tối đa 5 phần tử, nên slot thứ 5
+ * được ẩn để giao diện không thay đổi chiều cao hoặc nhảy bố cục.
+ */
+.article-popular-sidebar__list
+  > :nth-child(n + 5):not(.article-popular-sidebar__empty) {
+  display: none;
 }
 
 .article-popular-sidebar__item {
@@ -97,7 +108,8 @@
   transition: color 150ms ease;
 }
 
-.article-popular-sidebar__item:last-child {
+.article-popular-sidebar__item:last-child,
+.article-popular-sidebar__item:nth-child(4) {
   border-bottom: 0;
 }
 
@@ -186,6 +198,10 @@
   padding: 10px 0;
   gap: 12px;
   border-bottom: 1px solid #e7ece8;
+}
+
+.article-popular-sidebar__skeleton:nth-child(4) {
+  border-bottom: 0;
 }
 
 .article-popular-sidebar__skeleton > span {
