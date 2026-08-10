@@ -259,6 +259,119 @@ const schema = z
       .default(''),
 
     // =====================================================
+    // NEWSROOM AI / GEMINI
+    // =====================================================
+
+    GEMINI_API_KEY: z
+      .string()
+      .optional()
+      .default(''),
+
+    GEMINI_SCOUT_MODEL: z
+      .string()
+      .default('gemini-3.5-flash-lite'),
+
+    GEMINI_RESEARCH_MODEL: z
+      .string()
+      .default('gemini-3.5-flash'),
+
+    GEMINI_EDITOR_MODEL: z
+      .string()
+      .default('gemini-3.5-flash'),
+
+    GEMINI_WRITER_MODEL: z
+      .string()
+      .default('gemini-3.5-flash'),
+
+    GEMINI_FACTCHECK_MODEL: z
+      .string()
+      .default('gemini-3.5-flash'),
+
+    NEWSROOM_AI_ENABLED: boolFromString.default(false),
+
+    NEWSROOM_SCOUT_INTERVAL_MINUTES: z.coerce
+      .number()
+      .int()
+      .min(10)
+      .max(1440)
+      .default(30),
+
+    NEWSROOM_WORKER_INTERVAL_SECONDS: z.coerce
+      .number()
+      .int()
+      .min(5)
+      .max(300)
+      .default(10),
+
+    NEWSROOM_GEMINI_TIMEOUT_MS: z.coerce
+      .number()
+      .int()
+      .min(10000)
+      .max(300000)
+      .default(90000),
+
+    NEWSROOM_SCOUT_ITEMS_PER_QUERY: z.coerce
+      .number()
+      .int()
+      .min(3)
+      .max(20)
+      .default(8),
+
+    NEWSROOM_MAX_CANDIDATES_PER_RUN: z.coerce
+      .number()
+      .int()
+      .min(5)
+      .max(100)
+      .default(40),
+
+    NEWSROOM_MAX_RESEARCH_PER_RUN: z.coerce
+      .number()
+      .int()
+      .min(1)
+      .max(30)
+      .default(8),
+
+    NEWSROOM_MIN_SCOUT_SCORE: z.coerce
+      .number()
+      .int()
+      .min(0)
+      .max(20)
+      .default(9),
+
+    NEWSROOM_MIN_FACT_SCORE: z.coerce
+      .number()
+      .int()
+      .min(0)
+      .max(10)
+      .default(9),
+
+    NEWSROOM_MIN_ORIGINALITY_SCORE: z.coerce
+      .number()
+      .int()
+      .min(0)
+      .max(10)
+      .default(9),
+
+    NEWSROOM_MIN_EDITORIAL_SCORE: z.coerce
+      .number()
+      .int()
+      .min(0)
+      .max(10)
+      .default(8),
+
+    NEWSROOM_TASK_LOCK_MINUTES: z.coerce
+      .number()
+      .int()
+      .min(2)
+      .max(120)
+      .default(15),
+
+    NEWSROOM_SCOUT_QUERIES: z
+      .string()
+      .optional()
+      .default(''),
+
+    // =====================================================
     // DEVELOPMENT / LOGGING
     // =====================================================
 
@@ -340,6 +453,18 @@ const schema = z
         path: ['CLOUDINARY_URL'],
         message:
           'CLOUDINARY_URL is required when UPLOAD_PROVIDER=cloudinary.',
+      });
+    }
+
+    if (
+      value.NEWSROOM_AI_ENABLED &&
+      !value.GEMINI_API_KEY
+    ) {
+      ctx.addIssue({
+        code: 'custom',
+        path: ['GEMINI_API_KEY'],
+        message:
+          'GEMINI_API_KEY is required when NEWSROOM_AI_ENABLED=true.',
       });
     }
 
