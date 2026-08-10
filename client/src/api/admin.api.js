@@ -29,6 +29,19 @@ export const adminApi = {
   bulkDeleteArticles: async (ids) =>
     unwrap(await api.post('/admin/articles/bulk-delete', { ids })),
 
+  sourceWatchOverview: async () => unwrap(await api.get('/admin/source-watch/overview')),
+  sourceWatchSources: async () => unwrap(await api.get('/admin/source-watch/sources')),
+  createSourceWatchSource: async (payload) =>
+    unwrap(await api.post('/admin/source-watch/sources', payload)),
+  updateSourceWatchSource: async (id, payload) =>
+    unwrap(await api.patch(`/admin/source-watch/sources/${id}`, payload)),
+  checkSourceWatchSource: async (id) =>
+    unwrap(await api.post(`/admin/source-watch/sources/${id}/check`)),
+  sourceWatchItems: async (params = {}) =>
+    unwrapList(await api.get('/admin/source-watch/items', { params })),
+  updateSourceWatchItemStatus: async (id, status) =>
+    unwrap(await api.patch(`/admin/source-watch/items/${id}/status`, { status })),
+
   googleWorkspaceStatus: async () => unwrap(await api.get('/admin/google-workspace/status')),
   googleWorkspaceReuseKthl: async () => unwrap(await api.post('/admin/google-workspace/reuse-kthl')),
   googleWorkspaceConnectUrl: async () => unwrap(await api.get('/admin/google-workspace/connect-url')),
