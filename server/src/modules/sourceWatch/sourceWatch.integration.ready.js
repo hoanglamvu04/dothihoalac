@@ -1,0 +1,1 @@
+export const SOURCE_WATCH_INTEGRATION_READY = true;
