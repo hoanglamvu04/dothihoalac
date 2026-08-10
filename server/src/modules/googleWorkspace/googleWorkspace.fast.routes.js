@@ -6,9 +6,11 @@ import { requirePermission } from '../../middlewares/role.middleware.js';
 import asyncHandler from '../../utils/asyncHandler.js';
 import { sendCreated, sendSuccess } from '../../utils/apiResponse.js';
 import * as articleService from '../articles/article.service.js';
+import { adminArticleDetail } from '../articles/article.admin.detail.service.js';
 import Article from '../articles/article.model.js';
 import Content from '../contents/content.model.js';
 import ContentBody from '../contents/contentBody.model.js';
+import { updateContentWithBody } from '../contents/content.service.js';
 import { GoogleDocumentCounter } from './googleWorkspace.model.js';
 import { createArticleGoogleDocFast } from './googleWorkspace.document.service.js';
 import {
@@ -16,13 +18,16 @@ import {
   documentStatusForContent,
   ensureWorkspaceFolders,
   folderIdForDocumentStatus,
+  getGoogleDocsDocument,
   getGoogleDriveFile,
   googleDocUrl,
   loadConnectedGoogle,
   moveGoogleDriveFile,
+  parseGoogleDocsArticle,
 } from './googleWorkspace.service.js';
 
 const router = Router();
+const GOOGLE_DRIVE_FILES_ENDPOINT = 'https://www.googleapis.com/drive/v3/files';
 const FOLDER_KEYS = [
   'yearFolderId',
   'templateFolderId',
@@ -73,6 +78,54 @@ function normalizedDraftToken(value) {
   return String(value || '').trim().slice(0, 180);
 }
 
+function normalizedGoogleDocName(value) {
+  return String(value || '')
+    .replace(/[\r\n\t]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .slice(0, 180);
+}
+
+async function renameGoogleDriveFile(accessToken, fileId, fileName) {
+  const name = normalizedGoogleDocName(fileName);
+  if (!accessToken || !fileId || !name) return null;
+
+  const url = new URL(
+    `${GOOGLE_DRIVE_FILES_ENDPOINT}/${encodeURIComponent(fileId)}`,
+  );
+  url.searchParams.set('fields', 'id,name,webViewLink,parents');
+  url.searchParams.set('supportsAllDrives', 'true');
+
+  const response = await withTimeout(
+    fetch(url.toString(), {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ name }),
+    }),
+    10000,
+    'Google Drive phản hồi quá chậm khi đổi tên tài liệu.',
+  );
+
+  const payload = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    throw new GoogleWorkspaceError(
+      String(
+        payload?.error?.message ||
+          `Không đổi được tên Google Docs (HTTP ${response.status}).`,
+      ).slice(0, 500),
+      'GOOGLE_DOC_RENAME_FAILED',
+      response.status >= 400 && response.status < 500 ? 400 : 502,
+    );
+  }
+
+  return payload;
+}
+
 async function nextDocumentCode() {
   const now = new Date();
   const yy = String(now.getFullYear()).slice(-2);
@@ -89,7 +142,11 @@ async function nextDocumentCode() {
 
 async function articleBundle(contentId) {
   const [content, body, article] = await Promise.all([
-    Content.findOne({ _id: contentId, contentType: 'article', deletedAt: null }),
+    Content.findOne({
+      _id: contentId,
+      contentType: 'article',
+      deletedAt: null,
+    }),
     ContentBody.findOne({ contentId }).lean(),
     Article.findOne({ contentId }),
   ]);
@@ -113,7 +170,9 @@ function cachedFolderYear(connection, year) {
   if (!item || !connection?.rootFolderId) return null;
 
   const data = typeof item.toObject === 'function' ? item.toObject() : item;
-  if (FOLDER_KEYS.some((key) => !String(data?.[key] || '').trim())) return null;
+  if (FOLDER_KEYS.some((key) => !String(data?.[key] || '').trim())) {
+    return null;
+  }
 
   return { ...data, year: Number(data.year) };
 }
@@ -152,14 +211,18 @@ async function ensureArticleDocument(contentId) {
   }
 
   const documentCode = article.documentCode || await nextDocumentCode();
-  const fileName = `${documentCode} - ${String(content.title || 'Bài viết').trim()}`.slice(0, 180);
+  const fileName = `${documentCode} - ${String(
+    content.title || 'Bài viết',
+  ).trim()}`.slice(0, 180);
 
   if (!file) {
     const initialText = [
       content.title,
       content.summary,
       body?.bodyText || content.bodyText || 'Bắt đầu viết nội dung bài tại đây.',
-    ].filter(Boolean).join('\n\n');
+    ]
+      .filter(Boolean)
+      .join('\n\n');
 
     file = await withTimeout(
       createArticleGoogleDocFast(accessToken, {
@@ -172,13 +235,12 @@ async function ensureArticleDocument(contentId) {
       'Google Docs phản hồi quá chậm khi tạo tài liệu. Hãy thử lại; hệ thống sẽ tìm lại tài liệu đã tạo thay vì tạo trùng.',
     );
   } else if (targetFolderId) {
-    file = (
-      await withTimeout(
+    file =
+      (await withTimeout(
         moveGoogleDriveFile(accessToken, file.id, targetFolderId),
         12000,
         'Google Drive phản hồi quá chậm khi chuyển tài liệu vào thư mục nội dung.',
-      )
-    ) || file;
+      )) || file;
   }
 
   article.documentCode = documentCode;
@@ -209,7 +271,9 @@ router.post(
     const draftToken = normalizedDraftToken(req.body?.draftToken);
 
     if (draftToken) {
-      const previous = await Article.findOne({ googleDraftToken: draftToken }).lean();
+      const previous = await Article.findOne({
+        googleDraftToken: draftToken,
+      }).lean();
       if (previous?.contentId) {
         return sendCreated(
           res,
@@ -219,9 +283,12 @@ router.post(
       }
     }
 
-    const seed = req.body?.seed && typeof req.body.seed === 'object' ? req.body.seed : {};
+    const seed =
+      req.body?.seed && typeof req.body.seed === 'object' ? req.body.seed : {};
     const titleSeed = String(seed.title || '').trim();
-    const generatedTitle = `Bản nháp Google Docs ${new Date().toLocaleString('vi-VN')}`;
+    const generatedTitle = `Bản nháp Google Docs ${new Date().toLocaleString(
+      'vi-VN',
+    )}`;
 
     const created = await articleService.adminCreate(req.user._id, {
       title: titleSeed.length >= 5 ? titleSeed : generatedTitle,
@@ -259,6 +326,120 @@ router.post(
   asyncHandler(async (req, res) => {
     return sendSuccess(res, {
       data: await ensureArticleDocument(req.params.postId),
+    });
+  }),
+);
+
+/*
+ * KTHL-style sync path.
+ * Fast router được mount trước googleWorkspace.routes.js nên route này xử lý
+ * sync chính, còn route cũ phía sau vẫn là fallback tương thích.
+ */
+router.post(
+  '/posts/:postId/sync-from-doc',
+  ...articleGuard,
+  asyncHandler(async (req, res) => {
+    const { content, article } = await articleBundle(req.params.postId);
+
+    if (!article.googleDocId) {
+      throw new GoogleWorkspaceError(
+        'Bài viết chưa có Google Docs.',
+        'GOOGLE_DOC_NOT_LINKED',
+        409,
+      );
+    }
+
+    const { connection, accessToken } = await withTimeout(
+      loadConnectedGoogle(),
+      12000,
+      'Google phản hồi quá chậm khi làm mới phiên Workspace. Hãy thử lại.',
+    );
+
+    const document = await withTimeout(
+      getGoogleDocsDocument(accessToken, article.googleDocId),
+      18000,
+      'Google Docs phản hồi quá chậm khi đọc nội dung tài liệu.',
+    );
+
+    const parsed = parseGoogleDocsArticle(document);
+    const previousSlug = String(content.slug || '');
+
+    await updateContentWithBody(
+      content,
+      {
+        title: parsed.title,
+        summary: parsed.summary,
+        bodyHtml: parsed.bodyHtml,
+      },
+      req.user._id,
+      'Đồng bộ tiêu đề và nội dung từ Google Docs',
+    );
+
+    /*
+     * Giống KTHL:
+     * - draft: slug đi theo tiêu đề mới;
+     * - published: giữ URL cũ để không phá link/SEO đang tồn tại.
+     */
+    if (
+      content.status === 'published' &&
+      previousSlug &&
+      content.slug !== previousSlug
+    ) {
+      content.slug = previousSlug;
+      await content.save();
+    }
+
+    const year = Number(article.googleDocYear || new Date().getFullYear());
+    const folders = await resolveFolderYear(connection, accessToken, year);
+    const docStatus = documentStatusForContent(content.status);
+    const targetFolderId = folderIdForDocumentStatus(folders, docStatus);
+
+    if (targetFolderId) {
+      await withTimeout(
+        moveGoogleDriveFile(
+          accessToken,
+          article.googleDocId,
+          targetFolderId,
+        ),
+        12000,
+        'Google Drive phản hồi quá chậm khi chuyển tài liệu vào thư mục trạng thái.',
+      );
+    }
+
+    const documentCode = article.documentCode || await nextDocumentCode();
+    const desiredFileName = normalizedGoogleDocName(
+      `${documentCode} - ${parsed.title}`,
+    );
+
+    try {
+      const renamed = await renameGoogleDriveFile(
+        accessToken,
+        article.googleDocId,
+        desiredFileName,
+      );
+      if (renamed?.name) article.googleDocFileName = renamed.name;
+    } catch (error) {
+      /*
+       * Nội dung đã sync thành công; lỗi đổi tên Drive không được rollback bài.
+       */
+      console.warn(
+        `[GoogleWorkspace] Sync OK but rename failed: ${error.message}`,
+      );
+    }
+
+    article.documentCode = documentCode;
+    article.googleDocUrl =
+      article.googleDocUrl || googleDocUrl(article.googleDocId);
+    article.googleDocFolderId = targetFolderId;
+    article.googleDocStatus = docStatus;
+    article.googleDocYear = year;
+    article.googleDocSyncedAt = new Date();
+    await article.save();
+
+    return sendSuccess(res, {
+      data: await adminArticleDetail(content._id),
+      message:
+        'Đã đồng bộ tiêu đề, mô tả và nội dung mới nhất từ Google Docs về website.',
     });
   }),
 );
