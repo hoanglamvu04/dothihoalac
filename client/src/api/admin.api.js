@@ -29,6 +29,13 @@ export const adminApi = {
   bulkDeleteArticles: async (ids) =>
     unwrap(await api.post('/admin/articles/bulk-delete', { ids })),
 
+  newsroomOverview: async () => unwrap(await api.get('/admin/newsroom/overview')),
+  newsroomStories: async (params = {}) =>
+    unwrapList(await api.get('/admin/newsroom/stories', { params })),
+  newsroomStory: async (id) => unwrap(await api.get(`/admin/newsroom/stories/${id}`)),
+  triggerNewsroomScout: async () => unwrap(await api.post('/admin/newsroom/scout')),
+  runNewsroomStory: async (id) => unwrap(await api.post(`/admin/newsroom/stories/${id}/run`)),
+
   googleWorkspaceStatus: async () => unwrap(await api.get('/admin/google-workspace/status')),
   googleWorkspaceReuseKthl: async () => unwrap(await api.post('/admin/google-workspace/reuse-kthl')),
   googleWorkspaceConnectUrl: async () => unwrap(await api.get('/admin/google-workspace/connect-url')),
