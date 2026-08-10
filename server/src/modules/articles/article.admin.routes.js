@@ -6,6 +6,8 @@ import { PERMISSIONS } from '../../constants/permissions.js';
 import { validate } from '../../middlewares/validate.middleware.js';
 import {
   articleBodySchema,
+  articleBulkDeleteSchema,
+  articleDeleteSchema,
   articleMetadataSchema,
 } from './article.validation.js';
 import asyncHandler from '../../utils/asyncHandler.js';
@@ -22,8 +24,10 @@ r.use(
 );
 
 r.get('/', asyncHandler(c.adminList));
+r.post('/bulk-delete', validate(articleBulkDeleteSchema), asyncHandler(c.adminBulkDelete));
 r.get('/:id', asyncHandler(c.adminDetail));
 r.post('/', validate(articleBodySchema), asyncHandler(c.adminCreate));
+r.delete('/:id', validate(articleDeleteSchema), asyncHandler(c.adminDelete));
 
 /*
  * Google Docs giữ nội dung; endpoint này chỉ cập nhật metadata CMS
