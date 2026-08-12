@@ -1,4 +1,5 @@
 import * as s from './article.service.js';
+import { listPublicArticles } from './article.publicList.service.js';
 import { adminArticleDetail } from './article.admin.detail.service.js';
 import { adminUpdateMetadata as updateMetadata } from './article.metadata.service.js';
 import {
@@ -8,7 +9,7 @@ import {
 import { sendCreated, sendSuccess } from '../../utils/apiResponse.js';
 
 export async function list(req, res) {
-  const r = await s.list(req.query);
+  const r = await listPublicArticles(req.query);
   return sendSuccess(res, { data: r.items, meta: r.meta });
 }
 
