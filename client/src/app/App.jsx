@@ -17,6 +17,7 @@ import AdminLayout from '../components/layout/AdminLayout';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import GuestRoute from '../components/auth/GuestRoute';
 import AdminRoute from '../components/auth/AdminRoute';
+import EditorRouteId from '../components/routing/EditorRouteId';
 import { PageLoading } from '../components/common/Loading';
 
 const HomePage = lazy(() => import('../pages/public/HomePage'));
@@ -78,6 +79,23 @@ function AdminOnly({ children }) {
   return <AdminRoute>{children}</AdminRoute>;
 }
 
+function ProtectedEditor({
+  basePath,
+  sessionPrefix,
+  children,
+}) {
+  return (
+    <Protected>
+      <EditorRouteId
+        basePath={basePath}
+        sessionPrefix={sessionPrefix}
+      >
+        {children}
+      </EditorRouteId>
+    </Protected>
+  );
+}
+
 function RouterEffects() {
   return (
     <>
@@ -103,7 +121,6 @@ const router = createBrowserRouter(
         <Route path="bai-viet" element={<AdminArticlesPage />} />
         <Route path="theo-doi-nguon" element={<AdminSourceWatchPage />} />
 
-        {/* Google Docs soạn nội dung; trang Sửa chỉ quản lý metadata CMS. */}
         <Route path="bai-viet/moi" element={<GoogleDocsArticleLauncher />} />
         <Route path="bai-viet/docs/moi" element={<GoogleDocsArticleLauncher />} />
         <Route path="bai-viet/:id/sua" element={<ArticleMetadataPage />} />
@@ -122,13 +139,21 @@ const router = createBrowserRouter(
       <Route element={<PublicLayout />}>
         <Route index element={<HomePage />} />
         <Route path="tin-tuc" element={<ArticlesPage />} />
+        <Route path="tin-tuc/:id/:slug" element={<ArticleDetailPage />} />
         <Route path="tin-tuc/:slug" element={<ArticleDetailPage />} />
+
         <Route path="cong-dong" element={<CommunityPage />} />
+        <Route path="cong-dong/:id/:slug" element={<CommunityDetailPage />} />
         <Route path="cong-dong/:slug" element={<CommunityDetailPage />} />
+
         <Route path="nha-dat" element={<PropertiesPage />} />
+        <Route path="nha-dat/:id/:slug" element={<PropertyDetailPage />} />
         <Route path="nha-dat/:slug" element={<PropertyDetailPage />} />
+
         <Route path="viec-lam" element={<JobsPage />} />
+        <Route path="viec-lam/:id/:slug" element={<JobDetailPage />} />
         <Route path="viec-lam/:slug" element={<JobDetailPage />} />
+
         <Route path="tim-kiem" element={<SearchPage />} />
         <Route path="khu-vuc/:slug" element={<AreaPage />} />
         <Route path="thanh-vien/:username" element={<PublicProfilePage />} />
@@ -154,10 +179,98 @@ const router = createBrowserRouter(
         <Route path="xac-thuc-email" element={<Protected><VerifyEmailPage /></Protected>} />
         <Route path="xac-thuc-so-dien-thoai" element={<Protected><VerifyPhonePage /></Protected>} />
         <Route path="dang-bai" element={<Protected><CreateHubPage /></Protected>} />
-        <Route path="dang-bai/cong-dong" element={<Protected><CommunityEditorPage /></Protected>} />
-        <Route path="dang-bai/nha-dat" element={<Protected><PropertyEditorPage /></Protected>} />
-        <Route path="dang-bai/viec-lam" element={<Protected><JobEditorPage /></Protected>} />
-        <Route path="gui-tin" element={<Protected><NewsTipPage /></Protected>} />
+
+        <Route
+          path="dang-bai/cong-dong"
+          element={
+            <ProtectedEditor
+              basePath="/dang-bai/cong-dong"
+              sessionPrefix="community"
+            >
+              <CommunityEditorPage />
+            </ProtectedEditor>
+          }
+        />
+        <Route
+          path="dang-bai/cong-dong/:editorId"
+          element={
+            <ProtectedEditor
+              basePath="/dang-bai/cong-dong"
+              sessionPrefix="community"
+            >
+              <CommunityEditorPage />
+            </ProtectedEditor>
+          }
+        />
+
+        <Route
+          path="dang-bai/nha-dat"
+          element={
+            <ProtectedEditor
+              basePath="/dang-bai/nha-dat"
+              sessionPrefix="property"
+            >
+              <PropertyEditorPage />
+            </ProtectedEditor>
+          }
+        />
+        <Route
+          path="dang-bai/nha-dat/:editorId"
+          element={
+            <ProtectedEditor
+              basePath="/dang-bai/nha-dat"
+              sessionPrefix="property"
+            >
+              <PropertyEditorPage />
+            </ProtectedEditor>
+          }
+        />
+
+        <Route
+          path="dang-bai/viec-lam"
+          element={
+            <ProtectedEditor
+              basePath="/dang-bai/viec-lam"
+              sessionPrefix="job"
+            >
+              <JobEditorPage />
+            </ProtectedEditor>
+          }
+        />
+        <Route
+          path="dang-bai/viec-lam/:editorId"
+          element={
+            <ProtectedEditor
+              basePath="/dang-bai/viec-lam"
+              sessionPrefix="job"
+            >
+              <JobEditorPage />
+            </ProtectedEditor>
+          }
+        />
+
+        <Route
+          path="gui-tin"
+          element={
+            <ProtectedEditor
+              basePath="/gui-tin"
+              sessionPrefix="news-tip"
+            >
+              <NewsTipPage />
+            </ProtectedEditor>
+          }
+        />
+        <Route
+          path="gui-tin/:editorId"
+          element={
+            <ProtectedEditor
+              basePath="/gui-tin"
+              sessionPrefix="news-tip"
+            >
+              <NewsTipPage />
+            </ProtectedEditor>
+          }
+        />
 
         <Route path="tai-khoan" element={<Protected><AccountLayout /></Protected>}>
           <Route index element={<AccountOverviewPage />} />
