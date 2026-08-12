@@ -29,6 +29,7 @@ export const COMMUNITY_TYPES = {
   support: 'Tìm kiếm - hỗ trợ',
   marketplace: 'Mua bán - trao đổi',
   community_event: 'Sự kiện cộng đồng',
+  other: 'Khác',
 };
 
 export const TRANSACTION_TYPES = {

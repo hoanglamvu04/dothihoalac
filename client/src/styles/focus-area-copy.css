@@ -1,0 +1,60 @@
+/* Softer copy and readable descriptions for the six-area homepage selector. */
+
+.dth-focus-areas .dth-section-heading > div > div > p {
+  max-width: 760px;
+  color: var(--dth-muted);
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+
+.dth-focus-area-card {
+  align-items: start;
+  min-height: 138px;
+  padding: 16px;
+  gap: 11px;
+}
+
+.dth-focus-area-card > span {
+  margin-top: 1px;
+}
+
+.dth-focus-area-card small {
+  margin-bottom: 5px;
+  color: var(--dth-green);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: none;
+}
+
+.dth-focus-area-card strong {
+  margin-bottom: 7px;
+  font-size: 16px;
+  line-height: 1.25;
+}
+
+.dth-focus-area-card p {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  color: var(--dth-muted);
+  font-size: 12.5px;
+  line-height: 1.45;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.dth-focus-area-card > svg {
+  align-self: center;
+}
+
+@media (max-width: 680px) {
+  .dth-focus-area-card {
+    min-height: 116px;
+    padding: 14px;
+  }
+
+  .dth-focus-area-card p {
+    font-size: 12px;
+  }
+}

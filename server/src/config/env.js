@@ -225,6 +225,40 @@ const schema = z
       .min(12, 'ADMIN_PASSWORD must have at least 12 characters.'),
 
     // =====================================================
+    // GOOGLE WORKSPACE / DOCS
+    // =====================================================
+
+    GOOGLE_PROJECT_ID: z
+      .string()
+      .optional()
+      .default(''),
+
+    GOOGLE_OAUTH_CLIENT_ID: z
+      .string()
+      .optional()
+      .default(''),
+
+    GOOGLE_OAUTH_CLIENT_SECRET: z
+      .string()
+      .optional()
+      .default(''),
+
+    GOOGLE_OAUTH_REDIRECT_URI: z
+      .string()
+      .optional()
+      .default(''),
+
+    GOOGLE_WORKSPACE_ALLOWED_DOMAIN: z
+      .string()
+      .optional()
+      .default(''),
+
+    GOOGLE_TOKEN_ENCRYPTION_KEY: z
+      .string()
+      .optional()
+      .default(''),
+
+    // =====================================================
     // DEVELOPMENT / LOGGING
     // =====================================================
 

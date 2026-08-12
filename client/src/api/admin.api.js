@@ -1,5 +1,8 @@
 import { api, unwrap, unwrapList } from './http';
 
+const GOOGLE_DOCS_TIMEOUT_MS = 25000;
+const GOOGLE_DOCS_SYNC_TIMEOUT_MS = 120000;
+
 export const adminApi = {
   dashboard: async () => unwrap(await api.get('/admin/dashboard')),
   moderationQueue: async (params = {}) =>
@@ -17,8 +20,53 @@ export const adminApi = {
   updateLead: async (id, payload) => unwrap(await api.patch(`/admin/leads/${id}`, payload)),
 
   articles: async (params = {}) => unwrapList(await api.get('/admin/articles', { params })),
+  articleDetail: async (id) => unwrap(await api.get(`/admin/articles/${id}`)),
   createArticle: async (payload) => unwrap(await api.post('/admin/articles', payload)),
   updateArticle: async (id, payload) => unwrap(await api.patch(`/admin/articles/${id}`, payload)),
+  updateArticleMetadata: async (id, payload) =>
+    unwrap(await api.patch(`/admin/articles/${id}/metadata`, payload)),
+  deleteArticle: async (id) => unwrap(await api.delete(`/admin/articles/${id}`)),
+  bulkDeleteArticles: async (ids) =>
+    unwrap(await api.post('/admin/articles/bulk-delete', { ids })),
+
+  sourceWatchOverview: async () => unwrap(await api.get('/admin/source-watch/overview')),
+  sourceWatchSources: async () => unwrap(await api.get('/admin/source-watch/sources')),
+  createSourceWatchSource: async (payload) =>
+    unwrap(await api.post('/admin/source-watch/sources', payload)),
+  updateSourceWatchSource: async (id, payload) =>
+    unwrap(await api.patch(`/admin/source-watch/sources/${id}`, payload)),
+  checkSourceWatchSource: async (id) =>
+    unwrap(await api.post(`/admin/source-watch/sources/${id}/check`)),
+  sourceWatchItems: async (params = {}) =>
+    unwrapList(await api.get('/admin/source-watch/items', { params })),
+  updateSourceWatchItemStatus: async (id, status) =>
+    unwrap(await api.patch(`/admin/source-watch/items/${id}/status`, { status })),
+
+  googleWorkspaceStatus: async () => unwrap(await api.get('/admin/google-workspace/status')),
+  googleWorkspaceReuseKthl: async () => unwrap(await api.post('/admin/google-workspace/reuse-kthl')),
+  googleWorkspaceConnectUrl: async () => unwrap(await api.get('/admin/google-workspace/connect-url')),
+  googleWorkspaceSetup: async (payload = {}) => unwrap(await api.post('/admin/google-workspace/setup', payload)),
+  googleWorkspaceDisconnect: async () => unwrap(await api.post('/admin/google-workspace/disconnect')),
+  createGoogleDraft: async (payload = {}) => unwrap(await api.post(
+    '/admin/google-workspace/posts/create-draft',
+    payload,
+    { timeout: GOOGLE_DOCS_TIMEOUT_MS },
+  )),
+  ensureGoogleDoc: async (id) => unwrap(await api.post(
+    `/admin/google-workspace/posts/${id}/ensure-doc`,
+    undefined,
+    { timeout: GOOGLE_DOCS_TIMEOUT_MS },
+  )),
+  syncGoogleDoc: async (id) => unwrap(await api.post(
+    `/admin/google-workspace/posts/${id}/sync`,
+    undefined,
+    { timeout: GOOGLE_DOCS_SYNC_TIMEOUT_MS },
+  )),
+  publishGoogleDoc: async (id) => unwrap(await api.post(
+    `/admin/google-workspace/posts/${id}/publish`,
+    undefined,
+    { timeout: GOOGLE_DOCS_SYNC_TIMEOUT_MS },
+  )),
 
   createTaxonomy: async (type, payload) =>
     unwrap(await api.post(`/admin/taxonomy/${type}`, payload)),

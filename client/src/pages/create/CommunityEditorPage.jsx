@@ -10,158 +10,226 @@ import {
   Link,
   useLocation,
   useNavigate,
+  useParams,
   useSearchParams,
 } from 'react-router-dom';
 
 import {
   AlertTriangle,
   ArrowLeft,
-  CheckCircle2,
-  Clock3,
-  FilePenLine,
+  CalendarDays,
+  Check,
+  CircleHelp,
+  Ellipsis,
+  Eye,
   FileText,
+  Globe2,
   ImagePlus,
-  Info,
+  LifeBuoy,
   MapPin,
-  MessageCircle,
-  RefreshCcw,
+  MessagesSquare,
   Save,
   Send,
   ShieldCheck,
+  ShoppingBag,
   Sparkles,
   Star,
-  Tags,
+  TriangleAlert,
   UsersRound,
 } from 'lucide-react';
 
 import Seo from '../../components/common/Seo';
-import Button from '../../components/common/Button';
-import FormField from '../../components/common/FormField';
+import Avatar from '../../components/common/Avatar';
 import RichTextEditor from '../../components/forms/RichTextEditor';
 import MediaUploader from '../../components/forms/MediaUploader';
 import TaxonomyFields from '../../components/forms/TaxonomyFields';
+import { PageLoading } from '../../components/common/Loading';
 
 import { communityApi } from '../../api/content.api';
 import { apiErrorMessage } from '../../api/http';
+import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { COMMUNITY_TYPES } from '../../utils/constants';
+import {
+  editorPath,
+  isPersistedContentId,
+} from '../../utils/content';
 
 import './CommunityEditorPage.css';
 
-const TITLE_MIN_LENGTH = 5;
-const TITLE_MAX_LENGTH = 250;
-const SUMMARY_MAX_LENGTH = 1000;
-
-const POST_TYPE_DESCRIPTIONS = {
-  discussion:
-    'Trao đổi quan điểm, thông tin hoặc vấn đề đang được cộng đồng quan tâm.',
-
-  question:
-    'Đặt câu hỏi để nhận chia sẻ và hỗ trợ từ các thành viên.',
-
-  report:
-    'Phản ánh một sự việc, vấn đề hoặc hiện trạng cụ thể tại địa phương.',
-
-  sharing:
-    'Chia sẻ kinh nghiệm, kiến thức, hình ảnh hoặc câu chuyện hữu ích.',
-
-  review:
-    'Đánh giá địa điểm, dịch vụ hoặc trải nghiệm thực tế tại Hòa Lạc.',
+const POST_TYPE_META = {
+  discussion: {
+    icon: MessagesSquare,
+    description: 'Trao đổi một vấn đề hoặc góc nhìn với cộng đồng.',
+  },
+  question: {
+    icon: CircleHelp,
+    description: 'Đặt câu hỏi để nhận chia sẻ và hỗ trợ.',
+  },
+  report: {
+    icon: TriangleAlert,
+    description: 'Phản ánh sự việc hoặc hiện trạng tại địa phương.',
+  },
+  sharing: {
+    icon: Sparkles,
+    description: 'Chia sẻ kinh nghiệm, hình ảnh hoặc câu chuyện hữu ích.',
+  },
+  review: {
+    icon: Star,
+    description: 'Đánh giá địa điểm, dịch vụ hoặc trải nghiệm thực tế.',
+  },
+  support: {
+    icon: LifeBuoy,
+    description: 'Tìm thông tin, người hỗ trợ hoặc kinh nghiệm xử lý.',
+  },
+  marketplace: {
+    icon: ShoppingBag,
+    description: 'Trao đổi, mua bán nhỏ trong cộng đồng địa phương.',
+  },
+  community_event: {
+    icon: CalendarDays,
+    description: 'Chia sẻ hoạt động hoặc sự kiện cộng đồng.',
+  },
+  other: {
+    icon: Ellipsis,
+    description: 'Nội dung cộng đồng chưa phù hợp với các nhóm trên.',
+  },
 };
 
-const POST_TYPE_ICONS = {
-  discussion: MessageCircle,
-  question: UsersRound,
-  report: AlertTriangle,
-  sharing: Sparkles,
-  review: Star,
+const EMPTY_FORM = {
+  title: '',
+  summary: '',
+  bodyHtml: '',
+  postType: 'discussion',
+  primaryCategoryId: null,
+  primaryAreaId: null,
+  tagIds: [],
+  allowComments: true,
+  incidentTime: '',
+  locationText: '',
+  rating: '',
 };
 
 function normalizeId(value) {
-  if (!value) {
-    return null;
-  }
-
-  if (typeof value === 'string') {
-    return value;
-  }
-
+  if (!value) return null;
+  if (typeof value === 'string') return value;
   return value._id || value.id || null;
 }
 
 function normalizeIds(values) {
-  if (!Array.isArray(values)) {
-    return [];
+  if (!Array.isArray(values)) return [];
+  return values.map(normalizeId).filter(Boolean);
+}
+
+function getMediaId(value) {
+  return normalizeId(value);
+}
+
+function stripHtml(value = '') {
+  if (typeof document !== 'undefined') {
+    const template = document.createElement('template');
+    template.innerHTML = String(value || '');
+    return String(template.content.textContent || '')
+      .replace(/\s+/g, ' ')
+      .trim();
   }
 
-  return values
-    .map(normalizeId)
-    .filter(Boolean);
-}
-
-function extractBodyHtml(source) {
-  return (
-    source?.body?.bodyHtml ||
-    source?.body?.html ||
-    source?.bodyHtml ||
-    source?.contentHtml ||
-    ''
-  );
-}
-
-function stripHtml(html) {
-  return String(html || '')
+  return String(value || '')
     .replace(/<[^>]*>/g, ' ')
-    .replace(/&nbsp;/g, ' ')
+    .replace(/&nbsp;/gi, ' ')
     .replace(/\s+/g, ' ')
     .trim();
 }
 
-function getStorageKey(editingId) {
-  return editingId
-    ? `community-editor-draft:${editingId}`
-    : 'community-editor-draft:new';
+function deriveTitle(bodyHtml, postType) {
+  const text = stripHtml(bodyHtml);
+
+  if (text) {
+    const firstSentence = text.split(/(?<=[.!?])\s+/)[0] || text;
+    const compact = firstSentence.trim();
+
+    if (compact.length <= 140) {
+      return compact;
+    }
+
+    return `${compact.slice(0, 137).trim()}...`;
+  }
+
+  const label = COMMUNITY_TYPES[postType] || 'Cộng đồng';
+  return `${label} tại Đô Thị Hòa Lạc`;
 }
 
-function buildInitialForm(source = {}) {
+function deriveSummary(bodyHtml) {
+  const text = stripHtml(bodyHtml);
+  if (!text) return '';
+  return text.length <= 320
+    ? text
+    : `${text.slice(0, 317).trim()}...`;
+}
+
+function extractInlineImages(bodyHtml = '') {
+  if (typeof document === 'undefined' || !bodyHtml) {
+    return [];
+  }
+
+  const template = document.createElement('template');
+  template.innerHTML = String(bodyHtml || '');
+
+  const result = [];
+  const seen = new Set();
+
+  template.content
+    .querySelectorAll('figure[data-media-id] img, img[data-media-id]')
+    .forEach((image) => {
+      const figure = image.closest('figure[data-media-id]');
+      const id =
+        image.getAttribute('data-media-id') ||
+        figure?.getAttribute('data-media-id') ||
+        '';
+      const url = image.getAttribute('src') || '';
+
+      if (!id || !url || seen.has(id)) {
+        return;
+      }
+
+      seen.add(id);
+      result.push({
+        _id: id,
+        id,
+        url,
+        secureUrl: url,
+        altText: image.getAttribute('alt') || '',
+      });
+    });
+
+  return result;
+}
+
+function buildForm(source = {}) {
   return {
     title: source.title || '',
     summary: source.summary || '',
-    bodyHtml: extractBodyHtml(source),
-
+    bodyHtml:
+      source.body?.bodyHtml ||
+      source.body?.html ||
+      source.bodyHtml ||
+      '',
     postType:
       source.community?.postType ||
       source.postType ||
       'discussion',
-
-    primaryCategoryId: normalizeId(
-      source.primaryCategoryId,
-    ),
-
-    primaryAreaId: normalizeId(
-      source.primaryAreaId,
-    ),
-
-    tagIds: normalizeIds(
-      source.tagIds,
-    ),
-
-    thumbnailMediaId:
-      source.thumbnailMediaId || null,
-
-    allowComments:
-      source.allowComments !== false,
-
+    primaryCategoryId: normalizeId(source.primaryCategoryId),
+    primaryAreaId: normalizeId(source.primaryAreaId),
+    tagIds: normalizeIds(source.tagIds),
+    allowComments: source.allowComments !== false,
     incidentTime:
       source.community?.incidentTime ||
       source.incidentTime ||
       '',
-
     locationText:
       source.community?.locationText ||
       source.locationText ||
       '',
-
     rating:
       source.community?.rating ||
       source.rating ||
@@ -169,1654 +237,875 @@ function buildInitialForm(source = {}) {
   };
 }
 
+function buildSnapshot(form, thumbnailMode, thumbnailMedia) {
+  return JSON.stringify({
+    form,
+    thumbnailMode,
+    thumbnailMediaId: getMediaId(thumbnailMedia),
+  });
+}
+
+function resolveThumbnailState(source, bodyHtml) {
+  const thumbnail = source?.thumbnailMediaId || null;
+  const thumbnailId = getMediaId(thumbnail);
+
+  if (!thumbnailId) {
+    return {
+      mode: 'none',
+      media: null,
+    };
+  }
+
+  const inlineImages = extractInlineImages(bodyHtml);
+  const inline = inlineImages.find(
+    (item) => getMediaId(item) === thumbnailId,
+  );
+
+  if (inline) {
+    return {
+      mode: 'inline',
+      media: inline,
+    };
+  }
+
+  return {
+    mode: 'upload',
+    media: thumbnail,
+  };
+}
+
 export default function CommunityEditorPage() {
-  const [params] = useSearchParams();
-
-  const editingId = params.get('edit');
-
+  const { editorId } = useParams();
+  const [searchParams] = useSearchParams();
   const location = useLocation();
   const navigate = useNavigate();
   const toast = useToast();
+  const { user } = useAuth();
 
-  const formTopRef = useRef(null);
-  const autoSaveTimerRef = useRef(null);
-  const savedSnapshotRef = useRef('');
+  const legacyEditId = searchParams.get('edit') || '';
+  const persistedId = useMemo(() => {
+    if (isPersistedContentId(editorId)) {
+      return editorId;
+    }
 
-  const source = location.state?.item || {};
+    if (isPersistedContentId(legacyEditId)) {
+      return legacyEditId;
+    }
 
-  const storageKey = useMemo(
-    () => getStorageKey(editingId),
-    [editingId],
+    return '';
+  }, [editorId, legacyEditId]);
+
+  const sessionKey = editorId || legacyEditId || 'community-draft';
+  const storageKey = `dthl-community-composer:${sessionKey}`;
+
+  const stateSource = location.state?.item || {};
+  const initialSourceRef = useRef(stateSource);
+
+  const [form, setForm] = useState(() => buildForm(stateSource));
+  const initialThumbnail = useMemo(
+    () =>
+      resolveThumbnailState(
+        stateSource,
+        buildForm(stateSource).bodyHtml,
+      ),
+    [stateSource],
   );
 
-  const initialForm = useMemo(
-    () => buildInitialForm(source),
-    [source],
+  const [thumbnailMode, setThumbnailMode] = useState(
+    initialThumbnail.mode,
+  );
+  const [thumbnailMedia, setThumbnailMedia] = useState(
+    initialThumbnail.media,
   );
 
-  const [form, setForm] =
-    useState(initialForm);
+  const [hydrating, setHydrating] = useState(Boolean(persistedId));
+  const [savingAction, setSavingAction] = useState('');
+  const [loadError, setLoadError] = useState('');
+  const [fieldErrors, setFieldErrors] = useState({});
+  const [advancedOpen, setAdvancedOpen] = useState(false);
+  const [autosaveStatus, setAutosaveStatus] = useState('idle');
 
-  const [loading, setLoading] =
-    useState(false);
-
-  const [validationErrors, setValidationErrors] =
-    useState({});
-
-  const [autoSaveStatus, setAutoSaveStatus] =
-    useState('idle');
-
-  const [hasLocalDraft, setHasLocalDraft] =
-    useState(false);
-
-  const [restoredDraft, setRestoredDraft] =
-    useState(false);
-
-  const [showGuidelines, setShowGuidelines] =
-    useState(true);
-
-  const formSnapshot = useMemo(
-    () => JSON.stringify(form),
-    [form],
+  const savedSnapshotRef = useRef(
+    buildSnapshot(
+      buildForm(stateSource),
+      initialThumbnail.mode,
+      initialThumbnail.media,
+    ),
   );
 
-  const dirty =
-    formSnapshot !== savedSnapshotRef.current;
-
-  const selectedPostType = useMemo(
-    () => {
-      const Icon =
-        POST_TYPE_ICONS[form.postType] ||
-        MessageCircle;
-
-      return {
-        icon: Icon,
-
-        label:
-          COMMUNITY_TYPES[form.postType] ||
-          'Bài cộng đồng',
-
-        description:
-          POST_TYPE_DESCRIPTIONS[
-            form.postType
-          ] ||
-          'Nội dung dành cho cộng đồng Hòa Lạc.',
-      };
-    },
-    [form.postType],
-  );
-
-  const SelectedPostTypeIcon =
-    selectedPostType.icon;
-
-  const bodyTextLength = useMemo(
-    () => stripHtml(form.bodyHtml).length,
+  const inlineImages = useMemo(
+    () => extractInlineImages(form.bodyHtml),
     [form.bodyHtml],
   );
 
-  const completionItems = useMemo(
-    () => [
-      {
-        label: 'Tiêu đề',
-        completed:
-          form.title.trim().length >=
-          TITLE_MIN_LENGTH,
-      },
-      {
-        label: 'Nội dung',
-        completed:
-          bodyTextLength > 0 ||
-          Boolean(editingId),
-      },
-      {
-        label: 'Chuyên mục',
-        completed: Boolean(
-          form.primaryCategoryId,
-        ),
-      },
-      {
-        label: 'Khu vực',
-        completed:
-          form.postType !== 'report' ||
-          Boolean(form.primaryAreaId),
-      },
-      {
-        label: 'Ảnh đại diện',
-        completed: Boolean(
-          form.thumbnailMediaId,
-        ),
-        optional: true,
-      },
-    ],
-    [
-      bodyTextLength,
-      editingId,
-      form.postType,
-      form.primaryAreaId,
-      form.primaryCategoryId,
-      form.thumbnailMediaId,
-      form.title,
-    ],
+  const bodyText = useMemo(
+    () => stripHtml(form.bodyHtml),
+    [form.bodyHtml],
   );
 
-  const completionPercent = useMemo(() => {
-    const requiredItems =
-      completionItems.filter(
-        (item) => !item.optional,
-      );
+  const hasBodyContent =
+    Boolean(bodyText) || inlineImages.length > 0;
 
-    const completed =
-      requiredItems.filter(
-        (item) => item.completed,
-      ).length;
+  const dirty =
+    buildSnapshot(form, thumbnailMode, thumbnailMedia) !==
+    savedSnapshotRef.current;
 
-    return Math.round(
-      (completed /
-        Math.max(
-          requiredItems.length,
-          1,
-        )) *
-        100,
-    );
-  }, [completionItems]);
+  const displayName =
+    user?.displayName ||
+    user?.username ||
+    'Thành viên';
 
-  const change = useCallback(
-    (key, value) => {
-      setForm((current) => ({
-        ...current,
-        [key]: value,
-      }));
-
-      setValidationErrors(
-        (current) => {
-          if (!current[key]) {
-            return current;
-          }
-
-          const next = {
-            ...current,
-          };
-
-          delete next[key];
-
-          return next;
-        },
-      );
-    },
-    [],
-  );
+  const selectedType =
+    POST_TYPE_META[form.postType] || POST_TYPE_META.discussion;
 
   useEffect(() => {
-    const initialSnapshot =
-      JSON.stringify(initialForm);
+    if (!persistedId) {
+      setHydrating(false);
 
-    savedSnapshotRef.current =
-      initialSnapshot;
-
-    setForm(initialForm);
-    setValidationErrors({});
-    setRestoredDraft(false);
-
-    try {
-      const localValue =
-        window.localStorage.getItem(
-          storageKey,
+      try {
+        const stored = JSON.parse(
+          window.localStorage.getItem(storageKey) || 'null',
         );
 
-      setHasLocalDraft(
-        Boolean(localValue),
-      );
-    } catch {
-      setHasLocalDraft(false);
-    }
-  }, [
-    initialForm,
-    storageKey,
-  ]);
+        if (stored?.form) {
+          setForm({ ...EMPTY_FORM, ...stored.form });
+          setThumbnailMode(stored.thumbnailMode || 'none');
+          setThumbnailMedia(stored.thumbnailMedia || null);
+        }
+      } catch {
+        // Không chặn trình soạn nếu localStorage bị lỗi.
+      }
 
-  useEffect(() => {
-    if (!dirty) {
       return undefined;
     }
 
-    if (autoSaveTimerRef.current) {
-      window.clearTimeout(
-        autoSaveTimerRef.current,
-      );
-    }
+    let active = true;
+    setHydrating(true);
+    setLoadError('');
 
-    setAutoSaveStatus('saving');
+    communityApi
+      .editDetail(persistedId)
+      .then((source) => {
+        if (!active) return;
 
-    autoSaveTimerRef.current =
-      window.setTimeout(() => {
-        try {
-          window.localStorage.setItem(
-            storageKey,
-            JSON.stringify({
-              form,
-              savedAt:
-                new Date().toISOString(),
-            }),
+        const nextForm = buildForm(source);
+        const nextThumbnail = resolveThumbnailState(
+          source,
+          nextForm.bodyHtml,
+        );
+
+        setForm(nextForm);
+        setThumbnailMode(nextThumbnail.mode);
+        setThumbnailMedia(nextThumbnail.media);
+        savedSnapshotRef.current = buildSnapshot(
+          nextForm,
+          nextThumbnail.mode,
+          nextThumbnail.media,
+        );
+      })
+      .catch((error) => {
+        if (!active) return;
+
+        if (Object.keys(initialSourceRef.current || {}).length) {
+          const fallbackForm = buildForm(initialSourceRef.current);
+          const fallbackThumbnail = resolveThumbnailState(
+            initialSourceRef.current,
+            fallbackForm.bodyHtml,
           );
 
-          setHasLocalDraft(true);
-          setAutoSaveStatus('saved');
-        } catch {
-          setAutoSaveStatus('error');
+          setForm(fallbackForm);
+          setThumbnailMode(fallbackThumbnail.mode);
+          setThumbnailMedia(fallbackThumbnail.media);
+          savedSnapshotRef.current = buildSnapshot(
+            fallbackForm,
+            fallbackThumbnail.mode,
+            fallbackThumbnail.media,
+          );
+          return;
         }
-      }, 700);
+
+        setLoadError(
+          apiErrorMessage(
+            error,
+            'Không thể tải bản nháp để chỉnh sửa.',
+          ),
+        );
+      })
+      .finally(() => {
+        if (active) {
+          setHydrating(false);
+        }
+      });
 
     return () => {
-      if (autoSaveTimerRef.current) {
-        window.clearTimeout(
-          autoSaveTimerRef.current,
-        );
-      }
+      active = false;
     };
+  }, [persistedId, storageKey]);
+
+  useEffect(() => {
+    if (hydrating) return undefined;
+
+    setAutosaveStatus('saving');
+
+    const timer = window.setTimeout(() => {
+      try {
+        window.localStorage.setItem(
+          storageKey,
+          JSON.stringify({
+            form,
+            thumbnailMode,
+            thumbnailMedia,
+          }),
+        );
+        setAutosaveStatus('saved');
+      } catch {
+        setAutosaveStatus('error');
+      }
+    }, 650);
+
+    return () => window.clearTimeout(timer);
   }, [
-    dirty,
     form,
+    hydrating,
     storageKey,
+    thumbnailMedia,
+    thumbnailMode,
   ]);
 
   useEffect(() => {
-    const handleBeforeUnload = (
-      event,
-    ) => {
-      if (!dirty || loading) {
-        return;
-      }
+    if (
+      thumbnailMode !== 'inline' ||
+      !thumbnailMedia
+    ) {
+      return;
+    }
 
+    const selectedId = getMediaId(thumbnailMedia);
+    const stillExists = inlineImages.some(
+      (item) => getMediaId(item) === selectedId,
+    );
+
+    if (!stillExists) {
+      setThumbnailMode('none');
+      setThumbnailMedia(null);
+    }
+  }, [inlineImages, thumbnailMedia, thumbnailMode]);
+
+  useEffect(() => {
+    if (!dirty) return undefined;
+
+    const warn = (event) => {
       event.preventDefault();
       event.returnValue = '';
     };
 
-    window.addEventListener(
-      'beforeunload',
-      handleBeforeUnload,
-    );
+    window.addEventListener('beforeunload', warn);
+    return () => window.removeEventListener('beforeunload', warn);
+  }, [dirty]);
 
-    return () => {
-      window.removeEventListener(
-        'beforeunload',
-        handleBeforeUnload,
-      );
-    };
-  }, [
-    dirty,
-    loading,
-  ]);
+  const change = useCallback((key, value) => {
+    setForm((current) => ({
+      ...current,
+      [key]: value,
+    }));
 
-  const restoreLocalDraft =
-    useCallback(() => {
-      try {
-        const localValue =
-          window.localStorage.getItem(
-            storageKey,
-          );
+    setFieldErrors((current) => ({
+      ...current,
+      [key]: '',
+    }));
+  }, []);
 
-        if (!localValue) {
-          toast.error(
-            'Không tìm thấy dữ liệu tự lưu.',
-          );
+  const chooseThumbnailMode = (mode) => {
+    setThumbnailMode(mode);
 
-          return;
-        }
-
-        const parsed =
-          JSON.parse(localValue);
-
-        if (!parsed?.form) {
-          throw new Error(
-            'Invalid local draft.',
-          );
-        }
-
-        setForm({
-          ...initialForm,
-          ...parsed.form,
-
-          tagIds: normalizeIds(
-            parsed.form.tagIds,
-          ),
-        });
-
-        setRestoredDraft(true);
-
-        toast.success(
-          'Đã khôi phục nội dung tự lưu.',
-        );
-      } catch {
-        toast.error(
-          'Không thể khôi phục nội dung tự lưu.',
-        );
-      }
-    }, [
-      initialForm,
-      storageKey,
-      toast,
-    ]);
-
-  const clearLocalDraft =
-    useCallback(() => {
-      try {
-        window.localStorage.removeItem(
-          storageKey,
-        );
-
-        setHasLocalDraft(false);
-        setRestoredDraft(false);
-        setAutoSaveStatus('idle');
-
-        toast.success(
-          'Đã xóa dữ liệu tự lưu.',
-        );
-      } catch {
-        toast.error(
-          'Không thể xóa dữ liệu tự lưu.',
-        );
-      }
-    }, [
-      storageKey,
-      toast,
-    ]);
-
-  const resetForm = useCallback(() => {
-    const confirmed =
-      window.confirm(
-        'Bạn có chắc muốn xóa các thay đổi chưa lưu và đưa biểu mẫu về trạng thái ban đầu?',
-      );
-
-    if (!confirmed) {
-      return;
+    if (mode === 'none') {
+      setThumbnailMedia(null);
     }
 
-    setForm(initialForm);
-    setValidationErrors({});
-    clearLocalDraft();
+    if (mode === 'inline' && thumbnailMode !== 'inline') {
+      setThumbnailMedia(inlineImages[0] || null);
+    }
 
-    savedSnapshotRef.current =
-      JSON.stringify(initialForm);
-
-    toast.success(
-      'Đã đặt lại biểu mẫu.',
-    );
-  }, [
-    clearLocalDraft,
-    initialForm,
-    toast,
-  ]);
+    if (mode === 'upload' && thumbnailMode !== 'upload') {
+      setThumbnailMedia(null);
+    }
+  };
 
   const validate = useCallback(
     (submitAfter) => {
       const errors = {};
+      const resolvedTitle =
+        form.title.trim() ||
+        deriveTitle(form.bodyHtml, form.postType);
 
-      const title =
-        form.title.trim();
-
-      if (!title) {
-        errors.title =
-          'Vui lòng nhập tiêu đề.';
-      } else if (
-        title.length <
-        TITLE_MIN_LENGTH
-      ) {
-        errors.title =
-          `Tiêu đề cần ít nhất ${TITLE_MIN_LENGTH} ký tự.`;
-      }
-
-      if (
-        title.length >
-        TITLE_MAX_LENGTH
-      ) {
-        errors.title =
-          `Tiêu đề không được vượt quá ${TITLE_MAX_LENGTH} ký tự.`;
-      }
-
-      if (
-        form.summary.length >
-        SUMMARY_MAX_LENGTH
-      ) {
-        errors.summary =
-          `Mô tả không được vượt quá ${SUMMARY_MAX_LENGTH} ký tự.`;
-      }
-
-      if (
-        submitAfter &&
-        !editingId &&
-        bodyTextLength === 0
-      ) {
+      if (!hasBodyContent) {
         errors.bodyHtml =
-          'Vui lòng nhập nội dung bài viết.';
+          'Hãy viết nội dung hoặc chèn ít nhất một ảnh.';
       }
 
-      if (
-        submitAfter &&
-        form.postType === 'report' &&
-        !form.primaryAreaId
-      ) {
-        errors.primaryAreaId =
-          'Bài phản ánh cần chọn khu vực.';
+      if (resolvedTitle.length < 5) {
+        errors.title = 'Tiêu đề cần có ít nhất 5 ký tự.';
       }
 
-      if (
-        form.postType === 'review' &&
-        form.rating &&
-        ![1, 2, 3, 4, 5].includes(
-          Number(form.rating),
-        )
-      ) {
-        errors.rating =
-          'Điểm đánh giá không hợp lệ.';
+      if (resolvedTitle.length > 250) {
+        errors.title = 'Tiêu đề không được vượt quá 250 ký tự.';
       }
 
-      setValidationErrors(errors);
-
-      const firstErrorKey =
-        Object.keys(errors)[0];
-
-      if (firstErrorKey) {
-        formTopRef.current?.scrollIntoView(
-          {
-            behavior: 'smooth',
-            block: 'start',
-          },
-        );
-
-        toast.error(
-          errors[firstErrorKey],
-        );
-
-        return false;
+      if (form.summary.length > 1000) {
+        errors.summary =
+          'Mô tả ngắn không được vượt quá 1.000 ký tự.';
       }
 
-      return true;
-    },
-    [
-      bodyTextLength,
-      editingId,
-      form,
-      toast,
-    ],
+      if (form.postType === 'review' && !form.rating) {
+        errors.rating = 'Chọn điểm đánh giá cho bài Review.';
+      }
+
+      if (submitAfter && !form.primaryAreaId) {
+        errors.primaryAreaId = 'Chọn khu vực trước khi gửi duyệt.';
+      }
+
+      if (submitAfter && !form.primaryCategoryId) {
+        errors.primaryCategoryId = 'Chọn chuyên mục trước khi gửi duyệt.';
+      }
+
+      setFieldErrors(errors);
+      return Object.keys(errors).length === 0;
+    }, [form, hasBodyContent],
   );
 
-  const buildPayload =
-    useCallback(() => {
-      const thumbnailMediaId =
-        normalizeId(
-          form.thumbnailMediaId,
-        );
+  const buildPayload = useCallback(() => {
+    const resolvedTitle =
+      form.title.trim() ||
+      deriveTitle(form.bodyHtml, form.postType);
 
-      const payload = {
-        title: form.title.trim(),
-
-        summary:
-          form.summary.trim() ||
-          undefined,
-
-        postType: form.postType,
-
-        primaryCategoryId:
-          form.primaryCategoryId ||
-          null,
-
-        primaryAreaId:
-          form.primaryAreaId ||
-          null,
-
-        tagIds: normalizeIds(
-          form.tagIds,
-        ),
-
-        thumbnailMediaId,
-
-        allowComments:
-          Boolean(
-            form.allowComments,
-          ),
-
-        incidentTime:
-          form.postType === 'report'
-            ? form.incidentTime ||
-              null
-            : null,
-
-        locationText:
-          form.postType === 'report'
-            ? form.locationText.trim() ||
-              ''
-            : '',
-
-        rating:
-          form.postType === 'review' &&
-          form.rating
-            ? Number(form.rating)
-            : null,
-      };
-
-      const normalizedBody =
-        form.bodyHtml?.trim();
-
-      if (
-        normalizedBody ||
-        !editingId
-      ) {
-        payload.bodyHtml =
-          normalizedBody || '';
-      }
-
-      return payload;
-    },
-    [
-      editingId,
-      form,
-    ],
-  );
+    return {
+      title: resolvedTitle,
+      summary:
+        form.summary.trim() ||
+        deriveSummary(form.bodyHtml) ||
+        undefined,
+      bodyHtml: form.bodyHtml.trim(),
+      postType: form.postType,
+      primaryCategoryId: form.primaryCategoryId || null,
+      primaryAreaId: form.primaryAreaId || null,
+      tagIds: normalizeIds(form.tagIds),
+      thumbnailMediaId: getMediaId(thumbnailMedia),
+      allowComments: Boolean(form.allowComments),
+      incidentTime:
+        form.postType === 'report' && form.incidentTime
+          ? form.incidentTime
+          : null,
+      locationText:
+        form.postType === 'report'
+          ? form.locationText.trim()
+          : '',
+      rating:
+        form.postType === 'review' && form.rating
+          ? Number(form.rating)
+          : null,
+    };
+  }, [form, thumbnailMedia]);
 
   const save = useCallback(
     async (submitAfter = false) => {
-      if (
-        loading ||
-        !validate(submitAfter)
-      ) {
+      if (savingAction || !validate(submitAfter)) {
         return;
       }
 
-      setLoading(true);
+      setSavingAction(submitAfter ? 'submit' : 'save');
 
       try {
-        const nextPayload =
-          buildPayload();
-
+        const payload = buildPayload();
         let content;
 
-        if (editingId) {
-          content =
-            await communityApi.update(
-              editingId,
-              nextPayload,
-            );
+        if (persistedId) {
+          content = await communityApi.update(
+            persistedId,
+            payload,
+          );
         } else {
-          content =
-            await communityApi.create(
-              nextPayload,
-            );
+          content = await communityApi.create(payload);
         }
 
         const contentId =
-          content?._id ||
-          content?.id ||
-          editingId;
+          content?._id || content?.id || persistedId;
 
-        if (
-          submitAfter &&
-          contentId
-        ) {
-          await communityApi.submit(
-            contentId,
-          );
+        if (!contentId) {
+          throw new Error('Server không trả về ID bài viết.');
         }
 
-        savedSnapshotRef.current =
-          JSON.stringify(form);
+        setForm((current) => ({
+          ...current,
+          title: payload.title,
+          summary: payload.summary || current.summary,
+        }));
+
+        const oldStorageKey = storageKey;
+
+        if (!persistedId) {
+          navigate(
+            editorPath({
+              contentType: 'community',
+              _id: contentId,
+            }),
+            {
+              replace: true,
+              state: {
+                item: {
+                  ...content,
+                  ...payload,
+                  body: {
+                    bodyHtml: payload.bodyHtml,
+                  },
+                  community: {
+                    postType: payload.postType,
+                    incidentTime: payload.incidentTime,
+                    locationText: payload.locationText,
+                    rating: payload.rating,
+                  },
+                },
+              },
+            },
+          );
+        }
 
         try {
-          window.localStorage.removeItem(
-            storageKey,
-          );
+          window.localStorage.removeItem(oldStorageKey);
         } catch {
-          // Không chặn luồng lưu lên server.
+          // Không chặn lưu server.
         }
 
-        setHasLocalDraft(false);
-        setAutoSaveStatus('idle');
-
-        toast.success(
-          submitAfter
-            ? 'Đã lưu và gửi bài đi duyệt.'
-            : 'Đã lưu bản nháp.',
+        savedSnapshotRef.current = buildSnapshot(
+          {
+            ...form,
+            title: payload.title,
+            summary: payload.summary || form.summary,
+          },
+          thumbnailMode,
+          thumbnailMedia,
         );
 
-        navigate(
-          '/tai-khoan/bai-viet',
-        );
+        if (submitAfter) {
+          await communityApi.submit(contentId);
+          toast.success('Đã lưu và gửi bài đi duyệt.');
+          navigate('/tai-khoan/bai-viet');
+          return;
+        }
+
+        toast.success('Đã lưu bản nháp.');
       } catch (error) {
         toast.error(
-          apiErrorMessage(error),
+          apiErrorMessage(
+            error,
+            'Không thể lưu bài viết. Vui lòng thử lại.',
+          ),
         );
       } finally {
-        setLoading(false);
+        setSavingAction('');
       }
     },
     [
       buildPayload,
-      editingId,
       form,
-      loading,
       navigate,
+      persistedId,
+      savingAction,
       storageKey,
+      thumbnailMedia,
+      thumbnailMode,
       toast,
       validate,
     ],
   );
 
-  const handleBack =
-    useCallback(() => {
-      if (dirty) {
-        const confirmed =
-          window.confirm(
-            'Bạn đang có thay đổi chưa lưu. Bạn vẫn muốn rời trang?',
-          );
+  const handleBack = () => {
+    if (
+      dirty &&
+      !window.confirm(
+        'Bạn đang có thay đổi chưa lưu lên server. Vẫn rời trang?',
+      )
+    ) {
+      return;
+    }
 
-        if (!confirmed) {
-          return;
-        }
-      }
+    navigate('/tai-khoan/bai-viet');
+  };
 
-      if (
-        window.history.state?.idx > 0
-      ) {
-        navigate(-1);
-        return;
-      }
-
-      navigate('/dang-bai');
-    }, [
-      dirty,
-      navigate,
-    ]);
+  if (hydrating) {
+    return <PageLoading />;
+  }
 
   return (
-    <section className="community-editor-page">
+    <main className="community-composer-page">
       <Seo
-        title={
-          editingId
-            ? 'Sửa bài cộng đồng'
-            : 'Đăng bài cộng đồng'
-        }
-        description="Tạo bài thảo luận, hỏi đáp, phản ánh, chia sẻ hoặc đánh giá dành cho cộng đồng Hòa Lạc."
+        title={persistedId ? 'Chỉnh sửa bài cộng đồng' : 'Đăng bài cộng đồng'}
+        description="Soạn bài cộng đồng, chèn ảnh trực tiếp và chọn chủ đề tại Đô Thị Hòa Lạc."
       />
 
-      <div className="community-editor-container">
-        <nav className="community-editor-breadcrumb">
-          <button
-            type="button"
-            onClick={handleBack}
-          >
-            <ArrowLeft size={17} />
-            Quay lại
+      <div className="community-composer-shell">
+        <nav className="community-composer-breadcrumb" aria-label="Điều hướng">
+          <button type="button" onClick={handleBack}>
+            <ArrowLeft size={18} />
+            Bài viết của tôi
           </button>
-
           <span>/</span>
-
-          <Link to="/dang-bai">
-            Trung tâm đăng nội dung
-          </Link>
-
+          <Link to="/dang-bai">Trung tâm đăng nội dung</Link>
           <span>/</span>
-
-          <span>
-            {editingId
-              ? 'Chỉnh sửa bài'
-              : 'Bài cộng đồng'}
-          </span>
+          <strong>{persistedId ? 'Chỉnh sửa' : 'Bài cộng đồng mới'}</strong>
         </nav>
 
-        <header className="community-editor-hero">
-          <div className="community-editor-hero__icon">
-            <FilePenLine size={34} />
+        {loadError ? (
+          <div className="community-composer-alert" role="alert">
+            <AlertTriangle size={19} />
+            <span>{loadError}</span>
           </div>
+        ) : null}
 
-          <div className="community-editor-hero__content">
-            <span className="community-editor-hero__eyebrow">
-              <UsersRound size={16} />
-              Cộng đồng Hòa Lạc
-            </span>
+        <section className="community-composer-card">
+          <header className="community-composer-author">
+            <Avatar
+              name={displayName}
+              src={user?.profile?.avatarMediaId}
+              size="md"
+            />
 
-            <h1>
-              {editingId
-                ? 'Chỉnh sửa bài viết'
-                : 'Tạo bài viết cộng đồng'}
-            </h1>
-
-            <p>
-              Nội dung cần rõ ràng, đúng
-              khu vực, có giá trị trao đổi
-              và tuân thủ quy định cộng
-              đồng.
-            </p>
-          </div>
-
-          <div className="community-editor-hero__status">
-            <div>
-              <span>
-                Hoàn thiện biểu mẫu
-              </span>
-
-              <strong>
-                {completionPercent}%
-              </strong>
-            </div>
-
-            <div className="community-editor-progress">
-              <span
-                style={{
-                  width: `${completionPercent}%`,
-                }}
-              />
-            </div>
-
-            <small>
-              {autoSaveStatus ===
-              'saving'
-                ? 'Đang tự lưu...'
-                : autoSaveStatus ===
-                    'saved'
-                  ? 'Đã tự lưu trên thiết bị'
-                  : autoSaveStatus ===
-                      'error'
-                    ? 'Không thể tự lưu'
-                    : dirty
-                      ? 'Có thay đổi chưa lưu'
-                      : 'Chưa có thay đổi'}
-            </small>
-          </div>
-        </header>
-
-        {hasLocalDraft &&
-        !restoredDraft ? (
-          <section className="community-editor-restore">
-            <div>
-              <RefreshCcw size={21} />
-
+            <div className="community-composer-author__copy">
+              <strong>{displayName}</strong>
               <div>
-                <strong>
-                  Có nội dung tự lưu trên
-                  thiết bị
-                </strong>
-
-                <p>
-                  Bạn có thể khôi phục phần
-                  nội dung đã nhập trước đó
-                  hoặc tiếp tục với biểu
-                  mẫu hiện tại.
-                </p>
+                <span>
+                  <Globe2 size={14} />
+                  Công khai
+                </span>
+                <span className="community-composer-autosave">
+                  {autosaveStatus === 'saving'
+                    ? 'Đang tự lưu...'
+                    : autosaveStatus === 'saved'
+                      ? 'Đã tự lưu trên thiết bị'
+                      : autosaveStatus === 'error'
+                        ? 'Không thể tự lưu'
+                        : 'Bản nháp'}
+                </span>
               </div>
             </div>
 
-            <div className="community-editor-restore__actions">
-              <button
-                type="button"
-                onClick={
-                  restoreLocalDraft
-                }
-              >
-                Khôi phục
-              </button>
+            <span className="community-composer-route-id" title={sessionKey}>
+              ID: {String(sessionKey).slice(0, 12)}
+            </span>
+          </header>
 
-              <button
-                type="button"
-                onClick={
-                  clearLocalDraft
-                }
-              >
-                Xóa bản tự lưu
-              </button>
+          <div className="community-composer-topic-heading">
+            <div>
+              <span>Cộng đồng hoặc chủ đề</span>
+              <p>Chọn nhãn để người đọc hiểu nhanh bài viết thuộc nhóm nào.</p>
             </div>
-          </section>
-        ) : null}
+          </div>
 
-        <div className="community-editor-layout">
-          <main
-            ref={formTopRef}
-            className="community-editor-main"
-          >
-            <section className="community-editor-card">
-              <header className="community-editor-card__heading">
+          <div className="community-composer-topics" role="group" aria-label="Chọn loại bài cộng đồng">
+            {Object.entries(COMMUNITY_TYPES).map(([value, label]) => {
+              const meta = POST_TYPE_META[value] || POST_TYPE_META.other;
+              const Icon = meta.icon;
+              const selected = form.postType === value;
+
+              return (
+                <button
+                  type="button"
+                  key={value}
+                  className={selected ? 'is-selected' : ''}
+                  aria-pressed={selected}
+                  title={meta.description}
+                  onClick={() => change('postType', value)}
+                >
+                  <Icon size={17} />
+                  <span>{label}</span>
+                  {selected ? <Check size={15} /> : null}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="community-composer-selected-type">
+            {(() => {
+              const Icon = selectedType.icon;
+              return <Icon size={17} />;
+            })()}
+            <span>{selectedType.description}</span>
+          </div>
+
+          <label className="community-composer-title">
+            <span>
+              Tiêu đề ngắn
+              <small>Có thể để trống — hệ thống sẽ lấy câu đầu làm tiêu đề.</small>
+            </span>
+            <input
+              value={form.title}
+              maxLength={250}
+              placeholder="Ví dụ: Đường vào khu dân cư đang ngập sau mưa lớn"
+              onChange={(event) => change('title', event.target.value)}
+            />
+            {fieldErrors.title ? <em>{fieldErrors.title}</em> : null}
+          </label>
+
+          <div className="community-composer-editor-block">
+            <div className="community-composer-editor-label">
+              <div>
+                <strong>Bạn muốn chia sẻ điều gì?</strong>
                 <span>
-                  <MessageCircle
-                    size={21}
-                  />
+                  Viết như Facebook/Threads; có thể dán ảnh từ clipboard, kéo thả hoặc bấm nút ảnh trong thanh công cụ.
                 </span>
+              </div>
+              <span>{bodyText.length.toLocaleString('vi-VN')} ký tự</span>
+            </div>
 
+            <RichTextEditor
+              className="community-composer-rte"
+              value={form.bodyHtml}
+              onChange={(html) => change('bodyHtml', html)}
+              placeholder="Chia sẻ thông tin, câu hỏi, phản ánh, hình ảnh hoặc câu chuyện của bạn..."
+              uploadFolder="community/inline"
+              maxImages={20}
+              maxImageSizeMb={10}
+            />
+
+            {fieldErrors.bodyHtml ? (
+              <p className="community-composer-field-error">
+                {fieldErrors.bodyHtml}
+              </p>
+            ) : null}
+          </div>
+
+          <section className="community-composer-thumbnail">
+            <header>
+              <div>
+                <ImagePlus size={21} />
                 <div>
-                  <small>
-                    Bước 1
-                  </small>
-
-                  <h2>
-                    Loại bài viết
-                  </h2>
-
+                  <strong>Ảnh đại diện bài viết</strong>
                   <p>
-                    Chọn loại phù hợp để
-                    hệ thống hiển thị đúng
-                    trường thông tin.
+                    Không bắt buộc. Có thể tải ảnh riêng hoặc chọn một ảnh đã có trong bài; ảnh được chọn vẫn giữ nguyên trong nội dung.
                   </p>
                 </div>
-              </header>
+              </div>
+            </header>
 
-              <div className="community-type-grid">
-                {Object.entries(
-                  COMMUNITY_TYPES,
-                ).map(
-                  ([value, label]) => {
-                    const TypeIcon =
-                      POST_TYPE_ICONS[
-                        value
-                      ] ||
-                      MessageCircle;
+            <div className="community-composer-thumbnail__modes">
+              <button
+                type="button"
+                className={thumbnailMode === 'none' ? 'is-active' : ''}
+                onClick={() => chooseThumbnailMode('none')}
+              >
+                Không dùng ảnh đại diện
+              </button>
 
-                    const selected =
-                      form.postType ===
-                      value;
+              <button
+                type="button"
+                className={thumbnailMode === 'inline' ? 'is-active' : ''}
+                disabled={!inlineImages.length}
+                onClick={() => chooseThumbnailMode('inline')}
+              >
+                Chọn ảnh trong bài
+                {inlineImages.length ? ` (${inlineImages.length})` : ''}
+              </button>
+
+              <button
+                type="button"
+                className={thumbnailMode === 'upload' ? 'is-active' : ''}
+                onClick={() => chooseThumbnailMode('upload')}
+              >
+                Tải ảnh riêng
+              </button>
+            </div>
+
+            {thumbnailMode === 'inline' ? (
+              inlineImages.length ? (
+                <div className="community-composer-inline-images">
+                  {inlineImages.map((image, index) => {
+                    const active =
+                      getMediaId(image) === getMediaId(thumbnailMedia);
 
                     return (
                       <button
                         type="button"
-                        key={value}
-                        className={
-                          selected
-                            ? 'is-selected'
-                            : ''
-                        }
-                        onClick={() =>
-                          change(
-                            'postType',
-                            value,
-                          )
-                        }
+                        key={getMediaId(image) || index}
+                        className={active ? 'is-selected' : ''}
+                        onClick={() => setThumbnailMedia(image)}
                       >
+                        <img
+                          src={image.secureUrl || image.url}
+                          alt={image.altText || `Ảnh ${index + 1}`}
+                        />
                         <span>
-                          <TypeIcon
-                            size={21}
-                          />
+                          {active ? <Check size={16} /> : null}
+                          Ảnh {index + 1}
                         </span>
-
-                        <strong>
-                          {label}
-                        </strong>
-
-                        <small>
-                          {POST_TYPE_DESCRIPTIONS[
-                            value
-                          ] ||
-                            'Bài viết dành cho cộng đồng.'}
-                        </small>
-
-                        {selected ? (
-                          <CheckCircle2
-                            size={18}
-                          />
-                        ) : null}
                       </button>
                     );
-                  },
-                )}
-              </div>
+                  })}
+                </div>
+              ) : (
+                <p className="community-composer-thumbnail__empty">
+                  Chưa có ảnh trong nội dung. Hãy dán, kéo thả hoặc tải ảnh vào phần soạn thảo trước.
+                </p>
+              )
+            ) : null}
 
-              <div className="community-selected-type">
-                <SelectedPostTypeIcon
-                  size={19}
+            {thumbnailMode === 'upload' ? (
+              <div className="community-composer-thumbnail__upload">
+                <MediaUploader
+                  value={thumbnailMedia}
+                  onChange={setThumbnailMedia}
+                  label="Tải ảnh đại diện riêng"
+                  required={false}
                 />
-
-                <div>
-                  <strong>
-                    {
-                      selectedPostType.label
-                    }
-                  </strong>
-
-                  <p>
-                    {
-                      selectedPostType.description
-                    }
-                  </p>
-                </div>
               </div>
+            ) : null}
+          </section>
 
-              {form.postType ===
-              'review' ? (
-                <div className="community-review-rating">
-                  <FormField
-                    label="Điểm đánh giá"
-                    required
-                  >
-                    <select
-                      value={form.rating}
-                      onChange={(event) =>
-                        change(
-                          'rating',
-                          event.target
-                            .value,
-                        )
-                      }
-                    >
-                      <option value="">
-                        Chọn điểm đánh giá
-                      </option>
+          <section className="community-composer-details">
+            <button
+              type="button"
+              className="community-composer-details__toggle"
+              aria-expanded={advancedOpen}
+              onClick={() => setAdvancedOpen((current) => !current)}
+            >
+              <span>
+                <FileText size={19} />
+                <strong>Thông tin bổ sung</strong>
+                <small>Khu vực, chuyên mục, thẻ, mô tả ngắn và tùy chọn bài viết.</small>
+              </span>
+              <span>{advancedOpen ? 'Thu gọn' : 'Mở'}</span>
+            </button>
 
-                      {[5, 4, 3, 2, 1].map(
-                        (value) => (
-                          <option
-                            key={value}
-                            value={value}
-                          >
-                            {value}/5 sao
-                          </option>
-                        ),
-                      )}
-                    </select>
-                  </FormField>
-
-                  {validationErrors.rating ? (
-                    <p className="community-field-error">
-                      {
-                        validationErrors.rating
-                      }
-                    </p>
-                  ) : null}
-                </div>
-              ) : null}
-            </section>
-
-            <section className="community-editor-card">
-              <header className="community-editor-card__heading">
-                <span>
-                  <FileText size={21} />
-                </span>
-
-                <div>
-                  <small>
-                    Bước 2
-                  </small>
-
-                  <h2>
-                    Nội dung bài viết
-                  </h2>
-
-                  <p>
-                    Viết tiêu đề rõ ràng,
-                    mô tả ngắn gọn và nội
-                    dung đầy đủ.
-                  </p>
-                </div>
-              </header>
-
-              <div className="community-editor-field">
-                <div className="community-editor-field__label">
-                  <label htmlFor="community-title">
-                    Tiêu đề
-                    <span>*</span>
-                  </label>
-
-                  <small
-                    className={
-                      form.title.length >
-                      TITLE_MAX_LENGTH
-                        ? 'is-over-limit'
-                        : ''
-                    }
-                  >
-                    {form.title.length}/
-                    {TITLE_MAX_LENGTH}
-                  </small>
-                </div>
-
-                <input
-                  id="community-title"
-                  value={form.title}
-                  minLength={
-                    TITLE_MIN_LENGTH
-                  }
-                  maxLength={
-                    TITLE_MAX_LENGTH
-                  }
-                  placeholder="Ví dụ: Tuyến đường vào khu dân cư đang xuống cấp, cần đơn vị kiểm tra"
-                  className={
-                    validationErrors.title
-                      ? 'has-error'
-                      : ''
-                  }
-                  onChange={(event) =>
-                    change(
-                      'title',
-                      event.target.value,
-                    )
-                  }
-                />
-
-                {validationErrors.title ? (
-                  <p className="community-field-error">
-                    {
-                      validationErrors.title
-                    }
-                  </p>
-                ) : (
-                  <p className="community-field-hint">
-                    Nêu đúng vấn đề chính,
-                    hạn chế viết hoa toàn bộ
-                    hoặc dùng tiêu đề gây
-                    hiểu nhầm.
-                  </p>
-                )}
-              </div>
-
-              <div className="community-editor-field">
-                <div className="community-editor-field__label">
-                  <label htmlFor="community-summary">
-                    Mô tả ngắn
-                  </label>
-
-                  <small
-                    className={
-                      form.summary.length >
-                      SUMMARY_MAX_LENGTH
-                        ? 'is-over-limit'
-                        : ''
-                    }
-                  >
-                    {form.summary.length}/
-                    {SUMMARY_MAX_LENGTH}
-                  </small>
-                </div>
-
-                <textarea
-                  id="community-summary"
-                  rows="4"
-                  value={form.summary}
-                  maxLength={
-                    SUMMARY_MAX_LENGTH
-                  }
-                  placeholder="Tóm tắt nội dung để người đọc nhanh chóng hiểu bài viết đang nói về vấn đề gì."
-                  className={
-                    validationErrors.summary
-                      ? 'has-error'
-                      : ''
-                  }
-                  onChange={(event) =>
-                    change(
-                      'summary',
-                      event.target.value,
-                    )
-                  }
-                />
-
-                {validationErrors.summary ? (
-                  <p className="community-field-error">
-                    {
-                      validationErrors.summary
-                    }
-                  </p>
-                ) : null}
-              </div>
-
-              <div className="community-editor-field">
-                <div className="community-editor-field__label">
-                  <label>
-                    Nội dung
-                    {!editingId ? (
-                      <span>*</span>
-                    ) : null}
-                  </label>
-
-                  <small>
-                    {bodyTextLength.toLocaleString(
-                      'vi-VN',
-                    )}{' '}
-                    ký tự
-                  </small>
-                </div>
-
-                <div
-                  className={
-                    validationErrors.bodyHtml
-                      ? 'community-rich-editor has-error'
-                      : 'community-rich-editor'
-                  }
-                >
-                  <RichTextEditor
-                    value={form.bodyHtml}
-                    onChange={(value) =>
-                      change(
-                        'bodyHtml',
-                        value,
-                      )
-                    }
-                  />
-                </div>
-
-                {validationErrors.bodyHtml ? (
-                  <p className="community-field-error">
-                    {
-                      validationErrors.bodyHtml
-                    }
-                  </p>
-                ) : (
-                  <p className="community-field-hint">
-                    Cung cấp đủ bối cảnh,
-                    thời gian, địa điểm và
-                    nguồn thông tin khi có.
-                  </p>
-                )}
-              </div>
-            </section>
-
-            <section className="community-editor-card">
-              <header className="community-editor-card__heading">
-                <span>
-                  <Tags size={21} />
-                </span>
-
-                <div>
-                  <small>
-                    Bước 3
-                  </small>
-
-                  <h2>
-                    Phân loại nội dung
-                  </h2>
-
-                  <p>
-                    Chọn chuyên mục, khu vực
-                    và thẻ nội dung để bài
-                    viết dễ được tìm thấy.
-                  </p>
-                </div>
-              </header>
-
-              <div className="community-taxonomy-wrapper">
+            {advancedOpen ? (
+              <div className="community-composer-details__body">
                 <TaxonomyFields
                   scope="community"
-                  categoryId={
-                    form.primaryCategoryId
-                  }
-                  areaId={
-                    form.primaryAreaId
-                  }
+                  categoryId={form.primaryCategoryId}
+                  areaId={form.primaryAreaId}
                   tagIds={form.tagIds}
                   onChange={change}
-                  areaRequired={
-                    form.postType ===
-                    'report'
-                  }
-                />
-              </div>
-
-              {validationErrors.primaryAreaId ? (
-                <p className="community-field-error">
-                  {
-                    validationErrors.primaryAreaId
-                  }
-                </p>
-              ) : null}
-            </section>
-
-            {form.postType ===
-            'report' ? (
-              <section className="community-editor-card community-report-card">
-                <header className="community-editor-card__heading">
-                  <span>
-                    <AlertTriangle
-                      size={21}
-                    />
-                  </span>
-
-                  <div>
-                    <small>
-                      Thông tin phản ánh
-                    </small>
-
-                    <h2>
-                      Thời gian và địa điểm
-                    </h2>
-
-                    <p>
-                      Thông tin cụ thể giúp
-                      cộng đồng và đơn vị
-                      liên quan dễ xác minh.
-                    </p>
-                  </div>
-                </header>
-
-                <div className="community-report-grid">
-                  <FormField label="Thời gian xảy ra">
-                    <div className="community-input-with-icon">
-                      <Clock3 size={18} />
-
-                      <input
-                        type="datetime-local"
-                        value={
-                          form.incidentTime
-                        }
-                        onChange={(event) =>
-                          change(
-                            'incidentTime',
-                            event.target
-                              .value,
-                          )
-                        }
-                      />
-                    </div>
-                  </FormField>
-
-                  <FormField label="Địa điểm cụ thể">
-                    <div className="community-input-with-icon">
-                      <MapPin size={18} />
-
-                      <input
-                        value={
-                          form.locationText
-                        }
-                        maxLength="500"
-                        placeholder="Tên đường, thôn, xã hoặc mốc địa điểm gần nhất"
-                        onChange={(event) =>
-                          change(
-                            'locationText',
-                            event.target
-                              .value,
-                          )
-                        }
-                      />
-                    </div>
-                  </FormField>
-                </div>
-
-                <div className="community-report-notice">
-                  <ShieldCheck size={19} />
-
-                  <p>
-                    Chỉ phản ánh sự việc bạn
-                    có căn cứ hoặc trải
-                    nghiệm thực tế. Không
-                    công khai dữ liệu cá
-                    nhân của người khác.
-                  </p>
-                </div>
-              </section>
-            ) : null}
-
-            <section className="community-editor-card">
-              <header className="community-editor-card__heading">
-                <span>
-                  <ImagePlus size={21} />
-                </span>
-
-                <div>
-                  <small>
-                    Bước 4
-                  </small>
-
-                  <h2>
-                    Ảnh đại diện
-                  </h2>
-
-                  <p>
-                    Chọn hình ảnh liên quan
-                    trực tiếp đến nội dung
-                    bài viết.
-                  </p>
-                </div>
-              </header>
-
-              <div className="community-media-wrapper">
-                <MediaUploader
-                  value={
-                    form.thumbnailMediaId
-                  }
-                  onChange={(value) =>
-                    change(
-                      'thumbnailMediaId',
-                      value,
-                    )
-                  }
-                />
-              </div>
-
-              <div className="community-image-guidance">
-                <Info size={18} />
-
-                <p>
-                  Nên dùng ảnh rõ nét, đúng
-                  hiện trạng và không chứa
-                  thông tin cá nhân nhạy cảm.
-                </p>
-              </div>
-            </section>
-
-            <section className="community-editor-card community-settings-card">
-              <header className="community-editor-card__heading">
-                <span>
-                  <MessageCircle
-                    size={21}
-                  />
-                </span>
-
-                <div>
-                  <small>
-                    Thiết lập bài viết
-                  </small>
-
-                  <h2>
-                    Bình luận và tương tác
-                  </h2>
-                </div>
-              </header>
-
-              <label className="community-comments-setting">
-                <input
-                  type="checkbox"
-                  checked={
-                    form.allowComments
-                  }
-                  onChange={(event) =>
-                    change(
-                      'allowComments',
-                      event.target.checked,
-                    )
-                  }
+                  categoryRequired={false}
+                  areaRequired={false}
                 />
 
-                <span className="community-comments-setting__control" />
-
-                <span>
-                  <strong>
-                    Cho phép thành viên bình
-                    luận
-                  </strong>
-
-                  <small>
-                    Thành viên có thể trao
-                    đổi và phản hồi bên dưới
-                    bài viết.
-                  </small>
-                </span>
-              </label>
-            </section>
-
-            {editingId &&
-            !extractBodyHtml(source) ? (
-              <div className="community-editor-warning">
-                <AlertTriangle
-                  size={20}
-                />
-
-                <div>
-                  <strong>
-                    Chưa tải được nội dung
-                    HTML của bản nháp
-                  </strong>
-
-                  <p>
-                    Các trường bạn nhập lại
-                    trên trang này sẽ được
-                    cập nhật. Trường nội
-                    dung chỉ được gửi lên
-                    server khi bạn nhập hoặc
-                    chỉnh sửa lại.
-                  </p>
-                </div>
-              </div>
-            ) : null}
-
-            <section className="community-editor-actions">
-              <div>
-                <button
-                  type="button"
-                  className="community-reset-button"
-                  disabled={loading}
-                  onClick={resetForm}
-                >
-                  <RefreshCcw
-                    size={17}
-                  />
-                  Đặt lại
-                </button>
-
-                <span>
-                  {dirty
-                    ? 'Bạn đang có thay đổi chưa lưu.'
-                    : 'Biểu mẫu chưa có thay đổi mới.'}
-                </span>
-              </div>
-
-              <div>
-                <Button
-                  variant="outline"
-                  loading={loading}
-                  disabled={loading}
-                  onClick={() =>
-                    save(false)
-                  }
-                >
-                  <Save size={17} />
-                  Lưu bản nháp
-                </Button>
-
-                <Button
-                  loading={loading}
-                  disabled={loading}
-                  onClick={() =>
-                    save(true)
-                  }
-                >
-                  <Send size={17} />
-                  Lưu và gửi duyệt
-                </Button>
-              </div>
-            </section>
-          </main>
-
-          <aside className="community-editor-sidebar">
-            <div className="community-editor-sidebar__content">
-              <section className="community-editor-sidebar-card community-completion-card">
-                <div className="community-sidebar-heading">
-                  <CheckCircle2
-                    size={20}
-                  />
-
-                  <div>
-                    <h2>
-                      Mức độ hoàn thiện
-                    </h2>
-
-                    <p>
-                      Kiểm tra các thông tin
-                      chính trước khi gửi.
-                    </p>
+                {(fieldErrors.primaryCategoryId || fieldErrors.primaryAreaId) ? (
+                  <div className="community-composer-taxonomy-errors">
+                    {fieldErrors.primaryCategoryId ? (
+                      <span>{fieldErrors.primaryCategoryId}</span>
+                    ) : null}
+                    {fieldErrors.primaryAreaId ? (
+                      <span>{fieldErrors.primaryAreaId}</span>
+                    ) : null}
                   </div>
-                </div>
-
-                <div className="community-completion-score">
-                  <strong>
-                    {completionPercent}%
-                  </strong>
-
-                  <div>
-                    <span
-                      style={{
-                        width: `${completionPercent}%`,
-                      }}
-                    />
-                  </div>
-                </div>
-
-                <ul>
-                  {completionItems.map(
-                    (item) => (
-                      <li
-                        key={item.label}
-                        className={
-                          item.completed
-                            ? 'is-completed'
-                            : ''
-                        }
-                      >
-                        <CheckCircle2
-                          size={16}
-                        />
-
-                        <span>
-                          {item.label}
-
-                          {item.optional ? (
-                            <small>
-                              Không bắt buộc
-                            </small>
-                          ) : null}
-                        </span>
-                      </li>
-                    ),
-                  )}
-                </ul>
-              </section>
-
-              <section className="community-editor-sidebar-card">
-                <div className="community-sidebar-heading">
-                  <FilePenLine
-                    size={20}
-                  />
-
-                  <div>
-                    <h2>
-                      Loại bài đang chọn
-                    </h2>
-
-                    <p>
-                      {
-                        selectedPostType.label
-                      }
-                    </p>
-                  </div>
-                </div>
-
-                <div className="community-type-summary">
-                  <span>
-                    <SelectedPostTypeIcon
-                      size={24}
-                    />
-                  </span>
-
-                  <strong>
-                    {
-                      selectedPostType.label
-                    }
-                  </strong>
-
-                  <p>
-                    {
-                      selectedPostType.description
-                    }
-                  </p>
-                </div>
-              </section>
-
-              <section className="community-editor-sidebar-card">
-                <button
-                  type="button"
-                  className="community-guidelines-toggle"
-                  onClick={() =>
-                    setShowGuidelines(
-                      (current) =>
-                        !current,
-                    )
-                  }
-                >
-                  <span>
-                    <ShieldCheck
-                      size={20}
-                    />
-
-                    <strong>
-                      Hướng dẫn đăng bài
-                    </strong>
-                  </span>
-
-                  <span>
-                    {showGuidelines
-                      ? 'Thu gọn'
-                      : 'Mở rộng'}
-                  </span>
-                </button>
-
-                {showGuidelines ? (
-                  <ul className="community-guidelines-list">
-                    <li>
-                      Viết tiêu đề đúng nội
-                      dung, không gây hiểu
-                      nhầm.
-                    </li>
-
-                    <li>
-                      Chọn đúng khu vực và
-                      chuyên mục liên quan.
-                    </li>
-
-                    <li>
-                      Không đăng nội dung
-                      xúc phạm hoặc chưa có
-                      căn cứ.
-                    </li>
-
-                    <li>
-                      Che thông tin cá nhân
-                      trong hình ảnh, giấy tờ.
-                    </li>
-
-                    <li>
-                      Không đăng quảng cáo
-                      lặp lại hoặc liên kết
-                      rác.
-                    </li>
-                  </ul>
                 ) : null}
 
-                <Link
-                  className="community-guidelines-link"
-                  to="/quy-dinh-dang-bai"
-                  target="_blank"
-                >
-                  Xem quy định đầy đủ
-                </Link>
-              </section>
+                <label className="community-composer-summary">
+                  <span>Mô tả ngắn <small>Không bắt buộc</small></span>
+                  <textarea
+                    rows={3}
+                    maxLength={1000}
+                    value={form.summary}
+                    placeholder="Để trống để hệ thống tự lấy đoạn đầu của bài viết."
+                    onChange={(event) => change('summary', event.target.value)}
+                  />
+                  {fieldErrors.summary ? <em>{fieldErrors.summary}</em> : null}
+                </label>
 
-              <section className="community-editor-sidebar-card community-moderation-card">
-                <ShieldCheck size={24} />
+                {form.postType === 'report' ? (
+                  <div className="community-composer-specific-grid">
+                    <label>
+                      <span><CalendarDays size={16} /> Thời điểm xảy ra</span>
+                      <input
+                        type="datetime-local"
+                        value={form.incidentTime ? String(form.incidentTime).slice(0, 16) : ''}
+                        onChange={(event) => change('incidentTime', event.target.value)}
+                      />
+                    </label>
 
-                <small>
-                  Quy trình kiểm duyệt
-                </small>
+                    <label>
+                      <span><MapPin size={16} /> Địa điểm cụ thể</span>
+                      <input
+                        value={form.locationText}
+                        maxLength={500}
+                        placeholder="Ví dụ: đoạn gần cổng Khu CNC Hòa Lạc"
+                        onChange={(event) => change('locationText', event.target.value)}
+                      />
+                    </label>
+                  </div>
+                ) : null}
 
-                <h2>
-                  Nội dung được kiểm tra
-                  trước khi xuất bản
-                </h2>
+                {form.postType === 'review' ? (
+                  <div className="community-composer-rating">
+                    <span>Điểm Review</span>
+                    <div>
+                      {[1, 2, 3, 4, 5].map((value) => (
+                        <button
+                          type="button"
+                          key={value}
+                          className={Number(form.rating) === value ? 'is-active' : ''}
+                          onClick={() => change('rating', value)}
+                        >
+                          <Star size={18} />
+                          {value}
+                        </button>
+                      ))}
+                    </div>
+                    {fieldErrors.rating ? <em>{fieldErrors.rating}</em> : null}
+                  </div>
+                ) : null}
 
-                <p>
-                  Bài viết có thể được yêu
-                  cầu bổ sung, chỉnh sửa
-                  hoặc từ chối khi không
-                  phù hợp với quy định.
-                </p>
-
-                <div>
+                <label className="community-composer-comments">
+                  <input
+                    type="checkbox"
+                    checked={form.allowComments}
+                    onChange={(event) => change('allowComments', event.target.checked)}
+                  />
                   <span>
-                    <Clock3 size={16} />
-                    Trạng thái chờ duyệt
+                    <strong>Cho phép bình luận</strong>
+                    <small>Người đọc có thể trao đổi bên dưới bài viết sau khi bài được xuất bản.</small>
                   </span>
+                </label>
+              </div>
+            ) : null}
+          </section>
 
-                  <span>
-                    <MessageCircle
-                      size={16}
-                    />
-                    Có thể nhận phản hồi
-                  </span>
-                </div>
-              </section>
+          <footer className="community-composer-actions">
+            <div>
+              <ShieldCheck size={18} />
+              <span>
+                Nội dung gửi duyệt cần có chuyên mục và khu vực. Ảnh đại diện là tùy chọn.
+              </span>
             </div>
-          </aside>
-        </div>
+
+            <div>
+              <button
+                type="button"
+                className="community-composer-save"
+                disabled={Boolean(savingAction)}
+                onClick={() => save(false)}
+              >
+                <Save size={18} />
+                {savingAction === 'save' ? 'Đang lưu...' : 'Lưu bản nháp'}
+              </button>
+
+              <button
+                type="button"
+                className="community-composer-submit"
+                disabled={Boolean(savingAction)}
+                onClick={() => save(true)}
+              >
+                <Send size={18} />
+                {savingAction === 'submit' ? 'Đang gửi...' : 'Gửi duyệt'}
+              </button>
+            </div>
+          </footer>
+        </section>
+
+        <aside className="community-composer-note">
+          <Eye size={18} />
+          <p>
+            Trải nghiệm soạn bài được thiết kế theo kiểu social composer: chọn chủ đề trước, viết nội dung ở trung tâm, chèn ảnh ngay trong bài và chỉ mở các trường nâng cao khi cần.
+          </p>
+        </aside>
       </div>
-    </section>
+    </main>
   );
 }

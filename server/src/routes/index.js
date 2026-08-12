@@ -24,6 +24,9 @@ import leadRoutes from '../modules/leads/lead.routes.js';
 import systemRoutes from '../modules/system/system.routes.js';
 import systemAdminRoutes from '../modules/system/system.admin.routes.js';
 import moderationRoutes from '../modules/moderation/moderation.routes.js';
+import googleWorkspaceFastRoutes from '../modules/googleWorkspace/googleWorkspace.fast.routes.js';
+import googleWorkspaceRoutes from '../modules/googleWorkspace/googleWorkspace.routes.js';
+import sourceWatchRoutes from '../modules/sourceWatch/sourceWatch.routes.js';
 
 const router = Router();
 router.use('/health', healthRoutes);
@@ -48,5 +51,9 @@ router.use('/system', systemRoutes);
 router.use('/admin/articles', articleAdminRoutes);
 router.use('/admin/taxonomy', taxonomyAdminRoutes);
 router.use('/admin/system', systemAdminRoutes);
+router.use('/admin/google-workspace', googleWorkspaceFastRoutes);
+router.use('/admin/google-workspace', googleWorkspaceRoutes);
+router.use('/admin/source-watch', sourceWatchRoutes);
 router.use('/admin', moderationRoutes);
+
 export default router;

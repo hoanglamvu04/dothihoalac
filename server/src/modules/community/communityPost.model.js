@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { getOrCreateModel } from '../../utils/modelHelpers.js';
+
 const schema = new mongoose.Schema(
   {
     contentId: {
@@ -20,6 +21,7 @@ const schema = new mongoose.Schema(
         'support',
         'marketplace',
         'community_event',
+        'other',
       ],
       required: true,
       index: true,
@@ -30,10 +32,21 @@ const schema = new mongoose.Schema(
       default: 'open',
       index: true,
     },
-    acceptedCommentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Comment', default: null },
+    acceptedCommentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Comment',
+      default: null,
+    },
     incidentStatus: {
       type: String,
-      enum: ['new', 'verifying', 'forwarded', 'processing', 'resolved', 'insufficient_evidence'],
+      enum: [
+        'new',
+        'verifying',
+        'forwarded',
+        'processing',
+        'resolved',
+        'insufficient_evidence',
+      ],
       default: 'new',
       index: true,
     },
@@ -41,7 +54,16 @@ const schema = new mongoose.Schema(
     locationText: { type: String, default: '', maxlength: 500 },
     rating: { type: Number, min: 1, max: 5, default: null },
   },
-  { timestamps: true, collection: 'communityposts' },
+  {
+    timestamps: true,
+    collection: 'communityposts',
+  },
 );
+
 schema.index({ postType: 1, incidentStatus: 1 });
-export default getOrCreateModel('CommunityPost', schema, 'communityposts');
+
+export default getOrCreateModel(
+  'CommunityPost',
+  schema,
+  'communityposts',
+);

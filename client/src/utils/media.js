@@ -1,7 +1,4 @@
-const serverUrl = (
-  import.meta.env.VITE_SERVER_URL ||
-  'http://localhost:5000'
-).replace(/\/$/, '');
+import { getResolvedServerBaseUrl } from '../api/runtime.js';
 
 export function mediaUrl(value) {
   const url =
@@ -25,5 +22,6 @@ export function mediaUrl(value) {
     return url;
   }
 
+  const serverUrl = getResolvedServerBaseUrl();
   return `${serverUrl}${url.startsWith('/') ? '' : '/'}${url}`;
 }

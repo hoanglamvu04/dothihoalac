@@ -20,7 +20,6 @@ import {
   Copy,
   Eye,
   Link2,
-  MapPin,
   Newspaper,
   Share2,
   Tag,
@@ -36,13 +35,14 @@ import ReactionBar from '../../components/content/ReactionBar';
 import CommentsSection from '../../components/content/CommentsSection';
 import ErrorState from '../../components/common/ErrorState';
 import { PageLoading } from '../../components/common/Loading';
-import LeadForm from '../../components/forms/LeadForm';
 
 import { articleApi } from '../../api/content.api';
 import { useToast } from '../../context/ToastContext';
 import { formatDateTime } from '../../utils/formatters';
+import { mediaUrl } from '../../utils/media';
 
 import './ArticleDetailPage.css';
+import './ArticlePopularSidebar.css';
 
 function stripHtml(value) {
   return String(value || '')
@@ -53,96 +53,6 @@ function stripHtml(value) {
     .trim();
 }
 
-function createHeadingId(value) {
-  return String(value || '')
-    .normalize('NFD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLowerCase()
-    .replace(/đ/g, 'd')
-    .replace(/[^a-z0-9\s-]/g, '')
-    .replace(/\s+/g, '-')
-    .replace(/-+/g, '-')
-    .replace(/^-|-$/g, '');
-}
-
-function prepareArticleHtml(html) {
-  if (
-    !html ||
-    typeof DOMParser === 'undefined'
-  ) {
-    return {
-      html: html || '',
-      headings: [],
-    };
-  }
-
-  const parser = new DOMParser();
-
-  const documentNode = parser.parseFromString(
-    `<div id="article-content-root">${html}</div>`,
-    'text/html',
-  );
-
-  const root = documentNode.querySelector(
-    '#article-content-root',
-  );
-
-  if (!root) {
-    return {
-      html,
-      headings: [],
-    };
-  }
-
-  const usedIds = new Map();
-  const headings = [];
-
-  root
-    .querySelectorAll('h2, h3')
-    .forEach((heading, index) => {
-      const title = heading.textContent
-        ?.replace(/\s+/g, ' ')
-        .trim();
-
-      if (!title) {
-        return;
-      }
-
-      const baseId =
-        createHeadingId(title) ||
-        `noi-dung-${index + 1}`;
-
-      const count =
-        usedIds.get(baseId) || 0;
-
-      usedIds.set(
-        baseId,
-        count + 1,
-      );
-
-      const id = count
-        ? `${baseId}-${count + 1}`
-        : baseId;
-
-      heading.id = id;
-
-      headings.push({
-        id,
-        title,
-        level:
-          heading.tagName.toLowerCase() ===
-          'h3'
-            ? 3
-            : 2,
-      });
-    });
-
-  return {
-    html: root.innerHTML,
-    headings,
-  };
-}
-
 function getReadingMinutes(item, html) {
   const serverReadingMinutes = Number(
     item?.article?.readingMinutes ||
@@ -151,9 +61,7 @@ function getReadingMinutes(item, html) {
   );
 
   if (serverReadingMinutes > 0) {
-    return Math.ceil(
-      serverReadingMinutes,
-    );
+    return Math.ceil(serverReadingMinutes);
   }
 
   const wordCount = stripHtml(html)
@@ -225,66 +133,90 @@ function getTagItems(item) {
           tag.id ||
           tag.slug ||
           name,
-
         name,
       };
     })
     .filter(Boolean);
 }
 
-async function copyToClipboard(value) {
-  if (
-    navigator.clipboard?.writeText
-  ) {
-    await navigator.clipboard.writeText(
-      value,
-    );
+function getArticleId(article) {
+  return String(
+    article?._id ||
+      article?.id ||
+      '',
+  );
+}
 
+function selectSidebarArticles(
+  currentItem,
+  articles = [],
+) {
+  const currentId = getArticleId(currentItem);
+  const currentSlug = String(
+    currentItem?.slug || '',
+  );
+  const seen = new Set();
+  const result = [];
+
+  for (const article of articles) {
+    const id = getArticleId(article);
+    const slug = String(article?.slug || '');
+
+    if (
+      !id ||
+      !slug ||
+      id === currentId ||
+      slug === currentSlug ||
+      seen.has(id)
+    ) {
+      continue;
+    }
+
+    seen.add(id);
+    result.push(article);
+
+    if (result.length === 4) {
+      break;
+    }
+  }
+
+  return result;
+}
+
+async function copyToClipboard(value) {
+  if (navigator.clipboard?.writeText) {
+    await navigator.clipboard.writeText(value);
     return;
   }
 
   const textarea =
-    document.createElement(
-      'textarea',
-    );
+    document.createElement('textarea');
 
   textarea.value = value;
   textarea.style.position = 'fixed';
   textarea.style.opacity = '0';
 
-  document.body.appendChild(
-    textarea,
-  );
-
+  document.body.appendChild(textarea);
   textarea.focus();
   textarea.select();
-
   document.execCommand('copy');
-
   textarea.remove();
 }
 
 export default function ArticleDetailPage() {
   const { slug } = useParams();
   const toast = useToast();
-
   const articleRef = useRef(null);
 
-  const [item, setItem] =
-    useState(null);
-
-  const [error, setError] =
-    useState(null);
-
-  const [
-    readingProgress,
-    setReadingProgress,
-  ] = useState(0);
-
-  const [
-    copied,
-    setCopied,
-  ] = useState(false);
+  const [item, setItem] = useState(null);
+  const [error, setError] = useState(null);
+  const [readingProgress, setReadingProgress] =
+    useState(0);
+  const [copied, setCopied] = useState(false);
+  const [sidebarArticles, setSidebarArticles] =
+    useState([]);
+  const [sidebarLoading, setSidebarLoading] =
+    useState(true);
 
   useEffect(() => {
     let active = true;
@@ -292,6 +224,8 @@ export default function ArticleDetailPage() {
     setItem(null);
     setError(null);
     setReadingProgress(0);
+    setSidebarArticles([]);
+    setSidebarLoading(true);
 
     window.scrollTo({
       top: 0,
@@ -317,6 +251,53 @@ export default function ArticleDetailPage() {
     };
   }, [slug]);
 
+  useEffect(() => {
+    if (!item?._id) {
+      return undefined;
+    }
+
+    let active = true;
+
+    const loadSidebarArticles = async () => {
+      setSidebarLoading(true);
+
+      try {
+        /*
+         * API sort=popular dùng viewCount thật giảm dần và publishedAt
+         * mới nhất làm tie-breaker. Vì vậy bài 0 view tự động rơi về
+         * thứ tự mới nhất mà không cần trộn một danh sách giả khác.
+         */
+        const result = await articleApi.list({
+          sort: 'popular',
+          limit: 8,
+        });
+
+        if (active) {
+          setSidebarArticles(
+            selectSidebarArticles(
+              item,
+              result?.items || [],
+            ),
+          );
+        }
+      } catch {
+        if (active) {
+          setSidebarArticles([]);
+        }
+      } finally {
+        if (active) {
+          setSidebarLoading(false);
+        }
+      }
+    };
+
+    loadSidebarArticles();
+
+    return () => {
+      active = false;
+    };
+  }, [item]);
+
   const bodyHtml = useMemo(
     () =>
       item?.body?.bodyHtml ||
@@ -325,21 +306,14 @@ export default function ArticleDetailPage() {
     [item],
   );
 
-  const preparedBody = useMemo(
+  const readingMinutes = useMemo(
     () =>
-      prepareArticleHtml(bodyHtml),
-    [bodyHtml],
+      getReadingMinutes(
+        item,
+        bodyHtml,
+      ),
+    [item, bodyHtml],
   );
-
-  const readingMinutes =
-    useMemo(
-      () =>
-        getReadingMinutes(
-          item,
-          bodyHtml,
-        ),
-      [item, bodyHtml],
-    );
 
   const tagItems = useMemo(
     () => getTagItems(item),
@@ -349,11 +323,6 @@ export default function ArticleDetailPage() {
   const categoryValue =
     getTaxonomyValue(
       item?.primaryCategoryId,
-    );
-
-  const areaValue =
-    getTaxonomyValue(
-      item?.primaryAreaId,
     );
 
   const authorName =
@@ -369,33 +338,24 @@ export default function ArticleDetailPage() {
     item?.authorId?.avatarMediaId ||
     null;
 
-  const viewCount =
-    getViewCount(item);
+  const viewCount = getViewCount(item);
 
   const publishedAt =
     item?.publishedAt ||
     item?.createdAt;
 
-  const updatedAt =
-    item?.updatedAt;
+  const updatedAt = item?.updatedAt;
 
   const wasUpdated = useMemo(() => {
-    if (
-      !updatedAt ||
-      !publishedAt
-    ) {
+    if (!updatedAt || !publishedAt) {
       return false;
     }
 
     const publishedTime =
-      new Date(
-        publishedAt,
-      ).getTime();
+      new Date(publishedAt).getTime();
 
     const updatedTime =
-      new Date(
-        updatedAt,
-      ).getTime();
+      new Date(updatedAt).getTime();
 
     if (
       Number.isNaN(publishedTime) ||
@@ -419,15 +379,12 @@ export default function ArticleDetailPage() {
 
     const updateProgress = () => {
       if (animationFrame) {
-        cancelAnimationFrame(
-          animationFrame,
-        );
+        cancelAnimationFrame(animationFrame);
       }
 
       animationFrame =
         requestAnimationFrame(() => {
-          const article =
-            articleRef.current;
+          const article = articleRef.current;
 
           if (!article) {
             return;
@@ -440,9 +397,7 @@ export default function ArticleDetailPage() {
           const articleHeight =
             article.offsetHeight;
 
-          const start =
-            articleTop - 120;
-
+          const start = articleTop - 120;
           const end =
             articleTop +
             articleHeight -
@@ -469,9 +424,7 @@ export default function ArticleDetailPage() {
     window.addEventListener(
       'scroll',
       updateProgress,
-      {
-        passive: true,
-      },
+      { passive: true },
     );
 
     window.addEventListener(
@@ -481,9 +434,7 @@ export default function ArticleDetailPage() {
 
     return () => {
       if (animationFrame) {
-        cancelAnimationFrame(
-          animationFrame,
-        );
+        cancelAnimationFrame(animationFrame);
       }
 
       window.removeEventListener(
@@ -498,15 +449,14 @@ export default function ArticleDetailPage() {
     };
   }, [item]);
 
-  const handleCopyLink =
-    useCallback(async () => {
+  const handleCopyLink = useCallback(
+    async () => {
       try {
         await copyToClipboard(
           window.location.href,
         );
 
         setCopied(true);
-
         toast.success(
           'Đã sao chép liên kết bài viết.',
         );
@@ -519,10 +469,12 @@ export default function ArticleDetailPage() {
           'Không thể sao chép liên kết.',
         );
       }
-    }, [toast]);
+    },
+    [toast],
+  );
 
-  const handleShare =
-    useCallback(async () => {
+  const handleShare = useCallback(
+    async () => {
       const shareData = {
         title: item?.title,
         text:
@@ -533,9 +485,7 @@ export default function ArticleDetailPage() {
 
       if (navigator.share) {
         try {
-          await navigator.share(
-            shareData,
-          );
+          await navigator.share(shareData);
         } catch (shareError) {
           if (
             shareError?.name !==
@@ -551,28 +501,13 @@ export default function ArticleDetailPage() {
       }
 
       await handleCopyLink();
-    }, [
+    },
+    [
       handleCopyLink,
       item,
       toast,
-    ]);
-
-  const scrollToHeading =
-    useCallback((headingId) => {
-      const heading =
-        document.getElementById(
-          headingId,
-        );
-
-      if (!heading) {
-        return;
-      }
-
-      heading.scrollIntoView({
-        behavior: 'smooth',
-        block: 'start',
-      });
-    }, []);
+    ],
+  );
 
   if (!item && !error) {
     return <PageLoading />;
@@ -582,9 +517,7 @@ export default function ArticleDetailPage() {
     return (
       <section className="article-view-error">
         <div className="article-view-container">
-          <ErrorState
-            error={error}
-          />
+          <ErrorState error={error} />
         </div>
       </section>
     );
@@ -688,9 +621,7 @@ export default function ArticleDetailPage() {
                     )}
 
                     <span>
-                      <UserRound
-                        size={14}
-                      />
+                      <UserRound size={14} />
                       Ban biên tập
                     </span>
                   </div>
@@ -698,24 +629,17 @@ export default function ArticleDetailPage() {
 
                 <div className="article-view-byline">
                   <span>
-                    <CalendarDays
-                      size={16}
-                    />
-
-                    {formatDateTime(
-                      publishedAt,
-                    )}
+                    <CalendarDays size={16} />
+                    {formatDateTime(publishedAt)}
                   </span>
 
                   <span>
                     <Clock3 size={16} />
-                    {readingMinutes} phút
-                    đọc
+                    {readingMinutes} phút đọc
                   </span>
 
                   <span>
                     <Eye size={16} />
-
                     {viewCount.toLocaleString(
                       'vi-VN',
                     )}{' '}
@@ -734,9 +658,7 @@ export default function ArticleDetailPage() {
 
                   <button
                     type="button"
-                    onClick={
-                      handleCopyLink
-                    }
+                    onClick={handleCopyLink}
                   >
                     {copied ? (
                       <Check size={17} />
@@ -755,9 +677,7 @@ export default function ArticleDetailPage() {
                 <p className="article-view-updated">
                   Cập nhật lần cuối:{' '}
                   <strong>
-                    {formatDateTime(
-                      updatedAt,
-                    )}
+                    {formatDateTime(updatedAt)}
                   </strong>
                 </p>
               ) : null}
@@ -765,9 +685,7 @@ export default function ArticleDetailPage() {
 
             {item.isSponsored ? (
               <div className="article-view-sponsored">
-                <Newspaper
-                  size={19}
-                />
+                <Newspaper size={19} />
 
                 <div>
                   <strong>
@@ -775,10 +693,8 @@ export default function ArticleDetailPage() {
                   </strong>
 
                   <p>
-                    Bài viết có nội dung
-                    hợp tác hoặc tài trợ.
-                    Thông tin được trình bày
-                    theo tiêu chuẩn biên tập
+                    Bài viết có nội dung hợp tác hoặc tài trợ.
+                    Thông tin được trình bày theo tiêu chuẩn biên tập
                     của Đô Thị Hòa Lạc.
                   </p>
                 </div>
@@ -787,9 +703,7 @@ export default function ArticleDetailPage() {
 
             <div className="article-view-cover">
               <ContentImage
-                media={
-                  item.thumbnailMediaId
-                }
+                media={item.thumbnailMediaId}
                 alt={item.title}
                 ratio="hero"
               />
@@ -797,15 +711,10 @@ export default function ArticleDetailPage() {
 
             <div className="article-view-content">
               <div className="article-view-body">
-                <ArticleBody
-                  html={
-                    preparedBody.html
-                  }
-                />
+                <ArticleBody html={bodyHtml} />
               </div>
 
-              {item.article
-                ?.sourceNote ? (
+              {item.article?.sourceNote ? (
                 <div className="article-view-source-note">
                   <Link2 size={18} />
 
@@ -815,10 +724,7 @@ export default function ArticleDetailPage() {
                     </strong>
 
                     <p>
-                      {
-                        item.article
-                          .sourceNote
-                      }
+                      {item.article.sourceNote}
                     </p>
                   </div>
                 </div>
@@ -832,24 +738,18 @@ export default function ArticleDetailPage() {
                   </span>
 
                   <div>
-                    {tagItems.map(
-                      (tag) => (
-                        <span
-                          key={tag.id}
-                        >
-                          {tag.name}
-                        </span>
-                      ),
-                    )}
+                    {tagItems.map((tag) => (
+                      <span key={tag.id}>
+                        {tag.name}
+                      </span>
+                    ))}
                   </div>
                 </div>
               ) : null}
             </div>
 
             <div className="article-view-reactions">
-              <ReactionBar
-                content={item}
-              />
+              <ReactionBar content={item} />
             </div>
 
             <div className="article-view-comments">
@@ -862,238 +762,90 @@ export default function ArticleDetailPage() {
             </div>
           </article>
 
-          <aside className="article-view-sidebar">
+          <aside
+            className="article-view-sidebar article-popular-sidebar-shell"
+            aria-label="Bài viết xem nhiều"
+          >
             <div className="article-view-sidebar__sticky">
-              {preparedBody.headings
-                .length ? (
-                <section className="article-sidebar-card article-sidebar-toc">
-                  <div className="article-sidebar-card__heading">
-                    <Newspaper
-                      size={18}
-                    />
-
-                    <h2>
-                      Trong bài viết
-                    </h2>
+              <section className="article-popular-sidebar">
+                <header className="article-popular-sidebar__header">
+                  <div>
+                    <span>Tin đáng chú ý</span>
+                    <h2>Xem nhiều</h2>
                   </div>
 
-                  <nav>
-                    {preparedBody.headings.map(
-                      (heading) => (
-                        <button
-                          type="button"
-                          key={heading.id}
-                          className={
-                            heading.level ===
-                            3
-                              ? 'is-level-3'
-                              : ''
-                          }
-                          onClick={() =>
-                            scrollToHeading(
-                              heading.id,
-                            )
-                          }
+                  <Link to="/tin-tuc">
+                    Xem tất cả
+                  </Link>
+                </header>
+
+                <div className="article-popular-sidebar__accent" />
+
+                <div className="article-popular-sidebar__list">
+                  {sidebarLoading
+                    ? Array.from({ length: 4 }).map((_, index) => (
+                        <div
+                          className="article-popular-sidebar__skeleton"
+                          key={`popular-loading-${index}`}
+                          aria-hidden="true"
                         >
-                          {heading.title}
-                        </button>
-                      ),
-                    )}
-                  </nav>
-                </section>
-              ) : null}
+                          <span />
+                          <div>
+                            <i />
+                            <i />
+                            <i />
+                          </div>
+                        </div>
+                      ))
+                    : sidebarArticles.map((article) => {
+                        const coverUrl = mediaUrl(
+                          article.thumbnailMediaId,
+                        );
+                        const views = getViewCount(article);
 
-              <section className="article-sidebar-card article-sidebar-info">
-                <div className="article-sidebar-card__heading">
-                  <Newspaper
-                    size={18}
-                  />
+                        return (
+                          <Link
+                            className="article-popular-sidebar__item"
+                            to={`/tin-tuc/${article.slug}`}
+                            key={getArticleId(article)}
+                          >
+                            <div className="article-popular-sidebar__thumb">
+                              {coverUrl ? (
+                                <img
+                                  src={coverUrl}
+                                  alt=""
+                                  loading="lazy"
+                                />
+                              ) : (
+                                <span>
+                                  <Newspaper size={22} />
+                                </span>
+                              )}
+                            </div>
 
-                  <h2>
-                    Thông tin bài viết
-                  </h2>
+                            <div className="article-popular-sidebar__copy">
+                              <span>
+                                {article.primaryCategoryId?.name || 'Tin tức'}
+                              </span>
+
+                              <h3>{article.title}</h3>
+
+                              <small>
+                                <Eye size={13} />
+                                {views.toLocaleString('vi-VN')} lượt xem
+                              </small>
+                            </div>
+                          </Link>
+                        );
+                      })}
+
+                  {!sidebarLoading &&
+                  !sidebarArticles.length ? (
+                    <div className="article-popular-sidebar__empty">
+                      Chưa có đủ bài viết để hiển thị mục xem nhiều.
+                    </div>
+                  ) : null}
                 </div>
-
-                <dl>
-                  <div>
-                    <dt>
-                      <Tag size={16} />
-                      Chuyên mục
-                    </dt>
-
-                    <dd>
-                      {categoryValue ? (
-                        <Link
-                          to={`/tin-tuc?category=${encodeURIComponent(
-                            categoryValue,
-                          )}`}
-                        >
-                          {item
-                            .primaryCategoryId
-                            ?.name ||
-                            'Tin tức'}
-                        </Link>
-                      ) : (
-                        item
-                          .primaryCategoryId
-                          ?.name ||
-                        'Tin tức'
-                      )}
-                    </dd>
-                  </div>
-
-                  <div>
-                    <dt>
-                      <MapPin
-                        size={16}
-                      />
-                      Khu vực
-                    </dt>
-
-                    <dd>
-                      {areaValue ? (
-                        <Link
-                          to={`/tin-tuc?area=${encodeURIComponent(
-                            areaValue,
-                          )}`}
-                        >
-                          {item
-                            .primaryAreaId
-                            ?.name ||
-                            'Hòa Lạc'}
-                        </Link>
-                      ) : (
-                        item.primaryAreaId
-                          ?.name ||
-                        'Hòa Lạc'
-                      )}
-                    </dd>
-                  </div>
-
-                  <div>
-                    <dt>
-                      <Clock3
-                        size={16}
-                      />
-                      Thời gian đọc
-                    </dt>
-
-                    <dd>
-                      {readingMinutes}{' '}
-                      phút
-                    </dd>
-                  </div>
-
-                  <div>
-                    <dt>
-                      <Eye size={16} />
-                      Lượt xem
-                    </dt>
-
-                    <dd>
-                      {viewCount.toLocaleString(
-                        'vi-VN',
-                      )}
-                    </dd>
-                  </div>
-                </dl>
-              </section>
-
-              <section className="article-sidebar-card article-sidebar-share">
-                <div>
-                  <Share2 size={19} />
-
-                  <div>
-                    <h2>
-                      Chia sẻ bài viết
-                    </h2>
-
-                    <p>
-                      Gửi thông tin hữu ích
-                      này tới bạn bè và cộng
-                      đồng.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="article-sidebar-share__actions">
-                  <button
-                    type="button"
-                    onClick={handleShare}
-                  >
-                    <Share2 size={17} />
-                    Chia sẻ
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={
-                      handleCopyLink
-                    }
-                  >
-                    {copied ? (
-                      <Check size={17} />
-                    ) : (
-                      <Copy size={17} />
-                    )}
-
-                    {copied
-                      ? 'Đã sao chép'
-                      : 'Sao chép'}
-                  </button>
-                </div>
-              </section>
-
-              <section className="article-sidebar-card article-sidebar-cta">
-                <span>
-                  Kiến Trúc Hòa Lạc
-                </span>
-
-                <h2>
-                  Bạn có đất hoặc nhà cần
-                  xây?
-                </h2>
-
-                <p>
-                  Gửi thông tin để nhận tư
-                  vấn phương án kiến trúc
-                  phù hợp với địa hình và
-                  nhu cầu sử dụng.
-                </p>
-
-                <Link
-                  to={`/tu-van?type=architecture_design&source=${item._id}`}
-                >
-                  Yêu cầu tư vấn
-                  <ArrowLeft size={17} />
-                </Link>
-              </section>
-
-              <section className="article-sidebar-card article-sidebar-lead">
-                <div className="article-sidebar-card__heading">
-                  <UserRound
-                    size={18}
-                  />
-
-                  <div>
-                    <h2>
-                      Tư vấn nhanh
-                    </h2>
-
-                    <p>
-                      Để lại thông tin, đội
-                      ngũ tư vấn sẽ liên hệ
-                      lại.
-                    </p>
-                  </div>
-                </div>
-
-                <LeadForm
-                  compact
-                  sourceContentId={
-                    item._id
-                  }
-                />
               </section>
             </div>
           </aside>

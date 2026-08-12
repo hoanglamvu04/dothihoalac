@@ -1,66 +1,88 @@
 import axios from 'axios';
 
-const baseURL = (
-  import.meta.env.VITE_API_URL ||
-  'http://localhost:5000/api/v1'
-).replace(/\/$/, '');
+import { resetBackendDiscovery, resolveApiBaseUrl } from './runtime.js';
 
-export const api = axios.create({
-  baseURL,
-  withCredentials: true,
-  timeout: 60000,
-  headers: {
-    Accept: 'application/json',
-  },
-});
+function createHttpClient(timeout) {
+  const client = axios.create({
+    withCredentials: true,
+    timeout,
+    headers: {
+      Accept: 'application/json',
+    },
+  });
 
-const refreshClient = axios.create({
-  baseURL,
-  withCredentials: true,
-  timeout: 20000,
-});
+  client.interceptors.request.use(async (config) => {
+    config.baseURL = await resolveApiBaseUrl();
+    return config;
+  });
+
+  return client;
+}
+
+export const api = createHttpClient(60000);
+const refreshClient = createHttpClient(20000);
 
 let refreshPromise = null;
 
 api.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const status = error.response?.status;
     const config = error.config || {};
-    const isAuthEndpoint = String(
-      config.url || '',
-    ).includes('/auth/');
+    const errorCode = String(error?.code || '');
+    const isTimeout =
+      errorCode === 'ECONNABORTED' ||
+      errorCode === 'ETIMEDOUT' ||
+      /timeout/i.test(String(error?.message || ''));
+    const isCanceled =
+      axios.isCancel(error) ||
+      errorCode === 'ERR_CANCELED';
 
+    /*
+     * Chỉ rediscover backend khi thực sự mất kết nối.
+     * Timeout của một API chậm (đặc biệt Google Docs) không có nghĩa là
+     * backend đã đổi port; retry nguyên request sẽ khiến UI chờ gấp đôi
+     * và có thể tạo tác vụ trùng.
+     */
     if (
-      status === 401 &&
-      !config.__retried &&
-      !isAuthEndpoint
+      import.meta.env.DEV &&
+      !error.response &&
+      !isCanceled &&
+      !isTimeout &&
+      !config.__backendRediscovered
     ) {
+      config.__backendRediscovered = true;
+      resetBackendDiscovery();
+
+      try {
+        config.baseURL = await resolveApiBaseUrl();
+        return api(config);
+      } catch {
+        // Không tìm được backend mới; trả lỗi gốc bên dưới.
+      }
+    }
+
+    const status = error.response?.status;
+    const isAuthEndpoint = String(config.url || '').includes('/auth/');
+
+    if (status === 401 && !config.__retried && !isAuthEndpoint) {
       config.__retried = true;
 
       try {
         refreshPromise ||=
-          refreshClient
-            .post('/auth/refresh')
-            .finally(() => {
-              refreshPromise = null;
-            });
+          refreshClient.post('/auth/refresh').finally(() => {
+            refreshPromise = null;
+          });
 
         await refreshPromise;
-
+        config.baseURL = await resolveApiBaseUrl();
         return api(config);
       } catch {
         // AuthContext xử lý trạng thái chưa đăng nhập.
       }
     }
 
-    if (
-      import.meta.env.VITE_DEBUG_API === 'true'
-    ) {
-      console.error(
-        '[DTHL API]',
-        error.response?.data || error.message,
-      );
+    if (import.meta.env.VITE_DEBUG_API === 'true') {
+      console.error('[DTHL API]', error.response?.data || error.message);
     }
 
     return Promise.reject(error);
@@ -73,10 +95,7 @@ export function apiErrorMessage(
 ) {
   const payload = error?.response?.data;
 
-  if (
-    payload?.errors &&
-    Array.isArray(payload.errors)
-  ) {
+  if (payload?.errors && Array.isArray(payload.errors)) {
     const detail = payload.errors
       .map((item) => item.message)
       .filter(Boolean)
@@ -87,11 +106,7 @@ export function apiErrorMessage(
     }
   }
 
-  return (
-    payload?.message ||
-    error?.message ||
-    fallback
-  );
+  return payload?.message || error?.message || fallback;
 }
 
 export function unwrap(response) {

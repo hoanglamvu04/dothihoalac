@@ -1,0 +1,196 @@
+/* Vietnamese-safe newsroom typography overrides.
+ * Loaded after ArticleNewsroomTheme.css so legacy article-body rules cannot
+ * enlarge Google Docs content or carry document-like sizing into the website.
+ */
+
+.article-view-page .article-view-header h1,
+.article-view-page .article-view-lead,
+.article-view-page .article-view-body,
+.article-view-page .article-view-body .article-body,
+.article-view-page .article-view-body .article-body :is(p, li, h2, h3, h4, blockquote, figcaption) {
+  font-family: "Times New Roman", "Noto Serif", serif;
+  font-kerning: normal;
+  font-variant-ligatures: common-ligatures;
+  text-rendering: optimizeLegibility;
+  letter-spacing: normal;
+  word-spacing: normal;
+}
+
+/* Headline: prominent, but no longer oversized like a document cover. */
+.article-view-page .article-view-header h1 {
+  max-width: 960px;
+  font-size: clamp(40px, 3.15vw, 50px);
+  font-weight: 700;
+  line-height: 1.08;
+  letter-spacing: -0.018em;
+  text-wrap: balance;
+}
+
+/* Sapo should introduce the article, not compete visually with the headline. */
+.article-view-page .article-view-lead {
+  max-width: 900px;
+  margin-top: 18px;
+  font-size: clamp(18.5px, 1.22vw, 20px);
+  font-weight: 600;
+  line-height: 1.58;
+  letter-spacing: -0.004em;
+}
+
+/* Main reading size: closer to Vietnamese newspaper sites on desktop. */
+.article-view-page .article-view-body,
+.article-view-page .article-view-body .article-body {
+  max-width: 900px;
+  color: #202020;
+  font-size: 19px;
+  font-weight: 400;
+  line-height: 1.72;
+}
+
+.article-view-page .article-view-body .article-body :is(p, ul, ol) {
+  margin-top: 0;
+  margin-bottom: 1.18em;
+  font-size: inherit;
+  font-weight: 400;
+  line-height: inherit;
+}
+
+.article-view-page .article-view-body .article-body li {
+  margin-bottom: 0.34em;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+.article-view-page .article-view-body .article-body :is(strong, b) {
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 700;
+  letter-spacing: normal;
+  word-spacing: normal;
+}
+
+.article-view-page .article-view-body .article-body h2 {
+  margin: 1.7em 0 0.58em;
+  font-size: 26px;
+  font-weight: 700;
+  line-height: 1.32;
+}
+
+.article-view-page .article-view-body .article-body h3 {
+  margin: 1.55em 0 0.52em;
+  font-size: 23px;
+  font-weight: 700;
+  line-height: 1.34;
+}
+
+.article-view-page .article-view-body .article-body h4 {
+  margin: 1.45em 0 0.48em;
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.38;
+}
+
+.article-view-page .article-view-body .article-body blockquote {
+  font-size: 19px;
+  line-height: 1.68;
+}
+
+.article-view-page .article-view-body .article-body figcaption {
+  margin-top: 7px;
+  color: #777;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+}
+
+/* Metadata stays sans-serif so the page has a clearer editorial hierarchy. */
+.article-view-page .article-view-author strong,
+.article-view-page .article-view-author a,
+.article-view-page .article-view-byline span,
+.article-view-page .article-view-updated {
+  font-family: Arial, "Segoe UI", sans-serif;
+}
+
+.article-view-page .article-view-author strong,
+.article-view-page .article-view-author a {
+  font-size: 14px;
+}
+
+.article-view-page .article-view-byline span,
+.article-view-page .article-view-updated {
+  font-size: 13px;
+}
+
+/* Right rail remains editorial but should not overpower the main article. */
+.article-view-page .article-popular-sidebar__header h2,
+.article-view-page .article-popular-sidebar__copy h3,
+.article-view-page .article-popular-sidebar__item::before {
+  font-family: "Times New Roman", "Noto Serif", serif;
+  letter-spacing: normal;
+  word-spacing: normal;
+}
+
+.article-view-page .article-popular-sidebar__header h2 {
+  font-size: 30px;
+  line-height: 1.15;
+}
+
+.article-view-page .article-popular-sidebar__copy h3 {
+  font-size: 17px;
+  line-height: 1.38;
+}
+
+.article-view-page .article-popular-sidebar__item::before {
+  font-size: 18px;
+}
+
+@media (max-width: 1100px) {
+  .article-view-page .article-view-header h1 {
+    font-size: clamp(38px, 4.2vw, 46px);
+  }
+
+  .article-view-page .article-view-body,
+  .article-view-page .article-view-body .article-body {
+    font-size: 18.5px;
+  }
+}
+
+@media (max-width: 680px) {
+  .article-view-page .article-view-header h1 {
+    font-size: 34px;
+    line-height: 1.1;
+    letter-spacing: -0.012em;
+  }
+
+  .article-view-page .article-view-lead {
+    margin-top: 14px;
+    font-size: 18px;
+    font-weight: 600;
+    line-height: 1.55;
+  }
+
+  .article-view-page .article-view-body,
+  .article-view-page .article-view-body .article-body {
+    font-size: 17.5px;
+    line-height: 1.68;
+  }
+
+  .article-view-page .article-view-body .article-body h2 {
+    font-size: 24px;
+  }
+
+  .article-view-page .article-view-body .article-body h3 {
+    font-size: 21px;
+  }
+
+  .article-view-page .article-view-body .article-body h4 {
+    font-size: 19px;
+  }
+
+  .article-view-page .article-view-body .article-body blockquote {
+    font-size: 17.5px;
+  }
+
+  .article-view-page .article-view-body .article-body figcaption {
+    font-size: 13px;
+  }
+}

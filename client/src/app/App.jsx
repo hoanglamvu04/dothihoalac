@@ -17,6 +17,7 @@ import AdminLayout from '../components/layout/AdminLayout';
 import ProtectedRoute from '../components/auth/ProtectedRoute';
 import GuestRoute from '../components/auth/GuestRoute';
 import AdminRoute from '../components/auth/AdminRoute';
+import EditorRouteId from '../components/routing/EditorRouteId';
 import { PageLoading } from '../components/common/Loading';
 
 const HomePage = lazy(() => import('../pages/public/HomePage'));
@@ -58,7 +59,11 @@ const ReportsPage = lazy(() => import('../pages/account/ReportsPage'));
 const AdminDashboardPage = lazy(() => import('../pages/admin/AdminDashboardPage'));
 const ModerationQueuePage = lazy(() => import('../pages/admin/ModerationQueuePage'));
 const AdminArticlesPage = lazy(() => import('../pages/admin/AdminArticlesPage'));
-const ArticleEditorPage = lazy(() => import('../pages/admin/ArticleEditorPage'));
+const AdminSourceWatchPage = lazy(() => import('../pages/admin/AdminSourceWatchPage'));
+const ArticleMetadataPage = lazy(() => import('../pages/admin/ArticleMetadataPage'));
+const GoogleDocsArticleLauncher = lazy(() => import('../pages/admin/GoogleDocsArticleLauncher'));
+const GoogleWorkspacePage = lazy(() => import('../pages/admin/GoogleWorkspacePage'));
+const AdminJobsPage = lazy(() => import('../pages/admin/AdminJobsPage'));
 const AdminUsersPage = lazy(() => import('../pages/admin/AdminUsersPage'));
 const AdminReportsPage = lazy(() => import('../pages/admin/AdminReportsPage'));
 const AdminLeadsPage = lazy(() => import('../pages/admin/AdminLeadsPage'));
@@ -74,6 +79,23 @@ function AdminOnly({ children }) {
   return <AdminRoute>{children}</AdminRoute>;
 }
 
+function ProtectedEditor({
+  basePath,
+  sessionPrefix,
+  children,
+}) {
+  return (
+    <Protected>
+      <EditorRouteId
+        basePath={basePath}
+        sessionPrefix={sessionPrefix}
+      >
+        {children}
+      </EditorRouteId>
+    </Protected>
+  );
+}
+
 function RouterEffects() {
   return (
     <>
@@ -86,152 +108,171 @@ function RouterEffects() {
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route element={<RouterEffects />}>
+      <Route
+        path="quan-tri"
+        element={
+          <AdminOnly>
+            <AdminLayout />
+          </AdminOnly>
+        }
+      >
+        <Route index element={<AdminDashboardPage />} />
+        <Route path="kiem-duyet" element={<ModerationQueuePage />} />
+        <Route path="bai-viet" element={<AdminArticlesPage />} />
+        <Route path="theo-doi-nguon" element={<AdminSourceWatchPage />} />
+
+        <Route path="bai-viet/moi" element={<GoogleDocsArticleLauncher />} />
+        <Route path="bai-viet/docs/moi" element={<GoogleDocsArticleLauncher />} />
+        <Route path="bai-viet/:id/sua" element={<ArticleMetadataPage />} />
+        <Route path="bai-viet/:id/docs" element={<GoogleDocsArticleLauncher />} />
+
+        <Route path="viec-lam" element={<AdminJobsPage />} />
+        <Route path="nguoi-dung" element={<AdminUsersPage />} />
+        <Route path="bao-cao" element={<AdminReportsPage />} />
+        <Route path="khach-hang" element={<AdminLeadsPage />} />
+        <Route path="phan-loai" element={<AdminTaxonomyPage />} />
+        <Route path="google-workspace" element={<GoogleWorkspacePage />} />
+        <Route path="he-thong" element={<AdminSystemPage />} />
+        <Route path="nhat-ky" element={<AdminLogsPage />} />
+      </Route>
+
       <Route element={<PublicLayout />}>
         <Route index element={<HomePage />} />
         <Route path="tin-tuc" element={<ArticlesPage />} />
+        <Route path="tin-tuc/:id/:slug" element={<ArticleDetailPage />} />
         <Route path="tin-tuc/:slug" element={<ArticleDetailPage />} />
+
         <Route path="cong-dong" element={<CommunityPage />} />
+        <Route path="cong-dong/:id/:slug" element={<CommunityDetailPage />} />
         <Route path="cong-dong/:slug" element={<CommunityDetailPage />} />
+
         <Route path="nha-dat" element={<PropertiesPage />} />
+        <Route path="nha-dat/:id/:slug" element={<PropertyDetailPage />} />
         <Route path="nha-dat/:slug" element={<PropertyDetailPage />} />
+
         <Route path="viec-lam" element={<JobsPage />} />
+        <Route path="viec-lam/:id/:slug" element={<JobDetailPage />} />
         <Route path="viec-lam/:slug" element={<JobDetailPage />} />
+
         <Route path="tim-kiem" element={<SearchPage />} />
         <Route path="khu-vuc/:slug" element={<AreaPage />} />
         <Route path="thanh-vien/:username" element={<PublicProfilePage />} />
         <Route path="lien-he" element={<ContactPage />} />
-        <Route
-          path="tu-van-kien-truc"
-          element={<LeadPage type="architecture_design" />}
-        />
-        <Route
-          path="uoc-tinh-chi-phi-xay-dung"
-          element={<LeadPage type="cost_estimation" />}
-        />
+        <Route path="tu-van-kien-truc" element={<LeadPage type="architecture_design" />} />
+        <Route path="uoc-tinh-chi-phi-xay-dung" element={<LeadPage type="cost_estimation" />} />
         <Route path="tim-homestay" element={<LeadPage type="homestay_search" />} />
         <Route path="dat-villa" element={<LeadPage type="villa_booking" />} />
         <Route path="trang/:slug" element={<StaticPage />} />
         <Route path="gioi-thieu" element={<StaticPage fixedSlug="gioi-thieu" />} />
-        <Route
-          path="dieu-khoan-su-dung"
-          element={<StaticPage fixedSlug="dieu-khoan-su-dung" />}
-        />
-        <Route
-          path="chinh-sach-quyen-rieng-tu"
-          element={<StaticPage fixedSlug="chinh-sach-quyen-rieng-tu" />}
-        />
-        <Route
-          path="quy-dinh-dang-bai"
-          element={<StaticPage fixedSlug="quy-dinh-dang-bai" />}
-        />
-        <Route
-          path="dieu-khoan"
-          element={<StaticPage fixedSlug="dieu-khoan-su-dung" />}
-        />
-        <Route
-          path="chinh-sach-quyen-rieng"
-          element={<StaticPage fixedSlug="chinh-sach-quyen-rieng-tu" />}
-        />
+        <Route path="dieu-khoan-su-dung" element={<StaticPage fixedSlug="dieu-khoan-su-dung" />} />
+        <Route path="chinh-sach-quyen-rieng-tu" element={<StaticPage fixedSlug="chinh-sach-quyen-rieng-tu" />} />
+        <Route path="quy-dinh-dang-bai" element={<StaticPage fixedSlug="quy-dinh-dang-bai" />} />
+        <Route path="dieu-khoan" element={<StaticPage fixedSlug="dieu-khoan-su-dung" />} />
+        <Route path="chinh-sach-quyen-rieng" element={<StaticPage fixedSlug="chinh-sach-quyen-rieng-tu" />} />
         <Route path="tu-van" element={<LeadPage />} />
 
-        <Route
-          path="dang-nhap"
-          element={
-            <GuestRoute>
-              <LoginPage />
-            </GuestRoute>
-          }
-        />
-        <Route
-          path="dang-ky"
-          element={
-            <GuestRoute>
-              <RegisterPage />
-            </GuestRoute>
-          }
-        />
-        <Route
-          path="quen-mat-khau"
-          element={
-            <GuestRoute>
-              <ForgotPasswordPage />
-            </GuestRoute>
-          }
-        />
-        <Route
-          path="dat-lai-mat-khau/:token"
-          element={
-            <GuestRoute>
-              <ResetPasswordPage />
-            </GuestRoute>
-          }
-        />
+        <Route path="dang-nhap" element={<GuestRoute><LoginPage /></GuestRoute>} />
+        <Route path="dang-ky" element={<GuestRoute><RegisterPage /></GuestRoute>} />
+        <Route path="quen-mat-khau" element={<GuestRoute><ForgotPasswordPage /></GuestRoute>} />
+        <Route path="dat-lai-mat-khau/:token" element={<GuestRoute><ResetPasswordPage /></GuestRoute>} />
 
-        <Route
-          path="xac-thuc-email"
-          element={
-            <Protected>
-              <VerifyEmailPage />
-            </Protected>
-          }
-        />
-        <Route
-          path="xac-thuc-so-dien-thoai"
-          element={
-            <Protected>
-              <VerifyPhonePage />
-            </Protected>
-          }
-        />
-        <Route
-          path="dang-bai"
-          element={
-            <Protected>
-              <CreateHubPage />
-            </Protected>
-          }
-        />
+        <Route path="xac-thuc-email" element={<Protected><VerifyEmailPage /></Protected>} />
+        <Route path="xac-thuc-so-dien-thoai" element={<Protected><VerifyPhonePage /></Protected>} />
+        <Route path="dang-bai" element={<Protected><CreateHubPage /></Protected>} />
+
         <Route
           path="dang-bai/cong-dong"
           element={
-            <Protected>
+            <ProtectedEditor
+              basePath="/dang-bai/cong-dong"
+              sessionPrefix="community"
+            >
               <CommunityEditorPage />
-            </Protected>
+            </ProtectedEditor>
           }
         />
         <Route
-          path="dang-bai/nha-dat"
+          path="dang-bai/cong-dong/:editorId"
           element={
-            <Protected>
-              <PropertyEditorPage />
-            </Protected>
-          }
-        />
-        <Route
-          path="dang-bai/viec-lam"
-          element={
-            <Protected>
-              <JobEditorPage />
-            </Protected>
-          }
-        />
-        <Route
-          path="gui-tin"
-          element={
-            <Protected>
-              <NewsTipPage />
-            </Protected>
+            <ProtectedEditor
+              basePath="/dang-bai/cong-dong"
+              sessionPrefix="community"
+            >
+              <CommunityEditorPage />
+            </ProtectedEditor>
           }
         />
 
         <Route
-          path="tai-khoan"
+          path="dang-bai/nha-dat"
           element={
-            <Protected>
-              <AccountLayout />
-            </Protected>
+            <ProtectedEditor
+              basePath="/dang-bai/nha-dat"
+              sessionPrefix="property"
+            >
+              <PropertyEditorPage />
+            </ProtectedEditor>
           }
-        >
+        />
+        <Route
+          path="dang-bai/nha-dat/:editorId"
+          element={
+            <ProtectedEditor
+              basePath="/dang-bai/nha-dat"
+              sessionPrefix="property"
+            >
+              <PropertyEditorPage />
+            </ProtectedEditor>
+          }
+        />
+
+        <Route
+          path="dang-bai/viec-lam"
+          element={
+            <ProtectedEditor
+              basePath="/dang-bai/viec-lam"
+              sessionPrefix="job"
+            >
+              <JobEditorPage />
+            </ProtectedEditor>
+          }
+        />
+        <Route
+          path="dang-bai/viec-lam/:editorId"
+          element={
+            <ProtectedEditor
+              basePath="/dang-bai/viec-lam"
+              sessionPrefix="job"
+            >
+              <JobEditorPage />
+            </ProtectedEditor>
+          }
+        />
+
+        <Route
+          path="gui-tin"
+          element={
+            <ProtectedEditor
+              basePath="/gui-tin"
+              sessionPrefix="news-tip"
+            >
+              <NewsTipPage />
+            </ProtectedEditor>
+          }
+        />
+        <Route
+          path="gui-tin/:editorId"
+          element={
+            <ProtectedEditor
+              basePath="/gui-tin"
+              sessionPrefix="news-tip"
+            >
+              <NewsTipPage />
+            </ProtectedEditor>
+          }
+        />
+
+        <Route path="tai-khoan" element={<Protected><AccountLayout /></Protected>}>
           <Route index element={<AccountOverviewPage />} />
           <Route path="ho-so" element={<ProfileSettingsPage />} />
           <Route path="bao-mat" element={<SecurityPage />} />
@@ -241,26 +282,6 @@ const router = createBrowserRouter(
           <Route path="tin-nha-dat" element={<MyListingsPage />} />
           <Route path="da-luu" element={<BookmarksPage />} />
           <Route path="bao-cao" element={<ReportsPage />} />
-        </Route>
-
-        <Route
-          path="quan-tri"
-          element={
-            <AdminOnly>
-              <AdminLayout />
-            </AdminOnly>
-          }
-        >
-          <Route index element={<AdminDashboardPage />} />
-          <Route path="kiem-duyet" element={<ModerationQueuePage />} />
-          <Route path="bai-viet" element={<AdminArticlesPage />} />
-          <Route path="bai-viet/moi" element={<ArticleEditorPage />} />
-          <Route path="nguoi-dung" element={<AdminUsersPage />} />
-          <Route path="bao-cao" element={<AdminReportsPage />} />
-          <Route path="khach-hang" element={<AdminLeadsPage />} />
-          <Route path="phan-loai" element={<AdminTaxonomyPage />} />
-          <Route path="he-thong" element={<AdminSystemPage />} />
-          <Route path="nhat-ky" element={<AdminLogsPage />} />
         </Route>
 
         <Route path="*" element={<NotFoundPage />} />

@@ -9,6 +9,7 @@ export const articleApi = {
 export const communityApi = {
   list: async (params = {}) => unwrapList(await api.get('/community', { params })),
   detail: async (slug) => unwrap(await api.get(`/community/${slug}`)),
+  editDetail: async (id) => unwrap(await api.get(`/community/${id}/edit`)),
   create: async (payload) => unwrap(await api.post('/community', payload)),
   update: async (id, payload) => unwrap(await api.patch(`/community/${id}`, payload)),
   remove: async (id) => api.delete(`/community/${id}`),

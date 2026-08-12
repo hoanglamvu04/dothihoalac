@@ -1,14 +1,81 @@
 import { CONTENT_TYPES } from './constants';
 
+const CONTENT_SECTIONS = {
+  article: 'tin-tuc',
+  community: 'cong-dong',
+  property: 'nha-dat',
+  job: 'viec-lam',
+};
+
+const EDITOR_SECTIONS = {
+  community: '/dang-bai/cong-dong',
+  property: '/dang-bai/nha-dat',
+  job: '/dang-bai/viec-lam',
+  news_tip: '/gui-tin',
+};
+
+export function contentId(item) {
+  if (!item) return '';
+
+  if (typeof item === 'string') {
+    return item;
+  }
+
+  return String(item._id || item.id || '');
+}
+
+export function isPersistedContentId(value) {
+  return /^[0-9a-fA-F]{24}$/.test(String(value || ''));
+}
+
+export function createEditorSessionId(prefix = 'draft') {
+  const safePrefix = String(prefix || 'draft')
+    .toLowerCase()
+    .replace(/[^a-z0-9-]+/g, '-')
+    .replace(/^-+|-+$/g, '') || 'draft';
+
+  if (globalThis.crypto?.randomUUID) {
+    return `${safePrefix}-${globalThis.crypto.randomUUID()}`;
+  }
+
+  return `${safePrefix}-${Date.now()}-${Math.random()
+    .toString(36)
+    .slice(2, 10)}`;
+}
+
+export function editorBasePath(type) {
+  return EDITOR_SECTIONS[type] || '/dang-bai';
+}
+
+export function editorPath(item) {
+  const id = contentId(item);
+  const base = editorBasePath(item?.contentType);
+
+  if (!id || base === '/dang-bai') {
+    return base;
+  }
+
+  return `${base}/${encodeURIComponent(id)}`;
+}
+
 export function contentPath(item) {
   const type = item?.contentType;
-  const slug = item?.slug;
-  if (!slug) return '#';
-  if (type === 'article') return `/tin-tuc/${slug}`;
-  if (type === 'community') return `/cong-dong/${slug}`;
-  if (type === 'property') return `/nha-dat/${slug}`;
-  if (type === 'job') return `/viec-lam/${slug}`;
-  return `/noi-dung/${slug}`;
+  const slug = String(item?.slug || '').trim();
+  const id = contentId(item);
+  const section = CONTENT_SECTIONS[type];
+
+  if (!section || !slug) {
+    return '#';
+  }
+
+  const encodedSlug = encodeURIComponent(slug);
+
+  if (id) {
+    return `/${section}/${encodeURIComponent(id)}/${encodedSlug}`;
+  }
+
+  // Giữ tương thích với dữ liệu cũ chưa có ID ở client.
+  return `/${section}/${encodedSlug}`;
 }
 
 export function contentTypeLabel(type) {
