@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { configureDnsServers } from '../config/dns.js';
 import { connectDatabase, disconnectDatabase } from '../config/database.js';
 import { logger } from '../config/logger.js';
 import { env } from '../config/env.js';
@@ -17,6 +18,9 @@ async function clearDatabase() {
 }
 
 async function run() {
+  const dnsServers = configureDnsServers();
+  logger.info({ dnsServers }, 'DNS configured for reset seed runner');
+
   await connectDatabase();
   await clearDatabase();
   const result = await runSeed({ includeDemo: true });
