@@ -4,6 +4,7 @@ const definitions = {
   article: [
     ['Quy hoạch', 'quy-hoach'],
     ['Hạ tầng - Giao thông', 'ha-tang-giao-thong'],
+    ['Dự án ĐTXD', 'du-an-dtxd'],
     ['Bất động sản', 'bat-dong-san'],
     ['Khu Công nghệ cao', 'khu-cong-nghe-cao'],
     ['Giáo dục - Đại học Quốc gia', 'giao-duc'],
