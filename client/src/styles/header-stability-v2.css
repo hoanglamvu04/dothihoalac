@@ -1,0 +1,134 @@
+/* =========================================================
+   DTHL HEADER STABILITY V2
+   - Prevent layout-height changes while scrolling.
+   - Keep smart hide/show transform-only to avoid scroll jitter.
+   - Add a compact, clickable Trang chủ entry before Tin tức on desktop.
+========================================================= */
+
+.dthl-header {
+  opacity: 1 !important;
+  filter: none !important;
+  transition:
+    transform 190ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 150ms ease !important;
+  will-change: transform;
+}
+
+.dthl-header.is-hidden {
+  opacity: 1 !important;
+  filter: none !important;
+  transform: translate3d(0, calc(-100% - 2px), 0) !important;
+}
+
+/*
+ * The previous compact mode changed the actual sticky-header height as soon
+ * as scrollY crossed a tiny threshold. That changed document geometry while
+ * the browser was still resolving the same scroll gesture and could make the
+ * header flicker between compact/non-compact states. Keep row geometry fixed;
+ * compact mode may still visually reduce inner controls without moving page
+ * content underneath the reader.
+ */
+@media (min-width: 1021px) {
+  .dthl-header.is-compact .dthl-header-top {
+    min-height: 32px !important;
+    max-height: 32px !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .dthl-header.is-compact .dthl-header-top__inner {
+    min-height: 32px !important;
+  }
+
+  .dthl-header.is-compact .dthl-header-main__inner {
+    min-height: 78px !important;
+  }
+
+  .dthl-header.is-compact .dthl-header-nav__inner {
+    min-height: 48px !important;
+  }
+
+  .dthl-header-top,
+  .dthl-header-main__inner,
+  .dthl-header-nav__inner {
+    transition: none !important;
+  }
+}
+
+@media (max-width: 1020px) {
+  .dthl-header.is-compact .dthl-header-main__inner {
+    min-height: 72px !important;
+  }
+
+  .dthl-header-main__inner {
+    transition: none !important;
+  }
+}
+
+/* =========================
+   DESKTOP HOME NAV ENTRY
+   The brand already points to `/`. Its pseudo-element extends that same
+   clickable home link into the primary nav row without duplicating routing
+   state or adding another scroll listener.
+========================= */
+@media (min-width: 1021px) {
+  .dthl-header-main {
+    z-index: 2;
+  }
+
+  .dthl-brand {
+    position: static;
+  }
+
+  .dthl-brand::after {
+    position: absolute;
+    bottom: -43px;
+    left: max(20px, calc((100vw - 1480px) / 2));
+    z-index: 4;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    min-height: 37px;
+    padding: 0 16px;
+
+    border-radius: 11px;
+
+    color: var(--dthl-text);
+    background: transparent;
+
+    font-size: 0.9rem;
+    font-weight: 680;
+    line-height: 1;
+    white-space: nowrap;
+
+    content: 'Trang chủ';
+
+    transition:
+      color 150ms ease,
+      background 150ms ease;
+  }
+
+  .dthl-brand:hover::after,
+  .dthl-brand:focus-visible::after {
+    color: var(--dthl-green-dark);
+    background: var(--dthl-green-soft);
+  }
+
+  .dthl-header-nav nav {
+    padding-left: 103px;
+  }
+}
+
+@media (max-width: 1240px) and (min-width: 1021px) {
+  .dthl-brand::after {
+    left: 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dthl-header {
+    transition: none !important;
+  }
+}
