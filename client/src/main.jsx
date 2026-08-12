@@ -13,6 +13,7 @@ import './styles/focus-area-copy.css';
 import './styles/mobile-ui-polish.css';
 import './styles/newsroom-mobile-v2.css';
 import './styles/articles-modern-v2.css';
+import './styles/articles-newsroom-v3.css';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
