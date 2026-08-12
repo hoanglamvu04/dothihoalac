@@ -28,7 +28,7 @@ function baseCookieOptions() {
 }
 
 export function setAuthCookies(res, { accessToken, refreshToken }) {
-  res.cookie(ACCESS_COOKIE, accessToken, { ...baseCookieOptions(), maxAge: 15 * 60 * 1000 });
+  res.cookie(ACCESS_COOKIE, accessToken, { ...baseCookieOptions(), maxAge: 60 * 60 * 1000 });
   res.cookie(REFRESH_COOKIE, refreshToken, {
     ...baseCookieOptions(),
     maxAge: 30 * 24 * 60 * 60 * 1000,
