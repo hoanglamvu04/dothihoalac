@@ -1,8 +1,19 @@
+import {
+  memo,
+  useMemo,
+} from 'react';
 import DOMPurify from 'dompurify';
 
-export default function ArticleBody({ html }) {
-  const normalizedHtml = String(html || '').normalize('NFC');
-  const sanitizedHtml = DOMPurify.sanitize(normalizedHtml);
+function ArticleBody({ html }) {
+  const sanitizedHtml = useMemo(() => {
+    const normalizedHtml = String(
+      html || '',
+    ).normalize('NFC');
+
+    return DOMPurify.sanitize(
+      normalizedHtml,
+    );
+  }, [html]);
 
   return (
     <div
@@ -13,3 +24,5 @@ export default function ArticleBody({ html }) {
     />
   );
 }
+
+export default memo(ArticleBody);
