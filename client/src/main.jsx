@@ -11,6 +11,7 @@ import './styles/responsive.css';
 import './styles/editorial-polish.css';
 import './styles/focus-area-copy.css';
 import './styles/mobile-ui-polish.css';
+import './styles/newsroom-mobile-v2.css';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
