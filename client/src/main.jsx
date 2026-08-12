@@ -15,6 +15,7 @@ import './styles/newsroom-mobile-v2.css';
 import './styles/articles-modern-v2.css';
 import './styles/articles-newsroom-v3.css';
 import './styles/articles-newsroom-v4.css';
+import './styles/header-stability-v2.css';
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
