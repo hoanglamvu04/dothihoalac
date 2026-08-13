@@ -1,0 +1,268 @@
+/* =========================================================
+   DTHL HEADER MODERN V3
+   - Gọn hơn, nhẹ hơn, hiện đại hơn trên desktop.
+   - Giữ nguyên logic tìm kiếm / tài khoản / thông báo.
+   - Loại bỏ nút Đăng bài khỏi header desktop và mobile.
+========================================================= */
+
+.dthl-post-button,
+.dthl-mobile-post-button {
+  display: none !important;
+}
+
+@media (min-width: 1021px) {
+  .dthl-header-main {
+    border-bottom: 1px solid rgba(16, 38, 26, 0.07);
+    background: rgba(255, 255, 255, 0.965);
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+  }
+
+  .dthl-header-main__inner,
+  .dthl-header.is-compact .dthl-header-main__inner {
+    grid-template-columns:
+      minmax(228px, 292px)
+      minmax(340px, 1fr)
+      auto;
+    min-height: 68px !important;
+    gap: 18px;
+  }
+
+  .dthl-brand {
+    gap: 10px;
+  }
+
+  .dthl-brand__mark,
+  .dthl-header.is-compact .dthl-brand__mark {
+    width: 44px !important;
+    height: 44px !important;
+    border-radius: 11px !important;
+  }
+
+  .dthl-brand__content {
+    gap: 2px;
+  }
+
+  .dthl-brand__content strong {
+    font-size: 1rem;
+    font-weight: 730;
+    letter-spacing: -0.015em;
+  }
+
+  .dthl-brand__content small {
+    font-size: 0.61rem;
+    font-weight: 720;
+    letter-spacing: 0.115em;
+  }
+
+  .dthl-header-search {
+    height: 44px;
+    padding: 3px 4px 3px 14px;
+    gap: 9px;
+    border-color: rgba(16, 38, 26, 0.1);
+    border-radius: 14px;
+    background: #f6f9f7;
+    box-shadow: none;
+    transition:
+      border-color 170ms ease,
+      background-color 170ms ease,
+      box-shadow 170ms ease;
+  }
+
+  .dthl-header-search:hover {
+    border-color: rgba(31, 163, 75, 0.23);
+    background: #f8fbf9;
+  }
+
+  .dthl-header-search:focus-within {
+    border-color: rgba(31, 163, 75, 0.58);
+    background: #ffffff;
+    box-shadow:
+      0 0 0 3px rgba(31, 163, 75, 0.08),
+      0 8px 22px rgba(8, 61, 32, 0.055);
+  }
+
+  .dthl-header-search__leading-icon {
+    width: 18px;
+    height: 18px;
+  }
+
+  .dthl-header-search input {
+    font-size: 0.88rem;
+  }
+
+  .dthl-header-search input::placeholder {
+    color: #89958e;
+  }
+
+  .dthl-header-search__clear {
+    width: 28px;
+    height: 28px;
+  }
+
+  .dthl-header-search__submit {
+    height: 36px;
+    padding: 0 14px;
+    gap: 6px;
+    border-radius: 10px;
+    font-size: 0.79rem;
+    font-weight: 720;
+    box-shadow: none;
+  }
+
+  .dthl-header-search__submit:hover:not(:disabled) {
+    box-shadow: 0 7px 16px rgba(31, 163, 75, 0.16);
+    transform: translateY(-1px);
+  }
+
+  .dthl-header-actions {
+    gap: 6px;
+  }
+
+  .dthl-icon-button,
+  .dthl-mobile-menu-button {
+    width: 40px;
+    height: 40px;
+    border-color: rgba(16, 38, 26, 0.09);
+    border-radius: 11px;
+    background: #f7faf8;
+  }
+
+  .dthl-icon-button:hover,
+  .dthl-icon-button.is-active,
+  .dthl-mobile-menu-button:hover {
+    border-color: rgba(31, 163, 75, 0.24);
+    background: #edf8f1;
+  }
+
+  .dthl-auth-actions {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .dthl-login-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 0 12px;
+    gap: 6px;
+    border-radius: 10px;
+    color: #29443a !important;
+    font-size: 0.85rem;
+    font-weight: 690;
+    white-space: nowrap;
+    transition:
+      color 150ms ease,
+      background-color 150ms ease;
+  }
+
+  .dthl-login-link:hover {
+    color: #08743d !important;
+    background: #f0f8f3;
+  }
+
+  .dthl-register-button {
+    height: 40px;
+    padding: 0 14px;
+    gap: 6px;
+    border-radius: 11px;
+    font-size: 0.85rem;
+    font-weight: 720;
+    box-shadow: 0 7px 18px rgba(31, 163, 75, 0.15);
+  }
+
+  .dthl-register-button:hover {
+    box-shadow: 0 9px 20px rgba(31, 163, 75, 0.2);
+  }
+
+  .dthl-header-nav {
+    border-bottom: 1px solid rgba(16, 38, 26, 0.07);
+    background: rgba(255, 255, 255, 0.985);
+  }
+
+  .dthl-header-nav__inner,
+  .dthl-header.is-compact .dthl-header-nav__inner {
+    min-height: 46px !important;
+  }
+
+  .dthl-header-nav-upgrade {
+    gap: 2px;
+  }
+
+  .dthl-header-nav-upgrade__link {
+    min-height: 38px;
+    padding: 0 0.68rem;
+    border-radius: 10px;
+    color: #314a3f;
+    font-size: 0.88rem;
+    font-weight: 680;
+    letter-spacing: -0.008em;
+    transition:
+      color 150ms ease,
+      background-color 150ms ease,
+      box-shadow 150ms ease,
+      transform 150ms ease;
+  }
+
+  .dthl-header-nav-upgrade__link:hover {
+    color: #08743d;
+    background: #f2f8f4;
+  }
+
+  .dthl-header-nav-upgrade__link.is-active {
+    color: #08743d;
+    background: #edf7f0;
+    box-shadow: inset 0 -2px 0 #18a558;
+  }
+
+  .dthl-header-nav__quick-links {
+    gap: 20px;
+  }
+
+  .dthl-header-nav__quick-links a {
+    color: #718078;
+    font-size: 0.79rem;
+    font-weight: 620;
+  }
+
+  .dthl-header-nav__quick-links a:hover {
+    color: #08743d;
+  }
+}
+
+@media (min-width: 1021px) and (max-width: 1280px) {
+  .dthl-header-main__inner,
+  .dthl-header.is-compact .dthl-header-main__inner {
+    grid-template-columns:
+      minmax(210px, 250px)
+      minmax(300px, 1fr)
+      auto;
+    gap: 12px;
+  }
+
+  .dthl-header-search__submit {
+    padding-inline: 11px;
+  }
+
+  .dthl-login-link {
+    padding-inline: 9px;
+  }
+
+  .dthl-register-button {
+    padding-inline: 11px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dthl-header-search,
+  .dthl-header-search__submit,
+  .dthl-icon-button,
+  .dthl-mobile-menu-button,
+  .dthl-login-link,
+  .dthl-register-button,
+  .dthl-header-nav-upgrade__link {
+    transition: none !important;
+  }
+}
