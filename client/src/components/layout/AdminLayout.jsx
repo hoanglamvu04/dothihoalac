@@ -94,7 +94,9 @@ export default function AdminLayout() {
     >
       <aside className="admin-sidebar" aria-label="Điều hướng quản trị">
         <Link className="admin-brand" to="/quan-tri">
-          <span className="admin-brand-mark">ĐT</span>
+          <span className="admin-brand-mark">
+            <img src="/Logo.png" alt="" aria-hidden="true" />
+          </span>
           <span className="admin-brand-copy">
             <strong>Đô Thị Hòa Lạc</strong>
             <small>Content & Community Studio</small>
