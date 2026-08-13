@@ -303,18 +303,6 @@ export default function ArticlesPage() {
       ? pageCopy.filteredTitle
       : pageCopy.latestTitle;
 
-  const compactHero = isCategoryPage
-    ? {
-        display: 'block',
-        minHeight: 0,
-        padding: '15px 20px',
-        borderLeft: '3px solid var(--articles-accent)',
-        borderRadius: '13px',
-        background: '#fff',
-        boxShadow: '0 6px 22px rgb(20 62 36 / 0.045)',
-      }
-    : undefined;
-
   return (
     <section
       className={`articles-page articles-page-v3 articles-page--${pageCopy.theme}`}
@@ -322,213 +310,207 @@ export default function ArticlesPage() {
       <Seo title={pageCopy.seoTitle} description={pageCopy.seoDescription} />
 
       <div className="articles-page__container">
-        <header className="articles-hero articles-v3-hero" style={compactHero}>
-          <div className="articles-hero__content">
-            <span className="articles-hero__eyebrow">
-              <Newspaper size={15} />
-              {pageCopy.eyebrow}
-            </span>
-            <h1
-              style={
-                isCategoryPage
-                  ? {
-                      margin: '5px 0 0',
-                      maxWidth: 'none',
-                      fontSize: 'clamp(21px, 2vw, 28px)',
-                      lineHeight: 1.15,
-                    }
-                  : undefined
-              }
-            >
-              {pageCopy.title}
-            </h1>
-            <p
-              style={
-                isCategoryPage
-                  ? {
-                      maxWidth: '900px',
-                      marginTop: '5px',
-                      fontSize: '12.5px',
-                      lineHeight: 1.5,
-                    }
-                  : undefined
-              }
-            >
-              {pageCopy.description}
-            </p>
-          </div>
-
-          {!isCategoryPage ? (
-            <form
-              className="articles-hero__search articles-v3-search"
-              onSubmit={(event) => {
-                event.preventDefault();
-                updateUrl({ q: searchDraft.trim() });
-              }}
-            >
-              <Search size={19} />
-              <input
-                type="search"
-                value={searchDraft}
-                onChange={(event) => setSearchDraft(event.target.value)}
-                placeholder={pageCopy.searchPlaceholder}
-                aria-label="Tìm kiếm tin tức"
-              />
-              <button
-                type="submit"
-                className="articles-hero__search-submit"
-                disabled={!searchDraft.trim()}
-              >
-                <Search size={16} />
-                Tìm kiếm
-              </button>
-            </form>
-          ) : null}
-        </header>
-
         {!isCategoryPage ? (
-          <div className="articles-v3-category-shell">
-            <span className="articles-v3-category-label">Theo chuyên mục</span>
-            <nav
-              className="articles-category-rail articles-v3-category-rail"
-              aria-label="Chuyên mục tin tức"
-            >
-              <button
-                type="button"
-                className={!category ? 'is-active' : ''}
-                onClick={() => {
-                  setCategoryDraft('');
-                  updateUrl({ category: '' });
+          <>
+            <header className="articles-hero articles-v3-hero">
+              <div className="articles-hero__content">
+                <span className="articles-hero__eyebrow">
+                  <Newspaper size={15} />
+                  {pageCopy.eyebrow}
+                </span>
+                <h1>{pageCopy.title}</h1>
+                <p>{pageCopy.description}</p>
+              </div>
+
+              <form
+                className="articles-hero__search articles-v3-search"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  updateUrl({ q: searchDraft.trim() });
                 }}
               >
-                Tin mới
-              </button>
-              {ARTICLE_CATEGORY_RAIL.map((item) => (
+                <Search size={19} />
+                <input
+                  type="search"
+                  value={searchDraft}
+                  onChange={(event) => setSearchDraft(event.target.value)}
+                  placeholder={pageCopy.searchPlaceholder}
+                  aria-label="Tìm kiếm tin tức"
+                />
+                <button
+                  type="submit"
+                  className="articles-hero__search-submit"
+                  disabled={!searchDraft.trim()}
+                >
+                  <Search size={16} />
+                  Tìm kiếm
+                </button>
+              </form>
+            </header>
+
+            <div className="articles-v3-category-shell">
+              <span className="articles-v3-category-label">Theo chuyên mục</span>
+              <nav
+                className="articles-category-rail articles-v3-category-rail"
+                aria-label="Chuyên mục tin tức"
+              >
                 <button
                   type="button"
-                  key={item.slug}
-                  className={category === item.slug ? 'is-active' : ''}
+                  className={!category ? 'is-active' : ''}
                   onClick={() => {
-                    setCategoryDraft(item.slug);
-                    updateUrl({ category: item.slug });
+                    setCategoryDraft('');
+                    updateUrl({ category: '' });
                   }}
                 >
-                  {item.label}
+                  Tin mới
                 </button>
-              ))}
-            </nav>
-          </div>
-        ) : null}
-
-        <section className="articles-v3-filterbar" aria-label="Bộ lọc tin tức">
-          <div className="articles-v3-filterbar__title">
-            <SlidersHorizontal size={17} />
-            <strong>Lọc nội dung</strong>
-          </div>
-
-          <label className="articles-v3-field">
-            <span>Chuyên mục</span>
-            <div>
-              <Tags size={16} />
-              <select
-                value={categoryDraft}
-                onChange={(event) => setCategoryDraft(event.target.value)}
-              >
-                <option value="">Tất cả chuyên mục</option>
-                {categoryOptions.map((item) => (
-                  <option key={item._id || valueOf(item)} value={valueOf(item)}>
-                    {item.name} ({facetCount(categoryCounts, item)})
-                  </option>
+                {ARTICLE_CATEGORY_RAIL.map((item) => (
+                  <button
+                    type="button"
+                    key={item.slug}
+                    className={category === item.slug ? 'is-active' : ''}
+                    onClick={() => {
+                      setCategoryDraft(item.slug);
+                      updateUrl({ category: item.slug });
+                    }}
+                  >
+                    {item.label}
+                  </button>
                 ))}
-              </select>
+              </nav>
             </div>
-          </label>
 
-          <label className="articles-v3-field">
-            <span>Khu vực</span>
-            <div>
-              <MapPin size={16} />
-              <select
-                value={areaDraft}
-                onChange={(event) => setAreaDraft(event.target.value)}
-              >
-                <option value="">Tất cả khu vực</option>
-                {areaOptions.map((item) => (
-                  <option key={item._id || valueOf(item)} value={valueOf(item)}>
-                    {item.name} ({facetCount(areaCounts, item)})
-                  </option>
-                ))}
-              </select>
-            </div>
-          </label>
-
-          <label className="articles-v3-field articles-v3-date-field">
-            <span>Ngày đăng</span>
-            <div>
-              <CalendarDays size={16} />
-              <input
-                type="date"
-                value={dateDraft}
-                onChange={(event) => setDateDraft(event.target.value)}
-              />
-            </div>
-          </label>
-
-          <label className="articles-v3-field">
-            <span>Sắp xếp</span>
-            <div>
-              {sortDraft === 'popular' ? (
-                <TrendingUp size={16} />
-              ) : (
-                <Clock3 size={16} />
-              )}
-              <select
-                value={sortDraft}
-                onChange={(event) => setSortDraft(event.target.value)}
-              >
-                <option value="">Mới nhất</option>
-                <option value="popular">Đọc nhiều</option>
-              </select>
-            </div>
-          </label>
-
-          <div className="articles-v3-filterbar__actions">
-            <button type="button" className="is-primary" onClick={applyFilters}>
-              <SlidersHorizontal size={16} />
-              Lọc tin
-            </button>
-            {hasSecondaryFilter ? (
-              <button type="button" className="is-reset" onClick={clearFilters}>
-                <RotateCcw size={15} />
-                Xóa lọc
-              </button>
-            ) : null}
-          </div>
-        </section>
-
-        {hasSecondaryFilter ? (
-          <div className="articles-v3-active-filter">
-            <span>Đang xem:</span>
-            {areaName ? <b>{areaName}</b> : null}
-            {date ? <b>{date.split('-').reverse().join('/')}</b> : null}
-            {sort === 'popular' ? <b>Đọc nhiều</b> : null}
-            {query ? <b>“{query}”</b> : null}
-            <button
-              type="button"
-              onClick={() => {
-                setSearchDraft('');
-                setAreaDraft('');
-                setDateDraft('');
-                setSortDraft('');
-                updateUrl({ q: '', area: '', date: '', sort: '' });
-              }}
+            <section
+              className="articles-v3-filterbar"
+              aria-label="Bộ lọc tin tức"
             >
-              Xóa tất cả bộ lọc phụ
-            </button>
-          </div>
+              <div className="articles-v3-filterbar__title">
+                <SlidersHorizontal size={17} />
+                <strong>Lọc nội dung</strong>
+              </div>
+
+              <label className="articles-v3-field">
+                <span>Chuyên mục</span>
+                <div>
+                  <Tags size={16} />
+                  <select
+                    value={categoryDraft}
+                    onChange={(event) => setCategoryDraft(event.target.value)}
+                  >
+                    <option value="">Tất cả chuyên mục</option>
+                    {categoryOptions.map((item) => (
+                      <option
+                        key={item._id || valueOf(item)}
+                        value={valueOf(item)}
+                      >
+                        {item.name} ({facetCount(categoryCounts, item)})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </label>
+
+              <label className="articles-v3-field">
+                <span>Khu vực</span>
+                <div>
+                  <MapPin size={16} />
+                  <select
+                    value={areaDraft}
+                    onChange={(event) => setAreaDraft(event.target.value)}
+                  >
+                    <option value="">Tất cả khu vực</option>
+                    {areaOptions.map((item) => (
+                      <option
+                        key={item._id || valueOf(item)}
+                        value={valueOf(item)}
+                      >
+                        {item.name} ({facetCount(areaCounts, item)})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </label>
+
+              <label className="articles-v3-field articles-v3-date-field">
+                <span>Ngày đăng</span>
+                <div>
+                  <CalendarDays size={16} />
+                  <input
+                    type="date"
+                    value={dateDraft}
+                    onChange={(event) => setDateDraft(event.target.value)}
+                  />
+                </div>
+              </label>
+
+              <label className="articles-v3-field">
+                <span>Sắp xếp</span>
+                <div>
+                  {sortDraft === 'popular' ? (
+                    <TrendingUp size={16} />
+                  ) : (
+                    <Clock3 size={16} />
+                  )}
+                  <select
+                    value={sortDraft}
+                    onChange={(event) => setSortDraft(event.target.value)}
+                  >
+                    <option value="">Mới nhất</option>
+                    <option value="popular">Đọc nhiều</option>
+                  </select>
+                </div>
+              </label>
+
+              <div className="articles-v3-filterbar__actions">
+                <button
+                  type="button"
+                  className="is-primary"
+                  onClick={applyFilters}
+                >
+                  <SlidersHorizontal size={16} />
+                  Lọc tin
+                </button>
+                {hasSecondaryFilter ? (
+                  <button
+                    type="button"
+                    className="is-reset"
+                    onClick={clearFilters}
+                  >
+                    <RotateCcw size={15} />
+                    Xóa lọc
+                  </button>
+                ) : null}
+              </div>
+            </section>
+
+            {hasSecondaryFilter ? (
+              <div className="articles-v3-active-filter">
+                <span>Đang xem:</span>
+                {areaName ? <b>{areaName}</b> : null}
+                {date ? <b>{date.split('-').reverse().join('/')}</b> : null}
+                {sort === 'popular' ? <b>Đọc nhiều</b> : null}
+                {query ? <b>“{query}”</b> : null}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSearchDraft('');
+                    setAreaDraft('');
+                    setDateDraft('');
+                    setSortDraft('');
+                    updateUrl({ q: '', area: '', date: '', sort: '' });
+                  }}
+                >
+                  Xóa tất cả bộ lọc phụ
+                </button>
+              </div>
+            ) : null}
+          </>
         ) : null}
 
-        <section ref={resultsRef} className="articles-results articles-v3-results">
+        <section
+          ref={resultsRef}
+          className="articles-results articles-v3-results"
+        >
           <header className="articles-results__header articles-v3-results__header">
             <div>
               <span className="articles-results__eyebrow">
@@ -598,7 +580,9 @@ export default function ArticlesPage() {
               Hiển thị <strong>{pageStart}-{pageEnd}</strong> trong{' '}
               <strong>{total.toLocaleString('vi-VN')}</strong> bài viết
               {totalPages > 1 ? (
-                <> · Trang <strong>{currentPage}/{totalPages}</strong></>
+                <>
+                  {' '}· Trang <strong>{currentPage}/{totalPages}</strong>
+                </>
               ) : null}
             </div>
             <Pagination meta={result.meta} onPageChange={onPageChange} />
