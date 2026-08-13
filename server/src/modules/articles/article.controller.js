@@ -6,18 +6,78 @@ import {
   adminDeleteArticle as deleteArticle,
   adminDeleteArticles as deleteArticles,
 } from './article.admin.delete.service.js';
+import Content from '../contents/content.model.js';
 import { sendCreated, sendSuccess } from '../../utils/apiResponse.js';
 
+const FACET_CACHE_TTL_MS = 60_000;
+let facetCache = null;
+let facetCacheExpiresAt = 0;
+
+function countIds(items = [], primaryKey, listKey) {
+  const counts = new Map();
+
+  items.forEach((item) => {
+    const ids = new Set([
+      item?.[primaryKey],
+      ...(Array.isArray(item?.[listKey]) ? item[listKey] : []),
+    ]);
+
+    ids.forEach((id) => {
+      if (!id) return;
+      const key = String(id);
+      counts.set(key, (counts.get(key) || 0) + 1);
+    });
+  });
+
+  return [...counts.entries()]
+    .map(([id, count]) => ({ id, count }))
+    .sort((a, b) => b.count - a.count);
+}
+
+async function getPublishedArticleFacets() {
+  const now = Date.now();
+
+  if (facetCache && facetCacheExpiresAt > now) {
+    return facetCache;
+  }
+
+  const articles = await Content.find({
+    contentType: 'article',
+    status: 'published',
+    visibility: 'public',
+    deletedAt: null,
+  })
+    .select('primaryCategoryId categoryIds primaryAreaId areaIds')
+    .lean();
+
+  facetCache = {
+    categories: countIds(
+      articles,
+      'primaryCategoryId',
+      'categoryIds',
+    ),
+    areas: countIds(
+      articles,
+      'primaryAreaId',
+      'areaIds',
+    ),
+  };
+
+  facetCacheExpiresAt = now + FACET_CACHE_TTL_MS;
+  return facetCache;
+}
+
 export async function list(req, res) {
-  const r = await listPublicArticles(req.query);
+  const [r, facets] = await Promise.all([
+    listPublicArticles(req.query),
+    getPublishedArticleFacets(),
+  ]);
+
   return sendSuccess(res, {
     data: r.items,
     meta: {
       ...r.meta,
-      facets: r.facets || {
-        categories: [],
-        areas: [],
-      },
+      facets,
     },
   });
 }
