@@ -10,7 +10,16 @@ import { sendCreated, sendSuccess } from '../../utils/apiResponse.js';
 
 export async function list(req, res) {
   const r = await listPublicArticles(req.query);
-  return sendSuccess(res, { data: r.items, meta: r.meta });
+  return sendSuccess(res, {
+    data: r.items,
+    meta: {
+      ...r.meta,
+      facets: r.facets || {
+        categories: [],
+        areas: [],
+      },
+    },
+  });
 }
 
 export async function detail(req, res) {
