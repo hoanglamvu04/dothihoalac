@@ -1,13 +1,18 @@
 /* =========================================================
    DTHL BRAND LOGO V3
    Single visual source: /public/Logo.png -> /Logo.png
-   Keeps legacy logo-mark imports visually overridden until the
-   remaining large JSX files are refactored, so every rendered
-   brand mark uses the new uploaded logo consistently.
+   Every legacy logo-mark render is visually replaced by the new
+   uploaded logo while old JSX imports are being retired safely.
 ========================================================= */
 
 :root {
   --dthl-brand-logo-image: url('/Logo.png');
+}
+
+/* Final fallback for any old logo image that is still rendered. */
+img[src*='logo-mark'] {
+  content: url('/Logo.png');
+  object-fit: contain;
 }
 
 /* Public header */
@@ -49,7 +54,7 @@
   opacity: 0 !important;
 }
 
-/* Generic safety net for any legacy brand-mark wrapper not listed above. */
+/* Generic safety net for legacy brand-mark wrappers not listed above. */
 [class*='brand'][class*='mark']:has(> img[src*='logo-mark']) {
   background-color: transparent !important;
   background-image: var(--dthl-brand-logo-image) !important;
