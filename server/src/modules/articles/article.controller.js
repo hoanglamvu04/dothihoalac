@@ -10,8 +10,23 @@ import Content from '../contents/content.model.js';
 import { sendCreated, sendSuccess } from '../../utils/apiResponse.js';
 
 const FACET_CACHE_TTL_MS = 60_000;
-let facetCache = null;
-let facetCacheExpiresAt = 0;
+let facetRowsCache = null;
+let facetRowsExpireAt = 0;
+
+function normalizeId(value) {
+  return typeof value === 'string' ? value.trim() : '';
+}
+
+function itemHasId(item, primaryKey, listKey, expectedId) {
+  if (!expectedId) return true;
+
+  const ids = [
+    item?.[primaryKey],
+    ...(Array.isArray(item?.[listKey]) ? item[listKey] : []),
+  ];
+
+  return ids.some((id) => id && String(id) === expectedId);
+}
 
 function countIds(items = [], primaryKey, listKey) {
   const counts = new Map();
@@ -34,14 +49,14 @@ function countIds(items = [], primaryKey, listKey) {
     .sort((a, b) => b.count - a.count);
 }
 
-async function getPublishedArticleFacets() {
+async function getPublishedFacetRows() {
   const now = Date.now();
 
-  if (facetCache && facetCacheExpiresAt > now) {
-    return facetCache;
+  if (facetRowsCache && facetRowsExpireAt > now) {
+    return facetRowsCache;
   }
 
-  const articles = await Content.find({
+  facetRowsCache = await Content.find({
     contentType: 'article',
     status: 'published',
     visibility: 'public',
@@ -50,27 +65,48 @@ async function getPublishedArticleFacets() {
     .select('primaryCategoryId categoryIds primaryAreaId areaIds')
     .lean();
 
-  facetCache = {
+  facetRowsExpireAt = now + FACET_CACHE_TTL_MS;
+  return facetRowsCache;
+}
+
+async function getPublishedArticleFacets(query = {}) {
+  const rows = await getPublishedFacetRows();
+  const selectedCategoryId = normalizeId(
+    query.categories || query.category,
+  );
+  const selectedAreaId = normalizeId(query.areas || query.area);
+
+  const categoryRows = selectedAreaId
+    ? rows.filter((item) =>
+        itemHasId(item, 'primaryAreaId', 'areaIds', selectedAreaId),
+      )
+    : rows;
+
+  const areaRows = selectedCategoryId
+    ? rows.filter((item) =>
+        itemHasId(
+          item,
+          'primaryCategoryId',
+          'categoryIds',
+          selectedCategoryId,
+        ),
+      )
+    : rows;
+
+  return {
     categories: countIds(
-      articles,
+      categoryRows,
       'primaryCategoryId',
       'categoryIds',
     ),
-    areas: countIds(
-      articles,
-      'primaryAreaId',
-      'areaIds',
-    ),
+    areas: countIds(areaRows, 'primaryAreaId', 'areaIds'),
   };
-
-  facetCacheExpiresAt = now + FACET_CACHE_TTL_MS;
-  return facetCache;
 }
 
 export async function list(req, res) {
   const [r, facets] = await Promise.all([
     listPublicArticles(req.query),
-    getPublishedArticleFacets(),
+    getPublishedArticleFacets(req.query),
   ]);
 
   return sendSuccess(res, {
