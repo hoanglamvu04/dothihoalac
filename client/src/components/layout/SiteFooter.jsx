@@ -15,8 +15,6 @@ import {
   ShieldCheck,
 } from 'lucide-react';
 
-import logoMark from '../../assets/logo-mark.svg';
-
 import './SiteFooter.css';
 
 const exploreLinks = [
@@ -122,7 +120,7 @@ export default function SiteFooter() {
               aria-label="Đô Thị Hòa Lạc - Trang chủ"
             >
               <img
-                src={logoMark}
+                src="/Logo.png"
                 alt="Biểu tượng Đô Thị Hòa Lạc"
               />
 

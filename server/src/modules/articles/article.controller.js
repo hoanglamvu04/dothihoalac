@@ -1,15 +1,121 @@
 import * as s from './article.service.js';
+import { listPublicArticles } from './article.publicList.service.js';
 import { adminArticleDetail } from './article.admin.detail.service.js';
 import { adminUpdateMetadata as updateMetadata } from './article.metadata.service.js';
 import {
   adminDeleteArticle as deleteArticle,
   adminDeleteArticles as deleteArticles,
 } from './article.admin.delete.service.js';
+import Content from '../contents/content.model.js';
 import { sendCreated, sendSuccess } from '../../utils/apiResponse.js';
 
+const FACET_CACHE_TTL_MS = 60_000;
+let facetRowsCache = null;
+let facetRowsExpireAt = 0;
+
+function normalizeId(value) {
+  return typeof value === 'string' ? value.trim() : '';
+}
+
+function itemHasId(item, primaryKey, listKey, expectedId) {
+  if (!expectedId) return true;
+
+  const ids = [
+    item?.[primaryKey],
+    ...(Array.isArray(item?.[listKey]) ? item[listKey] : []),
+  ];
+
+  return ids.some((id) => id && String(id) === expectedId);
+}
+
+function countIds(items = [], primaryKey, listKey) {
+  const counts = new Map();
+
+  items.forEach((item) => {
+    const ids = new Set([
+      item?.[primaryKey],
+      ...(Array.isArray(item?.[listKey]) ? item[listKey] : []),
+    ]);
+
+    ids.forEach((id) => {
+      if (!id) return;
+      const key = String(id);
+      counts.set(key, (counts.get(key) || 0) + 1);
+    });
+  });
+
+  return [...counts.entries()]
+    .map(([id, count]) => ({ id, count }))
+    .sort((a, b) => b.count - a.count);
+}
+
+async function getPublishedFacetRows() {
+  const now = Date.now();
+
+  if (facetRowsCache && facetRowsExpireAt > now) {
+    return facetRowsCache;
+  }
+
+  facetRowsCache = await Content.find({
+    contentType: 'article',
+    status: 'published',
+    visibility: 'public',
+    deletedAt: null,
+  })
+    .select('primaryCategoryId categoryIds primaryAreaId areaIds')
+    .lean();
+
+  facetRowsExpireAt = now + FACET_CACHE_TTL_MS;
+  return facetRowsCache;
+}
+
+async function getPublishedArticleFacets(query = {}) {
+  const rows = await getPublishedFacetRows();
+  const selectedCategoryId = normalizeId(
+    query.categories || query.category,
+  );
+  const selectedAreaId = normalizeId(query.areas || query.area);
+
+  const categoryRows = selectedAreaId
+    ? rows.filter((item) =>
+        itemHasId(item, 'primaryAreaId', 'areaIds', selectedAreaId),
+      )
+    : rows;
+
+  const areaRows = selectedCategoryId
+    ? rows.filter((item) =>
+        itemHasId(
+          item,
+          'primaryCategoryId',
+          'categoryIds',
+          selectedCategoryId,
+        ),
+      )
+    : rows;
+
+  return {
+    categories: countIds(
+      categoryRows,
+      'primaryCategoryId',
+      'categoryIds',
+    ),
+    areas: countIds(areaRows, 'primaryAreaId', 'areaIds'),
+  };
+}
+
 export async function list(req, res) {
-  const r = await s.list(req.query);
-  return sendSuccess(res, { data: r.items, meta: r.meta });
+  const [r, facets] = await Promise.all([
+    listPublicArticles(req.query),
+    getPublishedArticleFacets(req.query),
+  ]);
+
+  return sendSuccess(res, {
+    data: r.items,
+    meta: {
+      ...r.meta,
+      facets,
+    },
+  });
 }
 
 export async function detail(req, res) {

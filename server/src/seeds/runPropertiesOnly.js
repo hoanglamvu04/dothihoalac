@@ -1,10 +1,9 @@
-import dns from 'node:dns';
-
 import {
   connectDatabase,
   disconnectDatabase,
 } from '../config/database.js';
 
+import { configureDnsServers } from '../config/dns.js';
 import { logger } from '../config/logger.js';
 
 import { seedRoles } from './seedRoles.js';
@@ -17,16 +16,10 @@ import { seedUsers } from './seedUsers.js';
 import { seedMedia } from './seedMedia.js';
 import { seedProperties } from './seedProperties.js';
 
-/*
- * Ép Node ưu tiên hai DNS công cộng khi phân giải
- * bản ghi SRV của MongoDB Atlas.
- */
-dns.setServers([
-  '1.1.1.1',
-  '8.8.8.8',
-]);
-
 async function run() {
+  const dnsServers = configureDnsServers();
+  logger.info({ dnsServers }, 'DNS configured for property seed runner');
+
   logger.info(
     'Starting property seed',
   );

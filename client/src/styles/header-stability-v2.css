@@ -1,0 +1,85 @@
+/* =========================================================
+   DTHL HEADER STABILITY V2
+   - Prevent layout-height changes while scrolling.
+   - Keep smart hide/show transform-only to avoid scroll jitter.
+   - Navigation entries are rendered by HeaderNavigationUpgrade.
+========================================================= */
+
+.dthl-header {
+  opacity: 1 !important;
+  filter: none !important;
+  transition:
+    transform 190ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 150ms ease !important;
+  will-change: transform;
+}
+
+.dthl-header.is-hidden {
+  opacity: 1 !important;
+  filter: none !important;
+  transform: translate3d(0, calc(-100% - 2px), 0) !important;
+}
+
+/*
+ * Keep the sticky-header row geometry stable while scrolling.
+ * Changing the real header height around a small scroll threshold can make
+ * the browser repeatedly recalculate the page position and cause flicker.
+ */
+@media (min-width: 1021px) {
+  .dthl-header.is-compact .dthl-header-top {
+    min-height: 32px !important;
+    max-height: 32px !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+
+  .dthl-header.is-compact .dthl-header-top__inner {
+    min-height: 32px !important;
+  }
+
+  .dthl-header.is-compact .dthl-header-main__inner {
+    min-height: 78px !important;
+  }
+
+  .dthl-header.is-compact .dthl-header-nav__inner {
+    min-height: 48px !important;
+  }
+
+  .dthl-header-top,
+  .dthl-header-main__inner,
+  .dthl-header-nav__inner {
+    transition: none !important;
+  }
+
+  /*
+   * `Trang chủ` is now a real React Router link rendered by
+   * HeaderNavigationUpgrade. Explicitly neutralize the old pseudo-element
+   * implementation so it cannot create a duplicate home entry.
+   */
+  .dthl-header-main .dthl-brand::after {
+    display: none !important;
+    content: none !important;
+  }
+
+  /* Remove spacing that belonged to the former pseudo home item. */
+  .dthl-header-nav nav,
+  .dthl-header-nav-upgrade {
+    padding-left: 0 !important;
+  }
+}
+
+@media (max-width: 1020px) {
+  .dthl-header.is-compact .dthl-header-main__inner {
+    min-height: 72px !important;
+  }
+
+  .dthl-header-main__inner {
+    transition: none !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dthl-header {
+    transition: none !important;
+  }
+}

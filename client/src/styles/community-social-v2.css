@@ -1,0 +1,399 @@
+/* =========================================================
+   DTHL COMMUNITY FLOW V2
+   - Collapse the community page into one centered reading flow.
+   - Remove redundant search/sidebar chrome from the primary canvas.
+   - Make composer, navigation and feed feel like one continuous surface.
+========================================================= */
+
+.community-social-page.community-social-page {
+  padding: 16px 0 56px;
+  background: #f5f7f5;
+}
+
+.community-social-page.community-social-page .community-social-page__container {
+  width: min(1080px, calc(100% - 28px));
+}
+
+.community-social-page.community-social-page .community-social-intro,
+.community-social-page.community-social-page .community-social-composer,
+.community-social-page.community-social-page .community-social-types,
+.community-social-page.community-social-page .community-social-toolbar,
+.community-social-page.community-social-page .community-social-active-filters,
+.community-social-page.community-social-page .community-social-layout,
+.community-social-page.community-social-page .community-social-pagination {
+  width: min(860px, 100%);
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Intro: editorial, compact and calm. */
+.community-social-page.community-social-page .community-social-intro {
+  padding: 2px 2px 12px;
+}
+
+.community-social-page.community-social-page .community-social-intro__eyebrow {
+  margin-bottom: 6px;
+  font-size: 0.68rem;
+  letter-spacing: 0.07em;
+}
+
+.community-social-page.community-social-page .community-social-intro h1 {
+  font-size: clamp(1.78rem, 2.5vw, 2.18rem);
+  letter-spacing: -0.035em;
+  line-height: 1.08;
+}
+
+.community-social-page.community-social-page .community-social-intro p {
+  max-width: 700px;
+  margin-top: 6px;
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+/* Composer: one clear entry point instead of a mini dashboard. */
+.community-social-page.community-social-page .community-social-composer {
+  min-height: 72px;
+  padding: 11px 13px;
+  gap: 11px;
+  border-radius: 15px;
+  border-color: #d8e4dc;
+  box-shadow: none;
+}
+
+.community-social-page.community-social-page .community-social-composer:hover {
+  transform: none;
+  border-color: #bdd9c8;
+  box-shadow: 0 6px 22px rgb(15 70 39 / 0.05);
+}
+
+.community-social-page.community-social-page .community-social-composer__prompt {
+  font-size: 0.9rem;
+}
+
+.community-social-page.community-social-page .community-social-composer__hint {
+  margin-top: 2px;
+  font-size: 0.71rem;
+}
+
+.community-social-page.community-social-page .community-social-composer__quick {
+  display: none;
+}
+
+.community-social-page.community-social-page .community-social-composer__cta {
+  min-height: 38px;
+  padding: 0 12px;
+  border-radius: 10px;
+  font-size: 0.72rem;
+}
+
+/* Types + toolbar become one continuous navigation block. */
+.community-social-page.community-social-page .community-social-types {
+  margin-top: 10px;
+  margin-bottom: 0;
+  padding: 5px 6px 4px;
+  gap: 3px;
+  border-radius: 14px 14px 0 0;
+  border-color: #dce6df;
+  border-bottom: 0;
+  background: #fff;
+  box-shadow: none;
+}
+
+.community-social-page.community-social-page .community-social-types button,
+.community-social-page.community-social-page .community-social-types__more {
+  min-height: 35px;
+}
+
+.community-social-page.community-social-page .community-social-types button {
+  padding-inline: 9px;
+  border-radius: 8px;
+  font-size: 0.69rem;
+}
+
+.community-social-page.community-social-page .community-social-types__more {
+  padding-inline: 8px;
+  border-radius: 8px;
+}
+
+.community-social-page.community-social-page .community-social-types__more select {
+  height: 34px;
+  font-size: 0.69rem;
+}
+
+.community-social-page.community-social-page .community-social-toolbar {
+  margin-top: 0;
+  padding: 6px 7px 7px;
+  min-height: 50px;
+  border: 1px solid #dce6df;
+  border-top: 1px solid #edf2ef;
+  border-radius: 0 0 14px 14px;
+  background: #fff;
+}
+
+.community-social-page.community-social-page .community-social-toolbar__sort,
+.community-social-page.community-social-page .community-social-toolbar__actions {
+  gap: 5px;
+}
+
+.community-social-page.community-social-page .community-social-toolbar__sort button {
+  min-height: 34px;
+  padding: 0 9px;
+  border-radius: 8px;
+  font-size: 0.7rem;
+}
+
+.community-social-page.community-social-page .community-social-toolbar__area,
+.community-social-page.community-social-page .community-social-filter-button {
+  min-height: 34px;
+  border-radius: 8px;
+}
+
+.community-social-page.community-social-page .community-social-toolbar__area {
+  padding-inline: 8px;
+}
+
+.community-social-page.community-social-page .community-social-toolbar__area select {
+  height: 32px;
+  font-size: 0.7rem;
+}
+
+/* Search remains available inside the advanced drawer; remove duplicate inline search. */
+.community-social-page.community-social-page .community-social-search {
+  display: none;
+}
+
+.community-social-page.community-social-page .community-social-filter-button {
+  padding-inline: 10px;
+  font-size: 0.7rem;
+}
+
+.community-social-page.community-social-page .community-social-active-filters {
+  margin-top: 7px;
+}
+
+/* One centered feed: no secondary dashboard column. */
+.community-social-page.community-social-page .community-social-layout {
+  display: block;
+  margin-top: 14px;
+}
+
+.community-social-page.community-social-page .community-social-sidebar {
+  display: none !important;
+}
+
+.community-social-page.community-social-page .community-social-feed {
+  overflow: hidden;
+  border: 1px solid #dde6e0;
+  border-radius: 17px;
+  background: #fff;
+  box-shadow: 0 10px 34px rgb(12 54 31 / 0.035);
+}
+
+.community-social-page.community-social-page .community-social-feed__header {
+  min-height: 70px;
+  padding: 14px 17px 12px;
+  border-bottom: 1px solid #edf1ee;
+  background: #fff;
+}
+
+.community-social-page.community-social-page .community-social-feed__header span {
+  display: none;
+}
+
+.community-social-page.community-social-page .community-social-feed__header h2 {
+  margin: 0;
+  font-size: 1.16rem;
+  letter-spacing: -0.018em;
+}
+
+.community-social-page.community-social-page .community-social-feed__header p {
+  margin-top: 3px;
+  font-size: 0.69rem;
+}
+
+.community-social-page.community-social-page .community-social-feed-list {
+  display: block;
+}
+
+.community-social-page.community-social-page .community-social-feed-item + .community-social-feed-item {
+  border-top: 1px solid #edf1ee;
+}
+
+.community-social-page.community-social-page .community-card {
+  padding: 17px 18px;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.community-social-page.community-social-page .community-card > a {
+  margin-top: 11px;
+  border-radius: 12px;
+}
+
+.community-social-page.community-social-page .community-card > footer {
+  margin-top: 10px;
+  padding-top: 10px;
+}
+
+.community-social-page.community-social-page .community-social-empty {
+  border: 0;
+  border-radius: 0;
+}
+
+.community-social-page.community-social-page .community-social-pagination {
+  margin-top: 14px;
+}
+
+/* Drawer stays the home for deep filtering and search. */
+.community-social-page.community-social-page .community-social-filter-drawer {
+  width: min(360px, calc(100vw - 28px));
+  border-radius: 18px;
+}
+
+@media (max-width: 720px) {
+  .community-social-page.community-social-page {
+    padding: 10px 0 36px;
+  }
+
+  .community-social-page.community-social-page .community-social-page__container {
+    width: calc(100% - 14px);
+  }
+
+  .community-social-page.community-social-page .community-social-intro {
+    padding: 0 2px 10px;
+  }
+
+  .community-social-page.community-social-page .community-social-intro__eyebrow {
+    font-size: 0.63rem;
+  }
+
+  .community-social-page.community-social-page .community-social-intro h1 {
+    font-size: 1.48rem;
+  }
+
+  .community-social-page.community-social-page .community-social-intro p {
+    margin-top: 5px;
+    font-size: 0.77rem;
+    line-height: 1.45;
+  }
+
+  .community-social-page.community-social-page .community-social-composer {
+    min-height: 66px;
+    padding: 10px;
+    border-radius: 13px;
+  }
+
+  .community-social-page.community-social-page .community-social-composer__prompt {
+    font-size: 0.82rem;
+  }
+
+  .community-social-page.community-social-page .community-social-composer__hint {
+    display: none;
+  }
+
+  .community-social-page.community-social-page .community-social-types {
+    width: 100%;
+    margin: 8px 0 0;
+    padding: 4px 5px 3px;
+    border: 1px solid #dce6df;
+    border-bottom: 0;
+    border-radius: 13px 13px 0 0;
+    background: #fff;
+  }
+
+  .community-social-page.community-social-page .community-social-types button,
+  .community-social-page.community-social-page .community-social-types__more {
+    min-height: 34px;
+  }
+
+  .community-social-page.community-social-page .community-social-toolbar {
+    width: 100%;
+    margin: 0;
+    padding: 5px 5px 6px;
+    min-height: 46px;
+    flex-direction: row;
+    align-items: center;
+    border-radius: 0 0 13px 13px;
+  }
+
+  .community-social-page.community-social-page .community-social-toolbar__sort {
+    min-width: 0;
+  }
+
+  .community-social-page.community-social-page .community-social-toolbar__sort button {
+    min-height: 33px;
+    padding-inline: 8px;
+  }
+
+  .community-social-page.community-social-page .community-social-toolbar__actions {
+    width: auto;
+    margin-left: auto;
+    display: flex;
+  }
+
+  .community-social-page.community-social-page .community-social-toolbar__area {
+    display: none;
+  }
+
+  .community-social-page.community-social-page .community-social-filter-button {
+    min-width: 38px;
+    min-height: 33px;
+    padding-inline: 8px;
+  }
+
+  .community-social-page.community-social-page .community-social-layout {
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .community-social-page.community-social-page .community-social-feed {
+    border-radius: 14px;
+  }
+
+  .community-social-page.community-social-page .community-social-feed__header {
+    min-height: 61px;
+    padding: 12px 13px 10px;
+  }
+
+  .community-social-page.community-social-page .community-social-feed__header h2 {
+    font-size: 1.05rem;
+  }
+
+  .community-social-page.community-social-page .community-card {
+    padding: 14px 13px;
+  }
+
+  .community-social-page.community-social-page .community-card h3 {
+    font-size: 0.94rem;
+  }
+
+  .community-social-page.community-social-page .community-card > p {
+    font-size: 0.78rem;
+    line-height: 1.52;
+  }
+
+  .community-social-page.community-social-page .community-social-pagination {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .community-social-page.community-social-page .community-social-intro h1 {
+    font-size: 1.38rem;
+  }
+
+  .community-social-page.community-social-page .community-social-types button {
+    padding-inline: 8px;
+    font-size: 0.66rem;
+  }
+
+  .community-social-page.community-social-page .community-social-types__more select {
+    max-width: 74px;
+    font-size: 0.66rem;
+  }
+
+  .community-social-page.community-social-page .community-social-toolbar__sort button {
+    font-size: 0.67rem;
+  }
+}

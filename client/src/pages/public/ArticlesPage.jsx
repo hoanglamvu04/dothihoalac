@@ -5,14 +5,10 @@ import {
   useRef,
   useState,
 } from 'react';
-
+import { useSearchParams } from 'react-router-dom';
 import {
-  useSearchParams,
-} from 'react-router-dom';
-
-import {
+  CalendarDays,
   Clock3,
-  Filter,
   Grid3X3,
   List,
   MapPin,
@@ -22,7 +18,6 @@ import {
   SlidersHorizontal,
   Tags,
   TrendingUp,
-  X,
 } from 'lucide-react';
 
 import Seo from '../../components/common/Seo';
@@ -30,1336 +25,567 @@ import ArticleCard from '../../components/content/ArticleCard';
 import Pagination from '../../components/common/Pagination';
 import ErrorState from '../../components/common/ErrorState';
 import { LoadingBlock } from '../../components/common/Loading';
-import MultiSelectFilter from '../../components/filters/MultiSelectFilter';
-
 import { articleApi } from '../../api/content.api';
 import { useListPage } from '../../hooks/useListPage';
 import { useTaxonomy } from '../../context/TaxonomyContext';
+import {
+  ARTICLE_CATEGORY_PAGE_COPY,
+  ARTICLE_CATEGORY_RAIL,
+  ARTICLE_DEFAULT_PAGE_COPY,
+} from '../../utils/constants';
 
-import './ArticlesPage.css';
+import './ArticlesPageV3.css';
 
-const VIEW_MODE_KEY =
-  'dothihoalac.article-view-mode';
+const PAGE_SIZE = 12;
+const VIEW_MODE_KEY = 'dothihoalac.article-view-mode';
 
-const SORT_OPTIONS = [
-  {
-    value: '',
-    label: 'Mới nhất',
-    icon: Clock3,
-  },
-  {
-    value: 'popular',
-    label: 'Đọc nhiều',
-    icon: TrendingUp,
-  },
-];
-
-function parseCsv(value) {
-  return Array.from(
-    new Set(
-      String(value || '')
-        .split(',')
-        .map((item) => item.trim())
-        .filter(Boolean),
-    ),
-  );
+function valueOf(item) {
+  return String(item?.slug || item?._id || item?.id || '');
 }
 
-function getItemId(item) {
-  return String(
-    item?._id ||
-      item?.id ||
-      '',
-  );
-}
-
-function getItemUrlValue(item) {
-  return String(
-    item?.slug ||
-      item?._id ||
-      item?.id ||
-      '',
-  );
-}
-
-function findTaxonomyItem(items, value) {
+function findTaxonomy(items, value) {
   return items.find(
     (item) =>
-      String(item?.slug || '') ===
-        String(value) ||
-      getItemId(item) === String(value),
+      valueOf(item) === String(value) ||
+      String(item?._id || item?.id || '') === String(value),
   );
 }
 
-function getTotal(meta, itemCount) {
-  return Number(
-    meta?.total ??
-      meta?.totalItems ??
-      meta?.itemCount ??
-      itemCount ??
-      0,
+function getDateRange(value) {
+  if (!value) return null;
+
+  const start = new Date(`${value}T00:00:00`);
+  const end = new Date(`${value}T23:59:59.999`);
+
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) {
+    return null;
+  }
+
+  return {
+    publishedFrom: start.toISOString(),
+    publishedTo: end.toISOString(),
+  };
+}
+
+function getPageCopy(category, categoryName) {
+  if (!category) return ARTICLE_DEFAULT_PAGE_COPY;
+  if (ARTICLE_CATEGORY_PAGE_COPY[category]) {
+    return ARTICLE_CATEGORY_PAGE_COPY[category];
+  }
+
+  const name = categoryName || 'Chuyên mục tin tức';
+  return {
+    ...ARTICLE_DEFAULT_PAGE_COPY,
+    seoTitle: `${name} | Đô Thị Hòa Lạc`,
+    seoDescription: `Tin mới thuộc chuyên mục ${name} tại khu vực Đô Thị Hòa Lạc.`,
+    eyebrow: name,
+    title: `${name} tại khu vực Đô Thị Hòa Lạc`,
+    description: `Tổng hợp thông tin mới thuộc chuyên mục ${name}, ưu tiên những nội dung gắn với địa bàn và thay đổi có ảnh hưởng trực tiếp đến khu vực.`,
+    resultsEyebrow: name,
+    latestTitle: `${name} mới nhất`,
+    filteredTitle: `${name} theo bộ lọc`,
+  };
+}
+
+function facetMap(rows) {
+  return new Map(
+    (Array.isArray(rows) ? rows : []).map((row) => [
+      String(row?.id || ''),
+      Number(row?.count || 0),
+    ]),
   );
 }
 
-function getCurrentPage(meta, searchParams) {
-  return Number(
-    meta?.page ??
-      meta?.currentPage ??
-      searchParams.get('page') ??
-      1,
-  );
+function facetCount(map, item) {
+  const id = String(item?._id || item?.id || '');
+  return id ? Number(map.get(id) || 0) : 0;
 }
 
-function getLimit(meta, itemCount) {
-  return Number(
-    meta?.limit ??
-      meta?.pageSize ??
-      meta?.perPage ??
-      itemCount ??
-      0,
+function isSelected(item, value) {
+  if (!value) return false;
+  return (
+    valueOf(item) === String(value) ||
+    String(item?._id || item?.id || '') === String(value)
   );
 }
 
 export default function ArticlesPage() {
-  const [
-    searchParams,
-    setSearchParams,
-  ] = useSearchParams();
-
-  const {
-    categories = [],
-    areas = [],
-  } = useTaxonomy();
-
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { categories = [], areas = [] } = useTaxonomy();
   const resultsRef = useRef(null);
 
-  const [
-    filterPanelOpen,
-    setFilterPanelOpen,
-  ] = useState(false);
-
-  const [
-    searchInput,
-    setSearchInput,
-  ] = useState(
-    searchParams.get('q') || '',
+  const articleCategories = useMemo(
+    () =>
+      categories.filter((item) =>
+        ['article', 'all'].includes(item.contentScope),
+      ),
+    [categories],
   );
 
-  const [
-    viewMode,
-    setViewMode,
-  ] = useState(() => {
-    try {
-      const savedMode =
-        localStorage.getItem(
-          VIEW_MODE_KEY,
-        );
+  const category = searchParams.get('category') || '';
+  const area = searchParams.get('area') || '';
+  const date = searchParams.get('date') || '';
+  const sort = searchParams.get('sort') || '';
+  const query = searchParams.get('q') || '';
+  const isCategoryPage = Boolean(category);
 
-      return ['grid', 'list'].includes(
-        savedMode,
-      )
-        ? savedMode
+  const [searchDraft, setSearchDraft] = useState(query);
+  const [categoryDraft, setCategoryDraft] = useState(category);
+  const [areaDraft, setAreaDraft] = useState(area);
+  const [dateDraft, setDateDraft] = useState(date);
+  const [sortDraft, setSortDraft] = useState(sort);
+  const [viewMode, setViewMode] = useState(() => {
+    try {
+      return localStorage.getItem(VIEW_MODE_KEY) === 'list'
+        ? 'list'
         : 'grid';
     } catch {
       return 'grid';
     }
   });
 
-  const articleCategories = useMemo(
-    () =>
-      categories.filter(
-        (item) =>
-          item.contentScope ===
-          'article',
-      ),
-    [categories],
+  useEffect(() => {
+    setSearchDraft(query);
+    setCategoryDraft(category);
+    setAreaDraft(area);
+    setDateDraft(date);
+    setSortDraft(sort);
+  }, [query, category, area, date, sort]);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem(VIEW_MODE_KEY, viewMode);
+    } catch {
+      // Không chặn giao diện nếu localStorage bị vô hiệu hóa.
+    }
+  }, [viewMode]);
+
+  const categoryItem = useMemo(
+    () => findTaxonomy(articleCategories, category),
+    [articleCategories, category],
+  );
+  const areaItem = useMemo(
+    () => findTaxonomy(areas, area),
+    [areas, area],
+  );
+
+  const categoryName =
+    categoryItem?.name ||
+    ARTICLE_CATEGORY_RAIL.find((item) => item.slug === category)?.label ||
+    '';
+  const areaName = areaItem?.name || '';
+  const pageCopy = useMemo(
+    () => getPageCopy(category, categoryName),
+    [category, categoryName],
+  );
+
+  const listParams = useMemo(() => {
+    const params = { limit: PAGE_SIZE };
+    const page = searchParams.get('page');
+    const range = getDateRange(date);
+
+    if (category) params.category = categoryItem?._id || category;
+    if (area) params.area = areaItem?._id || area;
+    if (sort) params.sort = sort;
+    if (query) params.q = query;
+    if (page) params.page = page;
+    if (range) Object.assign(params, range);
+
+    return params;
+  }, [searchParams, category, categoryItem, area, areaItem, sort, query, date]);
+
+  const result = useListPage(articleApi.list, listParams);
+
+  const categoryCounts = useMemo(
+    () => facetMap(result.meta?.facets?.categories),
+    [result.meta?.facets?.categories],
+  );
+  const areaCounts = useMemo(
+    () => facetMap(result.meta?.facets?.areas),
+    [result.meta?.facets?.areas],
   );
 
   const categoryOptions = useMemo(
     () =>
-      articleCategories.map(
-        (item) => ({
-          value:
-            getItemUrlValue(item),
-
-          label:
-            item.name ||
-            item.title ||
-            'Chuyên mục',
-
-          searchText: [
-            item.name,
-            item.slug,
-          ]
-            .filter(Boolean)
-            .join(' '),
-        }),
-      ),
-    [articleCategories],
+      articleCategories.filter((item) => {
+        const count = facetCount(categoryCounts, item);
+        return result.loading || count > 0 || isSelected(item, category);
+      }),
+    [articleCategories, categoryCounts, result.loading, category],
   );
 
   const areaOptions = useMemo(
     () =>
-      areas.map((item) => ({
-        value:
-          getItemUrlValue(item),
-
-        label:
-          item.name ||
-          item.title ||
-          'Khu vực',
-
-        searchText: [
-          item.name,
-          item.slug,
-          item.parentName,
-        ]
-          .filter(Boolean)
-          .join(' '),
-      })),
-    [areas],
-  );
-
-  /*
-   * Hỗ trợ cả URL mới:
-   * ?categories=quy-hoach,ha-tang
-   *
-   * Và URL cũ:
-   * ?category=quy-hoach
-   */
-  const selectedCategories =
-    useMemo(() => {
-      const newValue =
-        searchParams.get(
-          'categories',
-        );
-
-      const legacyValue =
-        searchParams.get(
-          'category',
-        );
-
-      return parseCsv(
-        newValue || legacyValue,
-      );
-    }, [searchParams]);
-
-  const selectedAreas =
-    useMemo(() => {
-      const newValue =
-        searchParams.get('areas');
-
-      const legacyValue =
-        searchParams.get('area');
-
-      return parseCsv(
-        newValue || legacyValue,
-      );
-    }, [searchParams]);
-
-  const currentQuery =
-    searchParams.get('q') || '';
-
-  const currentSort =
-    searchParams.get('sort') || '';
-
-  /*
-   * Chuyển slug trên URL thành ID để gửi API.
-   * Nếu chưa tìm thấy taxonomy tương ứng,
-   * giữ nguyên giá trị URL.
-   */
-  const categoryApiValues =
-    useMemo(
-      () =>
-        selectedCategories.map(
-          (value) => {
-            const matched =
-              findTaxonomyItem(
-                articleCategories,
-                value,
-              );
-
-            return matched?._id || value;
-          },
-        ),
-      [
-        selectedCategories,
-        articleCategories,
-      ],
-    );
-
-  const areaApiValues = useMemo(
-    () =>
-      selectedAreas.map((value) => {
-        const matched =
-          findTaxonomyItem(
-            areas,
-            value,
-          );
-
-        return matched?._id || value;
+      areas.filter((item) => {
+        const count = facetCount(areaCounts, item);
+        return result.loading || count > 0 || isSelected(item, area);
       }),
-    [selectedAreas, areas],
+    [areas, areaCounts, result.loading, area],
   );
 
-  const searchKey =
-    searchParams.toString();
+  const updateUrl = useCallback(
+    (values) => {
+      setSearchParams((current) => {
+        const next = new URLSearchParams(current);
 
-  const params = useMemo(() => {
-    const source =
-      new URLSearchParams(
-        searchKey,
-      );
-
-    const nextParams = {};
-
-    /*
-     * API mới: hỗ trợ nhiều taxonomy.
-     */
-    if (categoryApiValues.length) {
-      nextParams.categories =
-        categoryApiValues.join(',');
-    }
-
-    if (areaApiValues.length) {
-      nextParams.areas =
-        areaApiValues.join(',');
-    }
-
-    /*
-     * Tương thích backend cũ khi chỉ
-     * chọn duy nhất một giá trị.
-     */
-    if (
-      categoryApiValues.length === 1
-    ) {
-      nextParams.category =
-        categoryApiValues[0];
-    }
-
-    if (areaApiValues.length === 1) {
-      nextParams.area =
-        areaApiValues[0];
-    }
-
-    const sort =
-      source.get('sort');
-
-    const q =
-      source.get('q');
-
-    const page =
-      source.get('page');
-
-    if (sort) {
-      nextParams.sort = sort;
-    }
-
-    if (q) {
-      nextParams.q = q;
-    }
-
-    if (page) {
-      nextParams.page = page;
-    }
-
-    return nextParams;
-  }, [
-    searchKey,
-    categoryApiValues,
-    areaApiValues,
-  ]);
-
-  const result = useListPage(
-    articleApi.list,
-    params,
-  );
-
-  /*
-   * Đồng bộ ô tìm kiếm khi URL thay đổi
-   * do Back/Forward hoặc nhấn chip.
-   */
-  useEffect(() => {
-    setSearchInput(currentQuery);
-  }, [currentQuery]);
-
-  const setUrlParams = useCallback(
-    (mutator, options = {}) => {
-      setSearchParams(
-        (current) => {
-          const next =
-            new URLSearchParams(
-              current,
-            );
-
-          mutator(next);
-
-          /*
-           * Không giữ page=1 trên URL.
-           */
-          if (
-            next.get('page') === '1'
-          ) {
-            next.delete('page');
+        Object.entries(values).forEach(([key, value]) => {
+          if (value === '' || value === null || value === undefined) {
+            next.delete(key);
+          } else {
+            next.set(key, String(value));
           }
+        });
 
-          return next;
-        },
-        options,
-      );
+        next.delete('categories');
+        next.delete('areas');
+        next.delete('page');
+        return next;
+      });
     },
     [setSearchParams],
   );
 
-  const updateListFilter =
-    useCallback(
-      ({
-        key,
-        legacyKey,
-        values,
-      }) => {
-        setUrlParams((next) => {
-          next.delete(legacyKey);
+  const applyFilters = useCallback(() => {
+    updateUrl({
+      category: categoryDraft,
+      area: areaDraft,
+      date: dateDraft,
+      sort: sortDraft,
+    });
+  }, [categoryDraft, areaDraft, dateDraft, sortDraft, updateUrl]);
 
-          if (values.length) {
-            next.set(
-              key,
-              values.join(','),
-            );
-          } else {
-            next.delete(key);
-          }
+  const clearFilters = useCallback(() => {
+    setAreaDraft('');
+    setDateDraft('');
+    setSortDraft('');
+    updateUrl({ area: '', date: '', sort: '' });
+  }, [updateUrl]);
 
-          next.delete('page');
-        });
-      },
-      [setUrlParams],
-    );
+  const clearAll = useCallback(() => {
+    setSearchDraft('');
+    setCategoryDraft('');
+    setAreaDraft('');
+    setDateDraft('');
+    setSortDraft('');
+    setSearchParams(new URLSearchParams());
+  }, [setSearchParams]);
 
-  const updateSingleFilter =
-    useCallback(
-      (key, value) => {
-        setUrlParams((next) => {
-          if (value) {
-            next.set(key, value);
-          } else {
-            next.delete(key);
-          }
+  const onPageChange = useCallback(
+    (page) => {
+      setSearchParams((current) => {
+        const next = new URLSearchParams(current);
+        if (Number(page) <= 1) next.delete('page');
+        else next.set('page', String(page));
+        return next;
+      });
 
-          next.delete('page');
-        });
-      },
-      [setUrlParams],
-    );
-
-  const commitSearch =
-    useCallback(
-      (value, replace = true) => {
-        const cleanValue =
-          String(value || '').trim();
-
-        setUrlParams(
-          (next) => {
-            if (cleanValue) {
-              next.set(
-                'q',
-                cleanValue,
-              );
-            } else {
-              next.delete('q');
-            }
-
-            next.delete('page');
-          },
-          {
-            replace,
-          },
-        );
-      },
-      [setUrlParams],
-    );
-
-  /*
-   * Debounce tìm kiếm 450 ms.
-   */
-  useEffect(() => {
-    const cleanInput =
-      searchInput.trim();
-
-    if (cleanInput === currentQuery) {
-      return undefined;
-    }
-
-    const timer =
       window.setTimeout(() => {
-        commitSearch(
-          cleanInput,
-          true,
-        );
-      }, 450);
-
-    return () => {
-      window.clearTimeout(timer);
-    };
-  }, [
-    searchInput,
-    currentQuery,
-    commitSearch,
-  ]);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(
-        VIEW_MODE_KEY,
-        viewMode,
-      );
-    } catch {
-      // Không ảnh hưởng giao diện nếu
-      // trình duyệt chặn localStorage.
-    }
-  }, [viewMode]);
-
-  useEffect(() => {
-    if (!filterPanelOpen) {
-      return undefined;
-    }
-
-    const previousOverflow =
-      document.body.style.overflow;
-
-    const closeWithEscape = (
-      event,
-    ) => {
-      if (event.key === 'Escape') {
-        setFilterPanelOpen(false);
-      }
-    };
-
-    document.body.style.overflow =
-      'hidden';
-
-    document.addEventListener(
-      'keydown',
-      closeWithEscape,
-    );
-
-    return () => {
-      document.body.style.overflow =
-        previousOverflow;
-
-      document.removeEventListener(
-        'keydown',
-        closeWithEscape,
-      );
-    };
-  }, [filterPanelOpen]);
-
-  const handlePageChange =
-    useCallback(
-      (page) => {
-        setUrlParams((next) => {
-          if (Number(page) <= 1) {
-            next.delete('page');
-          } else {
-            next.set(
-              'page',
-              String(page),
-            );
-          }
+        resultsRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
         });
-
-        window.setTimeout(() => {
-          resultsRef.current?.scrollIntoView(
-            {
-              behavior: 'smooth',
-              block: 'start',
-            },
-          );
-        }, 30);
-      },
-      [setUrlParams],
-    );
-
-  const toggleCategoryChip =
-    useCallback(
-      (value) => {
-        const exists =
-          selectedCategories.includes(
-            value,
-          );
-
-        const nextValues = exists
-          ? selectedCategories.filter(
-              (item) => item !== value,
-            )
-          : [
-              ...selectedCategories,
-              value,
-            ];
-
-        updateListFilter({
-          key: 'categories',
-          legacyKey: 'category',
-          values: nextValues,
-        });
-      },
-      [
-        selectedCategories,
-        updateListFilter,
-      ],
-    );
-
-  const clearAllFilters =
-    useCallback(() => {
-      setSearchInput('');
-
-      setUrlParams((next) => {
-        [
-          'category',
-          'categories',
-          'area',
-          'areas',
-          'sort',
-          'q',
-          'page',
-        ].forEach((key) => {
-          next.delete(key);
-        });
-      });
-    }, [setUrlParams]);
-
-  const removeCategory =
-    useCallback(
-      (value) => {
-        updateListFilter({
-          key: 'categories',
-          legacyKey: 'category',
-          values:
-            selectedCategories.filter(
-              (item) =>
-                item !== value,
-            ),
-        });
-      },
-      [
-        selectedCategories,
-        updateListFilter,
-      ],
-    );
-
-  const removeArea = useCallback(
-    (value) => {
-      updateListFilter({
-        key: 'areas',
-        legacyKey: 'area',
-        values:
-          selectedAreas.filter(
-            (item) => item !== value,
-          ),
-      });
+      }, 30);
     },
-    [
-      selectedAreas,
-      updateListFilter,
-    ],
+    [setSearchParams],
   );
 
-  const selectedCategoryItems =
-    useMemo(
-      () =>
-        selectedCategories.map(
-          (value) => {
-            const item =
-              findTaxonomyItem(
-                articleCategories,
-                value,
-              );
+  const total = Number(result.meta?.total || 0);
+  const currentPage = Number(result.meta?.page || 1);
+  const totalPages = Math.max(1, Number(result.meta?.totalPages || 1));
+  const limit = Number(result.meta?.limit || PAGE_SIZE);
+  const pageStart = total ? (currentPage - 1) * limit + 1 : 0;
+  const pageEnd = total ? Math.min(total, currentPage * limit) : 0;
+  const hasSecondaryFilter = Boolean(area || date || sort || query);
 
-            return {
-              value,
-              label:
-                item?.name ||
-                item?.title ||
-                value,
-            };
-          },
-        ),
-      [
-        selectedCategories,
-        articleCategories,
-      ],
-    );
-
-  const selectedAreaItems =
-    useMemo(
-      () =>
-        selectedAreas.map(
-          (value) => {
-            const item =
-              findTaxonomyItem(
-                areas,
-                value,
-              );
-
-            return {
-              value,
-              label:
-                item?.name ||
-                item?.title ||
-                value,
-            };
-          },
-        ),
-      [selectedAreas, areas],
-    );
-
-  const activeFilterCount =
-    selectedCategories.length +
-    selectedAreas.length +
-    (currentQuery ? 1 : 0) +
-    (currentSort ? 1 : 0);
-
-  const hasFilters =
-    activeFilterCount > 0;
-
-  const total = getTotal(
-    result.meta,
-    result.items.length,
-  );
-
-  const currentPage =
-    getCurrentPage(
-      result.meta,
-      searchParams,
-    );
-
-  const limit = getLimit(
-    result.meta,
-    result.items.length,
-  );
-
-  const fromItem =
-    total > 0
-      ? (currentPage - 1) *
-          Math.max(limit, 1) +
-        1
-      : 0;
-
-  const toItem =
-    total > 0
-      ? Math.min(
-          fromItem +
-            result.items.length -
-            1,
-          total,
-        )
-      : 0;
-
-  const popularCategories =
-    articleCategories.slice(0, 7);
+  const resultTitle = query
+    ? `Kết quả cho “${query}”`
+    : hasSecondaryFilter
+      ? pageCopy.filteredTitle
+      : pageCopy.latestTitle;
 
   return (
-    <section className="articles-page">
-      <Seo
-        title="Tin tức Hòa Lạc"
-        description="Tin quy hoạch, hạ tầng, bất động sản, đời sống và chính sách tại Hòa Lạc."
-      />
+    <section
+      className={`articles-page articles-page-v3 articles-page--${pageCopy.theme}`}
+    >
+      <Seo title={pageCopy.seoTitle} description={pageCopy.seoDescription} />
 
       <div className="articles-page__container">
-        <header className="articles-hero">
-          <div className="articles-hero__content">
-            <span className="articles-hero__eyebrow">
-              <Newspaper size={16} />
-              Tin tức địa phương
-            </span>
+        {!isCategoryPage ? (
+          <>
+            <header className="articles-hero articles-v3-hero">
+              <div className="articles-hero__content">
+                <span className="articles-hero__eyebrow">
+                  <Newspaper size={15} />
+                  {pageCopy.eyebrow}
+                </span>
+                <h1>{pageCopy.title}</h1>
+                <p>{pageCopy.description}</p>
+              </div>
 
-            <h1>
-              Chuyển động Đô Thị Hòa Lạc
-            </h1>
-
-            <p>
-              Theo dõi quy hoạch, hạ tầng,
-              bất động sản, chính sách và
-              đời sống địa phương theo đúng
-              chuyên mục, khu vực bạn quan
-              tâm.
-            </p>
-          </div>
-
-          <form
-            className="articles-hero__search"
-            onSubmit={(event) => {
-              event.preventDefault();
-
-              commitSearch(
-                searchInput,
-                false,
-              );
-            }}
-          >
-            <Search size={20} />
-
-            <input
-              type="search"
-              value={searchInput}
-              onChange={(event) =>
-                setSearchInput(
-                  event.target.value,
-                )
-              }
-              placeholder="Tìm quy hoạch, dự án, hạ tầng..."
-              aria-label="Tìm kiếm tin tức"
-            />
-
-            {searchInput ? (
-              <button
-                type="button"
-                className="articles-hero__search-clear"
-                aria-label="Xóa từ khóa"
-                onClick={() => {
-                  setSearchInput('');
-                  commitSearch('');
+              <form
+                className="articles-hero__search articles-v3-search"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  updateUrl({ q: searchDraft.trim() });
                 }}
               >
-                <X size={17} />
-              </button>
-            ) : null}
-
-            <button
-              type="submit"
-              className="articles-hero__search-submit"
-            >
-              <Search size={17} />
-              Tìm kiếm
-            </button>
-          </form>
-        </header>
-
-        {popularCategories.length ? (
-          <nav
-            className="articles-category-rail"
-            aria-label="Chuyên mục nổi bật"
-          >
-            <button
-              type="button"
-              className={
-                selectedCategories.length ===
-                0
-                  ? 'is-active'
-                  : ''
-              }
-              onClick={() =>
-                updateListFilter({
-                  key: 'categories',
-                  legacyKey:
-                    'category',
-                  values: [],
-                })
-              }
-            >
-              Tất cả
-            </button>
-
-            {popularCategories.map(
-              (item) => {
-                const value =
-                  getItemUrlValue(
-                    item,
-                  );
-
-                const selected =
-                  selectedCategories.includes(
-                    value,
-                  );
-
-                return (
-                  <button
-                    type="button"
-                    key={
-                      item._id ||
-                      value
-                    }
-                    className={
-                      selected
-                        ? 'is-active'
-                        : ''
-                    }
-                    onClick={() =>
-                      toggleCategoryChip(
-                        value,
-                      )
-                    }
-                  >
-                    {item.name}
-                  </button>
-                );
-              },
-            )}
-          </nav>
-        ) : null}
-
-        <div className="articles-mobile-filter-row">
-          <button
-            type="button"
-            onClick={() =>
-              setFilterPanelOpen(true)
-            }
-          >
-            <SlidersHorizontal
-              size={17}
-            />
-
-            Bộ lọc
-
-            {activeFilterCount > 0 ? (
-              <span>
-                {activeFilterCount}
-              </span>
-            ) : null}
-          </button>
-
-          <label>
-            <span>Sắp xếp</span>
-
-            <select
-              value={currentSort}
-              onChange={(event) =>
-                updateSingleFilter(
-                  'sort',
-                  event.target.value,
-                )
-              }
-            >
-              <option value="">
-                Mới nhất
-              </option>
-
-              <option value="popular">
-                Đọc nhiều
-              </option>
-            </select>
-          </label>
-        </div>
-
-        <section
-          className={[
-            'articles-filter-panel',
-            filterPanelOpen
-              ? 'is-open'
-              : '',
-          ]
-            .filter(Boolean)
-            .join(' ')}
-          aria-label="Bộ lọc tin tức"
-        >
-          <div className="articles-filter-panel__mobile-header">
-            <div>
-              <Filter size={19} />
-
-              <strong>
-                Bộ lọc tin tức
-              </strong>
-            </div>
-
-            <button
-              type="button"
-              aria-label="Đóng bộ lọc"
-              onClick={() =>
-                setFilterPanelOpen(false)
-              }
-            >
-              <X size={21} />
-            </button>
-          </div>
-
-          <div className="articles-filter-panel__heading">
-            <div>
-              <span>
-                <SlidersHorizontal
-                  size={17}
+                <Search size={19} />
+                <input
+                  type="search"
+                  value={searchDraft}
+                  onChange={(event) => setSearchDraft(event.target.value)}
+                  placeholder={pageCopy.searchPlaceholder}
+                  aria-label="Tìm kiếm tin tức"
                 />
-              </span>
+                <button
+                  type="submit"
+                  className="articles-hero__search-submit"
+                  disabled={!searchDraft.trim()}
+                >
+                  <Search size={16} />
+                  Tìm kiếm
+                </button>
+              </form>
+            </header>
 
-              <div>
-                <h2>
-                  Lọc nội dung
-                </h2>
-
-                <p>
-                  Có thể chọn đồng thời
-                  nhiều chuyên mục và khu
-                  vực.
-                </p>
-              </div>
+            <div className="articles-v3-category-shell">
+              <span className="articles-v3-category-label">Theo chuyên mục</span>
+              <nav
+                className="articles-category-rail articles-v3-category-rail"
+                aria-label="Chuyên mục tin tức"
+              >
+                <button
+                  type="button"
+                  className={!category ? 'is-active' : ''}
+                  onClick={() => {
+                    setCategoryDraft('');
+                    updateUrl({ category: '' });
+                  }}
+                >
+                  Tin mới
+                </button>
+                {ARTICLE_CATEGORY_RAIL.map((item) => (
+                  <button
+                    type="button"
+                    key={item.slug}
+                    className={category === item.slug ? 'is-active' : ''}
+                    onClick={() => {
+                      setCategoryDraft(item.slug);
+                      updateUrl({ category: item.slug });
+                    }}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </nav>
             </div>
 
-            {hasFilters ? (
-              <button
-                type="button"
-                onClick={clearAllFilters}
-              >
-                <RotateCcw size={16} />
-                Xóa tất cả
-              </button>
-            ) : null}
-          </div>
-
-          <div className="articles-filter-grid">
-            <MultiSelectFilter
-              label="Chuyên mục"
-              placeholder="Tất cả chuyên mục"
-              icon={Tags}
-              options={categoryOptions}
-              selectedValues={
-                selectedCategories
-              }
-              onChange={(values) =>
-                updateListFilter({
-                  key: 'categories',
-                  legacyKey:
-                    'category',
-                  values,
-                })
-              }
-              searchable
-            />
-
-            <MultiSelectFilter
-              label="Khu vực"
-              placeholder="Tất cả khu vực"
-              icon={MapPin}
-              options={areaOptions}
-              selectedValues={
-                selectedAreas
-              }
-              onChange={(values) =>
-                updateListFilter({
-                  key: 'areas',
-                  legacyKey: 'area',
-                  values,
-                })
-              }
-              searchable
-            />
-
-            <label className="articles-sort-filter">
-              <span>Sắp xếp</span>
-
-              <div>
-                {currentSort ===
-                'popular' ? (
-                  <TrendingUp size={18} />
-                ) : (
-                  <Clock3 size={18} />
-                )}
-
-                <select
-                  value={currentSort}
-                  onChange={(event) =>
-                    updateSingleFilter(
-                      'sort',
-                      event.target.value,
-                    )
-                  }
-                >
-                  {SORT_OPTIONS.map(
-                    (option) => (
-                      <option
-                        key={
-                          option.value
-                        }
-                        value={
-                          option.value
-                        }
-                      >
-                        {option.label}
-                      </option>
-                    ),
-                  )}
-                </select>
+            <section
+              className="articles-v3-filterbar"
+              aria-label="Bộ lọc tin tức"
+            >
+              <div className="articles-v3-filterbar__title">
+                <SlidersHorizontal size={17} />
+                <strong>Lọc nội dung</strong>
               </div>
-            </label>
-          </div>
 
-          {hasFilters ? (
-            <div className="articles-active-filters">
-              <span className="articles-active-filters__label">
-                Đang lọc:
-              </span>
+              <label className="articles-v3-field">
+                <span>Chuyên mục</span>
+                <div>
+                  <Tags size={16} />
+                  <select
+                    value={categoryDraft}
+                    onChange={(event) => setCategoryDraft(event.target.value)}
+                  >
+                    <option value="">Tất cả chuyên mục</option>
+                    {categoryOptions.map((item) => (
+                      <option
+                        key={item._id || valueOf(item)}
+                        value={valueOf(item)}
+                      >
+                        {item.name} ({facetCount(categoryCounts, item)})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </label>
 
-              {selectedCategoryItems.map(
-                (item) => (
+              <label className="articles-v3-field">
+                <span>Khu vực</span>
+                <div>
+                  <MapPin size={16} />
+                  <select
+                    value={areaDraft}
+                    onChange={(event) => setAreaDraft(event.target.value)}
+                  >
+                    <option value="">Tất cả khu vực</option>
+                    {areaOptions.map((item) => (
+                      <option
+                        key={item._id || valueOf(item)}
+                        value={valueOf(item)}
+                      >
+                        {item.name} ({facetCount(areaCounts, item)})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              </label>
+
+              <label className="articles-v3-field articles-v3-date-field">
+                <span>Ngày đăng</span>
+                <div>
+                  <CalendarDays size={16} />
+                  <input
+                    type="date"
+                    value={dateDraft}
+                    onChange={(event) => setDateDraft(event.target.value)}
+                  />
+                </div>
+              </label>
+
+              <label className="articles-v3-field">
+                <span>Sắp xếp</span>
+                <div>
+                  {sortDraft === 'popular' ? (
+                    <TrendingUp size={16} />
+                  ) : (
+                    <Clock3 size={16} />
+                  )}
+                  <select
+                    value={sortDraft}
+                    onChange={(event) => setSortDraft(event.target.value)}
+                  >
+                    <option value="">Mới nhất</option>
+                    <option value="popular">Đọc nhiều</option>
+                  </select>
+                </div>
+              </label>
+
+              <div className="articles-v3-filterbar__actions">
+                <button
+                  type="button"
+                  className="is-primary"
+                  onClick={applyFilters}
+                >
+                  <SlidersHorizontal size={16} />
+                  Lọc tin
+                </button>
+                {hasSecondaryFilter ? (
                   <button
                     type="button"
-                    key={`category-${item.value}`}
-                    onClick={() =>
-                      removeCategory(
-                        item.value,
-                      )
-                    }
+                    className="is-reset"
+                    onClick={clearFilters}
                   >
-                    <Tags size={14} />
-
-                    {item.label}
-
-                    <X size={14} />
+                    <RotateCcw size={15} />
+                    Xóa lọc
                   </button>
-                ),
-              )}
+                ) : null}
+              </div>
+            </section>
 
-              {selectedAreaItems.map(
-                (item) => (
-                  <button
-                    type="button"
-                    key={`area-${item.value}`}
-                    onClick={() =>
-                      removeArea(
-                        item.value,
-                      )
-                    }
-                  >
-                    <MapPin size={14} />
-
-                    {item.label}
-
-                    <X size={14} />
-                  </button>
-                ),
-              )}
-
-              {currentQuery ? (
+            {hasSecondaryFilter ? (
+              <div className="articles-v3-active-filter">
+                <span>Đang xem:</span>
+                {areaName ? <b>{areaName}</b> : null}
+                {date ? <b>{date.split('-').reverse().join('/')}</b> : null}
+                {sort === 'popular' ? <b>Đọc nhiều</b> : null}
+                {query ? <b>“{query}”</b> : null}
                 <button
                   type="button"
                   onClick={() => {
-                    setSearchInput('');
-                    commitSearch('');
+                    setSearchDraft('');
+                    setAreaDraft('');
+                    setDateDraft('');
+                    setSortDraft('');
+                    updateUrl({ q: '', area: '', date: '', sort: '' });
                   }}
                 >
-                  <Search size={14} />
-
-                  “{currentQuery}”
-
-                  <X size={14} />
+                  Xóa tất cả bộ lọc phụ
                 </button>
-              ) : null}
-
-              {currentSort ===
-              'popular' ? (
-                <button
-                  type="button"
-                  onClick={() =>
-                    updateSingleFilter(
-                      'sort',
-                      '',
-                    )
-                  }
-                >
-                  <TrendingUp
-                    size={14}
-                  />
-
-                  Đọc nhiều
-
-                  <X size={14} />
-                </button>
-              ) : null}
-            </div>
-          ) : null}
-
-          <div className="articles-filter-panel__mobile-actions">
-            <button
-              type="button"
-              className="articles-filter-mobile-clear"
-              onClick={clearAllFilters}
-              disabled={!hasFilters}
-            >
-              Xóa bộ lọc
-            </button>
-
-            <button
-              type="button"
-              className="articles-filter-mobile-apply"
-              onClick={() =>
-                setFilterPanelOpen(false)
-              }
-            >
-              Xem kết quả
-            </button>
-          </div>
-        </section>
-
-        {filterPanelOpen ? (
-          <button
-            type="button"
-            className="articles-filter-overlay"
-            aria-label="Đóng bộ lọc"
-            onClick={() =>
-              setFilterPanelOpen(false)
-            }
-          />
+              </div>
+            ) : null}
+          </>
         ) : null}
 
         <section
           ref={resultsRef}
-          className="articles-results"
+          className="articles-results articles-v3-results"
         >
-          <header className="articles-results__header">
+          <header className="articles-results__header articles-v3-results__header">
             <div>
               <span className="articles-results__eyebrow">
-                <Newspaper size={15} />
-                Kết quả tin tức
+                <Newspaper size={14} />
+                {pageCopy.resultsEyebrow}
               </span>
-
               <h2>
-                {currentQuery
-                  ? `Kết quả cho “${currentQuery}”`
-                  : hasFilters
-                    ? 'Tin tức theo bộ lọc'
-                    : 'Tin tức mới nhất'}
+                {resultTitle}
+                {!result.loading && !result.error ? (
+                  <small>{total.toLocaleString('vi-VN')} bài viết</small>
+                ) : null}
               </h2>
-
-              {!result.loading &&
-              !result.error ? (
-                <p>
-                  {total > 0 ? (
-                    <>
-                      Hiển thị{' '}
-                      <strong>
-                        {fromItem}–
-                        {toItem}
-                      </strong>{' '}
-                      trong tổng số{' '}
-                      <strong>
-                        {total.toLocaleString(
-                          'vi-VN',
-                        )}
-                      </strong>{' '}
-                      bài viết.
-                    </>
-                  ) : (
-                    'Chưa có bài viết phù hợp.'
-                  )}
-                </p>
-              ) : null}
             </div>
 
             <div className="articles-view-switch">
               <button
                 type="button"
-                className={
-                  viewMode === 'grid'
-                    ? 'is-active'
-                    : ''
-                }
+                className={viewMode === 'grid' ? 'is-active' : ''}
                 aria-label="Xem dạng lưới"
-                title="Dạng lưới"
-                onClick={() =>
-                  setViewMode('grid')
-                }
+                onClick={() => setViewMode('grid')}
               >
-                <Grid3X3 size={18} />
+                <Grid3X3 size={17} />
               </button>
-
               <button
                 type="button"
-                className={
-                  viewMode === 'list'
-                    ? 'is-active'
-                    : ''
-                }
+                className={viewMode === 'list' ? 'is-active' : ''}
                 aria-label="Xem dạng danh sách"
-                title="Dạng danh sách"
-                onClick={() =>
-                  setViewMode('list')
-                }
+                onClick={() => setViewMode('list')}
               >
-                <List size={19} />
+                <List size={18} />
               </button>
             </div>
           </header>
 
-          <div className="articles-results__body">
+          <div className="articles-results__body articles-v3-results__body">
             {result.loading ? (
               <LoadingBlock />
             ) : result.error ? (
-              <ErrorState
-                error={result.error}
-                onRetry={result.reload}
-              />
+              <ErrorState error={result.error} onRetry={result.reload} />
             ) : result.items.length ? (
-              <div
-                className={[
-                  'articles-content-grid',
-                  viewMode === 'list'
-                    ? 'is-list'
-                    : 'is-grid',
-                ].join(' ')}
-              >
-                {result.items.map(
-                  (item) => (
-                    <article
-                      className="articles-content-item"
-                      key={item._id}
-                    >
-                      <ArticleCard
-                        item={item}
-                      />
-                    </article>
-                  ),
-                )}
+              <div className={`articles-content-grid is-${viewMode}`}>
+                {result.items.map((item) => (
+                  <article className="articles-content-item" key={item._id}>
+                    <ArticleCard item={item} />
+                  </article>
+                ))}
               </div>
             ) : (
               <div className="articles-empty-state">
                 <span>
-                  <Newspaper
-                    size={37}
-                  />
+                  <Newspaper size={34} />
                 </span>
-
-                <h3>
-                  Không tìm thấy bài viết
-                </h3>
-
-                <p>
-                  Hãy thử bỏ bớt chuyên
-                  mục, khu vực hoặc sử dụng
-                  một từ khóa tìm kiếm
-                  khác.
-                </p>
-
-                {hasFilters ? (
-                  <button
-                    type="button"
-                    onClick={clearAllFilters}
-                  >
-                    <RotateCcw
-                      size={17}
-                    />
-                    Xóa tất cả bộ lọc
-                  </button>
-                ) : null}
+                <h3>Chưa có bài viết phù hợp</h3>
+                <p>Thử đổi ngày đăng, khu vực hoặc chuyển sang chuyên mục khác.</p>
+                <button type="button" onClick={clearAll}>
+                  <RotateCcw size={16} />
+                  Làm mới bộ lọc
+                </button>
               </div>
             )}
           </div>
         </section>
 
-        {!result.loading &&
-        !result.error &&
-        result.items.length ? (
+        {!result.loading && !result.error && result.items.length ? (
           <div className="articles-pagination">
-            <Pagination
-              meta={result.meta}
-              onPageChange={
-                handlePageChange
-              }
-            />
-
-            {result.meta?.totalPages ? (
-              <p>
-                Trang {currentPage} /{' '}
-                {result.meta.totalPages}
-              </p>
-            ) : null}
+            <div className="articles-pagination__summary">
+              Hiển thị <strong>{pageStart}-{pageEnd}</strong> trong{' '}
+              <strong>{total.toLocaleString('vi-VN')}</strong> bài viết
+              {totalPages > 1 ? (
+                <>
+                  {' '}· Trang <strong>{currentPage}/{totalPages}</strong>
+                </>
+              ) : null}
+            </div>
+            <Pagination meta={result.meta} onPageChange={onPageChange} />
           </div>
         ) : null}
       </div>
