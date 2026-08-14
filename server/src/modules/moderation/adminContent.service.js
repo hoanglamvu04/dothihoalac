@@ -11,23 +11,47 @@ import ApiError from '../../utils/ApiError.js';
 
 const MANAGED_TYPES = new Set(['community', 'property', 'job']);
 const MANAGED_STATUSES = new Set([
-  'draft',
-  'pending_review',
-  'needs_revision',
-  'approved',
-  'scheduled',
-  'published',
-  'rejected',
-  'hidden',
-  'archived',
-  'expired',
-  'deleted',
+  'draft', 'pending_review', 'needs_revision', 'approved', 'scheduled', 'published',
+  'rejected', 'hidden', 'archived', 'expired', 'deleted',
 ]);
+const COMMENT_STATUSES = new Set(['published', 'hidden', 'deleted', 'pending']);
+
+const DETAIL_FIELDS = {
+  community: new Set([
+    'postType', 'questionStatus', 'acceptedCommentId', 'incidentStatus',
+    'incidentTime', 'locationText', 'rating',
+  ]),
+  property: new Set([
+    'transactionType', 'propertyType', 'ownerType', 'price', 'priceUnit',
+    'isNegotiable', 'landArea', 'usableArea', 'bedrooms', 'bathrooms', 'frontage',
+    'roadWidth', 'direction', 'legalStatus', 'addressText', 'location', 'contactName',
+    'contactPhone', 'contactEmail', 'featureIds', 'expiresAt', 'soldAt', 'rentedAt',
+  ]),
+  job: new Set([
+    'jobType', 'companyName', 'salaryMin', 'salaryMax', 'salaryUnit',
+    'experienceLevel', 'workLocation', 'applicationMethod', 'contactEmail',
+    'contactPhone', 'deadline', 'positionsCount',
+  ]),
+};
 
 function ensureType(type) {
   if (!MANAGED_TYPES.has(type)) {
     throw new ApiError(422, 'Loại nội dung quản trị không hợp lệ.', 'ADMIN_CONTENT_TYPE_INVALID');
   }
+}
+
+function escapeRegex(value) {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function pickAllowedDetails(type, input) {
+  const result = {};
+  const allowed = DETAIL_FIELDS[type];
+  if (!input || typeof input !== 'object') return result;
+  for (const [key, value] of Object.entries(input)) {
+    if (allowed.has(key)) result[key] = value;
+  }
+  return result;
 }
 
 async function attachDetails(items, type) {
@@ -42,7 +66,7 @@ async function attachDetails(items, type) {
   } else if (type === 'property') {
     rows = await PropertyListing.find({ contentId: { $in: ids } }).lean();
     key = 'property';
-  } else if (type === 'job') {
+  } else {
     rows = await JobPost.find({ contentId: { $in: ids } }).lean();
     key = 'job';
   }
@@ -59,8 +83,7 @@ export async function list(type, query) {
   if (query.status) filter.status = query.status;
   if (query.includeDeleted !== '1' && query.status !== 'deleted') filter.deletedAt = null;
   if (query.q) {
-    const escaped = String(query.q).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-    const regex = new RegExp(escaped, 'i');
+    const regex = new RegExp(escapeRegex(query.q), 'i');
     filter.$or = [{ title: regex }, { summary: regex }];
   }
 
@@ -115,19 +138,9 @@ export async function update(admin, type, id, payload, ip) {
 
   const common = {};
   for (const key of [
-    'title',
-    'summary',
-    'bodyHtml',
-    'visibility',
-    'allowComments',
-    'primaryCategoryId',
-    'primaryAreaId',
-    'categoryIds',
-    'tagIds',
-    'areaIds',
-    'thumbnailMediaId',
-    'isFeatured',
-    'isSponsored',
+    'title', 'summary', 'bodyHtml', 'visibility', 'allowComments', 'primaryCategoryId',
+    'primaryAreaId', 'categoryIds', 'tagIds', 'areaIds', 'thumbnailMediaId',
+    'isFeatured', 'isSponsored',
   ]) {
     if (payload[key] !== undefined) common[key] = payload[key];
   }
@@ -136,13 +149,17 @@ export async function update(admin, type, id, payload, ip) {
     await updateContentWithBody(content, common, admin._id, 'Admin content edit');
   }
 
-  if (payload.details && typeof payload.details === 'object') {
+  const details = pickAllowedDetails(type, payload.details);
+  if (Object.keys(details).length) {
     const Model = type === 'community' ? CommunityPost : type === 'property' ? PropertyListing : JobPost;
-    await Model.findOneAndUpdate(
+    const updated = await Model.findOneAndUpdate(
       { contentId: id },
-      { $set: payload.details },
+      { $set: details },
       { runValidators: true, new: true },
     );
+    if (!updated) {
+      throw new ApiError(404, 'Không tìm thấy dữ liệu chuyên biệt của nội dung.', 'CONTENT_DETAIL_NOT_FOUND');
+    }
   }
 
   await writeAuditLog({
@@ -151,7 +168,7 @@ export async function update(admin, type, id, payload, ip) {
     targetType: 'content',
     targetId: id,
     oldData,
-    newData: payload,
+    newData: { ...common, details },
     ipAddress: ip,
   });
 
@@ -195,7 +212,7 @@ export async function comments(query) {
   const { page, limit, skip } = parsePagination(query, { limit: 30 });
   const filter = {};
   if (query.status) filter.status = query.status;
-  if (query.q) filter.body = new RegExp(String(query.q).replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i');
+  if (query.q) filter.body = new RegExp(escapeRegex(query.q), 'i');
   if (query.contentId) filter.contentId = query.contentId;
 
   const [items, total] = await Promise.all([
@@ -223,9 +240,14 @@ export async function updateComment(admin, id, payload, ip) {
     comment.body = body;
     comment.editedAt = new Date();
   }
-  if (payload.status !== undefined) comment.status = payload.status;
-  if (payload.status === 'deleted') comment.deletedAt = new Date();
-  else if (payload.status) comment.deletedAt = null;
+  if (payload.status !== undefined) {
+    if (!COMMENT_STATUSES.has(payload.status)) {
+      throw new ApiError(422, 'Trạng thái bình luận không hợp lệ.', 'COMMENT_STATUS_INVALID');
+    }
+    comment.status = payload.status;
+    if (payload.status === 'deleted') comment.deletedAt = new Date();
+    else comment.deletedAt = null;
+  }
   await comment.save();
 
   await writeAuditLog({
@@ -249,13 +271,17 @@ export async function deleteComment(admin, id, ip) {
   if (!comment) throw new ApiError(404, 'Không tìm thấy bình luận.', 'COMMENT_NOT_FOUND');
 
   const wasVisible = comment.status !== 'deleted';
+  const oldStatus = comment.status;
   comment.status = 'deleted';
   comment.deletedAt = new Date();
   comment.body = '[Bình luận đã bị xóa bởi quản trị viên]';
   await comment.save();
 
   if (wasVisible) {
-    await Content.updateOne({ _id: comment.contentId, commentCount: { $gt: 0 } }, { $inc: { commentCount: -1 } });
+    await Content.updateOne(
+      { _id: comment.contentId, commentCount: { $gt: 0 } },
+      { $inc: { commentCount: -1 } },
+    );
   }
 
   await writeAuditLog({
@@ -263,7 +289,7 @@ export async function deleteComment(admin, id, ip) {
     action: 'admin.comment.delete',
     targetType: 'comment',
     targetId: id,
-    oldData: { status: 'visible' },
+    oldData: { status: oldStatus },
     newData: { status: 'deleted' },
     ipAddress: ip,
   });
