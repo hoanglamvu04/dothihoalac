@@ -120,14 +120,16 @@ export function extractInlineMediaFigures(bodyHtml = '') {
 }
 
 /**
- * Kiểm tra toàn bộ ảnh trong bài:
- * - phải nằm trong figure;
- * - phải có Media ID hợp lệ;
- * - phải có alt và chú thích;
- * - URL phải trùng với Media đã lưu trong hệ thống;
- * - Media phải là ảnh active, chưa bị xóa.
+ * Kiểm tra toàn bộ ảnh trong nội dung.
+ *
+ * Với bài báo, requireCaption mặc định là true để giữ workflow CMS hiện tại.
+ * Community có thể đặt requireCaption=false vì UX social không bắt người dùng
+ * nhập chú thích cho từng ảnh, nhưng vẫn kiểm tra Media ID, URL và alt.
  */
-export async function validateInlineMediaHtml(bodyHtml = '') {
+export async function validateInlineMediaHtml(
+  bodyHtml = '',
+  { requireCaption = true } = {},
+) {
   const html = String(bodyHtml || '');
   const totalImages = countImages(html);
 
@@ -218,7 +220,7 @@ export async function validateInlineMediaHtml(bodyHtml = '') {
       );
     }
 
-    if (!item.caption) {
+    if (requireCaption && !item.caption) {
       throw inlineMediaError(
         `Ảnh thứ ${index + 1} phải có chú thích.`,
         'INLINE_MEDIA_CAPTION_REQUIRED',
