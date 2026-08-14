@@ -68,6 +68,14 @@ function postText(item) {
   ).trim();
 }
 
+function profileAvatar(user) {
+  return (
+    user?.profile?.avatarMediaId ||
+    user?.avatarMediaId ||
+    null
+  );
+}
+
 function ReactionButton({
   reaction,
   onReact,
@@ -243,6 +251,7 @@ export default function CommunityCard({ item }) {
             user?.profile?.displayName ||
             user?.username ||
             'Thành viên',
+          profile: user?.profile || null,
         },
       };
 
@@ -280,7 +289,11 @@ export default function CommunityCard({ item }) {
   return (
     <article className="community-card community-card--social">
       <header className="community-feed-card__header">
-        <Avatar name={authorName} size="sm" />
+        <Avatar
+          src={profileAvatar(author)}
+          name={authorName}
+          size="sm"
+        />
 
         <div className="community-feed-card__author">
           <Link
@@ -422,7 +435,11 @@ export default function CommunityCard({ item }) {
                 className="community-feed-comment"
                 key={comment._id}
               >
-                <Avatar name={name} size="xs" />
+                <Avatar
+                  src={profileAvatar(comment.userId)}
+                  name={name}
+                  size="xs"
+                />
 
                 <div className="community-feed-comment__bubble">
                   <strong>{name}</strong>
@@ -443,6 +460,7 @@ export default function CommunityCard({ item }) {
         onSubmit={submitComment}
       >
         <Avatar
+          src={profileAvatar(user)}
           name={
             user?.displayName ||
             user?.profile?.displayName ||
