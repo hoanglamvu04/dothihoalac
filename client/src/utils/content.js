@@ -70,11 +70,25 @@ export function contentPath(item) {
 
   const encodedSlug = encodeURIComponent(slug);
 
+  if (type === 'community') {
+    const username = String(
+      item?.authorId?.username ||
+        item?.author?.username ||
+        item?.username ||
+        '',
+    ).trim();
+
+    if (username) {
+      return `/${section}/${encodeURIComponent(username)}/${encodedSlug}`;
+    }
+
+    return `/${section}/${encodedSlug}`;
+  }
+
   if (id) {
     return `/${section}/${encodeURIComponent(id)}/${encodedSlug}`;
   }
 
-  // Giữ tương thích với dữ liệu cũ chưa có ID ở client.
   return `/${section}/${encodedSlug}`;
 }
 
