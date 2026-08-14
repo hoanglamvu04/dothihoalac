@@ -594,6 +594,11 @@ export default function CommunityPage() {
     user?.username ||
     'Bạn';
 
+  const composerAvatar =
+    user?.profile?.avatarMediaId ||
+    user?.avatarMediaId ||
+    null;
+
   const feedLabel = currentQuery
     ? `Kết quả cho “${currentQuery}”`
     : currentSort === 'popular'
@@ -644,6 +649,7 @@ export default function CommunityPage() {
           aria-label="Tạo bài viết cộng đồng"
         >
           <Avatar
+            src={composerAvatar}
             name={composerName}
             size="md"
           />
