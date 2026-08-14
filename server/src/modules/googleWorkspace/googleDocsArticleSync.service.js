@@ -39,6 +39,64 @@ function escapeHtml(value = '') {
     .replaceAll("'", '&#039;');
 }
 
+function safeLinkUrl(value = '') {
+  const url = String(value || '').trim();
+
+  return /^(https?:\/\/|mailto:|tel:)/i.test(url)
+    ? url
+    : '';
+}
+
+function textRunHtml(content, textStyle = {}) {
+  if (!content) return '';
+
+  let html = escapeHtml(content)
+    .replace(/\n/g, '<br>');
+
+  if (textStyle.bold === true) {
+    html = `<strong>${html}</strong>`;
+  }
+
+  if (textStyle.italic === true) {
+    html = `<em>${html}</em>`;
+  }
+
+  if (textStyle.underline === true) {
+    html = `<u>${html}</u>`;
+  }
+
+  if (textStyle.strikethrough === true) {
+    html = `<s>${html}</s>`;
+  }
+
+  const href = safeLinkUrl(
+    textStyle?.link?.url,
+  );
+
+  if (href) {
+    html = `<a href="${escapeHtml(href)}" target="_blank" rel="nofollow noopener noreferrer">${html}</a>`;
+  }
+
+  return html;
+}
+
+function summaryTextFromRow(row) {
+  const text = safeText(row?.text, 1000);
+  if (!text) return '';
+
+  const marker = text.match(
+    /^(?:\[?\s*sapo\s*\]?|mô\s*tả(?:\s*ngắn)?|mo\s*ta(?:\s*ngan)?)\s*[:：-]\s*(.+)$/iu,
+  );
+
+  if (marker?.[1]) {
+    return safeText(marker[1], 1000);
+  }
+
+  return row?.namedStyle === 'SUBTITLE'
+    ? text
+    : '';
+}
+
 function imageObjectFromDocument(document, objectId) {
   const inline = document?.inlineObjects?.[objectId]
     ?.inlineObjectProperties
@@ -381,32 +439,59 @@ function collectDocumentRows(document) {
       paragraph,
     );
 
+    const elements = paragraph.elements || [];
+    let lastTextIndex = -1;
+
+    for (let index = elements.length - 1; index >= 0; index -= 1) {
+      if (elements[index]?.textRun?.content) {
+        lastTextIndex = index;
+        break;
+      }
+    }
+
     let textBuffer = '';
+    let htmlBuffer = '';
 
     const flushText = () => {
       const text = textBuffer
         .replace(/\n+$/g, '')
         .trim();
 
+      const html = htmlBuffer.trim();
+
       textBuffer = '';
+      htmlBuffer = '';
 
       if (!text) return;
 
       rows.push({
         kind: 'text',
         text,
+        html: html || escapeHtml(text),
         namedStyle,
         listType,
       });
     };
 
-    for (const element of
-      paragraph.elements || []) {
+    elements.forEach((element, index) => {
       if (element?.textRun?.content) {
-        textBuffer += String(
+        let content = String(
           element.textRun.content,
-        );
-        continue;
+        ).replace(/\r/g, '');
+
+        if (index === lastTextIndex) {
+          content = content.replace(/\n+$/g, '');
+        }
+
+        if (content) {
+          textBuffer += content;
+          htmlBuffer += textRunHtml(
+            content,
+            element.textRun.textStyle || {},
+          );
+        }
+
+        return;
       }
 
       const objectId =
@@ -420,7 +505,7 @@ function collectDocumentRows(document) {
           objectId,
         });
       }
-    }
+    });
 
     flushText();
 
@@ -434,6 +519,11 @@ function collectDocumentRows(document) {
   }
 
   return rows;
+}
+
+function inlineHtml(block) {
+  return block?.html ||
+    escapeHtml(block?.text || '');
 }
 
 function blocksToHtml(blocks = []) {
@@ -459,7 +549,11 @@ function blocksToHtml(blocks = []) {
 
       for (const item of block.items || []) {
         html.push(
-          `<li>${escapeHtml(item)}</li>`,
+          `<li>${
+            typeof item === 'string'
+              ? escapeHtml(item)
+              : inlineHtml(item)
+          }</li>`,
         );
       }
 
@@ -470,21 +564,21 @@ function blocksToHtml(blocks = []) {
 
     if (block.type === 'h2') {
       html.push(
-        `<h2>${escapeHtml(block.text)}</h2>`,
+        `<h2>${inlineHtml(block)}</h2>`,
       );
       continue;
     }
 
     if (block.type === 'h3') {
       html.push(
-        `<h3>${escapeHtml(block.text)}</h3>`,
+        `<h3>${inlineHtml(block)}</h3>`,
       );
       continue;
     }
 
     if (block.type === 'h4') {
       html.push(
-        `<h4>${escapeHtml(block.text)}</h4>`,
+        `<h4>${inlineHtml(block)}</h4>`,
       );
       continue;
     }
@@ -510,7 +604,7 @@ function blocksToHtml(blocks = []) {
 
     if (block.text) {
       html.push(
-        `<p>${escapeHtml(block.text)}</p>`,
+        `<p>${inlineHtml(block)}</p>`,
       );
     }
   }
@@ -540,7 +634,8 @@ export async function syncGoogleDocsArticleContent({
     );
   }
 
-  let titleRow = textRows.find(
+  const earlyTextRows = textRows.slice(0, 3);
+  let titleRow = earlyTextRows.find(
     (row) =>
       row.namedStyle === 'TITLE' ||
       row.namedStyle === 'HEADING_1',
@@ -556,11 +651,24 @@ export async function syncGoogleDocsArticleContent({
 
   if (!title || title.length < 5) {
     throw new GoogleWorkspaceError(
-      'Tiêu đề Google Docs quá ngắn. Hãy dùng dòng đầu tiên hoặc Heading 1 làm tiêu đề.',
+      'Tiêu đề Google Docs quá ngắn. Hãy dùng dòng đầu tiên hoặc Title/Heading 1 làm tiêu đề.',
       'GOOGLE_DOC_TITLE_INVALID',
       400,
     );
   }
+
+  const titleTextIndex = Math.max(
+    textRows.indexOf(titleRow),
+    0,
+  );
+
+  const summaryRow = textRows
+    .slice(titleTextIndex + 1, titleTextIndex + 7)
+    .find((row) => Boolean(summaryTextFromRow(row))) || null;
+
+  const summary = summaryRow
+    ? summaryTextFromRow(summaryRow)
+    : '';
 
   const imageRows = rows.filter(
     (row) => row.kind === 'image',
@@ -587,7 +695,6 @@ export async function syncGoogleDocsArticleContent({
   const blocks = [];
   const seenObjectIds = new Set();
 
-  let titleConsumed = false;
   let coverMediaId = '';
   let coverUrl = '';
 
@@ -668,12 +775,11 @@ export async function syncGoogleDocsArticleContent({
         );
       }
 
-      // Quy ước giống KTHL: ảnh Google Docs đầu tiên là ảnh bìa.
-      // DTHL đã render thumbnailMediaId ở đầu bài nên không chèn lại ảnh bìa vào body.
+      // Ảnh đầu tiên vẫn là thumbnail/ảnh bìa cho card, SEO và danh sách,
+      // nhưng không được xóa khỏi thân bài. Vị trí trong Google Docs là nguồn sự thật.
       if (!coverMediaId) {
         coverMediaId = stored.mediaId;
         coverUrl = stored.url;
-        continue;
       }
 
       blocks.push({
@@ -688,11 +794,13 @@ export async function syncGoogleDocsArticleContent({
       continue;
     }
 
-    if (
-      !titleConsumed &&
-      row === titleRow
-    ) {
-      titleConsumed = true;
+    if (row === titleRow) {
+      continue;
+    }
+
+    // Sapo chỉ tồn tại khi biên tập viên chủ động dùng style Subtitle
+    // hoặc viết tiền tố "SAPO:"/"Mô tả:". Không tự lấy đoạn thân bài đầu tiên.
+    if (row === summaryRow) {
       continue;
     }
 
@@ -700,14 +808,19 @@ export async function syncGoogleDocsArticleContent({
       const previous =
         blocks[blocks.length - 1];
 
+      const item = {
+        text: row.text,
+        html: row.html,
+      };
+
       if (
         previous?.type === row.listType
       ) {
-        previous.items.push(row.text);
+        previous.items.push(item);
       } else {
         blocks.push({
           type: row.listType,
-          items: [row.text],
+          items: [item],
         });
       }
 
@@ -716,7 +829,11 @@ export async function syncGoogleDocsArticleContent({
 
     let type = 'p';
 
-    if (row.namedStyle === 'HEADING_2') {
+    if (
+      row.namedStyle === 'HEADING_1' ||
+      row.namedStyle === 'TITLE' ||
+      row.namedStyle === 'HEADING_2'
+    ) {
       type = 'h2';
     } else if (
       row.namedStyle === 'HEADING_3'
@@ -731,6 +848,7 @@ export async function syncGoogleDocsArticleContent({
     blocks.push({
       type,
       text: row.text,
+      html: row.html,
     });
   }
 
@@ -743,44 +861,22 @@ export async function syncGoogleDocsArticleContent({
 
   if (!meaningful.length) {
     throw new GoogleWorkspaceError(
-      'Google Docs mới có tiêu đề hoặc ảnh bìa nhưng chưa có nội dung bài viết.',
+      'Google Docs mới có tiêu đề nhưng chưa có nội dung bài viết.',
       'GOOGLE_DOC_CONTENT_EMPTY',
       400,
     );
   }
 
-  const firstParagraph = meaningful.find(
-    (block) =>
-      block.type === 'p' &&
-      String(block.text || '').trim().length >=
-        20,
-  );
-
-  const summary = String(
-    firstParagraph?.text ||
-      meaningful.find(
-        (block) => block.text,
-      )?.text ||
-      '',
-  )
-    .replace(/\s+/g, ' ')
-    .trim()
-    .slice(0, 320);
-
   return {
     title,
-    summary:
-      summary || `Nội dung bài viết ${title}`,
+    summary,
+    summaryDetected: Boolean(summaryRow),
     bodyHtml: blocksToHtml(meaningful),
     imageMap,
     imageUrls,
     imageMediaIds,
     imageCount: imageMediaIds.length,
-    inlineImageCount: Math.max(
-      imageMediaIds.length -
-        (coverMediaId ? 1 : 0),
-      0,
-    ),
+    inlineImageCount: imageMediaIds.length,
     coverMediaId,
     coverUrl,
   };
