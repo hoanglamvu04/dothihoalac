@@ -101,10 +101,18 @@ export const adminApi = {
   createPage: async (payload) => unwrap(await api.post('/admin/system/pages', payload)),
   updatePage: async (id, payload) =>
     unwrap(await api.patch(`/admin/system/pages/${id}`, payload)),
-  banners: async () => unwrap(await api.get('/admin/system/banners')),
-  createBanner: async (payload) => unwrap(await api.post('/admin/system/banners', payload)),
+
+  banners: async (params = {}) =>
+    unwrap(await api.get('/admin/system/banners', { params })),
+  createBanner: async (payload) =>
+    unwrap(await api.post('/admin/system/banners', payload)),
   updateBanner: async (id, payload) =>
     unwrap(await api.patch(`/admin/system/banners/${id}`, payload)),
+  toggleBanner: async (id, isActive) =>
+    unwrap(await api.patch(`/admin/system/banners/${id}/toggle`, { isActive })),
+  deleteBanner: async (id) =>
+    unwrap(await api.delete(`/admin/system/banners/${id}`)),
+
   activityLogs: async (params = {}) =>
     unwrapList(await api.get('/admin/system/activity-logs', { params })),
 };
