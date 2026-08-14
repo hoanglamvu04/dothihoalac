@@ -53,6 +53,27 @@ function stripHtml(value) {
     .trim();
 }
 
+function mediaIdOf(value) {
+  return String(
+    value?._id ||
+      value?.id ||
+      value ||
+      '',
+  );
+}
+
+function bodyContainsMediaId(html, mediaId) {
+  const id = String(mediaId || '').trim();
+  if (!id) return false;
+
+  const source = String(html || '');
+
+  return (
+    source.includes(`data-media-id="${id}"`) ||
+    source.includes(`data-media-id='${id}'`)
+  );
+}
+
 function getReadingMinutes(item, html) {
   const serverReadingMinutes = Number(
     item?.article?.readingMinutes ||
@@ -306,6 +327,40 @@ export default function ArticleDetailPage() {
     [item],
   );
 
+  const coverMediaId = useMemo(
+    () => mediaIdOf(item?.thumbnailMediaId),
+    [item?.thumbnailMediaId],
+  );
+
+  const coverUrl = useMemo(
+    () => mediaUrl(item?.thumbnailMediaId),
+    [item?.thumbnailMediaId],
+  );
+
+  const coverIsInline = useMemo(
+    () =>
+      bodyContainsMediaId(
+        bodyHtml,
+        coverMediaId,
+      ),
+    [bodyHtml, coverMediaId],
+  );
+
+  const showStandaloneCover =
+    Boolean(coverUrl) && !coverIsInline;
+
+  const seoDescription = useMemo(() => {
+    const explicit = String(
+      item?.summary || '',
+    ).trim();
+
+    if (explicit) return explicit;
+
+    return stripHtml(bodyHtml)
+      .slice(0, 180)
+      .trim();
+  }, [bodyHtml, item?.summary]);
+
   const readingMinutes = useMemo(
     () =>
       getReadingMinutes(
@@ -479,6 +534,7 @@ export default function ArticleDetailPage() {
         title: item?.title,
         text:
           item?.summary ||
+          seoDescription ||
           'Tin tức Đô Thị Hòa Lạc',
         url: window.location.href,
       };
@@ -505,6 +561,7 @@ export default function ArticleDetailPage() {
     [
       handleCopyLink,
       item,
+      seoDescription,
       toast,
     ],
   );
@@ -527,7 +584,7 @@ export default function ArticleDetailPage() {
     <section className="article-view-page">
       <Seo
         title={item.title}
-        description={item.summary}
+        description={seoDescription}
       />
 
       <div
@@ -701,13 +758,15 @@ export default function ArticleDetailPage() {
               </div>
             ) : null}
 
-            <div className="article-view-cover">
-              <ContentImage
-                media={item.thumbnailMediaId}
-                alt={item.title}
-                ratio="hero"
-              />
-            </div>
+            {showStandaloneCover ? (
+              <div className="article-view-cover">
+                <ContentImage
+                  media={item.thumbnailMediaId}
+                  alt={item.title}
+                  ratio="hero"
+                />
+              </div>
+            ) : null}
 
             <div className="article-view-content">
               <div className="article-view-body">
@@ -798,7 +857,7 @@ export default function ArticleDetailPage() {
                         </div>
                       ))
                     : sidebarArticles.map((article) => {
-                        const coverUrl = mediaUrl(
+                        const sidebarCoverUrl = mediaUrl(
                           article.thumbnailMediaId,
                         );
                         const views = getViewCount(article);
@@ -810,9 +869,9 @@ export default function ArticleDetailPage() {
                             key={getArticleId(article)}
                           >
                             <div className="article-popular-sidebar__thumb">
-                              {coverUrl ? (
+                              {sidebarCoverUrl ? (
                                 <img
-                                  src={coverUrl}
+                                  src={sidebarCoverUrl}
                                   alt=""
                                   loading="lazy"
                                 />
