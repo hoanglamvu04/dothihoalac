@@ -11,6 +11,8 @@ import { apiErrorMessage } from '../../api/http';
 import { useToast } from '../../context/ToastContext';
 import { formatDateTime } from '../../utils/formatters';
 
+import './AdminManagedContentPage.css';
+
 const STATUSES = [
   ['', 'Tất cả'],
   ['published', 'Đang hiển thị'],
