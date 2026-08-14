@@ -24,6 +24,7 @@ import {
 } from '../media/inlineMedia.service.js';
 
 const WORDS_PER_MINUTE = 220;
+const INLINE_MEDIA_CONTENT_TYPES = new Set(['article', 'community']);
 
 function normalizeText(value, fallback = '') {
   if (value === undefined || value === null) {
@@ -102,6 +103,16 @@ function sanitizeBody(bodyHtml = '') {
     bodyHtml: sanitizedHtml,
     bodyText,
     ...calculateBodyStats(bodyText),
+  };
+}
+
+function supportsInlineMedia(contentType) {
+  return INLINE_MEDIA_CONTENT_TYPES.has(String(contentType || ''));
+}
+
+function inlineMediaValidationOptions(contentType) {
+  return {
+    requireCaption: contentType === 'article',
   };
 }
 
@@ -267,10 +278,12 @@ export async function createContentWithBody({
 
   const body = sanitizeBody(bodyHtml);
 
-  const inlineMedia =
-    contentType === 'article'
-      ? await validateInlineMediaHtml(body.bodyHtml)
-      : [];
+  const inlineMedia = supportsInlineMedia(contentType)
+    ? await validateInlineMediaHtml(
+        body.bodyHtml,
+        inlineMediaValidationOptions(contentType),
+      )
+    : [];
 
   const inlineMediaIds = inlineMedia.map(
     (item) => item.mediaId,
@@ -333,7 +346,7 @@ export async function createContentWithBody({
       inlineMediaIds,
     });
 
-    if (contentType === 'article') {
+    if (supportsInlineMedia(contentType)) {
       await syncInlineMediaLinks(
         content._id,
         inlineMedia,
@@ -389,9 +402,10 @@ export async function updateContentWithBody(
   if (changes.bodyHtml !== undefined) {
     nextBody = sanitizeBody(changes.bodyHtml);
 
-    if (content.contentType === 'article') {
+    if (supportsInlineMedia(content.contentType)) {
       inlineMedia = await validateInlineMediaHtml(
         nextBody.bodyHtml,
+        inlineMediaValidationOptions(content.contentType),
       );
 
       nextBody.inlineMediaIds = inlineMedia.map(
@@ -532,7 +546,7 @@ export async function updateContentWithBody(
       },
     );
 
-    if (content.contentType === 'article') {
+    if (supportsInlineMedia(content.contentType)) {
       await syncInlineMediaLinks(
         content._id,
         inlineMedia || [],
