@@ -3,7 +3,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   ChevronDown,
   MessageCircle,
@@ -54,7 +54,6 @@ function collectMedia(item) {
   };
 
   append(item.thumbnailMediaId);
-
   (item.body?.inlineMediaIds || []).forEach(append);
 
   return result;
@@ -143,6 +142,7 @@ function ReactionButton({
 }
 
 export default function CommunityCard({ item }) {
+  const navigate = useNavigate();
   const { user, isAuthenticated } = useAuth();
   const toast = useToast();
   const commentInputRef = useRef(null);
@@ -191,6 +191,15 @@ export default function CommunityCard({ item }) {
     expanded || !isLong
       ? text
       : `${text.slice(0, 650).trim()}…`;
+
+  const openPost = (event) => {
+    const interactive = event.target?.closest?.(
+      'a, button, input, textarea, select, form, [role="button"]',
+    );
+
+    if (interactive) return;
+    navigate(href);
+  };
 
   const requireLogin = () => {
     if (isAuthenticated) return true;
@@ -289,7 +298,10 @@ export default function CommunityCard({ item }) {
   };
 
   return (
-    <article className="community-card community-card--social">
+    <article
+      className="community-card community-card--social"
+      onClick={openPost}
+    >
       <header className="community-feed-card__header">
         <Avatar
           src={profileAvatar(author)}
