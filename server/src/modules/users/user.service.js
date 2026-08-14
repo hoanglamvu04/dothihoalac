@@ -156,6 +156,27 @@ async function loadCommunityCoverFallback(items = []) {
   return result;
 }
 
+function buildPublicUrl(item) {
+  if (!item?.slug) return '';
+
+  if (item.contentType === 'community') {
+    const username = String(item.authorId?.username || '').trim();
+    return username
+      ? `/cong-dong/${encodeURIComponent(username)}/${encodeURIComponent(item.slug)}`
+      : `/cong-dong/${encodeURIComponent(item.slug)}`;
+  }
+
+  if (item.contentType === 'property') {
+    return `/nha-dat/${encodeURIComponent(item.slug)}`;
+  }
+
+  if (item.contentType === 'job') {
+    return `/viec-lam/${encodeURIComponent(item.slug)}`;
+  }
+
+  return '';
+}
+
 async function listContents(userId, query, contentType) {
   const { page, limit, skip } = parsePagination(query);
   const filter = { authorId: userId, deletedAt: null, ...(contentType ? { contentType } : {}) };
@@ -181,6 +202,7 @@ async function listContents(userId, query, contentType) {
         item.thumbnailMediaId ||
         fallbackCoverMap.get(String(item._id)) ||
         null,
+      publicUrl: buildPublicUrl(item),
     })),
     meta: buildPaginationMeta({ page, limit, total }),
   };
