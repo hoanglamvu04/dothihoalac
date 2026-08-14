@@ -11,6 +11,7 @@ import {
   LoaderCircle,
   MapPin,
   MessageCircle,
+  Save,
   Send,
   SlidersHorizontal,
   Tags,
@@ -24,10 +25,17 @@ import { useAuth } from '../../context/AuthContext';
 import { useTaxonomy } from '../../context/TaxonomyContext';
 import { useToast } from '../../context/ToastContext';
 import { COMMUNITY_TYPES } from '../../utils/constants';
+import { isPersistedContentId } from '../../utils/content';
 
 import './CommunityQuickComposer.css';
 
 const DEFAULT_TYPE = 'discussion';
+const EDITABLE_STATUSES = new Set([
+  'draft',
+  'needs_revision',
+  'rejected',
+  'published',
+]);
 
 function stripHtml(value = '') {
   if (typeof document === 'undefined') {
@@ -73,19 +81,36 @@ function deriveSummary(bodyHtml) {
     : `${text.slice(0, 417).trim()}...`;
 }
 
-function isQuickComposerLink(anchor) {
-  if (!anchor?.getAttribute) return false;
+function normalizeId(value) {
+  if (!value) return '';
+  if (typeof value === 'string') return value;
+  return String(value._id || value.id || '');
+}
+
+function getQuickComposerTarget(anchor) {
+  if (!anchor?.getAttribute) return null;
 
   const rawHref = anchor.getAttribute('href');
-  if (!rawHref) return false;
+  if (!rawHref) return null;
 
   try {
     const url = new URL(rawHref, window.location.origin);
     const pathname = url.pathname.replace(/\/+$/, '') || '/';
 
-    return pathname === '/dang-bai/cong-dong';
+    if (pathname === '/dang-bai/cong-dong') {
+      return { editId: '' };
+    }
+
+    const match = pathname.match(/^\/dang-bai\/cong-dong\/([^/]+)$/);
+    const editId = match ? decodeURIComponent(match[1]) : '';
+
+    if (isPersistedContentId(editId)) {
+      return { editId };
+    }
+
+    return null;
   } catch {
-    return false;
+    return null;
   }
 }
 
@@ -102,7 +127,9 @@ export default function CommunityQuickComposer() {
   const [bodyHtml, setBodyHtml] = useState('');
   const [allowComments, setAllowComments] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [loadingEdit, setLoadingEdit] = useState(false);
   const [draftId, setDraftId] = useState('');
+  const [editStatus, setEditStatus] = useState('');
   const [formError, setFormError] = useState('');
 
   const categories = useMemo(
@@ -149,6 +176,10 @@ export default function CommunityQuickComposer() {
     return parts.join(' · ');
   }, [postType, selectedArea, selectedCategory]);
 
+  const isEditing = Boolean(draftId);
+  const canEditCurrent =
+    !isEditing || EDITABLE_STATUSES.has(editStatus || 'draft');
+
   const resetComposer = useCallback(() => {
     setPostType(DEFAULT_TYPE);
     setCategoryId('');
@@ -156,55 +187,120 @@ export default function CommunityQuickComposer() {
     setBodyHtml('');
     setAllowComments(true);
     setSaving(false);
+    setLoadingEdit(false);
     setDraftId('');
+    setEditStatus('');
     setFormError('');
     setOptionsOpen(false);
   }, []);
 
-  const openComposer = useCallback(() => {
-    const params = new URLSearchParams(window.location.search);
-    const filteredType = params.get('type') || '';
-    const filteredArea = params.get('area') || '';
-    const filteredCategory = params.get('category') || '';
+  const closeComposer = useCallback(() => {
+    setOpen(false);
+    resetComposer();
 
-    if (COMMUNITY_TYPES[filteredType]) {
-      setPostType(filteredType);
-    }
+    window.dispatchEvent(
+      new CustomEvent('dthl:community-composer-closed'),
+    );
+  }, [resetComposer]);
 
-    if (
-      filteredArea &&
-      areas.some((item) => String(item._id) === filteredArea)
-    ) {
-      setAreaId(filteredArea);
-    }
+  const openComposer = useCallback(
+    async (editId = '') => {
+      resetComposer();
+      setOpen(true);
 
-    if (
-      filteredCategory &&
-      categories.some((item) => String(item._id) === filteredCategory)
-    ) {
-      setCategoryId(filteredCategory);
-    }
+      if (isPersistedContentId(editId)) {
+        setLoadingEdit(true);
+        setDraftId(editId);
 
-    setFormError('');
-    setOpen(true);
-  }, [areas, categories]);
+        try {
+          const source = await communityApi.editDetail(editId);
+          const status = String(source?.status || 'draft');
+
+          setEditStatus(status);
+          setPostType(
+            source?.community?.postType ||
+              source?.postType ||
+              DEFAULT_TYPE,
+          );
+          setCategoryId(normalizeId(source?.primaryCategoryId));
+          setAreaId(normalizeId(source?.primaryAreaId));
+          setBodyHtml(
+            source?.body?.bodyHtml ||
+              source?.bodyHtml ||
+              '',
+          );
+          setAllowComments(source?.allowComments !== false);
+
+          if (!EDITABLE_STATUSES.has(status)) {
+            setFormError(
+              'Bài đang chờ kiểm duyệt nên chưa thể chỉnh sửa. Hãy đợi kết quả duyệt trước.',
+            );
+          }
+        } catch (error) {
+          setFormError(
+            apiErrorMessage(
+              error,
+              'Không thể tải bài viết để chỉnh sửa.',
+            ),
+          );
+        } finally {
+          setLoadingEdit(false);
+        }
+
+        return;
+      }
+
+      const params = new URLSearchParams(window.location.search);
+      const filteredType = params.get('type') || '';
+      const filteredArea = params.get('area') || '';
+      const filteredCategory = params.get('category') || '';
+
+      if (COMMUNITY_TYPES[filteredType]) {
+        setPostType(filteredType);
+      }
+
+      if (
+        filteredArea &&
+        areas.some((item) => String(item._id) === filteredArea)
+      ) {
+        setAreaId(filteredArea);
+      }
+
+      if (
+        filteredCategory &&
+        categories.some((item) => String(item._id) === filteredCategory)
+      ) {
+        setCategoryId(filteredCategory);
+      }
+    },
+    [areas, categories, resetComposer],
+  );
 
   const requestClose = useCallback(
     (force = false) => {
-      if (saving) return;
+      if (saving || loadingEdit) return;
 
       if (
         !force &&
         hasContent &&
-        !window.confirm('Bỏ nội dung bạn đang soạn?')
+        !window.confirm(
+          isEditing
+            ? 'Đóng trình chỉnh sửa? Các thay đổi chưa lưu sẽ bị mất.'
+            : 'Bỏ nội dung bạn đang soạn?',
+        )
       ) {
         return;
       }
 
-      setOpen(false);
-      resetComposer();
+      closeComposer();
     },
-    [hasContent, resetComposer, saving],
+    [
+      closeComposer,
+      hasContent,
+      isEditing,
+      loadingEdit,
+      saving,
+    ],
   );
 
   useEffect(() => {
@@ -225,17 +321,17 @@ export default function CommunityQuickComposer() {
           ? event.target
           : null;
       const anchor = target?.closest('a[href]');
+      const composerTarget = getQuickComposerTarget(anchor);
 
-      if (!isQuickComposerLink(anchor)) return;
+      if (!composerTarget) return;
 
       if (!isAuthenticated) {
-        // Giữ nguyên ProtectedRoute hiện có cho người chưa đăng nhập.
         return;
       }
 
       event.preventDefault();
       event.stopPropagation();
-      openComposer();
+      void openComposer(composerTarget.editId);
     };
 
     document.addEventListener('click', handleDocumentClick, true);
@@ -250,9 +346,9 @@ export default function CommunityQuickComposer() {
   }, [isAuthenticated, openComposer]);
 
   useEffect(() => {
-    const handleOpenEvent = () => {
+    const handleOpenEvent = (event) => {
       if (isAuthenticated) {
-        openComposer();
+        void openComposer(event?.detail?.editId || '');
       }
     };
 
@@ -276,16 +372,17 @@ export default function CommunityQuickComposer() {
     document.body.style.overflow = 'hidden';
 
     const focusTimer = window.setTimeout(() => {
-      document
-        .querySelector(
-          '.community-quick-composer__rte .rte-content',
-        )
-        ?.focus();
-    }, 80);
+      if (!loadingEdit) {
+        document
+          .querySelector(
+            '.community-quick-composer__rte .rte-content',
+          )
+          ?.focus();
+      }
+    }, 100);
 
     const handleKeyDown = (event) => {
       if (event.key !== 'Escape') return;
-
       requestClose();
     };
 
@@ -296,10 +393,17 @@ export default function CommunityQuickComposer() {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [open, requestClose]);
+  }, [loadingEdit, open, requestClose]);
 
   const publish = async () => {
-    if (!hasContent || saving) return;
+    if (
+      !hasContent ||
+      saving ||
+      loadingEdit ||
+      !canEditCurrent
+    ) {
+      return;
+    }
 
     setSaving(true);
     setFormError('');
@@ -332,26 +436,33 @@ export default function CommunityQuickComposer() {
         setDraftId(id);
       }
 
-      await communityApi.submit(id);
+      if (editStatus === 'published') {
+        toast.success('Đã cập nhật bài viết.');
+      } else {
+        await communityApi.submit(id);
+        toast.success(
+          isEditing
+            ? 'Đã lưu thay đổi và gửi bài đi duyệt lại.'
+            : 'Đã đăng bài vào hàng chờ kiểm duyệt.',
+        );
+      }
 
-      toast.success(
-        'Đã đăng bài vào hàng chờ kiểm duyệt.',
-      );
-
-      setOpen(false);
-      resetComposer();
+      closeComposer();
 
       window.dispatchEvent(
         new CustomEvent('dthl:community-post-submitted', {
-          detail: { id },
+          detail: {
+            id,
+            updated: isEditing,
+          },
         }),
       );
     } catch (error) {
       setFormError(
         apiErrorMessage(
           error,
-          draftId
-            ? 'Bản nháp đã được lưu nhưng chưa thể gửi duyệt.'
+          isEditing
+            ? 'Không thể lưu thay đổi. Vui lòng thử lại.'
             : 'Không thể đăng bài. Vui lòng thử lại.',
         ),
       );
@@ -363,6 +474,12 @@ export default function CommunityQuickComposer() {
   if (!open || typeof document === 'undefined') {
     return null;
   }
+
+  const saveLabel = isEditing
+    ? editStatus === 'published'
+      ? 'Lưu thay đổi'
+      : 'Lưu & gửi duyệt'
+    : 'Đăng';
 
   return createPortal(
     <div
@@ -391,7 +508,7 @@ export default function CommunityQuickComposer() {
           </button>
 
           <strong id="community-quick-composer-title">
-            Bài viết mới
+            {isEditing ? 'Chỉnh sửa bài viết' : 'Bài viết mới'}
           </strong>
 
           <button
@@ -423,6 +540,7 @@ export default function CommunityQuickComposer() {
                 type="button"
                 className="community-quick-composer__topic-trigger"
                 aria-expanded={optionsOpen}
+                disabled={loadingEdit}
                 onClick={() => setOptionsOpen((value) => !value)}
               >
                 <span>
@@ -437,18 +555,29 @@ export default function CommunityQuickComposer() {
               Công khai
             </div>
 
-            <CommunitySocialEditor
-              className="community-quick-composer__rte"
-              value={bodyHtml}
-              onChange={(html) => {
-                setBodyHtml(html);
-                setFormError('');
-              }}
-              placeholder="Có gì mới?"
-              uploadFolder="community/inline"
-              maxImages={12}
-              maxImageSizeMb={10}
-            />
+            {loadingEdit ? (
+              <div className="community-quick-composer__loading">
+                <LoaderCircle
+                  size={22}
+                  className="community-quick-composer__spin"
+                />
+                Đang tải bài viết...
+              </div>
+            ) : (
+              <CommunitySocialEditor
+                className="community-quick-composer__rte"
+                value={bodyHtml}
+                disabled={!canEditCurrent}
+                onChange={(html) => {
+                  setBodyHtml(html);
+                  setFormError('');
+                }}
+                placeholder="Có gì mới?"
+                uploadFolder="community/inline"
+                maxImages={12}
+                maxImageSizeMb={10}
+              />
+            )}
           </div>
         </div>
 
@@ -472,6 +601,7 @@ export default function CommunityQuickComposer() {
                   <button
                     type="button"
                     key={value}
+                    disabled={!canEditCurrent}
                     className={postType === value ? 'is-active' : ''}
                     onClick={() => {
                       setPostType(value);
@@ -493,6 +623,7 @@ export default function CommunityQuickComposer() {
                 </span>
                 <select
                   value={areaId}
+                  disabled={!canEditCurrent}
                   onChange={(event) => {
                     setAreaId(event.target.value);
                     setFormError('');
@@ -514,6 +645,7 @@ export default function CommunityQuickComposer() {
                 </span>
                 <select
                   value={categoryId}
+                  disabled={!canEditCurrent}
                   onChange={(event) =>
                     setCategoryId(event.target.value)
                   }
@@ -532,6 +664,7 @@ export default function CommunityQuickComposer() {
               <input
                 type="checkbox"
                 checked={allowComments}
+                disabled={!canEditCurrent}
                 onChange={(event) =>
                   setAllowComments(event.target.checked)
                 }
@@ -559,6 +692,7 @@ export default function CommunityQuickComposer() {
           <button
             type="button"
             className="community-quick-composer__post-options"
+            disabled={loadingEdit}
             onClick={() => setOptionsOpen((value) => !value)}
           >
             <SlidersHorizontal size={17} />
@@ -567,13 +701,20 @@ export default function CommunityQuickComposer() {
 
           <div className="community-quick-composer__publish-group">
             <small>
-              Bài sẽ được kiểm duyệt trước khi hiển thị.
+              {editStatus === 'published'
+                ? 'Thay đổi sẽ cập nhật ngay trên bài đang hiển thị.'
+                : 'Bài sẽ được kiểm duyệt trước khi hiển thị.'}
             </small>
 
             <button
               type="button"
               className="community-quick-composer__publish"
-              disabled={!hasContent || saving}
+              disabled={
+                !hasContent ||
+                saving ||
+                loadingEdit ||
+                !canEditCurrent
+              }
               onClick={publish}
             >
               {saving ? (
@@ -581,10 +722,12 @@ export default function CommunityQuickComposer() {
                   size={17}
                   className="community-quick-composer__spin"
                 />
+              ) : isEditing ? (
+                <Save size={16} />
               ) : (
                 <Send size={16} />
               )}
-              {saving ? 'Đang đăng...' : 'Đăng'}
+              {saving ? 'Đang lưu...' : saveLabel}
             </button>
           </div>
         </footer>
