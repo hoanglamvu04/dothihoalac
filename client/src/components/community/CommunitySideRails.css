@@ -1,0 +1,332 @@
+.main-content--community {
+  position: relative;
+}
+
+.community-side-rails {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: 230px minmax(0, 900px) 250px;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+  padding-top: 178px;
+  pointer-events: none;
+}
+
+.community-side-rail {
+  position: sticky;
+  top: 218px;
+  display: grid;
+  align-self: start;
+  gap: 14px;
+  max-height: calc(100vh - 238px);
+  overflow-y: auto;
+  padding: 2px 2px 14px;
+  pointer-events: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #cfdad3 transparent;
+}
+
+.community-side-rail--left {
+  grid-column: 1;
+}
+
+.community-side-rail--right {
+  grid-column: 3;
+}
+
+.community-rail-card {
+  overflow: hidden;
+  border: 1px solid #dfe7e2;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 8px 26px rgb(20 48 31 / 0.045);
+}
+
+.community-rail-card__heading {
+  padding: 14px 14px 11px;
+  border-bottom: 1px solid #edf1ee;
+}
+
+.community-rail-card__heading > div {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.community-rail-card__icon {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  flex: 0 0 34px;
+  place-items: center;
+  border-radius: 10px;
+  background: #edf8f1;
+  color: #0a6130;
+}
+
+.community-rail-card__heading strong,
+.community-rail-card__heading small {
+  display: block;
+}
+
+.community-rail-card__heading strong {
+  color: #15261b;
+  font-size: 0.78rem;
+  font-weight: 780;
+  line-height: 1.2;
+}
+
+.community-rail-card__heading small {
+  margin-top: 3px;
+  color: #7b8880;
+  font-size: 0.62rem;
+  line-height: 1.35;
+}
+
+.community-rail-list {
+  display: grid;
+  padding: 7px;
+}
+
+.community-rail-list button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 36px;
+  border: 0;
+  border-radius: 9px;
+  padding: 7px 8px 7px 10px;
+  background: transparent;
+  color: #536158;
+  font-size: 0.71rem;
+  font-weight: 670;
+  text-align: left;
+  cursor: pointer;
+}
+
+.community-rail-list button svg {
+  flex: 0 0 auto;
+  opacity: 0.48;
+}
+
+.community-rail-list button:hover,
+.community-rail-list button.is-active {
+  background: #edf8f1;
+  color: #0a6130;
+}
+
+.community-rail-list button.is-active {
+  font-weight: 760;
+}
+
+.community-rail-topic-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 11px;
+}
+
+.community-rail-topic-list button {
+  min-height: 30px;
+  border: 1px solid #e2e9e4;
+  border-radius: 999px;
+  padding: 5px 9px;
+  background: #f8faf8;
+  color: #59675e;
+  font-size: 0.64rem;
+  font-weight: 680;
+  cursor: pointer;
+}
+
+.community-rail-topic-list button:hover,
+.community-rail-topic-list button.is-active {
+  border-color: #b9ddc6;
+  background: #edf8f1;
+  color: #0a6130;
+}
+
+.community-trending-list {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  padding: 4px 12px 0;
+  list-style: none;
+}
+
+.community-trending-list li {
+  display: grid;
+  grid-template-columns: 26px minmax(0, 1fr);
+  gap: 7px;
+  padding: 10px 0;
+  border-bottom: 1px solid #edf1ee;
+}
+
+.community-trending-list li:last-child {
+  border-bottom: 0;
+}
+
+.community-trending-list li > span {
+  display: grid;
+  width: 23px;
+  height: 23px;
+  place-items: center;
+  border-radius: 7px;
+  background: #edf8f1;
+  color: #0a6130;
+  font-size: 0.65rem;
+  font-weight: 820;
+}
+
+.community-trending-list a {
+  display: -webkit-box;
+  overflow: hidden;
+  color: #16241b;
+  font-size: 0.7rem;
+  font-weight: 720;
+  line-height: 1.42;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.community-trending-list a:hover {
+  color: #0a6130;
+}
+
+.community-trending-list small {
+  display: block;
+  margin-top: 4px;
+  color: #87928b;
+  font-size: 0.59rem;
+  line-height: 1.35;
+}
+
+.community-rail-more {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: calc(100% - 20px);
+  min-height: 34px;
+  margin: 3px 10px 10px;
+  border: 0;
+  border-radius: 9px;
+  padding: 7px 9px;
+  background: #f4f8f5;
+  color: #0a6130;
+  font-size: 0.66rem;
+  font-weight: 740;
+  cursor: pointer;
+}
+
+.community-rail-more:hover {
+  background: #e7f5ec;
+}
+
+.community-rail-loading {
+  display: grid;
+  gap: 8px;
+  padding: 13px;
+}
+
+.community-rail-loading span {
+  display: block;
+  height: 42px;
+  border-radius: 9px;
+  background: linear-gradient(90deg, #f2f5f3 25%, #f8faf8 50%, #f2f5f3 75%);
+  background-size: 200% 100%;
+  animation: communityRailLoading 1.25s linear infinite;
+}
+
+@keyframes communityRailLoading {
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.community-rail-empty {
+  margin: 0;
+  padding: 14px;
+  color: #7b8880;
+  font-size: 0.66rem;
+  line-height: 1.5;
+}
+
+.community-rail-card--join {
+  padding: 15px;
+  background: linear-gradient(150deg, #ffffff 0%, #f0f8f3 100%);
+}
+
+.community-rail-card__hero-icon {
+  display: grid;
+  width: 40px;
+  height: 40px;
+  place-items: center;
+  border-radius: 12px;
+  background: #0a6130;
+  color: #fff;
+}
+
+.community-rail-card--join > strong {
+  display: block;
+  margin-top: 10px;
+  color: #14251b;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.community-rail-card--join > p {
+  margin: 5px 0 12px;
+  color: #67746c;
+  font-size: 0.66rem;
+  line-height: 1.55;
+}
+
+.community-rail-card--join > a,
+.community-rail-card--join > button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 36px;
+  gap: 6px;
+  border-radius: 9px;
+  font-size: 0.68rem;
+  font-weight: 760;
+  cursor: pointer;
+}
+
+.community-rail-card--join > a {
+  border: 1px solid #0a6130;
+  background: #0a6130;
+  color: #fff;
+}
+
+.community-rail-card--join > button {
+  margin-top: 7px;
+  border: 1px solid #cfe0d5;
+  background: #fff;
+  color: #0a6130;
+}
+
+.community-rail-card--rules ul {
+  display: grid;
+  gap: 8px;
+  margin: 0;
+  padding: 12px 14px 14px 30px;
+  color: #67746c;
+  font-size: 0.64rem;
+  line-height: 1.5;
+}
+
+.community-rail-card--rules li::marker {
+  color: #159447;
+}
+
+@media (max-width: 1399px) {
+  .community-side-rails {
+    display: none;
+  }
+}
