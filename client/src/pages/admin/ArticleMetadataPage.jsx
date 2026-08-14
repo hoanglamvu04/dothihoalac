@@ -173,7 +173,7 @@ export default function ArticleMetadataPage() {
       const synced = await adminApi.syncGoogleDoc(id);
       setItem(synced);
       setForm(formFromArticle(synced));
-      toast.success('Đã đồng bộ tiêu đề, nội dung và hình ảnh mới nhất từ Google Docs.');
+      toast.success('Đã đồng bộ đúng cấu trúc tiêu đề, sapo, nội dung và hình ảnh từ Google Docs.');
     } catch (error) {
       toast.error(apiErrorMessage(error));
     } finally {
@@ -202,8 +202,8 @@ export default function ArticleMetadataPage() {
           <p className="admin-kicker">Content Studio · Thuộc tính CMS</p>
           <h1>Thuộc tính bài viết</h1>
           <p>
-            Google Docs giữ tiêu đề, nội dung và hình ảnh. Trang này chỉ quản lý loại tin,
-            danh mục, khu vực, thẻ, hiển thị, lịch đăng và ghi chú biên tập.
+            Google Docs giữ tiêu đề, sapo tùy chọn, nội dung và hình ảnh. Trang này quản lý
+            loại tin, danh mục, khu vực, thẻ, hiển thị, lịch đăng và ghi chú biên tập.
           </p>
         </div>
 
@@ -269,10 +269,42 @@ export default function ArticleMetadataPage() {
             <span>{item?.article?.documentCode || 'Chưa có mã Docs'}</span>
           </div>
           <h2>{item.title}</h2>
-          <p>{item.summary || 'Google Docs chưa có mô tả ngắn.'}</p>
+          <p>
+            {item.summary || 'Không có sapo — website sẽ đi thẳng vào thân bài, không tự lấy đoạn đầu tiên làm mô tả.'}
+          </p>
           <small>
-            Ảnh đầu tiên trong Google Docs là ảnh bìa. Muốn đổi ảnh bìa, hãy thay ảnh đầu tiên trong Docs rồi bấm Đồng bộ.
+            Ảnh đầu tiên trong Google Docs vẫn được dùng làm ảnh đại diện cho thẻ bài/SEO,
+            nhưng trên trang chi tiết ảnh sẽ giữ đúng vị trí bạn đặt trong tài liệu.
           </small>
+        </div>
+      </section>
+
+      <section className="admin-doc-structure-guide" aria-label="Quy ước soạn bài Google Docs">
+        <div className="admin-doc-structure-guide__intro">
+          <FileText size={19} />
+          <div>
+            <strong>Quy ước Google Docs → Website</strong>
+            <p>Hệ thống chỉ suy luận những gì có quy ước rõ ràng; đoạn văn thường sẽ luôn là thân bài.</p>
+          </div>
+        </div>
+
+        <div className="admin-doc-structure-guide__rules">
+          <div>
+            <b>1. Tiêu đề</b>
+            <span>Dòng đầu hoặc style Title / Heading 1.</span>
+          </div>
+          <div>
+            <b>2. Sapo tùy chọn</b>
+            <span>Dùng style Subtitle hoặc bắt đầu dòng bằng “SAPO:” / “Mô tả:”. Không có thì để trống.</span>
+          </div>
+          <div>
+            <b>3. Thân bài</b>
+            <span>Normal text là nội dung; Heading 2–4 là tiêu đề phụ. Bold, italic, gạch chân và link được giữ lại.</span>
+          </div>
+          <div>
+            <b>4. Hình ảnh</b>
+            <span>Ảnh đầu tiên làm thumbnail nhưng vẫn nằm nguyên vị trí trong bài; các ảnh sau cũng giữ thứ tự trong Docs.</span>
+          </div>
         </div>
       </section>
 
