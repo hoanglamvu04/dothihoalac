@@ -2,6 +2,7 @@ import Content from '../contents/content.model.js';
 import ContentBody from '../contents/contentBody.model.js';
 import CommunityPost from './communityPost.model.js';
 import Comment from '../comments/comment.model.js';
+import Reaction from '../reactions/reaction.model.js';
 
 import {
   createContentWithBody,
@@ -17,21 +18,96 @@ import {
 } from '../../utils/pagination.js';
 import ApiError from '../../utils/ApiError.js';
 
-export async function list(q) {
+function escapeRegex(value = '') {
+  return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+async function loadCommentPreviews(contentIds) {
+  if (!contentIds.length) {
+    return new Map();
+  }
+
+  const groups = await Comment.aggregate([
+    {
+      $match: {
+        contentId: { $in: contentIds },
+        parentId: null,
+        status: 'published',
+        deletedAt: null,
+      },
+    },
+    { $sort: { createdAt: -1 } },
+    {
+      $group: {
+        _id: '$contentId',
+        comments: { $push: '$$ROOT' },
+      },
+    },
+    {
+      $project: {
+        comments: { $slice: ['$comments', 2] },
+      },
+    },
+  ]);
+
+  const rawComments = groups.flatMap(
+    (group) => group.comments || [],
+  );
+
+  const populated = rawComments.length
+    ? await Comment.populate(rawComments, {
+        path: 'userId',
+        select:
+          'username displayName emailVerifiedAt phoneVerifiedAt',
+      })
+    : [];
+
+  const populatedMap = new Map(
+    populated.map((comment) => [
+      String(comment._id),
+      comment,
+    ]),
+  );
+
+  return new Map(
+    groups.map((group) => [
+      String(group._id),
+      (group.comments || []).map(
+        (comment) =>
+          populatedMap.get(String(comment._id)) || comment,
+      ),
+    ]),
+  );
+}
+
+export async function list(q, viewerId = null) {
   const { page, limit, skip } = parsePagination(q);
-  const f = {
+
+  const filter = {
     contentType: 'community',
     status: 'published',
     deletedAt: null,
   };
 
-  if (q.area) f.primaryAreaId = q.area;
-  if (q.category) f.primaryCategoryId = q.category;
+  if (q.area) filter.primaryAreaId = q.area;
+  if (q.category) filter.primaryCategoryId = q.category;
+
+  const queryText = String(q.q || '').trim();
+
+  if (queryText) {
+    const regex = new RegExp(escapeRegex(queryText), 'i');
+
+    filter.$or = [
+      { title: regex },
+      { summary: regex },
+    ];
+  }
 
   const detailFilter = {};
   if (q.type) detailFilter.postType = q.type;
 
   let ids = null;
+
   if (Object.keys(detailFilter).length) {
     ids = (
       await CommunityPost.find(detailFilter)
@@ -40,33 +116,68 @@ export async function list(q) {
     ).map((item) => item.contentId);
   }
 
-  if (ids) f._id = { $in: ids };
+  if (ids) {
+    filter._id = { $in: ids };
+  }
 
   const [items, total] = await Promise.all([
-    Content.find(f)
+    Content.find(filter)
       .populate(
         'authorId',
         'username displayName emailVerifiedAt phoneVerifiedAt',
       )
       .populate('primaryAreaId', 'name slug')
+      .populate('primaryCategoryId', 'name slug')
       .populate(
         'thumbnailMediaId',
         'url secureUrl altText width height',
       )
       .sort(
         q.sort === 'popular'
-          ? { reactionCount: -1, commentCount: -1 }
+          ? {
+              reactionCount: -1,
+              commentCount: -1,
+              publishedAt: -1,
+            }
           : { publishedAt: -1 },
       )
       .skip(skip)
       .limit(limit)
       .lean(),
-    Content.countDocuments(f),
+    Content.countDocuments(filter),
   ]);
 
-  const details = await CommunityPost.find({
-    contentId: { $in: items.map((item) => item._id) },
-  }).lean();
+  const contentIds = items.map((item) => item._id);
+
+  const [details, bodies, commentMap, viewerReactions] =
+    await Promise.all([
+      contentIds.length
+        ? CommunityPost.find({
+            contentId: { $in: contentIds },
+          }).lean()
+        : [],
+      contentIds.length
+        ? ContentBody.find({
+            contentId: { $in: contentIds },
+          })
+            .select('contentId bodyText inlineMediaIds')
+            .populate(
+              'inlineMediaIds',
+              'url secureUrl altText width height',
+            )
+            .lean()
+        : [],
+      loadCommentPreviews(contentIds),
+      viewerId && contentIds.length
+        ? Reaction.find({
+            userId: viewerId,
+            targetType: 'content',
+            targetId: { $in: contentIds },
+          })
+            .select('targetId reactionType')
+            .lean()
+        : [],
+    ]);
 
   const detailMap = new Map(
     details.map((detail) => [
@@ -75,12 +186,32 @@ export async function list(q) {
     ]),
   );
 
+  const bodyMap = new Map(
+    bodies.map((body) => [
+      String(body.contentId),
+      body,
+    ]),
+  );
+
+  const reactionMap = new Map(
+    viewerReactions.map((reaction) => [
+      String(reaction.targetId),
+      reaction.reactionType,
+    ]),
+  );
+
   return {
-    items: items.map((item) => ({
-      ...item,
-      community:
-        detailMap.get(String(item._id)) || null,
-    })),
+    items: items.map((item) => {
+      const key = String(item._id);
+
+      return {
+        ...item,
+        community: detailMap.get(key) || null,
+        body: bodyMap.get(key) || null,
+        commentPreview: commentMap.get(key) || [],
+        viewerReaction: reactionMap.get(key) || null,
+      };
+    }),
     meta: buildPaginationMeta({ page, limit, total }),
   };
 }
@@ -182,7 +313,7 @@ export async function update(id, userId, data) {
   await CommunityPost.findOneAndUpdate(
     { contentId: id },
     data,
-    { new: true },
+    { returnDocument: 'after' },
   );
 
   return content;
