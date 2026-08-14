@@ -6,6 +6,12 @@ export const AD_SLOT_OPTIONS = [
     recommendedSize: '1200 × 160',
   },
   {
+    value: 'site_before_footer',
+    label: 'Toàn website · trước chân trang',
+    group: 'Toàn website',
+    recommendedSize: '1200 × 160',
+  },
+  {
     value: 'home_before_community',
     label: 'Trang chủ · trước khối Cộng đồng / Việc làm',
     group: 'Trang chủ',
@@ -16,6 +22,24 @@ export const AD_SLOT_OPTIONS = [
     label: 'Trang chủ · sau khối Cộng đồng / Việc làm',
     group: 'Trang chủ',
     recommendedSize: '1200 × 160',
+  },
+  {
+    value: 'news_top',
+    label: 'Tin tức · đầu trang danh sách',
+    group: 'Tin tức',
+    recommendedSize: '1200 × 160',
+  },
+  {
+    value: 'article_top',
+    label: 'Tin tức · đầu trang chi tiết',
+    group: 'Tin tức',
+    recommendedSize: '1200 × 160',
+  },
+  {
+    value: 'community_top',
+    label: 'Cộng đồng · đầu bảng tin',
+    group: 'Cộng đồng',
+    recommendedSize: '1000 × 150',
   },
   {
     value: 'community_left_primary',
@@ -40,6 +64,24 @@ export const AD_SLOT_OPTIONS = [
     label: 'Cộng đồng · cột phải phụ',
     group: 'Cộng đồng',
     recommendedSize: '220 × 220',
+  },
+  {
+    value: 'property_top',
+    label: 'Nhà đất · đầu trang',
+    group: 'Nhà đất',
+    recommendedSize: '1200 × 160',
+  },
+  {
+    value: 'jobs_top',
+    label: 'Việc làm · đầu trang',
+    group: 'Việc làm',
+    recommendedSize: '1200 × 160',
+  },
+  {
+    value: 'search_top',
+    label: 'Tìm kiếm · đầu trang kết quả',
+    group: 'Tìm kiếm',
+    recommendedSize: '1200 × 160',
   },
 ];
 
