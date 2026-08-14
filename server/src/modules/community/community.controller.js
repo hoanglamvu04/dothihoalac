@@ -1,4 +1,5 @@
 import * as s from './community.service.js';
+import Reaction from '../reactions/reaction.model.js';
 import {
   sendCreated,
   sendSuccess,
@@ -17,8 +18,27 @@ export async function list(req, res) {
 }
 
 export async function detail(req, res) {
+  const data = await s.detail(req.params.slug);
+
+  let viewerReaction = null;
+
+  if (req.user?._id && data?._id) {
+    const reaction = await Reaction.findOne({
+      userId: req.user._id,
+      targetType: 'content',
+      targetId: data._id,
+    })
+      .select('reactionType')
+      .lean();
+
+    viewerReaction = reaction?.reactionType || null;
+  }
+
   return sendSuccess(res, {
-    data: await s.detail(req.params.slug),
+    data: {
+      ...data,
+      viewerReaction,
+    },
   });
 }
 
