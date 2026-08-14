@@ -417,7 +417,9 @@ export async function update(id, userId, data) {
     'community',
   );
 
-  assertEditable(content);
+  if (content.status !== 'published') {
+    assertEditable(content);
+  }
 
   await updateContentWithBody(
     content,
