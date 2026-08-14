@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 
 import Avatar from '../common/Avatar';
-import RichTextEditor from '../forms/RichTextEditor';
+import CommunitySocialEditor from './CommunitySocialEditor';
 import { communityApi } from '../../api/content.api';
 import { apiErrorMessage } from '../../api/http';
 import { useAuth } from '../../context/AuthContext';
@@ -142,7 +142,7 @@ export default function CommunityQuickComposer() {
   const topicSummary = useMemo(() => {
     const parts = [
       COMMUNITY_TYPES[postType] || 'Cộng đồng',
-      selectedArea?.name,
+      selectedArea?.name || 'Tất cả khu vực',
       selectedCategory?.name,
     ].filter(Boolean);
 
@@ -286,10 +286,6 @@ export default function CommunityQuickComposer() {
     const handleKeyDown = (event) => {
       if (event.key !== 'Escape') return;
 
-      if (document.querySelector('.rte-modal-backdrop')) {
-        return;
-      }
-
       requestClose();
     };
 
@@ -305,12 +301,6 @@ export default function CommunityQuickComposer() {
   const publish = async () => {
     if (!hasContent || saving) return;
 
-    if (!areaId) {
-      setFormError('Chọn khu vực của bài viết trước khi đăng.');
-      setOptionsOpen(true);
-      return;
-    }
-
     setSaving(true);
     setFormError('');
 
@@ -320,7 +310,7 @@ export default function CommunityQuickComposer() {
       bodyHtml: bodyHtml.trim(),
       postType,
       primaryCategoryId: categoryId || null,
-      primaryAreaId: areaId,
+      primaryAreaId: areaId || null,
       tagIds: [],
       thumbnailMediaId: null,
       allowComments,
@@ -447,7 +437,7 @@ export default function CommunityQuickComposer() {
               Công khai
             </div>
 
-            <RichTextEditor
+            <CommunitySocialEditor
               className="community-quick-composer__rte"
               value={bodyHtml}
               onChange={(html) => {
@@ -499,7 +489,7 @@ export default function CommunityQuickComposer() {
               <label>
                 <span>
                   <MapPin size={15} />
-                  Khu vực <b>*</b>
+                  Khu vực
                 </span>
                 <select
                   value={areaId}
@@ -508,7 +498,7 @@ export default function CommunityQuickComposer() {
                     setFormError('');
                   }}
                 >
-                  <option value="">Chọn khu vực</option>
+                  <option value="">Tất cả khu vực</option>
                   {areas.map((item) => (
                     <option key={item._id} value={item._id}>
                       {item.name}
