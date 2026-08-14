@@ -27,9 +27,10 @@ import {
 
 import Seo from '../../components/common/Seo';
 import ArticleCard from '../../components/content/ArticleCard';
-import CommunityCard from '../../components/content/CommunityCard';
+import HomeCommunityCard from '../../components/content/HomeCommunityCard';
 import PropertyCard from '../../components/content/PropertyCard';
 import JobCard from '../../components/content/JobCard';
+import AdSlot from '../../components/ads/AdSlot';
 import EmptyState from '../../components/common/EmptyState';
 import { LoadingBlock } from '../../components/common/Loading';
 
@@ -41,6 +42,7 @@ import {
 } from '../../api/content.api';
 
 import './HomePage.css';
+import './HomeCommunitySection.css';
 
 const INITIAL_DATA = {
   articles: [],
@@ -287,7 +289,7 @@ export default function HomePage() {
   const leadArticle = data.articles[0] || null;
   const newsroomSideArticles = data.articles.slice(1, 5);
   const latestArticles = data.articles.slice(5, 11);
-  const communityItems = data.community.slice(0, 4);
+  const communityItems = data.community.slice(0, 2);
   const propertyItems = data.properties.slice(0, 4);
   const jobItems = data.jobs.slice(0, 4);
 
@@ -533,6 +535,8 @@ export default function HomePage() {
         </div>
       </section>
 
+      <AdSlot slotKey="home_before_community" layout="strip" />
+
       <section className="dth-section dth-section--soft dth-home-community-jobs">
         <div className="container">
           <div className="dth-community-jobs">
@@ -567,7 +571,7 @@ export default function HomePage() {
                           index,
                         )}
                       >
-                        <CommunityCard item={item} />
+                        <HomeCommunityCard item={item} />
                       </div>
                     ),
                   )}
@@ -624,6 +628,8 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      <AdSlot slotKey="home_after_community" layout="strip" />
 
       <section className="dth-section dth-section--white dth-home-property">
         <div className="container">
