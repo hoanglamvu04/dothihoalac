@@ -330,9 +330,37 @@ export async function detail(slug) {
     'community',
   );
 
-  const community = await CommunityPost.findOne({
-    contentId: base._id,
-  }).lean();
+  const [community, rawBody] = await Promise.all([
+    CommunityPost.findOne({
+      contentId: base._id,
+    }).lean(),
+    ContentBody.findOne({
+      contentId: base._id,
+    })
+      .select('contentId bodyHtml bodyText inlineMediaIds readingTime wordCount')
+      .populate(
+        'inlineMediaIds',
+        'url secureUrl altText width height',
+      )
+      .lean(),
+  ]);
+
+  let body = rawBody || base.body;
+
+  if (
+    body &&
+    (!Array.isArray(body.inlineMediaIds) || !body.inlineMediaIds.length) &&
+    body.bodyHtml
+  ) {
+    const [hydrated] = await hydrateLegacyBodyMedia([body]);
+
+    if (hydrated) {
+      body = {
+        ...body,
+        inlineMediaIds: hydrated.inlineMediaIds || [],
+      };
+    }
+  }
 
   const profileMap = await loadAvatarProfiles([
     base.authorId?._id,
@@ -340,6 +368,7 @@ export async function detail(slug) {
 
   return {
     ...base,
+    body,
     authorId: attachProfile(base.authorId, profileMap),
     community,
   };
