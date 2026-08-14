@@ -12,11 +12,13 @@ import {
 } from 'react-router-dom';
 
 import {
+  ChevronLeft,
+  ChevronRight,
   Clock3,
   Filter,
+  ImagePlus,
   MapPin,
   MessageCircle,
-  MessagesSquare,
   Plus,
   RotateCcw,
   Search,
@@ -30,7 +32,6 @@ import {
 import Seo from '../../components/common/Seo';
 import Avatar from '../../components/common/Avatar';
 import CommunityCard from '../../components/content/CommunityCard';
-import Pagination from '../../components/common/Pagination';
 import ErrorState from '../../components/common/ErrorState';
 import { LoadingBlock } from '../../components/common/Loading';
 
@@ -87,91 +88,325 @@ function getPageSize(meta, itemCount) {
   );
 }
 
+function getPaginationItems(currentPage, totalPages) {
+  if (totalPages <= 7) {
+    return Array.from(
+      { length: totalPages },
+      (_, index) => index + 1,
+    );
+  }
+
+  const pages = new Set([
+    1,
+    totalPages,
+    currentPage,
+    currentPage - 1,
+    currentPage + 1,
+  ]);
+
+  if (currentPage <= 3) {
+    pages.add(2);
+    pages.add(3);
+    pages.add(4);
+  }
+
+  if (currentPage >= totalPages - 2) {
+    pages.add(totalPages - 1);
+    pages.add(totalPages - 2);
+    pages.add(totalPages - 3);
+  }
+
+  const sorted = [...pages]
+    .filter(
+      (page) =>
+        page >= 1 &&
+        page <= totalPages,
+    )
+    .sort((a, b) => a - b);
+
+  const result = [];
+
+  sorted.forEach((page, index) => {
+    const previous = sorted[index - 1];
+
+    if (
+      previous &&
+      page - previous > 1
+    ) {
+      result.push(
+        `ellipsis-${previous}`,
+      );
+    }
+
+    result.push(page);
+  });
+
+  return result;
+}
+
+function CommunityPagination({
+  page,
+  totalPages,
+  total,
+  fromItem,
+  toItem,
+  onChange,
+}) {
+  if (totalPages <= 1) {
+    return null;
+  }
+
+  const items = getPaginationItems(
+    page,
+    totalPages,
+  );
+
+  return (
+    <div className="community-social-pagination">
+      <nav
+        className="community-social-pagination__nav"
+        aria-label="Phân trang cộng đồng"
+      >
+        <button
+          type="button"
+          className="community-social-pagination__direction"
+          disabled={page <= 1}
+          onClick={() =>
+            onChange(page - 1)
+          }
+        >
+          <ChevronLeft size={17} />
+          <span>Trước</span>
+        </button>
+
+        <div className="community-social-pagination__numbers">
+          {items.map((item) => {
+            if (
+              typeof item === 'string'
+            ) {
+              return (
+                <span
+                  className="community-social-pagination__ellipsis"
+                  key={item}
+                >
+                  …
+                </span>
+              );
+            }
+
+            return (
+              <button
+                type="button"
+                key={item}
+                className={
+                  item === page
+                    ? 'is-active'
+                    : ''
+                }
+                aria-current={
+                  item === page
+                    ? 'page'
+                    : undefined
+                }
+                onClick={() =>
+                  onChange(item)
+                }
+              >
+                {item}
+              </button>
+            );
+          })}
+        </div>
+
+        <span className="community-social-pagination__mobile-status">
+          Trang {page}/{totalPages}
+        </span>
+
+        <button
+          type="button"
+          className="community-social-pagination__direction"
+          disabled={page >= totalPages}
+          onClick={() =>
+            onChange(page + 1)
+          }
+        >
+          <span>Sau</span>
+          <ChevronRight size={17} />
+        </button>
+      </nav>
+
+      <p className="community-social-pagination__meta">
+        {fromItem}–{toItem} trong{' '}
+        {total.toLocaleString('vi-VN')} bài
+      </p>
+    </div>
+  );
+}
+
 export default function CommunityPage() {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const { categoriesFor, areas = [] } = useTaxonomy();
-  const { user, isAuthenticated } = useAuth();
+  const [
+    searchParams,
+    setSearchParams,
+  ] = useSearchParams();
+
+  const {
+    categoriesFor,
+    areas = [],
+  } = useTaxonomy();
+
+  const {
+    user,
+    isAuthenticated,
+  } = useAuth();
+
   const resultsRef = useRef(null);
 
-  const [filtersOpen, setFiltersOpen] = useState(false);
-  const [searchInput, setSearchInput] = useState(
+  const [
+    filtersOpen,
+    setFiltersOpen,
+  ] = useState(false);
+
+  const [
+    searchInput,
+    setSearchInput,
+  ] = useState(
     searchParams.get('q') || '',
   );
 
-  const communityCategories = useMemo(
-    () => categoriesFor('community') || [],
-    [categoriesFor],
-  );
+  const communityCategories =
+    useMemo(
+      () =>
+        categoriesFor('community') ||
+        [],
+      [categoriesFor],
+    );
 
-  const searchKey = searchParams.toString();
+  const searchKey =
+    searchParams.toString();
 
   const params = useMemo(() => {
-    const source = new URLSearchParams(searchKey);
+    const source =
+      new URLSearchParams(
+        searchKey,
+      );
+
     const nextParams = {};
 
-    ['type', 'category', 'area', 'sort', 'q', 'page'].forEach(
-      (key) => {
-        const value = source.get(key);
-        if (value) nextParams[key] = value;
-      },
-    );
+    [
+      'type',
+      'category',
+      'area',
+      'sort',
+      'q',
+      'page',
+    ].forEach((key) => {
+      const value =
+        source.get(key);
+
+      if (value) {
+        nextParams[key] = value;
+      }
+    });
 
     return nextParams;
   }, [searchKey]);
 
-  const result = useListPage(communityApi.list, params);
-
-  const currentType = searchParams.get('type') || '';
-  const currentCategory = searchParams.get('category') || '';
-  const currentArea = searchParams.get('area') || '';
-  const currentSort = searchParams.get('sort') || '';
-  const currentQuery = searchParams.get('q') || '';
-
-  const selectedCategory = useMemo(
-    () =>
-      communityCategories.find(
-        (item) =>
-          String(item._id) === String(currentCategory) ||
-          String(item.slug) === String(currentCategory),
-      ),
-    [communityCategories, currentCategory],
+  const result = useListPage(
+    communityApi.list,
+    params,
   );
+
+  const currentType =
+    searchParams.get('type') || '';
+
+  const currentCategory =
+    searchParams.get('category') ||
+    '';
+
+  const currentArea =
+    searchParams.get('area') || '';
+
+  const currentSort =
+    searchParams.get('sort') || '';
+
+  const currentQuery =
+    searchParams.get('q') || '';
+
+  const selectedCategory =
+    useMemo(
+      () =>
+        communityCategories.find(
+          (item) =>
+            String(item._id) ===
+              String(
+                currentCategory,
+              ) ||
+            String(item.slug) ===
+              String(
+                currentCategory,
+              ),
+        ),
+      [
+        communityCategories,
+        currentCategory,
+      ],
+    );
 
   const selectedArea = useMemo(
     () =>
       areas.find(
         (item) =>
-          String(item._id) === String(currentArea) ||
-          String(item.slug) === String(currentArea),
+          String(item._id) ===
+            String(currentArea) ||
+          String(item.slug) ===
+            String(currentArea),
       ),
     [areas, currentArea],
   );
 
-  const setUrlParams = useCallback(
-    (mutator, options = {}) => {
-      setSearchParams(
-        (current) => {
-          const next = new URLSearchParams(current);
-          mutator(next);
+  const setUrlParams =
+    useCallback(
+      (
+        mutator,
+        options = {},
+      ) => {
+        setSearchParams(
+          (current) => {
+            const next =
+              new URLSearchParams(
+                current,
+              );
 
-          if (next.get('page') === '1') {
-            next.delete('page');
-          }
+            mutator(next);
 
-          return next;
-        },
-        options,
-      );
-    },
-    [setSearchParams],
-  );
+            if (
+              next.get('page') === '1'
+            ) {
+              next.delete('page');
+            }
+
+            return next;
+          },
+          options,
+        );
+      },
+      [setSearchParams],
+    );
 
   const update = useCallback(
-    (key, value, options = {}) => {
+    (
+      key,
+      value,
+      options = {},
+    ) => {
       setUrlParams(
         (next) => {
-          if (value) next.set(key, value);
-          else next.delete(key);
+          if (value) {
+            next.set(key, value);
+          } else {
+            next.delete(key);
+          }
+
           next.delete('page');
         },
         options,
@@ -180,60 +415,103 @@ export default function CommunityPage() {
     [setUrlParams],
   );
 
-  const commitSearch = useCallback(
-    (value, replace = false) => {
-      update('q', String(value || '').trim(), { replace });
-    },
-    [update],
-  );
+  const commitSearch =
+    useCallback(
+      (
+        value,
+        replace = false,
+      ) => {
+        update(
+          'q',
+          String(value || '').trim(),
+          { replace },
+        );
+      },
+      [update],
+    );
 
   useEffect(() => {
     setSearchInput(currentQuery);
   }, [currentQuery]);
 
   useEffect(() => {
-    if (!filtersOpen) return undefined;
+    if (!filtersOpen) {
+      return undefined;
+    }
 
-    const previousOverflow = document.body.style.overflow;
+    const previousOverflow =
+      document.body.style.overflow;
 
-    const closeWithEscape = (event) => {
-      if (event.key === 'Escape') {
+    const handleEscape = (
+      event,
+    ) => {
+      if (
+        event.key === 'Escape'
+      ) {
         setFiltersOpen(false);
       }
     };
 
-    document.body.style.overflow = 'hidden';
-    document.addEventListener('keydown', closeWithEscape);
+    document.body.style.overflow =
+      'hidden';
+
+    document.addEventListener(
+      'keydown',
+      handleEscape,
+    );
 
     return () => {
-      document.body.style.overflow = previousOverflow;
-      document.removeEventListener('keydown', closeWithEscape);
+      document.body.style.overflow =
+        previousOverflow;
+
+      document.removeEventListener(
+        'keydown',
+        handleEscape,
+      );
     };
   }, [filtersOpen]);
 
-  const clearAllFilters = useCallback(() => {
-    setSearchInput('');
+  const clearAllFilters =
+    useCallback(() => {
+      setSearchInput('');
 
-    setUrlParams((next) => {
-      ['type', 'category', 'area', 'sort', 'q', 'page'].forEach(
-        (key) => next.delete(key),
-      );
-    });
-  }, [setUrlParams]);
+      setUrlParams((next) => {
+        [
+          'type',
+          'category',
+          'area',
+          'sort',
+          'q',
+          'page',
+        ].forEach((key) =>
+          next.delete(key),
+        );
+      });
+    }, [setUrlParams]);
 
   const setPage = useCallback(
     (page) => {
       setUrlParams((next) => {
-        if (Number(page) <= 1) next.delete('page');
-        else next.set('page', String(page));
+        if (
+          Number(page) <= 1
+        ) {
+          next.delete('page');
+        } else {
+          next.set(
+            'page',
+            String(page),
+          );
+        }
       });
 
       window.setTimeout(() => {
-        resultsRef.current?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start',
-        });
-      }, 30);
+        resultsRef.current?.scrollIntoView(
+          {
+            behavior: 'smooth',
+            block: 'start',
+          },
+        );
+      }, 40);
     },
     [setUrlParams],
   );
@@ -243,25 +521,72 @@ export default function CommunityPage() {
     (currentCategory ? 1 : 0) +
     (currentArea ? 1 : 0) +
     (currentQuery ? 1 : 0) +
-    (currentSort === 'popular' ? 1 : 0);
+    (
+      currentSort === 'popular'
+        ? 1
+        : 0
+    );
 
-  const hasFilters = activeFilterCount > 0;
+  const hasFilters =
+    activeFilterCount > 0;
 
-  const total = getTotal(result.meta, result.items.length);
-  const currentPage = getCurrentPage(result.meta, searchParams);
-  const pageSize = getPageSize(result.meta, result.items.length);
+  const total = getTotal(
+    result.meta,
+    result.items.length,
+  );
+
+  const currentPage =
+    getCurrentPage(
+      result.meta,
+      searchParams,
+    );
+
+  const pageSize =
+    getPageSize(
+      result.meta,
+      result.items.length,
+    );
+
+  const totalPages = Math.max(
+    1,
+    Number(
+      result.meta?.totalPages ||
+        (
+          pageSize > 0
+            ? Math.ceil(
+                total / pageSize,
+              )
+            : 1
+        ),
+    ),
+  );
 
   const fromItem =
     total > 0
-      ? (currentPage - 1) * Math.max(pageSize, 1) + 1
+      ? (
+          currentPage - 1
+        ) *
+          Math.max(
+            pageSize,
+            1,
+          ) +
+        1
       : 0;
 
   const toItem =
     total > 0
-      ? Math.min(fromItem + result.items.length - 1, total)
+      ? Math.min(
+          fromItem +
+            result.items.length -
+            1,
+          total,
+        )
       : 0;
 
-  const isSecondaryType = SECONDARY_TYPES.includes(currentType);
+  const isSecondaryType =
+    SECONDARY_TYPES.includes(
+      currentType,
+    );
 
   const composerName =
     user?.displayName ||
@@ -269,13 +594,13 @@ export default function CommunityPage() {
     user?.username ||
     'Bạn';
 
-  const resultTitle = currentQuery
+  const feedLabel = currentQuery
     ? `Kết quả cho “${currentQuery}”`
     : currentSort === 'popular'
-      ? 'Bài viết đang được quan tâm'
+      ? 'Đang được quan tâm'
       : hasFilters
         ? 'Bài viết phù hợp'
-        : 'Bài viết mới nhất';
+        : 'Mới nhất';
 
   return (
     <section className="community-social-page">
@@ -286,17 +611,21 @@ export default function CommunityPage() {
 
       <div className="community-social-page__container">
         <header className="community-social-intro">
-          <div>
+          <div className="community-social-intro__content">
             <span className="community-social-intro__eyebrow">
               <UsersRound size={15} />
               Cộng đồng địa phương
             </span>
 
-            <h1>Cộng đồng Hòa Lạc</h1>
+            <h1>
+              Cộng đồng Hòa Lạc
+            </h1>
 
             <p>
-              Hỏi đáp, phản ánh và chia sẻ những câu chuyện gần gũi
-              trong đời sống của 6 xã quanh khu vực Hòa Lạc.
+              Hỏi đáp, phản ánh và
+              chia sẻ những câu chuyện
+              gần gũi của người dân
+              trong 6 xã.
             </p>
           </div>
 
@@ -314,16 +643,41 @@ export default function CommunityPage() {
           to="/dang-bai/cong-dong"
           aria-label="Tạo bài viết cộng đồng"
         >
-          <Avatar name={composerName} size="md" />
+          <Avatar
+            name={composerName}
+            size="md"
+          />
 
-          <span className="community-social-composer__field">
-            {isAuthenticated
-              ? `${composerName}, bạn muốn chia sẻ điều gì?`
-              : 'Bạn muốn chia sẻ điều gì với cộng đồng?'}
+          <span className="community-social-composer__body">
+            <span className="community-social-composer__prompt">
+              {isAuthenticated
+                ? `${composerName}, bạn muốn chia sẻ điều gì?`
+                : 'Bạn muốn chia sẻ điều gì với cộng đồng?'}
+            </span>
+
+            <span className="community-social-composer__quick">
+              <span>
+                <ImagePlus
+                  size={15}
+                />
+                Ảnh
+              </span>
+
+              <span>
+                <MapPin size={15} />
+                Khu vực
+              </span>
+
+              <span>
+                <Tags size={15} />
+                Chủ đề
+              </span>
+            </span>
           </span>
 
           <span className="community-social-composer__cta">
-            Đăng
+            <Plus size={16} />
+            Tạo bài
           </span>
         </Link>
 
@@ -334,50 +688,91 @@ export default function CommunityPage() {
           >
             <button
               type="button"
-              className={!currentType ? 'is-active' : ''}
-              onClick={() => update('type', '')}
+              className={
+                !currentType
+                  ? 'is-active'
+                  : ''
+              }
+              onClick={() =>
+                update('type', '')
+              }
             >
               Tất cả
             </button>
 
-            {PRIMARY_TYPES.map((value) => (
-              <button
-                type="button"
-                key={value}
-                className={currentType === value ? 'is-active' : ''}
-                onClick={() =>
-                  update(
-                    'type',
-                    currentType === value ? '' : value,
-                  )
-                }
-              >
-                {COMMUNITY_TYPES[value]}
-              </button>
-            ))}
+            {PRIMARY_TYPES.map(
+              (value) => (
+                <button
+                  type="button"
+                  key={value}
+                  className={
+                    currentType ===
+                    value
+                      ? 'is-active'
+                      : ''
+                  }
+                  onClick={() =>
+                    update(
+                      'type',
+                      currentType ===
+                        value
+                        ? ''
+                        : value,
+                    )
+                  }
+                >
+                  {
+                    COMMUNITY_TYPES[
+                      value
+                    ]
+                  }
+                </button>
+              ),
+            )}
 
             <label
               className={[
                 'community-social-types__more',
-                isSecondaryType ? 'is-active' : '',
+                isSecondaryType
+                  ? 'is-active'
+                  : '',
               ]
                 .filter(Boolean)
                 .join(' ')}
             >
               <select
-                value={isSecondaryType ? currentType : ''}
+                value={
+                  isSecondaryType
+                    ? currentType
+                    : ''
+                }
                 aria-label="Các loại bài khác"
                 onChange={(event) =>
-                  update('type', event.target.value)
+                  update(
+                    'type',
+                    event.target
+                      .value,
+                  )
                 }
               >
-                <option value="">Khác</option>
+                <option value="">
+                  Khác
+                </option>
 
-                {SECONDARY_TYPES.map((value) => (
-                  <option key={value} value={value}>
-                    {COMMUNITY_TYPES[value]}
-                  </option>
-                ))}
+                {SECONDARY_TYPES.map(
+                  (value) => (
+                    <option
+                      key={value}
+                      value={value}
+                    >
+                      {
+                        COMMUNITY_TYPES[
+                          value
+                        ]
+                      }
+                    </option>
+                  ),
+                )}
               </select>
             </label>
           </nav>
@@ -387,11 +782,14 @@ export default function CommunityPage() {
               <button
                 type="button"
                 className={
-                  currentSort !== 'popular'
+                  currentSort !==
+                  'popular'
                     ? 'is-active'
                     : ''
                 }
-                onClick={() => update('sort', '')}
+                onClick={() =>
+                  update('sort', '')
+                }
               >
                 <Clock3 size={15} />
                 Mới nhất
@@ -400,13 +798,21 @@ export default function CommunityPage() {
               <button
                 type="button"
                 className={
-                  currentSort === 'popular'
+                  currentSort ===
+                  'popular'
                     ? 'is-active'
                     : ''
                 }
-                onClick={() => update('sort', 'popular')}
+                onClick={() =>
+                  update(
+                    'sort',
+                    'popular',
+                  )
+                }
               >
-                <TrendingUp size={15} />
+                <TrendingUp
+                  size={15}
+                />
                 Quan tâm
               </button>
             </div>
@@ -419,31 +825,51 @@ export default function CommunityPage() {
                   value={currentArea}
                   aria-label="Lọc theo khu vực"
                   onChange={(event) =>
-                    update('area', event.target.value)
+                    update(
+                      'area',
+                      event.target
+                        .value,
+                    )
                   }
                 >
-                  <option value="">Tất cả khu vực</option>
+                  <option value="">
+                    Tất cả khu vực
+                  </option>
 
-                  {areas.map((item) => (
-                    <option key={item._id} value={item._id}>
-                      {item.name}
-                    </option>
-                  ))}
+                  {areas.map(
+                    (item) => (
+                      <option
+                        key={item._id}
+                        value={item._id}
+                      >
+                        {item.name}
+                      </option>
+                    ),
+                  )}
                 </select>
               </label>
 
               <button
                 type="button"
                 className="community-social-filter-button"
-                onClick={() => setFiltersOpen(true)}
+                onClick={() =>
+                  setFiltersOpen(true)
+                }
               >
-                <SlidersHorizontal size={16} />
-                <span className="community-social-filter-button__label">
+                <SlidersHorizontal
+                  size={16}
+                />
+
+                <span>
                   Tìm & lọc
                 </span>
 
                 {activeFilterCount ? (
-                  <strong>{activeFilterCount}</strong>
+                  <strong>
+                    {
+                      activeFilterCount
+                    }
+                  </strong>
                 ) : null}
               </button>
             </div>
@@ -455,9 +881,14 @@ export default function CommunityPage() {
             {currentType ? (
               <button
                 type="button"
-                onClick={() => update('type', '')}
+                onClick={() =>
+                  update('type', '')
+                }
               >
-                {COMMUNITY_TYPES[currentType] || currentType}
+                {COMMUNITY_TYPES[
+                  currentType
+                ] || currentType}
+
                 <X size={13} />
               </button>
             ) : null}
@@ -465,9 +896,16 @@ export default function CommunityPage() {
             {currentCategory ? (
               <button
                 type="button"
-                onClick={() => update('category', '')}
+                onClick={() =>
+                  update(
+                    'category',
+                    '',
+                  )
+                }
               >
-                {selectedCategory?.name || 'Chủ đề'}
+                {selectedCategory?.name ||
+                  'Chủ đề'}
+
                 <X size={13} />
               </button>
             ) : null}
@@ -475,17 +913,24 @@ export default function CommunityPage() {
             {currentArea ? (
               <button
                 type="button"
-                onClick={() => update('area', '')}
+                onClick={() =>
+                  update('area', '')
+                }
               >
-                {selectedArea?.name || 'Khu vực'}
+                {selectedArea?.name ||
+                  'Khu vực'}
+
                 <X size={13} />
               </button>
             ) : null}
 
-            {currentSort === 'popular' ? (
+            {currentSort ===
+            'popular' ? (
               <button
                 type="button"
-                onClick={() => update('sort', '')}
+                onClick={() =>
+                  update('sort', '')
+                }
               >
                 Đang quan tâm
                 <X size={13} />
@@ -508,7 +953,9 @@ export default function CommunityPage() {
             <button
               type="button"
               className="community-social-active-filters__clear"
-              onClick={clearAllFilters}
+              onClick={
+                clearAllFilters
+              }
             >
               Xóa lọc
             </button>
@@ -521,7 +968,9 @@ export default function CommunityPage() {
               type="button"
               className="community-social-filter-overlay"
               aria-label="Đóng bộ lọc"
-              onClick={() => setFiltersOpen(false)}
+              onClick={() =>
+                setFiltersOpen(false)
+              }
             />
 
             <aside
@@ -532,11 +981,22 @@ export default function CommunityPage() {
             >
               <header className="community-social-filter-drawer__header">
                 <div>
-                  <Filter size={18} />
+                  <span className="community-social-filter-drawer__icon">
+                    <Filter
+                      size={18}
+                    />
+                  </span>
 
                   <div>
-                    <h2>Tìm & lọc bài viết</h2>
-                    <p>Chỉ dùng khi bạn cần thu hẹp bảng tin.</p>
+                    <h2>
+                      Tìm & lọc
+                    </h2>
+
+                    <p>
+                      Thu hẹp bảng tin
+                      theo nhu cầu của
+                      bạn.
+                    </p>
                   </div>
                 </div>
 
@@ -544,7 +1004,11 @@ export default function CommunityPage() {
                   type="button"
                   className="community-social-filter-drawer__close"
                   aria-label="Đóng bộ lọc"
-                  onClick={() => setFiltersOpen(false)}
+                  onClick={() =>
+                    setFiltersOpen(
+                      false,
+                    )
+                  }
                 >
                   <X size={20} />
                 </button>
@@ -552,9 +1016,14 @@ export default function CommunityPage() {
 
               <form
                 className="community-social-filter-search"
-                onSubmit={(event) => {
+                onSubmit={(
+                  event,
+                ) => {
                   event.preventDefault();
-                  commitSearch(searchInput);
+
+                  commitSearch(
+                    searchInput,
+                  );
                 }}
               >
                 <Search size={17} />
@@ -562,8 +1031,13 @@ export default function CommunityPage() {
                 <input
                   type="search"
                   value={searchInput}
-                  onChange={(event) =>
-                    setSearchInput(event.target.value)
+                  onChange={(
+                    event,
+                  ) =>
+                    setSearchInput(
+                      event.target
+                        .value,
+                    )
                   }
                   placeholder="Tìm bài viết, câu hỏi, phản ánh..."
                   aria-label="Tìm trong cộng đồng"
@@ -576,23 +1050,52 @@ export default function CommunityPage() {
 
               <div className="community-social-filter-fields">
                 <label className="community-social-filter-field">
-                  <span>Loại bài</span>
+                  <span>
+                    Loại bài
+                  </span>
 
                   <div>
-                    <MessageCircle size={17} />
+                    <MessageCircle
+                      size={17}
+                    />
 
                     <select
-                      value={currentType}
-                      onChange={(event) =>
-                        update('type', event.target.value)
+                      value={
+                        currentType
+                      }
+                      onChange={(
+                        event,
+                      ) =>
+                        update(
+                          'type',
+                          event
+                            .target
+                            .value,
+                        )
                       }
                     >
-                      <option value="">Mọi loại bài</option>
+                      <option value="">
+                        Mọi loại bài
+                      </option>
 
-                      {Object.entries(COMMUNITY_TYPES).map(
-                        ([value, label]) => (
-                          <option key={value} value={value}>
-                            {label}
+                      {Object.entries(
+                        COMMUNITY_TYPES,
+                      ).map(
+                        ([
+                          value,
+                          label,
+                        ]) => (
+                          <option
+                            key={
+                              value
+                            }
+                            value={
+                              value
+                            }
+                          >
+                            {
+                              label
+                            }
                           </option>
                         ),
                       )}
@@ -601,65 +1104,133 @@ export default function CommunityPage() {
                 </label>
 
                 <label className="community-social-filter-field">
-                  <span>Chủ đề</span>
+                  <span>
+                    Chủ đề
+                  </span>
 
                   <div>
                     <Tags size={17} />
 
                     <select
-                      value={currentCategory}
-                      onChange={(event) =>
-                        update('category', event.target.value)
+                      value={
+                        currentCategory
+                      }
+                      onChange={(
+                        event,
+                      ) =>
+                        update(
+                          'category',
+                          event
+                            .target
+                            .value,
+                        )
                       }
                     >
-                      <option value="">Mọi chủ đề</option>
+                      <option value="">
+                        Mọi chủ đề
+                      </option>
 
-                      {communityCategories.map((item) => (
-                        <option key={item._id} value={item._id}>
-                          {item.name}
-                        </option>
-                      ))}
+                      {communityCategories.map(
+                        (item) => (
+                          <option
+                            key={
+                              item._id
+                            }
+                            value={
+                              item._id
+                            }
+                          >
+                            {
+                              item.name
+                            }
+                          </option>
+                        ),
+                      )}
                     </select>
                   </div>
                 </label>
 
                 <label className="community-social-filter-field">
-                  <span>Khu vực</span>
+                  <span>
+                    Khu vực
+                  </span>
 
                   <div>
-                    <MapPin size={17} />
+                    <MapPin
+                      size={17}
+                    />
 
                     <select
-                      value={currentArea}
-                      onChange={(event) =>
-                        update('area', event.target.value)
+                      value={
+                        currentArea
+                      }
+                      onChange={(
+                        event,
+                      ) =>
+                        update(
+                          'area',
+                          event
+                            .target
+                            .value,
+                        )
                       }
                     >
-                      <option value="">Mọi khu vực</option>
+                      <option value="">
+                        Mọi khu vực
+                      </option>
 
-                      {areas.map((item) => (
-                        <option key={item._id} value={item._id}>
-                          {item.name}
-                        </option>
-                      ))}
+                      {areas.map(
+                        (item) => (
+                          <option
+                            key={
+                              item._id
+                            }
+                            value={
+                              item._id
+                            }
+                          >
+                            {
+                              item.name
+                            }
+                          </option>
+                        ),
+                      )}
                     </select>
                   </div>
                 </label>
 
                 <label className="community-social-filter-field">
-                  <span>Sắp xếp</span>
+                  <span>
+                    Sắp xếp
+                  </span>
 
                   <div>
-                    <TrendingUp size={17} />
+                    <TrendingUp
+                      size={17}
+                    />
 
                     <select
-                      value={currentSort}
-                      onChange={(event) =>
-                        update('sort', event.target.value)
+                      value={
+                        currentSort
+                      }
+                      onChange={(
+                        event,
+                      ) =>
+                        update(
+                          'sort',
+                          event
+                            .target
+                            .value,
+                        )
                       }
                     >
-                      <option value="">Mới nhất</option>
-                      <option value="popular">Đang quan tâm</option>
+                      <option value="">
+                        Mới nhất
+                      </option>
+
+                      <option value="popular">
+                        Đang quan tâm
+                      </option>
                     </select>
                   </div>
                 </label>
@@ -668,18 +1239,30 @@ export default function CommunityPage() {
               <div className="community-social-filter-drawer__actions">
                 <button
                   type="button"
-                  onClick={clearAllFilters}
-                  disabled={!hasFilters && !searchInput}
+                  onClick={
+                    clearAllFilters
+                  }
+                  disabled={
+                    !hasFilters &&
+                    !searchInput
+                  }
                 >
-                  <RotateCcw size={15} />
+                  <RotateCcw
+                    size={15}
+                  />
                   Xóa lọc
                 </button>
 
                 <button
                   type="button"
                   onClick={() => {
-                    commitSearch(searchInput);
-                    setFiltersOpen(false);
+                    commitSearch(
+                      searchInput,
+                    );
+
+                    setFiltersOpen(
+                      false,
+                    );
                   }}
                 >
                   Xem kết quả
@@ -694,23 +1277,36 @@ export default function CommunityPage() {
           ref={resultsRef}
           className="community-social-feed"
         >
-          <header className="community-social-feed__header">
+          <header className="community-social-feed__meta">
             <div>
-              <span className="community-social-feed__eyebrow">
-                <MessagesSquare size={14} />
-                Bảng tin
-              </span>
+              <strong>
+                {feedLabel}
+              </strong>
 
-              <div className="community-social-feed__title-row">
-                <h2>{resultTitle}</h2>
-
-                {!result.loading && !result.error ? (
-                  <span>
-                    {total.toLocaleString('vi-VN')} bài
-                  </span>
-                ) : null}
-              </div>
+              {!result.loading &&
+              !result.error ? (
+                <span>
+                  {total.toLocaleString(
+                    'vi-VN',
+                  )}{' '}
+                  bài viết
+                </span>
+              ) : null}
             </div>
+
+            {hasFilters ? (
+              <button
+                type="button"
+                onClick={
+                  clearAllFilters
+                }
+              >
+                <RotateCcw
+                  size={14}
+                />
+                Đặt lại
+              </button>
+            ) : null}
           </header>
 
           {result.loading ? (
@@ -722,41 +1318,54 @@ export default function CommunityPage() {
             />
           ) : result.items.length ? (
             <div className="community-social-feed-list">
-              {result.items.map((item) => (
-                <article
-                  className="community-social-feed-item"
-                  key={item._id}
-                >
-                  <CommunityCard item={item} />
-                </article>
-              ))}
+              {result.items.map(
+                (item) => (
+                  <div
+                    className="community-social-feed-item"
+                    key={item._id}
+                  >
+                    <CommunityCard
+                      item={item}
+                    />
+                  </div>
+                ),
+              )}
             </div>
           ) : (
             <div className="community-social-empty">
               <span>
-                <MessagesSquare size={30} />
+                <MessageCircle
+                  size={28}
+                />
               </span>
 
-              <h3>Chưa có bài viết phù hợp</h3>
+              <h3>
+                Chưa có bài viết phù
+                hợp
+              </h3>
 
               <p>
                 {hasFilters
-                  ? 'Hãy thử bỏ bớt bộ lọc hoặc dùng từ khóa khác.'
-                  : 'Hãy là người đầu tiên chia sẻ thông tin với cộng đồng Hòa Lạc.'}
+                  ? 'Thử bỏ bớt bộ lọc hoặc sử dụng từ khóa khác.'
+                  : 'Hãy là người đầu tiên chia sẻ một câu chuyện với cộng đồng Hòa Lạc.'}
               </p>
 
               {hasFilters ? (
                 <button
                   type="button"
-                  onClick={clearAllFilters}
+                  onClick={
+                    clearAllFilters
+                  }
                 >
-                  <RotateCcw size={16} />
+                  <RotateCcw
+                    size={16}
+                  />
                   Xóa bộ lọc
                 </button>
               ) : (
                 <Link to="/dang-bai/cong-dong">
                   <Plus size={16} />
-                  Tạo bài viết đầu tiên
+                  Viết bài
                 </Link>
               )}
             </div>
@@ -766,19 +1375,16 @@ export default function CommunityPage() {
         {!result.loading &&
         !result.error &&
         result.items.length ? (
-          <div className="community-social-pagination">
-            <Pagination
-              meta={result.meta}
-              onPageChange={setPage}
-            />
-
-            <p>
-              {fromItem}–{toItem} / {total.toLocaleString('vi-VN')}
-              {result.meta?.totalPages
-                ? ` · Trang ${currentPage}/${result.meta.totalPages}`
-                : ''}
-            </p>
-          </div>
+          <CommunityPagination
+            page={currentPage}
+            totalPages={
+              totalPages
+            }
+            total={total}
+            fromItem={fromItem}
+            toItem={toItem}
+            onChange={setPage}
+          />
         ) : null}
       </div>
     </section>

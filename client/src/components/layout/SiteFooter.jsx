@@ -120,13 +120,13 @@ export default function SiteFooter() {
               aria-label="Đô Thị Hòa Lạc - Trang chủ"
             >
               <img
-                src="/Logo.png"
+                src="/Logo2.png"
                 alt="Biểu tượng Đô Thị Hòa Lạc"
               />
 
               <span>
                 <strong>Đô Thị Hòa Lạc</strong>
-                <small>Thuộc hệ sinh thái XSpace</small>
+                <small>Trung Tâm Phát Triển Đô Thị Hòa Lạc</small>
               </span>
             </Link>
 

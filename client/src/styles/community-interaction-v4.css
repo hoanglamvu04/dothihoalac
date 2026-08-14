@@ -1,0 +1,412 @@
+/* =========================================================
+   DTHL COMMUNITY INTERACTION V6
+   - Threads-like composer entry.
+   - Keep advanced search/filter only in the drawer.
+   - Facebook-like spacing between posts.
+   - Preserve reaction hover bridge and mobile ergonomics.
+========================================================= */
+
+/* =========================================================
+   REACTION HOVER BRIDGE
+========================================================= */
+
+.community-feed-reaction::before {
+  display: none !important;
+}
+
+.community-feed-reaction-picker {
+  bottom: calc(100% - 8px) !important;
+  margin-bottom: 0 !important;
+  padding: 8px !important;
+  box-shadow: 0 12px 34px rgb(13 38 22 / 0.2) !important;
+}
+
+.community-feed-reaction-picker button {
+  min-width: 43px;
+  min-height: 43px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .community-feed-reaction-picker button:hover {
+    transform: translateY(-5px) scale(1.14) !important;
+  }
+}
+
+/* =========================================================
+   PAGE WIDTH
+========================================================= */
+
+.community-social-page__container {
+  width: min(720px, calc(100% - 28px)) !important;
+  margin-inline: auto !important;
+  padding-top: 20px !important;
+}
+
+.community-social-intro {
+  padding-inline: 2px !important;
+}
+
+.community-social-intro h1 {
+  font-size: clamp(1.75rem, 3vw, 2.15rem) !important;
+}
+
+.community-social-intro p {
+  max-width: 560px !important;
+}
+
+/* =========================================================
+   MINI COMPOSER — MAKE IT FEEL CLICKABLE, NOT LIKE AN INPUT
+========================================================= */
+
+.community-social-composer {
+  min-height: 68px !important;
+  padding: 10px 13px !important;
+  margin-bottom: 8px !important;
+  border: 1px solid #dfe5e1 !important;
+  border-radius: 17px !important;
+  background: #fff !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.community-social-composer:hover {
+  border-color: #c6d8cd !important;
+  background: #fff !important;
+  box-shadow: 0 5px 18px rgb(20 48 31 / 0.045) !important;
+  transform: none !important;
+}
+
+.community-social-composer__body {
+  min-width: 0 !important;
+}
+
+.community-social-composer__prompt {
+  color: transparent !important;
+  font-size: 0 !important;
+  font-weight: 500 !important;
+  white-space: nowrap !important;
+}
+
+.community-social-composer__prompt::after {
+  content: 'Có gì mới?' !important;
+  color: #8b958f !important;
+  font-size: 0.84rem !important;
+  font-weight: 500 !important;
+}
+
+.community-social-composer__quick {
+  display: none !important;
+}
+
+.community-social-composer__cta {
+  min-width: 64px !important;
+  min-height: 36px !important;
+  padding: 0 14px !important;
+  border: 1px solid #dce3df !important;
+  border-radius: 11px !important;
+  color: transparent !important;
+  background: #fff !important;
+  font-size: 0 !important;
+  box-shadow: none !important;
+}
+
+.community-social-composer__cta::after {
+  content: 'Đăng' !important;
+  color: #17271d !important;
+  font-size: 0.71rem !important;
+  font-weight: 760 !important;
+}
+
+.community-social-composer__cta svg {
+  display: none !important;
+}
+
+/* =========================================================
+   FILTER ENTRY
+   Hide the always-visible dashboard controls. The existing
+   right drawer remains the single place for deep filtering.
+========================================================= */
+
+.community-social-control-panel {
+  display: block !important;
+  width: max-content !important;
+  max-width: 100% !important;
+  min-height: 0 !important;
+  margin: 0 0 6px auto !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.community-social-types,
+.community-social-toolbar__sort,
+.community-social-toolbar__area {
+  display: none !important;
+}
+
+.community-social-toolbar,
+.community-social-controls,
+.community-social-control-panel__toolbar {
+  border: 0 !important;
+}
+
+.community-social-toolbar {
+  display: block !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.community-social-toolbar__actions {
+  display: block !important;
+  width: auto !important;
+  margin: 0 !important;
+}
+
+.community-social-filter-button {
+  min-height: 38px !important;
+  padding: 0 12px !important;
+  gap: 6px !important;
+  border: 1px solid #dce4df !important;
+  border-radius: 11px !important;
+  color: #34463b !important;
+  background: #fff !important;
+  font-size: 0.69rem !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 9px rgb(20 48 31 / 0.025) !important;
+}
+
+.community-social-filter-button:hover {
+  border-color: #bfd7c8 !important;
+  color: #0b6d36 !important;
+  background: #f8fbf9 !important;
+}
+
+.community-social-filter-button strong {
+  min-width: 18px !important;
+  height: 18px !important;
+  font-size: 0.59rem !important;
+}
+
+/* The filter-count badge on the button is enough. */
+.community-social-active-filters {
+  display: none !important;
+}
+
+/* =========================================================
+   FEED — SEPARATE POSTS LIKE A SOCIAL NETWORK
+========================================================= */
+
+.community-social-page.community-social-page .community-social-feed {
+  overflow: visible !important;
+  margin-top: 8px !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.community-social-feed__meta {
+  min-height: 34px !important;
+  padding: 0 2px 8px !important;
+}
+
+.community-social-feed-list {
+  display: grid !important;
+  gap: 14px !important;
+}
+
+.community-social-page.community-social-page
+  .community-social-feed-item
+  + .community-social-feed-item {
+  border-top: 0 !important;
+}
+
+.community-social-page.community-social-page .community-card--social,
+.community-social-page.community-social-page .community-card {
+  overflow: visible !important;
+  padding: 0 !important;
+  border: 1px solid #dfe6e2 !important;
+  border-radius: 16px !important;
+  background: #fff !important;
+  box-shadow: 0 2px 12px rgb(20 48 31 / 0.035) !important;
+}
+
+.community-feed-card__header {
+  padding: 13px 14px 7px !important;
+}
+
+.community-feed-card__text {
+  padding: 5px 14px 11px !important;
+  font-size: 0.88rem !important;
+  line-height: 1.5 !important;
+}
+
+.community-feed-card__stats {
+  min-height: 34px !important;
+  padding: 5px 14px !important;
+}
+
+.community-feed-card__actions {
+  padding: 3px 8px !important;
+}
+
+.community-feed-action {
+  min-height: 37px !important;
+  font-size: 0.7rem !important;
+}
+
+.community-feed-comments {
+  padding: 6px 14px !important;
+}
+
+.community-feed-comment-box {
+  padding: 7px 14px 11px !important;
+}
+
+.community-social-page .community-feed-media--1 .community-feed-media__item {
+  max-height: 480px !important;
+  aspect-ratio: 16 / 10 !important;
+}
+
+/* =========================================================
+   QUICK COMPOSER SOCIAL IMAGE BEHAVIOUR
+========================================================= */
+
+.community-quick-composer__rte .community-social-editor__figure {
+  position: relative;
+  overflow: hidden;
+  margin: 10px 0 !important;
+  border-radius: 14px;
+  background: #f1f4f2;
+}
+
+.community-quick-composer__rte
+  .community-social-editor__figure
+  img {
+  display: block;
+  width: 100%;
+  max-height: 420px;
+  margin: 0;
+  border-radius: 14px;
+  object-fit: contain;
+  background: #f1f4f2;
+}
+
+.community-quick-composer__rte .rte-uploading {
+  color: #718078;
+  font-size: 0.66rem;
+  font-weight: 650;
+}
+
+/* =========================================================
+   TABLET / MOBILE
+========================================================= */
+
+@media (max-width: 760px) {
+  .community-social-page__container {
+    width: min(100%, calc(100% - 20px)) !important;
+    padding-top: 14px !important;
+  }
+
+  .community-social-intro {
+    gap: 10px !important;
+    padding-bottom: 12px !important;
+  }
+
+  .community-social-intro h1 {
+    font-size: clamp(1.55rem, 7vw, 1.9rem) !important;
+  }
+
+  .community-social-intro p {
+    font-size: 0.82rem !important;
+  }
+
+  .community-social-intro__create {
+    min-width: 42px !important;
+    padding: 0 10px !important;
+  }
+
+  .community-social-composer {
+    min-height: 64px !important;
+    padding: 9px 11px !important;
+    border-radius: 15px !important;
+  }
+
+  .community-social-composer__prompt::after {
+    font-size: 0.81rem !important;
+  }
+
+  .community-social-composer__cta {
+    min-width: 58px !important;
+    min-height: 34px !important;
+    padding: 0 10px !important;
+  }
+
+  .community-social-control-panel {
+    margin-bottom: 7px !important;
+  }
+
+  .community-social-filter-button {
+    min-height: 36px !important;
+    padding-inline: 10px !important;
+  }
+
+  .community-social-page.community-social-page .community-card--social,
+  .community-social-page.community-social-page .community-card {
+    border: 1px solid #dfe6e2 !important;
+    border-radius: 15px !important;
+  }
+
+  .community-social-page .community-feed-media--1 .community-feed-media__item {
+    max-height: 420px !important;
+    aspect-ratio: auto !important;
+  }
+}
+
+@media (max-width: 520px) {
+  .community-social-page__container {
+    width: 100% !important;
+  }
+
+  .community-social-intro,
+  .community-social-composer,
+  .community-social-feed__meta,
+  .community-social-pagination {
+    margin-inline: 12px !important;
+  }
+
+  .community-social-control-panel {
+    margin-right: 12px !important;
+  }
+
+  .community-social-feed-list {
+    gap: 10px !important;
+    padding-inline: 8px !important;
+  }
+
+  .community-social-page.community-social-page .community-card--social,
+  .community-social-page.community-social-page .community-card {
+    border: 1px solid #dfe6e2 !important;
+    border-radius: 14px !important;
+  }
+
+  .community-feed-card__header {
+    padding: 12px 12px 7px !important;
+  }
+
+  .community-feed-card__text {
+    padding: 5px 12px 10px !important;
+    font-size: 0.85rem !important;
+  }
+
+  .community-feed-card__stats,
+  .community-feed-comments,
+  .community-feed-comment-box {
+    padding-right: 12px !important;
+    padding-left: 12px !important;
+  }
+}

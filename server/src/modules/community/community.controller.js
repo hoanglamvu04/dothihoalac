@@ -5,7 +5,11 @@ import {
 } from '../../utils/apiResponse.js';
 
 export async function list(req, res) {
-  const result = await s.list(req.query);
+  const result = await s.list(
+    req.query,
+    req.user?._id || null,
+  );
+
   return sendSuccess(res, {
     data: result.items,
     meta: result.meta,
@@ -48,6 +52,7 @@ export async function update(req, res) {
 
 export async function remove(req, res) {
   await s.remove(req.params.id, req.user._id);
+
   return sendSuccess(res, {
     message: 'Đã xóa bài.',
   });
