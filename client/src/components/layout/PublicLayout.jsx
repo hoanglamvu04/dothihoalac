@@ -2,6 +2,7 @@ import { Outlet } from 'react-router-dom';
 import SiteHeader from './SiteHeader';
 import HeaderNavigationUpgrade from './HeaderNavigationUpgrade';
 import SiteFooter from './SiteFooter';
+import CommunityQuickComposer from '../community/CommunityQuickComposer';
 
 export default function PublicLayout() {
   return (
@@ -10,6 +11,7 @@ export default function PublicLayout() {
       <HeaderNavigationUpgrade />
       <main className="main-content"><Outlet /></main>
       <SiteFooter />
+      <CommunityQuickComposer />
     </div>
   );
 }
