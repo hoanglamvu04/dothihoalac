@@ -3,19 +3,19 @@ import SiteHeader from './SiteHeader';
 import HeaderNavigationUpgrade from './HeaderNavigationUpgrade';
 import SiteFooter from './SiteFooter';
 import CommunityQuickComposer from '../community/CommunityQuickComposer';
-import CommunitySideRails from '../community/CommunitySideRails';
+import CommunityAdRails from '../community/CommunityAdRails';
 
 export default function PublicLayout() {
   const location = useLocation();
   const normalizedPath = location.pathname.replace(/\/+$/, '') || '/';
-  const showCommunityRails = normalizedPath === '/cong-dong';
+  const showCommunityAds = normalizedPath === '/cong-dong';
 
   return (
     <div className="app-shell">
       <SiteHeader />
       <HeaderNavigationUpgrade />
-      <main className={`main-content${showCommunityRails ? ' main-content--community' : ''}`}>
-        {showCommunityRails ? <CommunitySideRails /> : null}
+      <main className={`main-content${showCommunityAds ? ' main-content--community' : ''}`}>
+        {showCommunityAds ? <CommunityAdRails /> : null}
         <Outlet />
       </main>
       <SiteFooter />
