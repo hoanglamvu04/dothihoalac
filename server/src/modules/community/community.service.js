@@ -3,6 +3,7 @@ import ContentBody from '../contents/contentBody.model.js';
 import CommunityPost from './communityPost.model.js';
 import Comment from '../comments/comment.model.js';
 import Reaction from '../reactions/reaction.model.js';
+import UserProfile from '../users/userProfile.model.js';
 
 import {
   createContentWithBody,
@@ -20,6 +21,31 @@ import ApiError from '../../utils/ApiError.js';
 
 function escapeRegex(value = '') {
   return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+async function loadAvatarProfiles(userIds = []) {
+  const uniqueIds = [...new Set(userIds.filter(Boolean).map(String))];
+  if (!uniqueIds.length) return new Map();
+
+  const profiles = await UserProfile.find({
+    userId: { $in: uniqueIds },
+  })
+    .select('userId avatarMediaId')
+    .populate('avatarMediaId', 'url secureUrl altText width height')
+    .lean();
+
+  return new Map(
+    profiles.map((profile) => [String(profile.userId), profile]),
+  );
+}
+
+function attachProfile(user, profileMap) {
+  if (!user) return user;
+  const plain = typeof user.toObject === 'function' ? user.toObject() : user;
+  return {
+    ...plain,
+    profile: profileMap.get(String(plain._id || plain.id)) || null,
+  };
 }
 
 async function loadCommentPreviews(contentIds) {
@@ -62,10 +88,17 @@ async function loadCommentPreviews(contentIds) {
       })
     : [];
 
+  const profileMap = await loadAvatarProfiles(
+    populated.map((comment) => comment.userId?._id),
+  );
+
   const populatedMap = new Map(
     populated.map((comment) => [
       String(comment._id),
-      comment,
+      {
+        ...comment,
+        userId: attachProfile(comment.userId, profileMap),
+      },
     ]),
   );
 
@@ -148,6 +181,9 @@ export async function list(q, viewerId = null) {
   ]);
 
   const contentIds = items.map((item) => item._id);
+  const authorProfileMap = await loadAvatarProfiles(
+    items.map((item) => item.authorId?._id),
+  );
 
   const [details, bodies, commentMap, viewerReactions] =
     await Promise.all([
@@ -206,6 +242,7 @@ export async function list(q, viewerId = null) {
 
       return {
         ...item,
+        authorId: attachProfile(item.authorId, authorProfileMap),
         community: detailMap.get(key) || null,
         body: bodyMap.get(key) || null,
         commentPreview: commentMap.get(key) || [],
@@ -226,7 +263,15 @@ export async function detail(slug) {
     contentId: base._id,
   }).lean();
 
-  return { ...base, community };
+  const profileMap = await loadAvatarProfiles([
+    base.authorId?._id,
+  ]);
+
+  return {
+    ...base,
+    authorId: attachProfile(base.authorId, profileMap),
+    community,
+  };
 }
 
 export async function editorDetail(id, userId) {
