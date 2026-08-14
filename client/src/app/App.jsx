@@ -68,6 +68,7 @@ const GoogleWorkspacePage = lazy(() => import('../pages/admin/GoogleWorkspacePag
 const AdminUsersPage = lazy(() => import('../pages/admin/AdminUsersPage'));
 const AdminReportsPage = lazy(() => import('../pages/admin/AdminReportsPage'));
 const AdminLeadsPage = lazy(() => import('../pages/admin/AdminLeadsPage'));
+const AdminAdsPage = lazy(() => import('../pages/admin/AdminAdsPage'));
 const AdminTaxonomyPage = lazy(() => import('../pages/admin/AdminTaxonomyPage'));
 const AdminSystemPage = lazy(() => import('../pages/admin/AdminSystemPage'));
 const AdminLogsPage = lazy(() => import('../pages/admin/AdminLogsPage'));
@@ -127,6 +128,7 @@ const router = createBrowserRouter(
         <Route path="nguoi-dung" element={<AdminUsersPage />} />
         <Route path="bao-cao" element={<AdminReportsPage />} />
         <Route path="khach-hang" element={<AdminLeadsPage />} />
+        <Route path="quang-cao" element={<AdminAdsPage />} />
         <Route path="phan-loai" element={<AdminTaxonomyPage />} />
         <Route path="google-workspace" element={<GoogleWorkspacePage />} />
         <Route path="he-thong" element={<AdminSystemPage />} />
