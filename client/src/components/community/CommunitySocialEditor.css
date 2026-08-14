@@ -127,7 +127,16 @@
 .community-quick-composer__rte .community-social-editor__media-card {
   flex-basis: min(235px, 72%);
   width: min(235px, 72%);
+  max-width: none;
+  margin: 0;
   border-radius: 16px;
+}
+
+.community-quick-composer__rte .community-social-editor__media-card img {
+  max-width: none;
+  max-height: none;
+  border-radius: 0;
+  object-fit: cover;
 }
 
 .community-quick-composer__rte .rte-toolbar {
