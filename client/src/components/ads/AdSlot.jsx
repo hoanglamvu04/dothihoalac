@@ -64,12 +64,16 @@ export default function AdSlot({
   const image = mediaUrl(ad.imageMediaId);
   const hasText = Boolean(ad.headline || ad.description || ad.ctaLabel);
   const creativeType = ad.creativeType || (image && hasText ? 'image_text' : image ? 'image' : 'text');
+  const showImage = creativeType !== 'text' && Boolean(image);
+  const showText = creativeType !== 'image' && hasText;
+
+  if (!showImage && !showText) return null;
 
   const content = (
     <>
       <span className="ad-slot__sponsored">Quảng cáo</span>
 
-      {image ? (
+      {showImage ? (
         <div className="ad-slot__media">
           <img
             src={image}
@@ -80,7 +84,7 @@ export default function AdSlot({
         </div>
       ) : null}
 
-      {creativeType !== 'image' && hasText ? (
+      {showText ? (
         <div className="ad-slot__copy">
           {ad.headline ? <strong>{ad.headline}</strong> : null}
           {ad.description ? <p>{ad.description}</p> : null}
