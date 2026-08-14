@@ -268,7 +268,7 @@
 }
 
 .community-quick-composer__rte .rte-toolbar {
-  order: 2;
+  order: 3;
   min-height: 46px;
   padding: 5px 0;
   gap: 5px;
@@ -313,7 +313,7 @@
 }
 
 .community-quick-composer__rte .rte-error {
-  order: 3;
+  order: 4;
   margin-top: 5px;
   border-radius: 10px;
   font-size: 0.72rem;
