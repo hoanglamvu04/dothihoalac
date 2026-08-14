@@ -137,10 +137,6 @@ async function createContentRevision({
     return null;
   }
 
-  /*
-   * Thử lại khi có hai yêu cầu sửa bài đồng thời
-   * cùng tạo một revisionNumber.
-   */
   for (let attempt = 0; attempt < 3; attempt += 1) {
     const latestRevision =
       await ContentRevision.findOne({
@@ -289,6 +285,12 @@ export async function createContentWithBody({
     (item) => item.mediaId,
   );
 
+  const resolvedThumbnailMediaId =
+    normalizeNullableId(thumbnailMediaId) ||
+    (contentType === 'community'
+      ? inlineMediaIds[0] || null
+      : null);
+
   const slug = await createUniqueSlug(
     Content,
     normalizedTitle,
@@ -304,11 +306,6 @@ export async function createContentWithBody({
       title: normalizedTitle,
       slug,
       summary: normalizeText(summary),
-
-      /*
-       * bodyText được lưu trong Content để phục vụ
-       * text index và tìm kiếm nhanh.
-       */
       bodyText: body.bodyText,
 
       status,
@@ -330,8 +327,7 @@ export async function createContentWithBody({
       areaIds:
         normalizeIdArray(areaIds),
 
-      thumbnailMediaId:
-        normalizeNullableId(thumbnailMediaId),
+      thumbnailMediaId: resolvedThumbnailMediaId,
 
       isFeatured: Boolean(isFeatured),
       isSponsored: Boolean(isSponsored),
@@ -355,10 +351,6 @@ export async function createContentWithBody({
 
     return content;
   } catch (error) {
-    /*
-     * Nếu Content đã được tạo nhưng ContentBody lỗi,
-     * xóa Content để tránh dữ liệu mồ côi.
-     */
     if (content?._id) {
       await Promise.allSettled([
         ContentMedia.deleteMany({
@@ -499,6 +491,15 @@ export async function updateContentWithBody(
       );
   }
 
+  if (
+    content.contentType === 'community' &&
+    !content.thumbnailMediaId &&
+    Array.isArray(inlineMedia) &&
+    inlineMedia.length
+  ) {
+    content.thumbnailMediaId = inlineMedia[0].mediaId;
+  }
+
   if (changes.isFeatured !== undefined) {
     content.isFeatured =
       Boolean(changes.isFeatured);
@@ -510,10 +511,6 @@ export async function updateContentWithBody(
   }
 
   if (nextBody) {
-    /*
-     * Đồng bộ bodyText trong Content để text index
-     * luôn có dữ liệu mới nhất.
-     */
     content.bodyText = nextBody.bodyText;
   }
 
@@ -580,10 +577,6 @@ export async function getPublishedContentBySlug(
     );
   }
 
-  /*
-   * Vừa lấy bài vừa tăng viewCount trong một truy vấn.
-   * new: true trả về dữ liệu sau khi tăng lượt xem.
-   */
   const query = Content.findOneAndUpdate(
     {
       slug: normalizedSlug,
