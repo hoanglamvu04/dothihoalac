@@ -1,3 +1,5 @@
+import mongoose from 'mongoose';
+
 import Content from '../contents/content.model.js';
 import ContentBody from '../contents/contentBody.model.js';
 import CommunityPost from './communityPost.model.js';
@@ -66,7 +68,7 @@ async function hydrateLegacyBodyMedia(bodies = []) {
     try {
       const refs = extractInlineMediaFigures(body.bodyHtml)
         .map((item) => String(item.mediaId || '').trim())
-        .filter(Boolean);
+        .filter((id) => mongoose.isValidObjectId(id));
 
       if (!refs.length) continue;
 
