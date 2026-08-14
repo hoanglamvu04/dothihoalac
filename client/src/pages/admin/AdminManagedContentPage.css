@@ -1,0 +1,218 @@
+.admin-managed-table {
+  min-width: 1180px;
+}
+
+.admin-managed-actions {
+  min-width: 430px;
+  flex-wrap: wrap;
+}
+
+.admin-managed-actions select {
+  min-height: 30px;
+  max-width: 140px;
+  border-radius: 8px;
+  padding: 5px 8px;
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.admin-managed-actions .is-danger {
+  border-color: #f0c8bf;
+  color: var(--admin-danger);
+  background: #fff8f6;
+}
+
+.admin-managed-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgb(7 19 12 / .58);
+  backdrop-filter: blur(3px);
+}
+
+.admin-managed-modal {
+  width: min(980px, 100%);
+  max-height: calc(100vh - 48px);
+  overflow: auto;
+  border: 1px solid var(--admin-line);
+  border-radius: 20px;
+  background: #fff;
+  box-shadow: 0 30px 90px rgb(4 15 8 / .28);
+}
+
+.admin-managed-modal > header {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 20px 22px;
+  border-bottom: 1px solid var(--admin-line);
+  background: rgb(255 255 255 / .96);
+  backdrop-filter: blur(10px);
+}
+
+.admin-managed-modal > header h2 {
+  margin: 4px 0 0;
+  font-size: 22px;
+  letter-spacing: -.025em;
+}
+
+.admin-managed-detail,
+.admin-managed-form {
+  padding: 22px;
+}
+
+.admin-managed-detail dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0;
+}
+
+.admin-managed-detail dl > div {
+  display: grid;
+  grid-template-columns: 130px minmax(0, 1fr);
+  gap: 12px;
+  padding: 11px 12px;
+  border: 1px solid #edf2ee;
+  border-radius: 11px;
+  background: #fbfcfb;
+}
+
+.admin-managed-detail dt {
+  color: var(--admin-muted);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.admin-managed-detail dd {
+  min-width: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+  color: var(--admin-dark);
+  font-size: 12px;
+}
+
+.admin-managed-summary,
+.admin-managed-body {
+  margin-top: 18px;
+  border: 1px solid var(--admin-line);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.admin-managed-summary > strong,
+.admin-managed-body > strong {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 12px;
+}
+
+.admin-managed-summary p,
+.admin-managed-body div {
+  margin: 0;
+  color: #3b4c42;
+  font-size: 13px;
+  line-height: 1.7;
+}
+
+.admin-managed-body img {
+  max-width: 100%;
+  height: auto;
+}
+
+.admin-managed-form {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.admin-managed-form label {
+  display: grid;
+  gap: 6px;
+}
+
+.admin-managed-form label > span {
+  color: var(--admin-muted);
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+
+.admin-managed-form input,
+.admin-managed-form textarea,
+.admin-managed-form select {
+  width: 100%;
+  min-height: 40px;
+  padding: 9px 11px;
+}
+
+.admin-managed-form textarea {
+  resize: vertical;
+  line-height: 1.55;
+}
+
+.admin-managed-form .is-wide {
+  grid-column: 1 / -1;
+}
+
+.admin-managed-check {
+  display: flex !important;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 42px;
+  padding: 9px 11px;
+  border: 1px solid var(--admin-line);
+  border-radius: 10px;
+  background: #fbfcfb;
+}
+
+.admin-managed-check input {
+  width: 16px;
+  min-height: 16px;
+}
+
+.admin-managed-check span {
+  text-transform: none !important;
+}
+
+.admin-managed-form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+@media (max-width: 760px) {
+  .admin-managed-modal-backdrop {
+    padding: 0;
+  }
+
+  .admin-managed-modal {
+    width: 100%;
+    max-height: 100dvh;
+    min-height: 100dvh;
+    border-radius: 0;
+  }
+
+  .admin-managed-detail dl,
+  .admin-managed-form {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-managed-detail dl > div {
+    grid-template-columns: 100px minmax(0, 1fr);
+  }
+
+  .admin-managed-form .is-wide {
+    grid-column: auto;
+  }
+}
