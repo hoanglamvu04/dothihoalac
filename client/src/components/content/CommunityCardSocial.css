@@ -4,6 +4,32 @@
   border-radius: 16px;
   background: #fff;
   box-shadow: 0 2px 12px rgb(20 48 31 / 0.035);
+  cursor: pointer;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease;
+}
+
+.community-card--social:hover {
+  border-color: #cbd9d0;
+  box-shadow: 0 8px 24px rgb(20 48 31 / 0.07);
+}
+
+.community-card--social:active {
+  transform: translateY(1px);
+}
+
+.community-card--social :is(a, button, input, textarea, select, form, [role='button']) {
+  cursor: auto;
+}
+
+.community-card--social :is(a, button, [role='button']) {
+  cursor: pointer;
+}
+
+.community-card--social :is(input, textarea) {
+  cursor: text;
 }
 
 .community-card--social > header,
@@ -403,6 +429,10 @@
     border-right: 0;
     border-left: 0;
     border-radius: 0;
+    box-shadow: none;
+  }
+
+  .community-card--social:hover {
     box-shadow: none;
   }
 
