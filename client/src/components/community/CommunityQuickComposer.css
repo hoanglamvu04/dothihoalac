@@ -224,7 +224,7 @@
   white-space: nowrap;
 }
 
-.community-quick-composer__topic-trigger:hover {
+.community-quick-composer__topic-trigger:hover:not(:disabled) {
   color: #4c5b52;
 }
 
@@ -235,6 +235,17 @@
   margin-top: 3px;
   color: #929b95;
   font-size: 0.67rem;
+}
+
+.community-quick-composer__loading {
+  display: flex;
+  min-height: 230px;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  color: #66736b;
+  font-size: 0.76rem;
+  font-weight: 680;
 }
 
 .community-quick-composer__rte.rte {
@@ -400,7 +411,7 @@
   cursor: pointer;
 }
 
-.community-quick-composer__type-list button:hover {
+.community-quick-composer__type-list button:hover:not(:disabled) {
   border-color: #bdd6c6;
 }
 
@@ -482,6 +493,13 @@
   font-size: 0.63rem;
 }
 
+.community-quick-composer button:disabled,
+.community-quick-composer select:disabled,
+.community-quick-composer input:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
 .community-quick-composer__error {
   margin: 0 22px 8px 74px;
   padding: 9px 11px;
@@ -517,7 +535,7 @@
   cursor: pointer;
 }
 
-.community-quick-composer__post-options:hover {
+.community-quick-composer__post-options:hover:not(:disabled) {
   color: #2d3c33;
 }
 
@@ -640,6 +658,10 @@
 
   .community-quick-composer__topic-trigger {
     max-width: 100%;
+  }
+
+  .community-quick-composer__loading {
+    min-height: 260px;
   }
 
   .community-quick-composer__rte .rte-content {
