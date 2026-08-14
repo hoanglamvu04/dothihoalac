@@ -59,11 +59,12 @@ const ReportsPage = lazy(() => import('../pages/account/ReportsPage'));
 const AdminDashboardPage = lazy(() => import('../pages/admin/AdminDashboardPage'));
 const ModerationQueuePage = lazy(() => import('../pages/admin/ModerationQueuePage'));
 const AdminArticlesPage = lazy(() => import('../pages/admin/AdminArticlesPage'));
+const AdminManagedContentPage = lazy(() => import('../pages/admin/AdminManagedContentPage'));
+const AdminCommentsPage = lazy(() => import('../pages/admin/AdminCommentsPage'));
 const AdminSourceWatchPage = lazy(() => import('../pages/admin/AdminSourceWatchPage'));
 const ArticleMetadataPage = lazy(() => import('../pages/admin/ArticleMetadataPage'));
 const GoogleDocsArticleLauncher = lazy(() => import('../pages/admin/GoogleDocsArticleLauncher'));
 const GoogleWorkspacePage = lazy(() => import('../pages/admin/GoogleWorkspacePage'));
-const AdminJobsPage = lazy(() => import('../pages/admin/AdminJobsPage'));
 const AdminUsersPage = lazy(() => import('../pages/admin/AdminUsersPage'));
 const AdminReportsPage = lazy(() => import('../pages/admin/AdminReportsPage'));
 const AdminLeadsPage = lazy(() => import('../pages/admin/AdminLeadsPage'));
@@ -79,17 +80,10 @@ function AdminOnly({ children }) {
   return <AdminRoute>{children}</AdminRoute>;
 }
 
-function ProtectedEditor({
-  basePath,
-  sessionPrefix,
-  children,
-}) {
+function ProtectedEditor({ basePath, sessionPrefix, children }) {
   return (
     <Protected>
-      <EditorRouteId
-        basePath={basePath}
-        sessionPrefix={sessionPrefix}
-      >
+      <EditorRouteId basePath={basePath} sessionPrefix={sessionPrefix}>
         {children}
       </EditorRouteId>
     </Protected>
@@ -119,6 +113,10 @@ const router = createBrowserRouter(
         <Route index element={<AdminDashboardPage />} />
         <Route path="kiem-duyet" element={<ModerationQueuePage />} />
         <Route path="bai-viet" element={<AdminArticlesPage />} />
+        <Route path="cong-dong" element={<AdminManagedContentPage type="community" />} />
+        <Route path="nha-dat" element={<AdminManagedContentPage type="property" />} />
+        <Route path="viec-lam" element={<AdminManagedContentPage type="job" />} />
+        <Route path="binh-luan" element={<AdminCommentsPage />} />
         <Route path="theo-doi-nguon" element={<AdminSourceWatchPage />} />
 
         <Route path="bai-viet/moi" element={<GoogleDocsArticleLauncher />} />
@@ -126,7 +124,6 @@ const router = createBrowserRouter(
         <Route path="bai-viet/:id/sua" element={<ArticleMetadataPage />} />
         <Route path="bai-viet/:id/docs" element={<GoogleDocsArticleLauncher />} />
 
-        <Route path="viec-lam" element={<AdminJobsPage />} />
         <Route path="nguoi-dung" element={<AdminUsersPage />} />
         <Route path="bao-cao" element={<AdminReportsPage />} />
         <Route path="khach-hang" element={<AdminLeadsPage />} />
@@ -183,10 +180,7 @@ const router = createBrowserRouter(
         <Route
           path="dang-bai/cong-dong"
           element={
-            <ProtectedEditor
-              basePath="/dang-bai/cong-dong"
-              sessionPrefix="community"
-            >
+            <ProtectedEditor basePath="/dang-bai/cong-dong" sessionPrefix="community">
               <CommunityEditorPage />
             </ProtectedEditor>
           }
@@ -194,10 +188,7 @@ const router = createBrowserRouter(
         <Route
           path="dang-bai/cong-dong/:editorId"
           element={
-            <ProtectedEditor
-              basePath="/dang-bai/cong-dong"
-              sessionPrefix="community"
-            >
+            <ProtectedEditor basePath="/dang-bai/cong-dong" sessionPrefix="community">
               <CommunityEditorPage />
             </ProtectedEditor>
           }
@@ -206,10 +197,7 @@ const router = createBrowserRouter(
         <Route
           path="dang-bai/nha-dat"
           element={
-            <ProtectedEditor
-              basePath="/dang-bai/nha-dat"
-              sessionPrefix="property"
-            >
+            <ProtectedEditor basePath="/dang-bai/nha-dat" sessionPrefix="property">
               <PropertyEditorPage />
             </ProtectedEditor>
           }
@@ -217,10 +205,7 @@ const router = createBrowserRouter(
         <Route
           path="dang-bai/nha-dat/:editorId"
           element={
-            <ProtectedEditor
-              basePath="/dang-bai/nha-dat"
-              sessionPrefix="property"
-            >
+            <ProtectedEditor basePath="/dang-bai/nha-dat" sessionPrefix="property">
               <PropertyEditorPage />
             </ProtectedEditor>
           }
@@ -229,10 +214,7 @@ const router = createBrowserRouter(
         <Route
           path="dang-bai/viec-lam"
           element={
-            <ProtectedEditor
-              basePath="/dang-bai/viec-lam"
-              sessionPrefix="job"
-            >
+            <ProtectedEditor basePath="/dang-bai/viec-lam" sessionPrefix="job">
               <JobEditorPage />
             </ProtectedEditor>
           }
@@ -240,10 +222,7 @@ const router = createBrowserRouter(
         <Route
           path="dang-bai/viec-lam/:editorId"
           element={
-            <ProtectedEditor
-              basePath="/dang-bai/viec-lam"
-              sessionPrefix="job"
-            >
+            <ProtectedEditor basePath="/dang-bai/viec-lam" sessionPrefix="job">
               <JobEditorPage />
             </ProtectedEditor>
           }
@@ -252,10 +231,7 @@ const router = createBrowserRouter(
         <Route
           path="gui-tin"
           element={
-            <ProtectedEditor
-              basePath="/gui-tin"
-              sessionPrefix="news-tip"
-            >
+            <ProtectedEditor basePath="/gui-tin" sessionPrefix="news-tip">
               <NewsTipPage />
             </ProtectedEditor>
           }
@@ -263,10 +239,7 @@ const router = createBrowserRouter(
         <Route
           path="gui-tin/:editorId"
           element={
-            <ProtectedEditor
-              basePath="/gui-tin"
-              sessionPrefix="news-tip"
-            >
+            <ProtectedEditor basePath="/gui-tin" sessionPrefix="news-tip">
               <NewsTipPage />
             </ProtectedEditor>
           }
