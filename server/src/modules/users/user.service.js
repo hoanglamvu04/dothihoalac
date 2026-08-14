@@ -3,8 +3,11 @@ import UserProfile from './userProfile.model.js';
 import UserSession from './userSession.model.js';
 import UsernameHistory from './usernameHistory.model.js';
 import Content from '../contents/content.model.js';
+import ContentBody from '../contents/contentBody.model.js';
+import Media from '../media/media.model.js';
 import Bookmark from '../bookmarks/bookmark.model.js';
 import Report from '../reports/report.model.js';
+import { extractInlineMediaFigures } from '../media/inlineMedia.service.js';
 import { env } from '../../config/env.js';
 import { parsePagination, buildPaginationMeta } from '../../utils/pagination.js';
 import ApiError from '../../utils/ApiError.js';
@@ -86,15 +89,101 @@ export async function revokeSession(userId, sessionId) {
   if (!result.matchedCount)
     throw new ApiError(404, 'Không tìm thấy phiên đăng nhập.', 'SESSION_NOT_FOUND');
 }
+
+async function loadCommunityCoverFallback(items = []) {
+  const targets = items.filter(
+    (item) => item.contentType === 'community' && !item.thumbnailMediaId,
+  );
+
+  if (!targets.length) return new Map();
+
+  const bodies = await ContentBody.find({
+    contentId: { $in: targets.map((item) => item._id) },
+  })
+    .select('contentId bodyHtml inlineMediaIds')
+    .populate('inlineMediaIds', 'url secureUrl altText width height')
+    .lean();
+
+  const result = new Map();
+  const legacyFirstIds = new Map();
+  const legacyMediaIds = new Set();
+
+  for (const body of bodies) {
+    const firstInline = Array.isArray(body.inlineMediaIds)
+      ? body.inlineMediaIds[0]
+      : null;
+
+    if (firstInline) {
+      result.set(String(body.contentId), firstInline);
+      continue;
+    }
+
+    if (!body.bodyHtml || !/<figure\b/i.test(body.bodyHtml)) continue;
+
+    try {
+      const first = extractInlineMediaFigures(body.bodyHtml)[0];
+      const mediaId = String(first?.mediaId || '').trim();
+
+      if (mediaId) {
+        legacyFirstIds.set(String(body.contentId), mediaId);
+        legacyMediaIds.add(mediaId);
+      }
+    } catch {
+      // Dữ liệu bài cũ không hợp lệ thì giữ fallback icon thay vì làm hỏng trang tài khoản.
+    }
+  }
+
+  if (legacyMediaIds.size) {
+    const media = await Media.find({
+      _id: { $in: [...legacyMediaIds] },
+      resourceType: 'image',
+      status: 'active',
+      deletedAt: null,
+    })
+      .select('_id url secureUrl altText width height')
+      .lean();
+
+    const mediaMap = new Map(
+      media.map((item) => [String(item._id), item]),
+    );
+
+    for (const [contentId, mediaId] of legacyFirstIds) {
+      const item = mediaMap.get(mediaId);
+      if (item) result.set(contentId, item);
+    }
+  }
+
+  return result;
+}
+
 async function listContents(userId, query, contentType) {
   const { page, limit, skip } = parsePagination(query);
   const filter = { authorId: userId, deletedAt: null, ...(contentType ? { contentType } : {}) };
   if (query.status) filter.status = query.status;
+
   const [items, total] = await Promise.all([
-    Content.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
+    Content.find(filter)
+      .populate('authorId', 'username displayName')
+      .populate('thumbnailMediaId', 'url secureUrl altText width height')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean(),
     Content.countDocuments(filter),
   ]);
-  return { items, meta: buildPaginationMeta({ page, limit, total }) };
+
+  const fallbackCoverMap = await loadCommunityCoverFallback(items);
+
+  return {
+    items: items.map((item) => ({
+      ...item,
+      thumbnailMediaId:
+        item.thumbnailMediaId ||
+        fallbackCoverMap.get(String(item._id)) ||
+        null,
+    })),
+    meta: buildPaginationMeta({ page, limit, total }),
+  };
 }
 export const listMyPosts = (userId, query) => listContents(userId, query);
 export const listMyListings = (userId, query) => listContents(userId, query, 'property');
