@@ -2,9 +2,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import {
   ChevronRight,
+  FilePenLine,
   MapPin,
   MessageCircle,
-  PenLine,
   ShieldCheck,
   Tags,
   TrendingUp,
@@ -235,12 +235,12 @@ export default function CommunitySideRails() {
 
         <section className="community-rail-card community-rail-card--join">
           <span className="community-rail-card__hero-icon">
-            <PenLine size={20} />
+            <FilePenLine size={20} />
           </span>
           <strong>Chia sẻ với Hòa Lạc</strong>
           <p>Đăng câu hỏi, phản ánh hiện trường hoặc chia sẻ kinh nghiệm hữu ích cho người dân địa phương.</p>
           <Link to="/dang-bai/cong-dong">
-            <PenLine size={15} />
+            <FilePenLine size={15} />
             Viết bài cộng đồng
           </Link>
           <button type="button" onClick={() => setFilter('type', 'report')}>
