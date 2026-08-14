@@ -7,6 +7,7 @@ import {
 import {
   ImagePlus,
   LoaderCircle,
+  X,
 } from 'lucide-react';
 
 import {
@@ -15,6 +16,7 @@ import {
 } from '../../api/http';
 
 import '../forms/RichTextEditor.css';
+import './CommunitySocialEditor.css';
 
 const ALLOWED_IMAGE_TYPES = new Set([
   'image/jpeg',
@@ -57,6 +59,114 @@ function fileNameToAlt(fileName = '') {
     .trim() || 'Ảnh bài viết cộng đồng';
 }
 
+function mediaKey(item, index = 0) {
+  return String(item?.id || item?.src || `community-media-${index}`);
+}
+
+function createMediaItem(media, fallbackAlt) {
+  const id = String(media?._id || media?.id || '');
+  const src = String(media?.secureUrl || media?.url || '');
+  const alt = String(media?.altText || fallbackAlt || '').trim() || 'Ảnh bài viết cộng đồng';
+  const width = Number(media?.width);
+  const height = Number(media?.height);
+  const widthAttribute =
+    Number.isFinite(width) && width > 0
+      ? ` width="${width}"`
+      : '';
+  const heightAttribute =
+    Number.isFinite(height) && height > 0
+      ? ` height="${height}"`
+      : '';
+
+  return {
+    id,
+    src,
+    alt,
+    width: Number.isFinite(width) ? width : null,
+    height: Number.isFinite(height) ? height : null,
+    html: `
+      <figure class="article-figure community-social-editor__figure" data-media-id="${escapeHtml(id)}">
+        <img
+          src="${escapeHtml(src)}"
+          alt="${escapeHtml(alt)}"
+          data-media-id="${escapeHtml(id)}"
+          loading="lazy"
+          decoding="async"${widthAttribute}${heightAttribute}
+        />
+      </figure>
+    `.trim(),
+  };
+}
+
+function parseEditorValue(value = '') {
+  const html = String(value || '');
+
+  if (!html || typeof document === 'undefined') {
+    return {
+      textHtml: normalizeHtml(html),
+      mediaItems: [],
+    };
+  }
+
+  const template = document.createElement('template');
+  template.innerHTML = html;
+
+  const mediaItems = [];
+  const figures = Array.from(template.content.querySelectorAll('figure'));
+
+  figures.forEach((figure) => {
+    const image = figure.querySelector('img[data-media-id], img');
+    const id = String(
+      figure.getAttribute('data-media-id') ||
+        image?.getAttribute('data-media-id') ||
+        '',
+    ).trim();
+    const src = String(image?.getAttribute('src') || '').trim();
+
+    if (!id || !src || !image) {
+      return;
+    }
+
+    const nextSibling = figure.nextElementSibling;
+
+    mediaItems.push({
+      id,
+      src,
+      alt: String(image.getAttribute('alt') || '').trim() || 'Ảnh bài viết cộng đồng',
+      width: Number(image.getAttribute('width')) || null,
+      height: Number(image.getAttribute('height')) || null,
+      html: figure.outerHTML,
+    });
+
+    figure.remove();
+
+    if (
+      nextSibling?.tagName === 'P' &&
+      ['', '<br>', '<br/>', '<br />'].includes(
+        String(nextSibling.innerHTML || '')
+          .trim()
+          .toLowerCase(),
+      )
+    ) {
+      nextSibling.remove();
+    }
+  });
+
+  return {
+    textHtml: normalizeHtml(template.innerHTML),
+    mediaItems,
+  };
+}
+
+function combineEditorHtml(textHtml, mediaItems = []) {
+  return [
+    normalizeHtml(textHtml),
+    ...mediaItems.map((item) => String(item?.html || '').trim()),
+  ]
+    .filter(Boolean)
+    .join('\n');
+}
+
 export default function CommunitySocialEditor({
   value = '',
   onChange,
@@ -70,10 +180,13 @@ export default function CommunitySocialEditor({
   const editorRef = useRef(null);
   const fileInputRef = useRef(null);
   const savedRangeRef = useRef(null);
+  const mediaItemsRef = useRef([]);
   const lastEmittedHtmlRef = useRef('');
 
+  const [mediaItems, setMediaItems] = useState([]);
   const [uploading, setUploading] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadLabel, setUploadLabel] = useState('');
   const [error, setError] = useState('');
 
   const saveSelection = useCallback(() => {
@@ -127,16 +240,19 @@ export default function CommunitySocialEditor({
     placeCaretAtEnd();
   }, [placeCaretAtEnd]);
 
-  const emitChange = useCallback(() => {
-    const editor = editorRef.current;
+  const emitCombinedChange = useCallback(
+    (nextItems = mediaItemsRef.current) => {
+      const editor = editorRef.current;
 
-    if (!editor) return;
+      if (!editor) return;
 
-    const html = normalizeHtml(editor.innerHTML);
-    lastEmittedHtmlRef.current = html;
-    onChange?.(html);
-    saveSelection();
-  }, [onChange, saveSelection]);
+      const html = combineEditorHtml(editor.innerHTML, nextItems);
+      lastEmittedHtmlRef.current = html;
+      onChange?.(html);
+      saveSelection();
+    },
+    [onChange, saveSelection],
+  );
 
   const insertHtmlAtCursor = useCallback(
     (html) => {
@@ -151,7 +267,7 @@ export default function CommunitySocialEditor({
       if (!selection || !selection.rangeCount) {
         editor.insertAdjacentHTML('beforeend', html);
         placeCaretAtEnd();
-        emitChange();
+        emitCombinedChange();
         return;
       }
 
@@ -160,7 +276,7 @@ export default function CommunitySocialEditor({
       if (!editor.contains(range.commonAncestorContainer)) {
         editor.insertAdjacentHTML('beforeend', html);
         placeCaretAtEnd();
-        emitChange();
+        emitCombinedChange();
         return;
       }
 
@@ -179,11 +295,11 @@ export default function CommunitySocialEditor({
         savedRangeRef.current = range.cloneRange();
       }
 
-      emitChange();
+      emitCombinedChange();
     },
     [
       disabled,
-      emitChange,
+      emitCombinedChange,
       placeCaretAtEnd,
       restoreSelection,
     ],
@@ -196,32 +312,40 @@ export default function CommunitySocialEditor({
 
     const nextHtml = String(value || '');
 
-    if (
-      nextHtml !== lastEmittedHtmlRef.current &&
-      editor.innerHTML !== nextHtml
-    ) {
-      editor.innerHTML = nextHtml;
+    if (nextHtml === lastEmittedHtmlRef.current) {
+      return;
     }
+
+    const parsed = parseEditorValue(nextHtml);
+
+    if (editor.innerHTML !== parsed.textHtml) {
+      editor.innerHTML = parsed.textHtml;
+    }
+
+    mediaItemsRef.current = parsed.mediaItems;
+    setMediaItems(parsed.mediaItems);
   }, [value]);
 
-  const validateImageFile = useCallback(
-    (file) => {
-      if (!file) return 'Chưa chọn ảnh.';
+  const validateFiles = useCallback(
+    (files) => {
+      const selected = Array.from(files || []).filter(Boolean);
 
-      if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
-        return 'Chỉ hỗ trợ ảnh JPG, PNG, WEBP, GIF hoặc AVIF.';
+      if (!selected.length) {
+        return 'Chưa chọn ảnh.';
       }
 
-      if (file.size > maxImageSizeMb * 1024 * 1024) {
-        return `Ảnh không được vượt quá ${maxImageSizeMb} MB.`;
-      }
-
-      const imageCount =
-        editorRef.current?.querySelectorAll('[data-media-id] img')
-          .length || 0;
-
-      if (imageCount >= maxImages) {
+      if (mediaItemsRef.current.length + selected.length > maxImages) {
         return `Mỗi bài chỉ được chèn tối đa ${maxImages} ảnh.`;
+      }
+
+      for (const file of selected) {
+        if (!ALLOWED_IMAGE_TYPES.has(file.type)) {
+          return `Ảnh “${file.name}” không đúng định dạng. Chỉ hỗ trợ JPG, PNG, WEBP, GIF hoặc AVIF.`;
+        }
+
+        if (file.size > maxImageSizeMb * 1024 * 1024) {
+          return `Ảnh “${file.name}” vượt quá ${maxImageSizeMb} MB.`;
+        }
       }
 
       return '';
@@ -229,9 +353,10 @@ export default function CommunitySocialEditor({
     [maxImageSizeMb, maxImages],
   );
 
-  const uploadInlineImage = useCallback(
-    async (file) => {
-      const validationMessage = validateImageFile(file);
+  const uploadInlineImages = useCallback(
+    async (files) => {
+      const selected = Array.from(files || []).filter(Boolean);
+      const validationMessage = validateFiles(selected);
 
       if (validationMessage) {
         setError(validationMessage);
@@ -243,60 +368,54 @@ export default function CommunitySocialEditor({
       setUploading(true);
       setUploadProgress(0);
 
+      let nextItems = [...mediaItemsRef.current];
+
       try {
-        const formData = new FormData();
-        const generatedAlt = fileNameToAlt(file.name);
+        for (let index = 0; index < selected.length; index += 1) {
+          const file = selected[index];
+          const formData = new FormData();
+          const generatedAlt = fileNameToAlt(file.name);
 
-        formData.append('image', file);
-        formData.append('folder', uploadFolder);
-        formData.append('altText', generatedAlt);
-
-        const response = await api.post('/media/images', formData, {
-          onUploadProgress(progressEvent) {
-            if (!progressEvent.total) return;
-
-            setUploadProgress(
-              Math.round(
-                (progressEvent.loaded * 100) /
-                  progressEvent.total,
-              ),
-            );
-          },
-        });
-
-        const media = response?.data?.data;
-        const mediaId = media?._id || media?.id;
-        const mediaUrl = media?.secureUrl || media?.url;
-
-        if (!mediaId || !mediaUrl) {
-          throw new Error(
-            'API upload ảnh không trả về Media ID hoặc URL.',
+          setUploadLabel(
+            selected.length > 1
+              ? `Đang tải ${index + 1}/${selected.length}`
+              : 'Đang tải ảnh',
           );
+
+          formData.append('image', file);
+          formData.append('folder', uploadFolder);
+          formData.append('altText', generatedAlt);
+
+          const response = await api.post('/media/images', formData, {
+            onUploadProgress(progressEvent) {
+              const fileRatio = progressEvent.total
+                ? progressEvent.loaded / progressEvent.total
+                : 0;
+              const overallRatio =
+                (index + fileRatio) / selected.length;
+
+              setUploadProgress(
+                Math.max(1, Math.round(overallRatio * 100)),
+              );
+            },
+          });
+
+          const media = response?.data?.data;
+          const item = createMediaItem(media, generatedAlt);
+
+          if (!item.id || !item.src) {
+            throw new Error(
+              'API upload ảnh không trả về Media ID hoặc URL.',
+            );
+          }
+
+          nextItems = [...nextItems, item];
+          mediaItemsRef.current = nextItems;
+          setMediaItems(nextItems);
+          emitCombinedChange(nextItems);
         }
 
-        const width = Number(media.width);
-        const height = Number(media.height);
-        const widthAttribute =
-          Number.isFinite(width) && width > 0
-            ? ` width="${width}"`
-            : '';
-        const heightAttribute =
-          Number.isFinite(height) && height > 0
-            ? ` height="${height}"`
-            : '';
-
-        insertHtmlAtCursor(`
-          <figure class="article-figure community-social-editor__figure" data-media-id="${escapeHtml(mediaId)}">
-            <img
-              src="${escapeHtml(mediaUrl)}"
-              alt="${escapeHtml(String(media?.altText || '').trim() || generatedAlt)}"
-              data-media-id="${escapeHtml(mediaId)}"
-              loading="lazy"
-              decoding="async"${widthAttribute}${heightAttribute}
-            />
-          </figure>
-          <p><br></p>
-        `);
+        setUploadProgress(100);
       } catch (uploadError) {
         setError(
           apiErrorMessage(
@@ -307,6 +426,7 @@ export default function CommunitySocialEditor({
       } finally {
         setUploading(false);
         setUploadProgress(0);
+        setUploadLabel('');
 
         if (fileInputRef.current) {
           fileInputRef.current.value = '';
@@ -314,11 +434,27 @@ export default function CommunitySocialEditor({
       }
     },
     [
-      insertHtmlAtCursor,
+      emitCombinedChange,
       saveSelection,
       uploadFolder,
-      validateImageFile,
+      validateFiles,
     ],
+  );
+
+  const removeMedia = useCallback(
+    (id) => {
+      if (disabled || uploading) return;
+
+      const nextItems = mediaItemsRef.current.filter(
+        (item) => String(item.id) !== String(id),
+      );
+
+      mediaItemsRef.current = nextItems;
+      setMediaItems(nextItems);
+      setError('');
+      emitCombinedChange(nextItems);
+    },
+    [disabled, emitCombinedChange, uploading],
   );
 
   const openImagePicker = useCallback(() => {
@@ -336,19 +472,15 @@ export default function CommunitySocialEditor({
       const clipboardItems = Array.from(
         event.clipboardData?.items || [],
       );
-      const imageItem = clipboardItems.find((item) =>
-        item.type.startsWith('image/'),
-      );
+      const imageFiles = clipboardItems
+        .filter((item) => item.type.startsWith('image/'))
+        .map((item) => item.getAsFile())
+        .filter(Boolean);
 
-      if (imageItem) {
+      if (imageFiles.length) {
         event.preventDefault();
-        const file = imageItem.getAsFile();
-
-        if (file) {
-          saveSelection();
-          void uploadInlineImage(file);
-        }
-
+        saveSelection();
+        void uploadInlineImages(imageFiles);
         return;
       }
 
@@ -365,7 +497,7 @@ export default function CommunitySocialEditor({
       disabled,
       insertHtmlAtCursor,
       saveSelection,
-      uploadInlineImage,
+      uploadInlineImages,
     ],
   );
 
@@ -373,17 +505,17 @@ export default function CommunitySocialEditor({
     (event) => {
       if (disabled) return;
 
-      const imageFile = Array.from(
+      const imageFiles = Array.from(
         event.dataTransfer?.files || [],
-      ).find((file) => file.type.startsWith('image/'));
+      ).filter((file) => file.type.startsWith('image/'));
 
-      if (!imageFile) return;
+      if (!imageFiles.length) return;
 
       event.preventDefault();
       saveSelection();
-      void uploadInlineImage(imageFile);
+      void uploadInlineImages(imageFiles);
     },
-    [disabled, saveSelection, uploadInlineImage],
+    [disabled, saveSelection, uploadInlineImages],
   );
 
   return (
@@ -399,13 +531,45 @@ export default function CommunitySocialEditor({
         aria-multiline="true"
         aria-label="Nội dung bài viết cộng đồng"
         data-placeholder={placeholder}
-        onInput={emitChange}
+        onInput={() => emitCombinedChange()}
         onKeyUp={saveSelection}
         onMouseUp={saveSelection}
         onFocus={saveSelection}
         onPaste={handlePaste}
         onDrop={handleDrop}
       />
+
+      {mediaItems.length ? (
+        <div
+          className="community-social-editor__media-strip"
+          aria-label={`${mediaItems.length} ảnh đã chọn`}
+        >
+          {mediaItems.map((item, index) => (
+            <figure
+              className="community-social-editor__media-card"
+              key={mediaKey(item, index)}
+            >
+              <img
+                src={item.src}
+                alt={item.alt}
+                draggable="false"
+              />
+
+              <button
+                type="button"
+                aria-label={`Xóa ảnh ${index + 1}`}
+                title="Xóa ảnh"
+                disabled={disabled || uploading}
+                onClick={() => removeMedia(item.id)}
+              >
+                <X size={16} />
+              </button>
+
+              <span>{index + 1}</span>
+            </figure>
+          ))}
+        </div>
+      ) : null}
 
       <div
         className="rte-toolbar"
@@ -437,8 +601,12 @@ export default function CommunitySocialEditor({
 
         {uploading ? (
           <span className="rte-uploading">
-            Đang tải ảnh
-            {uploadProgress ? ` ${uploadProgress}%` : ''}
+            {uploadLabel || 'Đang tải ảnh'}
+            {uploadProgress ? ` · ${uploadProgress}%` : ''}
+          </span>
+        ) : mediaItems.length ? (
+          <span className="community-social-editor__media-count">
+            {mediaItems.length}/{maxImages} ảnh · kéo ngang để xem
           </span>
         ) : null}
       </div>
@@ -447,12 +615,13 @@ export default function CommunitySocialEditor({
         ref={fileInputRef}
         type="file"
         accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
+        multiple
         hidden
         onChange={(event) => {
-          const file = event.target.files?.[0];
+          const files = event.target.files;
 
-          if (file) {
-            void uploadInlineImage(file);
+          if (files?.length) {
+            void uploadInlineImages(files);
           }
         }}
       />
