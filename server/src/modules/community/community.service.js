@@ -4,6 +4,8 @@ import CommunityPost from './communityPost.model.js';
 import Comment from '../comments/comment.model.js';
 import Reaction from '../reactions/reaction.model.js';
 import UserProfile from '../users/userProfile.model.js';
+import Media from '../media/media.model.js';
+import { extractInlineMediaFigures } from '../media/inlineMedia.service.js';
 
 import {
   createContentWithBody,
@@ -46,6 +48,71 @@ function attachProfile(user, profileMap) {
     ...plain,
     profile: profileMap.get(String(plain._id || plain.id)) || null,
   };
+}
+
+async function hydrateLegacyBodyMedia(bodies = []) {
+  const legacyRefs = new Map();
+  const mediaIds = new Set();
+
+  for (const body of bodies) {
+    if (Array.isArray(body.inlineMediaIds) && body.inlineMediaIds.length) {
+      continue;
+    }
+
+    if (!body.bodyHtml || !/<figure\b/i.test(body.bodyHtml)) {
+      continue;
+    }
+
+    try {
+      const refs = extractInlineMediaFigures(body.bodyHtml)
+        .map((item) => String(item.mediaId || '').trim())
+        .filter(Boolean);
+
+      if (!refs.length) continue;
+
+      legacyRefs.set(String(body.contentId), refs);
+      refs.forEach((id) => mediaIds.add(id));
+    } catch {
+      // Bài cũ có markup ảnh lỗi thì bỏ qua gallery thay vì làm hỏng cả feed.
+    }
+  }
+
+  let mediaMap = new Map();
+
+  if (mediaIds.size) {
+    const mediaDocuments = await Media.find({
+      _id: { $in: [...mediaIds] },
+      resourceType: 'image',
+      status: 'active',
+      deletedAt: null,
+    })
+      .select('_id url secureUrl altText width height')
+      .lean();
+
+    mediaMap = new Map(
+      mediaDocuments.map((media) => [String(media._id), media]),
+    );
+  }
+
+  return bodies.map((body) => {
+    const { bodyHtml, ...plainBody } = body;
+    const currentMedia = Array.isArray(body.inlineMediaIds)
+      ? body.inlineMediaIds
+      : [];
+
+    if (currentMedia.length) {
+      return plainBody;
+    }
+
+    const refs = legacyRefs.get(String(body.contentId)) || [];
+
+    return {
+      ...plainBody,
+      inlineMediaIds: refs
+        .map((id) => mediaMap.get(id))
+        .filter(Boolean),
+    };
+  });
 }
 
 async function loadCommentPreviews(contentIds) {
@@ -185,7 +252,7 @@ export async function list(q, viewerId = null) {
     items.map((item) => item.authorId?._id),
   );
 
-  const [details, bodies, commentMap, viewerReactions] =
+  const [details, rawBodies, commentMap, viewerReactions] =
     await Promise.all([
       contentIds.length
         ? CommunityPost.find({
@@ -196,7 +263,7 @@ export async function list(q, viewerId = null) {
         ? ContentBody.find({
             contentId: { $in: contentIds },
           })
-            .select('contentId bodyText inlineMediaIds')
+            .select('contentId bodyHtml bodyText inlineMediaIds')
             .populate(
               'inlineMediaIds',
               'url secureUrl altText width height',
@@ -214,6 +281,8 @@ export async function list(q, viewerId = null) {
             .lean()
         : [],
     ]);
+
+  const bodies = await hydrateLegacyBodyMedia(rawBodies);
 
   const detailMap = new Map(
     details.map((detail) => [
