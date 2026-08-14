@@ -65,6 +65,7 @@ r.post(
 
 r.get(
   '/:slug',
+  optionalAuth,
   validate(slugSchema),
   asyncHandler(c.detail),
 );
