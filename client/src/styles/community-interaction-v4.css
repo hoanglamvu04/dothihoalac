@@ -1,0 +1,23 @@
+/* Keep the reaction tray physically connected to the Like action.
+   The previous 6px air gap made hover easy to lose while moving upward. */
+.community-feed-reaction::before {
+  display: none !important;
+}
+
+.community-feed-reaction-picker {
+  bottom: calc(100% - 8px) !important;
+  margin-bottom: 0 !important;
+  padding: 8px !important;
+  box-shadow: 0 12px 34px rgb(13 38 22 / 0.2) !important;
+}
+
+.community-feed-reaction-picker button {
+  min-width: 43px;
+  min-height: 43px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .community-feed-reaction-picker button:hover {
+    transform: translateY(-5px) scale(1.14) !important;
+  }
+}
