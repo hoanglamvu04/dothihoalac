@@ -10,30 +10,35 @@ import { Link, useParams } from 'react-router-dom';
 
 import {
   ArrowLeft,
-  Check,
   CheckCircle2,
+  ChevronRight,
   ChevronUp,
   Copy,
-  Eye,
+  Flag,
+  Heart,
   HelpCircle,
   MapPin,
   MessageCircle,
+  MoreHorizontal,
+  Pencil,
+  Repeat2,
+  Send,
   Share2,
   Star,
-  Tag,
 } from 'lucide-react';
 
 import Seo from '../../components/common/Seo';
 import Avatar from '../../components/common/Avatar';
 import VerifiedMark from '../../components/common/VerifiedMark';
 import ContentImage from '../../components/content/ContentImage';
-import ReactionBar from '../../components/content/ReactionBar';
 import CommentsSection from '../../components/content/CommentsSection';
+import ReportModal from '../../components/content/ReportModal';
 import CommunityMediaLightbox from '../../components/community/CommunityMediaLightbox';
 import ErrorState from '../../components/common/ErrorState';
 import { PageLoading } from '../../components/common/Loading';
 
 import { communityApi } from '../../api/content.api';
+import { reactionApi } from '../../api/interaction.api';
 import { apiErrorMessage } from '../../api/http';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
@@ -103,28 +108,6 @@ function getCount(item, key) {
   );
 }
 
-function getTagItems(item) {
-  const source = item?.tagIds || item?.tags || [];
-  if (!Array.isArray(source)) return [];
-
-  return source
-    .map((tag) => {
-      if (!tag) return null;
-      if (typeof tag === 'string') {
-        return { id: tag, name: tag };
-      }
-
-      const name = tag.name || tag.title || tag.label;
-      if (!name) return null;
-
-      return {
-        id: tag._id || tag.id || tag.slug || name,
-        name,
-      };
-    })
-    .filter(Boolean);
-}
-
 async function copyText(value) {
   if (navigator.clipboard?.writeText) {
     await navigator.clipboard.writeText(value);
@@ -144,7 +127,7 @@ async function copyText(value) {
 
 export default function CommunityDetailPage() {
   const { slug } = useParams();
-  const { user } = useAuth();
+  const { user, isAuthenticated } = useAuth();
   const toast = useToast();
   const articleRef = useRef(null);
 
@@ -154,6 +137,10 @@ export default function CommunityDetailPage() {
   const [acceptLoadingId, setAcceptLoadingId] = useState('');
   const [readingProgress, setReadingProgress] = useState(0);
   const [mediaViewerIndex, setMediaViewerIndex] = useState(null);
+  const [postMenuAnchor, setPostMenuAnchor] = useState('');
+  const [reportOpen, setReportOpen] = useState(false);
+  const [postReaction, setPostReaction] = useState(null);
+  const [reactionCount, setReactionCount] = useState(0);
 
   useEffect(() => {
     let active = true;
@@ -161,12 +148,16 @@ export default function CommunityDetailPage() {
     setItem(null);
     setError(null);
     setReadingProgress(0);
+    setPostMenuAnchor('');
     window.scrollTo({ top: 0, left: 0, behavior: 'auto' });
 
     communityApi
       .detail(slug)
       .then((result) => {
-        if (active) setItem(result);
+        if (!active) return;
+        setItem(result);
+        setPostReaction(result?.viewerReaction || null);
+        setReactionCount(getCount(result, 'reactionCount'));
       })
       .catch((requestError) => {
         if (active) setError(requestError);
@@ -176,6 +167,27 @@ export default function CommunityDetailPage() {
       active = false;
     };
   }, [slug]);
+
+  useEffect(() => {
+    if (!postMenuAnchor) return undefined;
+
+    const close = (event) => {
+      if (event.target?.closest?.('.community-post-menu-wrap')) return;
+      setPostMenuAnchor('');
+    };
+
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setPostMenuAnchor('');
+    };
+
+    document.addEventListener('pointerdown', close);
+    window.addEventListener('keydown', closeOnEscape);
+
+    return () => {
+      document.removeEventListener('pointerdown', close);
+      window.removeEventListener('keydown', closeOnEscape);
+    };
+  }, [postMenuAnchor]);
 
   const author = item?.authorId || {};
   const authorName =
@@ -189,16 +201,13 @@ export default function CommunityDetailPage() {
   const isQuestion = postType === 'question';
   const acceptedCommentId = item?.community?.acceptedCommentId || null;
   const hasAcceptedAnswer = Boolean(acceptedCommentId);
-  const isOwner =
-    Boolean(user) && idOf(user) === idOf(author);
+  const isOwner = Boolean(user) && idOf(user) === idOf(author);
 
   const text = useMemo(() => postText(item), [item]);
   const media = useMemo(() => collectMedia(item), [item]);
-  const tags = useMemo(() => getTagItems(item), [item]);
 
   const viewCount = getCount(item, 'viewCount');
   const commentCount = getCount(item, 'commentCount');
-  const reactionCount = getCount(item, 'reactionCount');
   const publishedAt = item?.publishedAt || item?.createdAt;
 
   useEffect(() => {
@@ -237,8 +246,9 @@ export default function CommunityDetailPage() {
 
   const handleCopyLink = useCallback(async () => {
     try {
-      await copyText(window.location.href);
+      await copyText(window.location.href.split('#')[0]);
       setCopied(true);
+      setPostMenuAnchor('');
       toast.success('Đã sao chép liên kết bài viết.');
       window.setTimeout(() => setCopied(false), 1800);
     } catch {
@@ -250,8 +260,10 @@ export default function CommunityDetailPage() {
     const shareData = {
       title: item?.title,
       text: text || 'Bài viết từ Cộng đồng Hòa Lạc',
-      url: window.location.href,
+      url: window.location.href.split('#')[0],
     };
+
+    setPostMenuAnchor('');
 
     if (navigator.share) {
       try {
@@ -266,6 +278,46 @@ export default function CommunityDetailPage() {
 
     await handleCopyLink();
   }, [handleCopyLink, item?.title, text, toast]);
+
+  const requireLogin = useCallback(() => {
+    if (isAuthenticated) return true;
+    toast.info('Bạn cần đăng nhập để thực hiện thao tác này.');
+    return false;
+  }, [isAuthenticated, toast]);
+
+  const toggleLike = useCallback(async () => {
+    if (!item?._id || !requireLogin()) return;
+
+    const active = Boolean(postReaction);
+
+    try {
+      if (active) {
+        await reactionApi.remove('content', item._id);
+      } else {
+        await reactionApi.put('content', item._id, 'like');
+      }
+
+      setPostReaction(active ? null : 'like');
+      setReactionCount((current) =>
+        Math.max(0, current + (active ? -1 : 1)),
+      );
+    } catch (requestError) {
+      toast.error(
+        apiErrorMessage(requestError, 'Không thể cập nhật tương tác.'),
+      );
+    }
+  }, [item?._id, postReaction, requireLogin, toast]);
+
+  const focusReply = useCallback(() => {
+    const field = document.querySelector(
+      '.thread-comment-composer textarea',
+    );
+
+    if (field) {
+      field.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      window.setTimeout(() => field.focus(), 250);
+    }
+  }, []);
 
   const accept = useCallback(
     async (commentId) => {
@@ -305,6 +357,62 @@ export default function CommunityDetailPage() {
     [acceptLoadingId, hasAcceptedAnswer, item?._id, toast],
   );
 
+  const renderPostMenu = (anchor) => (
+    <div className="community-post-menu-wrap">
+      <button
+        type="button"
+        className="community-post-menu-trigger"
+        aria-label="Tùy chọn bài viết"
+        aria-expanded={postMenuAnchor === anchor}
+        onClick={() =>
+          setPostMenuAnchor((current) =>
+            current === anchor ? '' : anchor,
+          )
+        }
+      >
+        <MoreHorizontal size={21} />
+      </button>
+
+      {postMenuAnchor === anchor ? (
+        <div className="community-post-menu" role="menu">
+          {isOwner ? (
+            <Link
+              to={`/dang-bai/cong-dong/${item._id}?edit=${item._id}`}
+              onClick={() => setPostMenuAnchor('')}
+            >
+              <Pencil size={19} />
+              Chỉnh sửa bài viết
+            </Link>
+          ) : null}
+
+          <button type="button" onClick={handleCopyLink}>
+            <Copy size={19} />
+            {copied ? 'Đã sao chép' : 'Sao chép liên kết'}
+          </button>
+
+          <button type="button" onClick={handleShare}>
+            <Share2 size={19} />
+            Chia sẻ
+          </button>
+
+          {!isOwner ? (
+            <button
+              type="button"
+              className="is-danger"
+              onClick={() => {
+                setPostMenuAnchor('');
+                if (requireLogin()) setReportOpen(true);
+              }}
+            >
+              <Flag size={19} />
+              Báo cáo
+            </button>
+          ) : null}
+        </div>
+      ) : null}
+    </div>
+  );
+
   if (!item && !error) return <PageLoading />;
 
   if (error) {
@@ -326,12 +434,18 @@ export default function CommunityDetailPage() {
       </div>
 
       <div className="community-detail-container">
-        <nav className="community-detail-breadcrumb" aria-label="Điều hướng cộng đồng">
-          <Link to="/cong-dong">
-            <ArrowLeft size={17} />
-            Quay lại Cộng đồng
+        <header className="community-thread-pagebar">
+          <Link to="/cong-dong" aria-label="Quay lại Cộng đồng">
+            <ArrowLeft size={24} />
           </Link>
-        </nav>
+
+          <div>
+            <strong>Thread</strong>
+            <span>{viewCount.toLocaleString('vi-VN')} lượt xem</span>
+          </div>
+
+          {renderPostMenu('pagebar')}
+        </header>
 
         <main ref={articleRef} className="community-thread-shell">
           <article className="community-thread">
@@ -355,15 +469,23 @@ export default function CommunityDetailPage() {
                     emailVerifiedAt={author.emailVerifiedAt}
                     phoneVerifiedAt={author.phoneVerifiedAt}
                   />
+
+                  <ChevronRight size={15} className="community-thread__identity-chevron" />
+                  <span className="community-thread__type-text">{postTypeLabel}</span>
+                  <span className="community-thread__time" title={formatDateTime(publishedAt)}>
+                    {formatRelativeTime(publishedAt)}
+                  </span>
                 </div>
 
-                <p title={formatDateTime(publishedAt)}>
-                  {formatRelativeTime(publishedAt)}
-                  {item.primaryAreaId?.name ? ` · ${item.primaryAreaId.name}` : ''}
-                </p>
+                {item.primaryAreaId?.name || item.community?.locationText ? (
+                  <p>
+                    <MapPin size={13} />
+                    {item.community?.locationText || item.primaryAreaId?.name}
+                  </p>
+                ) : null}
               </div>
 
-              <span className="community-thread__type">{postTypeLabel}</span>
+              {renderPostMenu('post')}
             </header>
 
             <div className="community-thread__content">
@@ -371,21 +493,12 @@ export default function CommunityDetailPage() {
                 <p className="community-thread__text">{text}</p>
               ) : null}
 
-              <div className="community-thread__context">
-                {item.community?.locationText ? (
-                  <span>
-                    <MapPin size={15} />
-                    {item.community.locationText}
-                  </span>
-                ) : null}
-
-                {item.community?.rating ? (
-                  <span>
-                    <Star size={15} />
-                    {item.community.rating}/5
-                  </span>
-                ) : null}
-              </div>
+              {item.community?.rating ? (
+                <div className="community-thread__rating">
+                  <Star size={16} fill="currentColor" />
+                  {item.community.rating}/5
+                </div>
+              ) : null}
             </div>
 
             {isQuestion ? (
@@ -403,7 +516,7 @@ export default function CommunityDetailPage() {
                   </strong>
                   <p>
                     {hasAcceptedAnswer
-                      ? 'Câu trả lời do chủ bài lựa chọn được đánh dấu trong phần bình luận.'
+                      ? 'Câu trả lời do chủ bài lựa chọn được đánh dấu trong phần phản hồi.'
                       : 'Hãy chia sẻ thông tin rõ ràng và đúng trọng tâm để hỗ trợ người đăng.'}
                   </p>
                 </div>
@@ -432,58 +545,60 @@ export default function CommunityDetailPage() {
               </div>
             ) : null}
 
-            <div className="community-thread__stats">
-              <span>{reactionCount.toLocaleString('vi-VN')} tương tác</span>
-              <span>{commentCount.toLocaleString('vi-VN')} bình luận</span>
-              <span>
-                <Eye size={14} />
-                {viewCount.toLocaleString('vi-VN')} lượt xem
-              </span>
-            </div>
-
             <div className="community-thread__actions">
-              <div className="community-thread__reaction">
-                <ReactionBar content={item} />
-              </div>
-
-              <button type="button" onClick={handleShare}>
-                <Share2 size={18} />
-                Chia sẻ
+              <button
+                type="button"
+                className={postReaction ? 'is-active' : ''}
+                aria-label="Thích bài viết"
+                onClick={toggleLike}
+              >
+                <Heart
+                  size={22}
+                  fill={postReaction ? 'currentColor' : 'none'}
+                />
+                {reactionCount > 0 ? (
+                  <span>{reactionCount.toLocaleString('vi-VN')}</span>
+                ) : null}
               </button>
 
-              <button type="button" onClick={handleCopyLink}>
-                {copied ? <Check size={18} /> : <Copy size={18} />}
-                {copied ? 'Đã sao chép' : 'Sao chép'}
+              <button
+                type="button"
+                aria-label="Bình luận"
+                onClick={focusReply}
+              >
+                <MessageCircle size={22} />
+                {commentCount > 0 ? (
+                  <span>{commentCount.toLocaleString('vi-VN')}</span>
+                ) : null}
+              </button>
+
+              <button
+                type="button"
+                aria-label="Sao chép liên kết"
+                onClick={handleCopyLink}
+              >
+                <Repeat2 size={22} />
+              </button>
+
+              <button
+                type="button"
+                aria-label="Chia sẻ"
+                onClick={handleShare}
+              >
+                <Send size={22} />
               </button>
             </div>
 
-            {tags.length ? (
-              <div className="community-thread__tags">
-                <Tag size={15} />
-                {tags.map((tag) => (
-                  <span key={tag.id}>{tag.name}</span>
-                ))}
-              </div>
-            ) : null}
-
-            <section id="community-comments" className="community-thread-comments">
-              <header>
-                <MessageCircle size={20} />
-                <div>
-                  <h2>Bình luận</h2>
-                  <p>Trao đổi đúng chủ đề và tôn trọng thành viên khác.</p>
-                </div>
-              </header>
-
-              <CommentsSection
-                contentId={item._id}
-                allowComments={item.allowComments}
-                acceptedCommentId={acceptedCommentId}
-                onAcceptAnswer={accept}
-                isQuestionOwner={isOwner && isQuestion}
-                acceptLoadingId={acceptLoadingId}
-              />
-            </section>
+            <CommentsSection
+              contentId={item._id}
+              allowComments={item.allowComments}
+              acceptedCommentId={acceptedCommentId}
+              onAcceptAnswer={accept}
+              isQuestionOwner={isOwner && isQuestion}
+              acceptLoadingId={acceptLoadingId}
+              variant="thread"
+              postAuthorName={authorName}
+            />
           </article>
         </main>
       </div>
@@ -497,6 +612,13 @@ export default function CommunityDetailPage() {
           onClose={() => setMediaViewerIndex(null)}
         />
       ) : null}
+
+      <ReportModal
+        open={reportOpen}
+        onClose={() => setReportOpen(false)}
+        targetType="content"
+        targetId={item._id}
+      />
 
       {readingProgress > 0.35 ? (
         <button
