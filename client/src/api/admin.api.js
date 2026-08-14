@@ -9,6 +9,25 @@ export const adminApi = {
     unwrapList(await api.get('/admin/moderation/queue', { params })),
   moderate: async (id, action, payload = {}) =>
     unwrap(await api.post(`/admin/contents/${id}/${action}`, payload)),
+
+  managedContents: async (type, params = {}) =>
+    unwrapList(await api.get(`/admin/contents/${type}`, { params })),
+  managedContentDetail: async (type, id) =>
+    unwrap(await api.get(`/admin/contents/${type}/${id}`)),
+  updateManagedContent: async (type, id, payload) =>
+    unwrap(await api.patch(`/admin/contents/${type}/${id}`, payload)),
+  updateManagedContentStatus: async (type, id, status, note = '') =>
+    unwrap(await api.patch(`/admin/contents/${type}/${id}/status`, { status, note })),
+  deleteManagedContent: async (type, id) =>
+    unwrap(await api.delete(`/admin/contents/${type}/${id}`)),
+
+  comments: async (params = {}) =>
+    unwrapList(await api.get('/admin/comments', { params })),
+  updateComment: async (id, payload) =>
+    unwrap(await api.patch(`/admin/comments/${id}`, payload)),
+  deleteComment: async (id) =>
+    unwrap(await api.delete(`/admin/comments/${id}`)),
+
   users: async (params = {}) => unwrapList(await api.get('/admin/users', { params })),
   updateUserStatus: async (id, payload) =>
     unwrap(await api.patch(`/admin/users/${id}/status`, payload)),
