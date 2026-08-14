@@ -1,6 +1,9 @@
 import { Router } from 'express';
 import * as c from './community.controller.js';
-import { requireAuth } from '../../middlewares/auth.middleware.js';
+import {
+  optionalAuth,
+  requireAuth,
+} from '../../middlewares/auth.middleware.js';
 import { validate } from '../../middlewares/validate.middleware.js';
 import { contentCreateLimiter } from '../../middlewares/rateLimit.middleware.js';
 import {
@@ -14,7 +17,9 @@ import asyncHandler from '../../utils/asyncHandler.js';
 
 const r = Router();
 
-r.get('/', asyncHandler(c.list));
+// Khách vẫn xem được feed. Nếu đã đăng nhập, backend trả thêm reaction hiện tại của người xem.
+r.get('/', optionalAuth, asyncHandler(c.list));
+
 r.post(
   '/',
   requireAuth,
