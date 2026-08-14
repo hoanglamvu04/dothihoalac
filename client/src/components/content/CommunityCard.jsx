@@ -14,6 +14,7 @@ import {
 
 import Avatar from '../common/Avatar';
 import ContentImage from './ContentImage';
+import CommunityMediaLightbox from '../community/CommunityMediaLightbox';
 import { commentApi, reactionApi } from '../../api/interaction.api';
 import { apiErrorMessage } from '../../api/http';
 import { useAuth } from '../../context/AuthContext';
@@ -174,6 +175,7 @@ export default function CommunityCard({ item }) {
   );
   const [commentBody, setCommentBody] = useState('');
   const [commenting, setCommenting] = useState(false);
+  const [mediaViewerIndex, setMediaViewerIndex] = useState(null);
 
   const authorName =
     author.displayName ||
@@ -340,17 +342,20 @@ export default function CommunityCard({ item }) {
       ) : null}
 
       {media.length ? (
-        <Link
-          to={href}
+        <div
           className={`community-feed-media community-feed-media--${Math.min(
             media.length,
             4,
           )}`}
+          aria-label={`${media.length} ảnh trong bài viết`}
         >
           {media.slice(0, 4).map((image, index) => (
-            <div
+            <button
+              type="button"
               className="community-feed-media__item"
               key={mediaKey(image) || index}
+              aria-label={`Xem ảnh ${index + 1} trong ${media.length} ảnh`}
+              onClick={() => setMediaViewerIndex(index)}
             >
               <ContentImage
                 media={image}
@@ -366,9 +371,9 @@ export default function CommunityCard({ item }) {
                   +{media.length - 4}
                 </span>
               ) : null}
-            </div>
+            </button>
           ))}
-        </Link>
+        </div>
       ) : null}
 
       <div className="community-feed-card__stats">
@@ -498,6 +503,16 @@ export default function CommunityCard({ item }) {
           ) : null}
         </div>
       </form>
+
+      {mediaViewerIndex !== null ? (
+        <CommunityMediaLightbox
+          items={media}
+          startIndex={mediaViewerIndex}
+          title={item.title || 'Ảnh bài viết cộng đồng'}
+          authorName={authorName}
+          onClose={() => setMediaViewerIndex(null)}
+        />
+      ) : null}
     </article>
   );
 }
