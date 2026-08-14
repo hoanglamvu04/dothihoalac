@@ -39,9 +39,10 @@ const links = [
   ['/quan-tri/nguoi-dung', 'Người dùng', Users],
   ['/quan-tri/bao-cao', 'Báo cáo vi phạm', Flag],
   ['/quan-tri/khach-hang', 'Khách hàng tiềm năng', BarChart3],
+  ['/quan-tri/quang-cao', 'Quảng cáo', Megaphone],
   ['/quan-tri/phan-loai', 'Danh mục và khu vực', FolderTree],
   ['/quan-tri/google-workspace', 'Google Workspace', Cloud],
-  ['/quan-tri/he-thong', 'Trang, banner, cấu hình', Settings],
+  ['/quan-tri/he-thong', 'Trang và cấu hình', Settings],
   ['/quan-tri/nhat-ky', 'Nhật ký quản trị', Megaphone],
 ];
 
