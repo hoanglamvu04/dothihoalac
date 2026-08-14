@@ -92,6 +92,19 @@ function normalizeAdPayload(data = {}) {
   return payload;
 }
 
+async function writeAdAudit(adminId, action, targetId, oldData = null, newData = null) {
+  if (!adminId || !targetId) return;
+
+  await AdminActivityLog.create({
+    adminId,
+    action,
+    targetType: 'banner',
+    targetId,
+    oldData,
+    newData,
+  });
+}
+
 export async function page(slug) {
   const p = await StaticPage.findOne({ slug, status: 'published' }).lean();
   if (!p) throw new ApiError(404, 'Không tìm thấy trang.', 'PAGE_NOT_FOUND');
@@ -123,7 +136,13 @@ export async function banners(query = {}) {
   }
 
   if (device) {
-    filter.device = { $in: ['all', device] };
+    filter.$and.push({
+      $or: [
+        { device: { $in: ['all', device] } },
+        { device: { $exists: false } },
+        { device: null },
+      ],
+    });
   }
 
   return Banner.find(filter)
@@ -218,8 +237,10 @@ export async function saveBanner(userId, data, id) {
     const item = await Banner.findOne({ _id: id, deletedAt: null });
     if (!item) throw new ApiError(404, 'Không tìm thấy quảng cáo.', 'BANNER_NOT_FOUND');
 
+    const oldData = item.toObject();
     Object.assign(item, payload, { updatedBy: userId });
     await item.save();
+    await writeAdAudit(userId, 'advertisement.update', item._id, oldData, item.toObject());
     await item.populate('imageMediaId', 'url secureUrl altText width height');
     return item;
   }
@@ -229,35 +250,48 @@ export async function saveBanner(userId, data, id) {
     createdBy: userId,
     updatedBy: userId,
   });
+
+  await writeAdAudit(userId, 'advertisement.create', item._id, null, item.toObject());
   await item.populate('imageMediaId', 'url secureUrl altText width height');
   return item;
 }
 
 export async function toggleBanner(userId, id, isActive) {
-  const item = await Banner.findOneAndUpdate(
-    { _id: id, deletedAt: null },
-    { $set: { isActive: Boolean(isActive), updatedBy: userId } },
-    { new: true, runValidators: true },
-  ).populate('imageMediaId', 'url secureUrl altText width height');
+  const current = await Banner.findOne({ _id: id, deletedAt: null });
+  if (!current) throw new ApiError(404, 'Không tìm thấy quảng cáo.', 'BANNER_NOT_FOUND');
 
-  if (!item) throw new ApiError(404, 'Không tìm thấy quảng cáo.', 'BANNER_NOT_FOUND');
-  return item;
+  const previousState = Boolean(current.isActive);
+  current.isActive = Boolean(isActive);
+  current.updatedBy = userId;
+  await current.save();
+
+  await writeAdAudit(
+    userId,
+    current.isActive ? 'advertisement.enable' : 'advertisement.disable',
+    current._id,
+    { isActive: previousState },
+    { isActive: current.isActive },
+  );
+
+  await current.populate('imageMediaId', 'url secureUrl altText width height');
+  return current;
 }
 
 export async function deleteBanner(userId, id) {
-  const item = await Banner.findOneAndUpdate(
-    { _id: id, deletedAt: null },
-    {
-      $set: {
-        isActive: false,
-        deletedAt: new Date(),
-        updatedBy: userId,
-      },
-    },
-    { new: true },
-  );
-
+  const item = await Banner.findOne({ _id: id, deletedAt: null });
   if (!item) throw new ApiError(404, 'Không tìm thấy quảng cáo.', 'BANNER_NOT_FOUND');
+
+  const oldData = item.toObject();
+  item.isActive = false;
+  item.deletedAt = new Date();
+  item.updatedBy = userId;
+  await item.save();
+
+  await writeAdAudit(userId, 'advertisement.delete', item._id, oldData, {
+    isActive: false,
+    deletedAt: item.deletedAt,
+  });
+
   return item;
 }
 
