@@ -32,6 +32,13 @@ const userSchema = new mongoose.Schema(
   { timestamps: true, collection: 'users' },
 );
 
+userSchema.virtual('profile', {
+  ref: 'UserProfile',
+  localField: '_id',
+  foreignField: 'userId',
+  justOne: true,
+});
+
 userSchema.index({ phone: 1 }, { unique: true, sparse: true });
 userSchema.methods.comparePassword = function comparePassword(password) {
   return bcrypt.compare(password, this.passwordHash);
@@ -40,11 +47,13 @@ userSchema.methods.setPassword = async function setPassword(password) {
   this.passwordHash = await bcrypt.hash(password, 12);
 };
 userSchema.set('toJSON', {
+  virtuals: true,
   transform(_doc, ret) {
     delete ret.passwordHash;
     delete ret.__v;
     return ret;
   },
 });
+userSchema.set('toObject', { virtuals: true });
 
 export default getOrCreateModel('User', userSchema, 'users');
