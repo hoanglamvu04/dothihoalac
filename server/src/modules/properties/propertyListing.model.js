@@ -103,6 +103,7 @@ const schema = new mongoose.Schema(
       index: true,
     },
     addressText: { type: String, required: true, maxlength: 500 },
+    googleMapsUrl: { type: String, default: '', maxlength: 1200 },
     location: { type: pointSchema, default: undefined },
     contactName: { type: String, required: true, maxlength: 100 },
     contactPhone: { type: String, required: true },
