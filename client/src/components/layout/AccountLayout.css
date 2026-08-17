@@ -7,22 +7,9 @@
   --account-muted: #738079;
 
   min-height: 100vh;
-  padding: 28px 0 72px;
-
+  padding: 22px 0 72px;
   color: var(--account-ink);
-
-  background:
-    radial-gradient(
-      circle at 4% 2%,
-      rgb(31 163 75 / 0.08),
-      transparent 22%
-    ),
-    radial-gradient(
-      circle at 96% 88%,
-      rgb(31 163 75 / 0.055),
-      transparent 28%
-    ),
-    #f0f3f1;
+  background: #f4f6f4;
 }
 
 .account-center-page *,
@@ -31,30 +18,24 @@
   box-sizing: border-box;
 }
 
-/* Giới hạn chiều rộng toàn bộ khu vực tài khoản */
 .account-center-container {
   width: calc(100% - 32px);
   max-width: 1180px;
   margin-inline: auto;
 }
 
-/* Cảnh báo xác thực hoặc trạng thái tài khoản */
 .account-center-warning {
   display: flex;
   align-items: center;
-
-  min-height: 48px;
+  min-height: 46px;
   padding: 9px 12px;
-  margin-top: 14px;
+  margin-top: 12px;
   gap: 9px;
-
   border: 1px solid #ead59e;
-  border-radius: 12px;
-
+  border-radius: 11px;
   color: #77581c;
   background: #fff9e9;
-
-  font-size: 0.76rem;
+  font-size: 0.72rem;
 }
 
 .account-center-warning > span {
@@ -66,66 +47,121 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-
-  min-height: 34px;
+  min-height: 32px;
   padding: 0 10px;
   gap: 6px;
-
   border: 0;
-  border-radius: 9px;
-
+  border-radius: 8px;
   color: #77581c;
   background: rgb(119 88 28 / 0.09);
-
   font: inherit;
   font-weight: 700;
-
   cursor: pointer;
-
-  transition:
-    background 160ms ease,
-    transform 160ms ease;
 }
 
-.account-center-warning button:hover {
-  background: rgb(119 88 28 / 0.15);
-  transform: translateY(-1px);
+.account-center-workspace {
+  display: grid;
+  grid-template-columns: 218px minmax(0, 1fr);
+  align-items: start;
+  margin-top: 16px;
+  gap: 16px;
 }
 
-.account-center-warning button:active {
-  transform: translateY(0);
-}
-
-/* Nội dung thay đổi theo từng route tài khoản */
 .account-center-content {
   width: 100%;
   min-width: 0;
   max-width: 100%;
-
-  margin-top: 18px;
+  margin: 0;
 }
 
-/* Tablet */
+/* Trong bố cục mới đã có sidebar tài khoản cố định bên trái.
+   Ẩn sidebar xem trước cũ của trang hồ sơ để tránh lặp và giữ đúng Figma. */
+.account-center-content .profile-settings-layout {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.account-center-content .profile-settings-sidebar {
+  display: none;
+}
+
+.account-center-content .profile-settings-main {
+  width: 100%;
+  min-width: 0;
+}
+
 @media (max-width: 900px) {
   .account-center-page {
-    padding-top: 18px;
+    padding-top: 16px;
   }
 
   .account-center-container {
     width: calc(100% - 24px);
-    max-width: 1180px;
+  }
+
+  .account-center-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .account-shell-sidebar {
+    position: static;
+  }
+
+  .account-shell-sidebar__intro {
+    display: none;
+  }
+
+  .account-shell-nav {
+    display: flex;
+    overflow-x: auto;
+    padding: 7px;
+    gap: 4px;
+    scrollbar-width: none;
+  }
+
+  .account-shell-nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .account-shell-nav > a {
+    flex: 0 0 auto;
+    min-height: 38px;
+    padding-inline: 11px;
+  }
+
+  .account-shell-nav__more {
+    flex: 0 0 auto;
+  }
+
+  .account-shell-nav__more summary {
+    min-height: 38px;
+    white-space: nowrap;
+  }
+
+  .account-shell-nav__more > div {
+    position: absolute;
+    z-index: 20;
+    right: 12px;
+    width: 220px;
+    padding: 7px;
+    border: 1px solid var(--account-border);
+    border-radius: 11px;
+    background: #fff;
+    box-shadow: 0 14px 30px rgb(16 38 26 / 0.12);
   }
 }
 
-/* Mobile */
-@media (max-width: 520px) {
+@media (max-width: 620px) {
   .account-center-page {
-    padding: 10px 0 48px;
+    padding: 10px 0 46px;
   }
 
   .account-center-container {
     width: calc(100% - 14px);
-    max-width: 1180px;
+  }
+
+  .account-center-workspace {
+    margin-top: 10px;
+    gap: 10px;
   }
 
   .account-center-warning {
@@ -135,5 +171,15 @@
 
   .account-center-warning button {
     margin-left: auto;
+  }
+
+  .account-shell-nav > a span {
+    display: none;
+  }
+
+  .account-shell-nav > a {
+    min-width: 40px;
+    justify-content: center;
+    padding: 0;
   }
 }
