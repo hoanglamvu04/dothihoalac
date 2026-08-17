@@ -3,6 +3,7 @@ import { authApi } from '../api/auth.api';
 import { userApi } from '../api/user.api';
 
 const AuthContext = createContext(null);
+const USER_SYNC_STORAGE_KEY = 'dthl:user-updated';
 
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
@@ -11,8 +12,16 @@ export function AuthProvider({ children }) {
   const refreshUser = useCallback(async () => {
     try {
       const current = await authApi.me();
-      let profile = null;
-      try { profile = await userApi.myProfile(); } catch { /* Hồ sơ có thể chưa được tạo. */ }
+      let profile = current?.profile || null;
+
+      if (!profile) {
+        try {
+          profile = await userApi.myProfile();
+        } catch {
+          /* Hồ sơ có thể chưa được tạo. */
+        }
+      }
+
       const merged = { ...current, profile };
       setUser(merged);
       return merged;
@@ -26,6 +35,32 @@ export function AuthProvider({ children }) {
 
   useEffect(() => {
     refreshUser();
+  }, [refreshUser]);
+
+  useEffect(() => {
+    const refreshWhenVisible = () => {
+      if (document.visibilityState === 'visible') {
+        refreshUser();
+      }
+    };
+
+    const refreshOnStorage = (event) => {
+      if (event.key === USER_SYNC_STORAGE_KEY) {
+        refreshUser();
+      }
+    };
+
+    window.addEventListener('focus', refreshWhenVisible);
+    window.addEventListener('pageshow', refreshWhenVisible);
+    window.addEventListener('storage', refreshOnStorage);
+    document.addEventListener('visibilitychange', refreshWhenVisible);
+
+    return () => {
+      window.removeEventListener('focus', refreshWhenVisible);
+      window.removeEventListener('pageshow', refreshWhenVisible);
+      window.removeEventListener('storage', refreshOnStorage);
+      document.removeEventListener('visibilitychange', refreshWhenVisible);
+    };
   }, [refreshUser]);
 
   const login = useCallback(async (payload) => {
