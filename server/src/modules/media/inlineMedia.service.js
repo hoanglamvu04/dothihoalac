@@ -64,9 +64,9 @@ function inlineMediaError(message, code, details) {
  * Đọc các ảnh nội dung từ HTML đã được sanitize.
  *
  * Cấu trúc hợp lệ:
- * <figure data-media-id="...">
+ * <figure data-media-id="..." data-caption-optional="true">
  *   <img src="..." alt="..." />
- *   <figcaption>...</figcaption>
+ *   <figcaption>...</figcaption> // tùy chọn khi figure cho phép
  * </figure>
  */
 export function extractInlineMediaFigures(bodyHtml = '') {
@@ -105,6 +105,10 @@ export function extractInlineMediaFigures(bodyHtml = '') {
     const caption = captionMatch
       ? htmlToPlainText(captionMatch[1]).trim()
       : '';
+    const captionOptional =
+      String(figureAttributes['data-caption-optional'] || '')
+        .trim()
+        .toLowerCase() === 'true';
 
     items.push({
       mediaId: String(mediaId).trim(),
@@ -112,6 +116,7 @@ export function extractInlineMediaFigures(bodyHtml = '') {
       alt: String(imageAttributes.alt || '').trim(),
       title: String(imageAttributes.title || '').trim(),
       caption,
+      captionOptional,
       displayOrder: items.length,
     });
   }
@@ -122,9 +127,9 @@ export function extractInlineMediaFigures(bodyHtml = '') {
 /**
  * Kiểm tra toàn bộ ảnh trong nội dung.
  *
- * Với bài báo, requireCaption mặc định là true để giữ workflow CMS hiện tại.
- * Community có thể đặt requireCaption=false vì UX social không bắt người dùng
- * nhập chú thích cho từng ảnh, nhưng vẫn kiểm tra Media ID, URL và alt.
+ * ALT luôn bắt buộc. Với workflow yêu cầu caption, ảnh cũ vẫn phải có
+ * chú thích; ảnh được editor mới đánh dấu data-caption-optional="true"
+ * có thể bỏ trống caption mà vẫn hợp lệ.
  */
 export async function validateInlineMediaHtml(
   bodyHtml = '',
@@ -220,7 +225,7 @@ export async function validateInlineMediaHtml(
       );
     }
 
-    if (requireCaption && !item.caption) {
+    if (requireCaption && !item.caption && !item.captionOptional) {
       throw inlineMediaError(
         `Ảnh thứ ${index + 1} phải có chú thích.`,
         'INLINE_MEDIA_CAPTION_REQUIRED',
