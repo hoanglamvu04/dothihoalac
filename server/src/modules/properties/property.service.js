@@ -21,6 +21,15 @@ import {
 } from '../../utils/pagination.js';
 import ApiError from '../../utils/ApiError.js';
 
+const LISTING_PRIORITY = {
+  diamond: 30,
+  gold: 20,
+  silver: 10,
+  standard: 0,
+};
+
+const LISTING_DURATIONS = new Set([15, 30, 60]);
+
 function escapeRegex(value) {
   return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -29,8 +38,45 @@ function idString(value) {
   return String(value?._id || value || '');
 }
 
+function normalizeListingTier(value) {
+  return Object.hasOwn(LISTING_PRIORITY, value) ? value : 'standard';
+}
+
+function normalizeDuration(value) {
+  const number = Number(value);
+  return LISTING_DURATIONS.has(number)
+    ? number
+    : Number(env.PROPERTY_DEFAULT_EXPIRE_DAYS) || 15;
+}
+
+function normalizeStartDate(value) {
+  const date = value ? new Date(value) : new Date();
+  return Number.isNaN(date.getTime()) ? new Date() : date;
+}
+
+function getListingDates(data = {}, current = {}) {
+  const listingDurationDays = normalizeDuration(
+    data.listingDurationDays ?? current.listingDurationDays,
+  );
+
+  const listingStartAt = normalizeStartDate(
+    data.listingStartAt ?? current.listingStartAt,
+  );
+
+  const expiresAt = new Date(
+    listingStartAt.getTime() + listingDurationDays * 24 * 60 * 60 * 1000,
+  );
+
+  return {
+    listingDurationDays,
+    listingStartAt,
+    expiresAt,
+  };
+}
+
 /**
  * Lấy danh sách tin bất động sản đã xuất bản.
+ * Mặc định ưu tiên hạng tin rồi mới đến thời gian tạo.
  */
 export async function list(query) {
   const { page, limit, skip } = parsePagination(query);
@@ -50,43 +96,45 @@ export async function list(query) {
 
   if (query.minPrice || query.maxPrice) {
     propertyFilter.price = {
-      ...(query.minPrice
-        ? { $gte: Number(query.minPrice) }
-        : {}),
-      ...(query.maxPrice
-        ? { $lte: Number(query.maxPrice) }
-        : {}),
+      ...(query.minPrice ? { $gte: Number(query.minPrice) } : {}),
+      ...(query.maxPrice ? { $lte: Number(query.maxPrice) } : {}),
     };
   }
 
   if (query.minArea || query.maxArea) {
     propertyFilter.landArea = {
-      ...(query.minArea
-        ? { $gte: Number(query.minArea) }
-        : {}),
-      ...(query.maxArea
-        ? { $lte: Number(query.maxArea) }
-        : {}),
+      ...(query.minArea ? { $gte: Number(query.minArea) } : {}),
+      ...(query.maxArea ? { $lte: Number(query.maxArea) } : {}),
     };
   }
 
-  const priceSort =
-    query.sort === 'price_asc'
-      ? { price: 1, createdAt: -1 }
-      : query.sort === 'price_desc'
-        ? { price: -1, createdAt: -1 }
-        : null;
+  let propertySort;
+
+  if (query.sort === 'price_asc') {
+    propertySort = { price: 1, listingPriority: -1, createdAt: -1 };
+  } else if (query.sort === 'price_desc') {
+    propertySort = { price: -1, listingPriority: -1, createdAt: -1 };
+  } else if (query.sort === 'oldest') {
+    propertySort = { listingPriority: -1, createdAt: 1 };
+  } else {
+    propertySort = { listingPriority: -1, createdAt: -1 };
+  }
 
   const propertyDetails = await PropertyListing.find(propertyFilter)
-    .sort(priceSort || { createdAt: -1 })
+    .sort(propertySort)
     .lean();
 
   const contentIds = propertyDetails.map((item) => item.contentId);
 
+  if (!contentIds.length) {
+    return {
+      items: [],
+      meta: buildPaginationMeta({ page, limit, total: 0 }),
+    };
+  }
+
   const contentFilter = {
-    _id: {
-      $in: contentIds,
-    },
+    _id: { $in: contentIds },
     contentType: 'property',
     status: 'published',
     deletedAt: null,
@@ -111,68 +159,36 @@ export async function list(query) {
     ];
   }
 
+  const matching = await Content.find(contentFilter).select('_id').lean();
+  const matchingSet = new Set(matching.map((item) => idString(item._id)));
+  const orderedIds = contentIds.filter((id) => matchingSet.has(idString(id)));
+  const pageIds = orderedIds.slice(skip, skip + limit);
+  const total = orderedIds.length;
+
   const propertyMap = new Map(
-    propertyDetails.map((property) => [
-      String(property.contentId),
-      property,
-    ]),
+    propertyDetails.map((property) => [String(property.contentId), property]),
   );
 
   let items = [];
-  let total = 0;
 
-  if (priceSort) {
-    const matching = await Content.find(contentFilter)
-      .select('_id')
+  if (pageIds.length) {
+    const pageItems = await Content.find({
+      _id: { $in: pageIds },
+      contentType: 'property',
+      status: 'published',
+      deletedAt: null,
+    })
+      .populate('primaryAreaId', 'name slug')
+      .populate('thumbnailMediaId', 'url secureUrl altText width height')
       .lean();
 
-    const matchingSet = new Set(matching.map((item) => idString(item._id)));
-    const orderedIds = contentIds.filter((id) => matchingSet.has(idString(id)));
-    const pageIds = orderedIds.slice(skip, skip + limit);
+    const pageMap = new Map(
+      pageItems.map((item) => [String(item._id), item]),
+    );
 
-    total = orderedIds.length;
-
-    if (pageIds.length) {
-      const pageItems = await Content.find({
-        _id: { $in: pageIds },
-        contentType: 'property',
-        status: 'published',
-        deletedAt: null,
-      })
-        .populate('primaryAreaId', 'name slug')
-        .populate(
-          'thumbnailMediaId',
-          'url secureUrl altText width height',
-        )
-        .lean();
-
-      const pageMap = new Map(
-        pageItems.map((item) => [String(item._id), item]),
-      );
-
-      items = pageIds
-        .map((id) => pageMap.get(idString(id)))
-        .filter(Boolean);
-    }
-  } else {
-    const sort =
-      query.sort === 'oldest'
-        ? { publishedAt: 1 }
-        : { publishedAt: -1 };
-
-    [items, total] = await Promise.all([
-      Content.find(contentFilter)
-        .populate('primaryAreaId', 'name slug')
-        .populate(
-          'thumbnailMediaId',
-          'url secureUrl altText width height',
-        )
-        .sort(sort)
-        .skip(skip)
-        .limit(limit)
-        .lean(),
-      Content.countDocuments(contentFilter),
-    ]);
+    items = pageIds
+      .map((id) => pageMap.get(idString(id)))
+      .filter(Boolean);
   }
 
   return {
@@ -180,12 +196,7 @@ export async function list(query) {
       ...item,
       property: propertyMap.get(String(item._id)) || null,
     })),
-
-    meta: buildPaginationMeta({
-      page,
-      limit,
-      total,
-    }),
+    meta: buildPaginationMeta({ page, limit, total }),
   };
 }
 
@@ -193,19 +204,15 @@ export async function list(query) {
  * Lấy chi tiết tin bất động sản theo slug.
  */
 export async function detail(slug) {
-  const base = await getPublishedContentBySlug(
-    slug,
-    'property',
-  );
+  const base = await getPublishedContentBySlug(slug, 'property');
 
-  const property = await PropertyListing.findOne({
-    contentId: base._id,
-  })
+  const property = await PropertyListing.findOne({ contentId: base._id })
     .populate({
       path: 'featureIds',
       model: PropertyFeature,
       select: 'name slug featureGroup isActive',
     })
+    .populate('galleryMediaIds', 'url secureUrl altText width height resourceType')
     .lean();
 
   if (!property) {
@@ -234,9 +241,7 @@ export async function create(user, data) {
     );
   }
 
-  const normalizedContactPhone = normalizePhone(
-    data.contactPhone,
-  );
+  const normalizedContactPhone = normalizePhone(data.contactPhone);
 
   if (normalizedContactPhone !== user.phone) {
     throw new ApiError(
@@ -262,30 +267,24 @@ export async function create(user, data) {
   });
 
   const location =
-    data.longitude !== undefined &&
-    data.latitude !== undefined
+    data.longitude !== undefined && data.latitude !== undefined
       ? {
           type: 'Point',
-          coordinates: [
-            data.longitude,
-            data.latitude,
-          ],
+          coordinates: [data.longitude, data.latitude],
         }
       : undefined;
+
+  const listingTier = normalizeListingTier(data.listingTier);
+  const listingDates = getListingDates(data);
 
   await PropertyListing.create({
     contentId: content._id,
     ...data,
     contactPhone: normalizedContactPhone,
     location,
-    expiresAt: new Date(
-      Date.now() +
-        env.PROPERTY_DEFAULT_EXPIRE_DAYS *
-          24 *
-          60 *
-          60 *
-          1000,
-    ),
+    listingTier,
+    listingPriority: LISTING_PRIORITY[listingTier],
+    ...listingDates,
   });
 
   return content;
@@ -294,22 +293,11 @@ export async function create(user, data) {
 /**
  * Cập nhật tin bất động sản.
  */
-export async function update(
-  id,
-  userId,
-  data,
-) {
-  const content = await getOwnedContentOrThrow(
-    id,
-    userId,
-    'property',
-  );
-
+export async function update(id, userId, data) {
+  const content = await getOwnedContentOrThrow(id, userId, 'property');
   assertEditable(content);
 
-  const property = await PropertyListing.findOne({
-    contentId: id,
-  });
+  const property = await PropertyListing.findOne({ contentId: id });
 
   if (!property) {
     throw new ApiError(
@@ -319,10 +307,7 @@ export async function update(
     );
   }
 
-  if (
-    data.price !== undefined &&
-    data.price !== property.price
-  ) {
+  if (data.price !== undefined && data.price !== property.price) {
     await PropertyPriceHistory.create({
       contentId: id,
       oldPrice: property.price,
@@ -331,32 +316,35 @@ export async function update(
     });
   }
 
-  await updateContentWithBody(
-    content,
-    data,
-    userId,
-    'Property edit',
-  );
+  await updateContentWithBody(content, data, userId, 'Property edit');
 
   Object.assign(property, data);
 
   if (data.contactPhone) {
-    property.contactPhone = normalizePhone(
-      data.contactPhone,
-    );
+    property.contactPhone = normalizePhone(data.contactPhone);
+  }
+
+  if (data.longitude !== undefined && data.latitude !== undefined) {
+    property.location = {
+      type: 'Point',
+      coordinates: [data.longitude, data.latitude],
+    };
+  }
+
+  if (data.listingTier !== undefined) {
+    const listingTier = normalizeListingTier(data.listingTier);
+    property.listingTier = listingTier;
+    property.listingPriority = LISTING_PRIORITY[listingTier];
   }
 
   if (
-    data.longitude !== undefined &&
-    data.latitude !== undefined
+    data.listingDurationDays !== undefined ||
+    data.listingStartAt !== undefined
   ) {
-    property.location = {
-      type: 'Point',
-      coordinates: [
-        data.longitude,
-        data.latitude,
-      ],
-    };
+    const listingDates = getListingDates(data, property);
+    property.listingDurationDays = listingDates.listingDurationDays;
+    property.listingStartAt = listingDates.listingStartAt;
+    property.expiresAt = listingDates.expiresAt;
   }
 
   await property.save();
@@ -368,17 +356,9 @@ export async function update(
  * Gửi tin đi kiểm duyệt.
  */
 export async function submit(id, userId) {
-  const content = await getOwnedContentOrThrow(
-    id,
-    userId,
-    'property',
-  );
+  const content = await getOwnedContentOrThrow(id, userId, 'property');
 
-  const allowedStatuses = [
-    'draft',
-    'needs_revision',
-    'rejected',
-  ];
+  const allowedStatuses = ['draft', 'needs_revision', 'rejected'];
 
   if (!allowedStatuses.includes(content.status)) {
     throw new ApiError(
@@ -389,25 +369,17 @@ export async function submit(id, userId) {
   }
 
   content.status = 'pending_review';
-
   await content.save();
-
   return content;
 }
 
 /**
- * Gia hạn tin.
+ * Gia hạn tin theo thời hạn người đăng đã chọn.
  */
 export async function renew(id, userId) {
-  const content = await getOwnedContentOrThrow(
-    id,
-    userId,
-    'property',
-  );
+  const content = await getOwnedContentOrThrow(id, userId, 'property');
 
-  const property = await PropertyListing.findOne({
-    contentId: id,
-  });
+  const property = await PropertyListing.findOne({ contentId: id });
 
   if (!property) {
     throw new ApiError(
@@ -417,44 +389,27 @@ export async function renew(id, userId) {
     );
   }
 
+  const durationDays = normalizeDuration(property.listingDurationDays);
+  property.listingStartAt = new Date();
   property.expiresAt = new Date(
-    Date.now() +
-      env.PROPERTY_DEFAULT_EXPIRE_DAYS *
-        24 *
-        60 *
-        60 *
-        1000,
+    Date.now() + durationDays * 24 * 60 * 60 * 1000,
   );
 
   if (content.status === 'expired') {
     content.status = 'pending_review';
   }
 
-  await Promise.all([
-    property.save(),
-    content.save(),
-  ]);
-
+  await Promise.all([property.save(), content.save()]);
   return property;
 }
 
 /**
  * Đánh dấu tin đã bán hoặc đã cho thuê.
  */
-async function mark(
-  id,
-  userId,
-  type,
-) {
-  const content = await getOwnedContentOrThrow(
-    id,
-    userId,
-    'property',
-  );
+async function mark(id, userId, type) {
+  const content = await getOwnedContentOrThrow(id, userId, 'property');
 
-  const property = await PropertyListing.findOne({
-    contentId: id,
-  });
+  const property = await PropertyListing.findOne({ contentId: id });
 
   if (!property) {
     throw new ApiError(
@@ -474,29 +429,17 @@ async function mark(
 
   content.status = 'archived';
 
-  await Promise.all([
-    property.save(),
-    content.save(),
-  ]);
-
+  await Promise.all([property.save(), content.save()]);
   return property;
 }
 
-export const markSold = (id, userId) =>
-  mark(id, userId, 'sold');
-
-export const markRented = (id, userId) =>
-  mark(id, userId, 'rented');
+export const markSold = (id, userId) => mark(id, userId, 'sold');
+export const markRented = (id, userId) => mark(id, userId, 'rented');
 
 /**
  * Ghi nhận hành động liên hệ với tin.
  */
-export async function recordContact(
-  id,
-  userId,
-  type,
-  ip,
-) {
+export async function recordContact(id, userId, type, ip) {
   const exists = await Content.exists({
     _id: id,
     contentType: 'property',
@@ -505,11 +448,7 @@ export async function recordContact(
   });
 
   if (!exists) {
-    throw new ApiError(
-      404,
-      'Không tìm thấy tin.',
-      'PROPERTY_NOT_FOUND',
-    );
+    throw new ApiError(404, 'Không tìm thấy tin.', 'PROPERTY_NOT_FOUND');
   }
 
   return PropertyContact.create({
