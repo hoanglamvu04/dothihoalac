@@ -21,7 +21,6 @@ import {
   MessageCircle,
   MoreHorizontal,
   Pencil,
-  Repeat2,
   Send,
   Share2,
   Star,
@@ -440,7 +439,7 @@ export default function CommunityDetailPage() {
           </Link>
 
           <div>
-            <strong>Thread</strong>
+            <strong>Bài viết cộng đồng</strong>
             <span>{viewCount.toLocaleString('vi-VN')} lượt xem</span>
           </div>
 
@@ -577,7 +576,7 @@ export default function CommunityDetailPage() {
                 aria-label="Sao chép liên kết"
                 onClick={handleCopyLink}
               >
-                <Repeat2 size={22} />
+                <Copy size={22} />
               </button>
 
               <button
