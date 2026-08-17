@@ -3,6 +3,7 @@ import * as c from './property.controller.js';
 import { requireAuth, optionalAuth } from '../../middlewares/auth.middleware.js';
 import { validate } from '../../middlewares/validate.middleware.js';
 import { contentCreateLimiter } from '../../middlewares/rateLimit.middleware.js';
+import { servePropertyPreviewIfAllowed } from './propertyPreview.middleware.js';
 import {
   createSchema,
   updateSchema,
@@ -20,5 +21,11 @@ r.post('/:id/renew', requireAuth, validate(idSchema), asyncHandler(c.renew));
 r.post('/:id/mark-sold', requireAuth, validate(idSchema), asyncHandler(c.sold));
 r.post('/:id/mark-rented', requireAuth, validate(idSchema), asyncHandler(c.rented));
 r.post('/:id/contact-events', optionalAuth, validate(contactSchema), asyncHandler(c.contact));
-r.get('/:slug', validate(slugSchema), asyncHandler(c.detail));
+r.get(
+  '/:slug',
+  optionalAuth,
+  validate(slugSchema),
+  asyncHandler(servePropertyPreviewIfAllowed),
+  asyncHandler(c.detail),
+);
 export default r;
