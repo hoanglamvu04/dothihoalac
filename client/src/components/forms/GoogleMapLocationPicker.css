@@ -220,6 +220,16 @@
   line-height: 1.55;
 }
 
+/* Thanh Quay lại / Tiếp tục phải nằm sau nội dung, không đè lên form. */
+.property-editor-page .property-post-footer {
+  position: static !important;
+  bottom: auto !important;
+  z-index: auto !important;
+  margin-top: 18px;
+  box-shadow: 0 4px 18px rgb(23 54 35 / 0.04);
+  backdrop-filter: none;
+}
+
 @media (max-width: 720px) {
   .property-map-picker__heading {
     flex-direction: column;
@@ -249,5 +259,9 @@
 
   .property-map-picker__status > a {
     width: 100%;
+  }
+
+  .property-editor-page .property-post-footer {
+    margin-top: 14px;
   }
 }
