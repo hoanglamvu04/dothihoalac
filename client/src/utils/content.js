@@ -3,7 +3,7 @@ import { CONTENT_TYPES } from './constants';
 const CONTENT_SECTIONS = {
   article: 'tin-tuc',
   community: 'cong-dong',
-  property: 'nha-dat',
+  property: 'bat-dong-san',
   job: 'viec-lam',
 };
 
