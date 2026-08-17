@@ -1,10 +1,28 @@
 import { useState } from 'react';
-import { Bookmark, Flag, Share2 } from 'lucide-react';
+import { Bookmark, Flag, Navigation, Share2 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { bookmarkApi, reactionApi } from '../../api/interaction.api';
 import { REACTIONS } from '../../utils/constants';
 import ReportModal from './ReportModal';
+
+function propertyDirectionsUrl(content) {
+  if (content?.contentType !== 'property') return '';
+
+  const property = content?.property || {};
+  const coordinates = property?.location?.coordinates;
+  const hasCoordinates =
+    Array.isArray(coordinates) &&
+    coordinates.length >= 2 &&
+    Number.isFinite(Number(coordinates[0])) &&
+    Number.isFinite(Number(coordinates[1]));
+
+  const destination = hasCoordinates
+    ? `${Number(coordinates[1])},${Number(coordinates[0])}`
+    : String(property.addressText || content?.primaryAreaId?.name || 'Hòa Lạc, Hà Nội').trim();
+
+  return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination)}`;
+}
 
 export default function ReactionBar({ content }) {
   const { isAuthenticated } = useAuth();
@@ -13,6 +31,7 @@ export default function ReactionBar({ content }) {
   const [bookmarked, setBookmarked] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
   const [count, setCount] = useState(content?.reactionCount || 0);
+  const directionsUrl = propertyDirectionsUrl(content);
 
   const requireLogin = () => {
     if (!isAuthenticated) {
@@ -76,6 +95,11 @@ export default function ReactionBar({ content }) {
           ))}
         </div>
         <div className="reaction-actions">
+          {directionsUrl ? (
+            <a href={directionsUrl} target="_blank" rel="noreferrer">
+              <Navigation size={18} /> Xem đường đi
+            </a>
+          ) : null}
           <button type="button" className={bookmarked ? 'is-active' : ''} onClick={bookmark}><Bookmark size={18} /> {bookmarked ? 'Đã lưu' : 'Lưu'}</button>
           <button type="button" onClick={share}><Share2 size={18} /> Chia sẻ</button>
           <button type="button" onClick={() => (requireLogin() ? setReportOpen(true) : null)}><Flag size={18} /> Báo cáo</button>
