@@ -14,14 +14,22 @@ export function mediaUrl(value) {
     return '';
   }
 
+  const cleanUrl = String(url).trim();
+
+  // Một ObjectId chỉ là mã media, không phải đường dẫn ảnh. Nếu đưa thẳng
+  // ObjectId vào src, trình duyệt sẽ gọi /<object-id> và hiện biểu tượng ảnh lỗi.
+  if (/^[a-f0-9]{24}$/i.test(cleanUrl)) {
+    return '';
+  }
+
   if (
-    /^https?:\/\//i.test(url) ||
-    url.startsWith('data:') ||
-    url.startsWith('blob:')
+    /^https?:\/\//i.test(cleanUrl) ||
+    cleanUrl.startsWith('data:') ||
+    cleanUrl.startsWith('blob:')
   ) {
-    return url;
+    return cleanUrl;
   }
 
   const serverUrl = getResolvedServerBaseUrl();
-  return `${serverUrl}${url.startsWith('/') ? '' : '/'}${url}`;
+  return `${serverUrl}${cleanUrl.startsWith('/') ? '' : '/'}${cleanUrl}`;
 }
