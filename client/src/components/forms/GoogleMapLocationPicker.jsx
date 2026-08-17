@@ -42,8 +42,37 @@ function parseGoogleMapsCoordinates(value) {
   return null;
 }
 
-function buildSearchUrl(address) {
-  const query = String(address || '').trim() || 'Hòa Lạc, Hà Nội';
+function getSelectedAreaName() {
+  if (typeof document === 'undefined') return '';
+
+  const select = document.querySelector('.property-post-taxonomy select');
+  const name = select?.selectedOptions?.[0]?.textContent?.trim() || '';
+
+  return name && name !== 'Chọn khu vực' ? name : '';
+}
+
+function buildSearchQuery(address, areaName = '') {
+  const addressText = String(address || '').trim();
+  const areaText = String(areaName || '').trim() || 'Hòa Lạc';
+  const parts = [];
+  const normalizedAddress = addressText.toLocaleLowerCase('vi');
+
+  if (addressText) parts.push(addressText);
+
+  if (areaText && !normalizedAddress.includes(areaText.toLocaleLowerCase('vi'))) {
+    parts.push(areaText);
+  }
+
+  const joined = parts.join(', ').toLocaleLowerCase('vi');
+  if (!joined.includes('hà nội') && !joined.includes('ha noi')) {
+    parts.push('Hà Nội');
+  }
+
+  return parts.join(', ') || 'Hòa Lạc, Hà Nội';
+}
+
+function buildSearchUrl(address, areaName = '') {
+  const query = buildSearchQuery(address, areaName);
   return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(query)}`;
 }
 
@@ -59,6 +88,13 @@ export default function GoogleMapLocationPicker({
   const lat = asNumber(latitude);
   const lng = asNumber(longitude);
   const hasLocation = lat !== null && lng !== null;
+
+  const openGoogleMaps = (event) => {
+    event.preventDefault();
+    const areaName = getSelectedAreaName();
+    const url = buildSearchUrl(address, areaName);
+    window.open(url, '_blank', 'noopener,noreferrer');
+  };
 
   const saveFromLink = () => {
     const result = parseGoogleMapsCoordinates(mapsValue);
@@ -89,18 +125,19 @@ export default function GoogleMapLocationPicker({
         <div>
           <strong>Chọn vị trí trên Google Maps</strong>
           <span>
-            Không dùng Google Maps API và không cần API key. Hệ thống chỉ lưu
-            tọa độ của vị trí bạn chọn để người xem có thể mở bản đồ và chỉ đường.
+            Khi mở Maps, hệ thống tự ghép địa chỉ chi tiết + khu vực đã chọn +
+            Hà Nội để kết quả tìm kiếm chính xác hơn. Không dùng Google Maps API
+            và không cần API key.
           </span>
         </div>
-        <a href={searchUrl} target="_blank" rel="noreferrer">
+        <a href={searchUrl} target="_blank" rel="noreferrer" onClick={openGoogleMaps}>
           Mở Google Maps
           <ExternalLink size={15} />
         </a>
       </div>
 
       <div className="property-map-picker__guide">
-        <span><b>1</b>Mở Google Maps theo địa chỉ đã nhập.</span>
+        <span><b>1</b>Mở Google Maps theo địa chỉ đầy đủ đã ghép với khu vực.</span>
         <span><b>2</b>Chọn đúng nhà, lô đất hoặc vị trí bất động sản.</span>
         <span><b>3</b>Sao chép URL đầy đủ trên thanh địa chỉ trình duyệt.</span>
         <span><b>4</b>Dán URL vào ô dưới và chọn <strong>Lưu vị trí</strong>.</span>
@@ -157,9 +194,11 @@ export default function GoogleMapLocationPicker({
       <div className="property-map-picker__note">
         <Info size={18} />
         <p>
-          Link rút gọn kiểu <strong>maps.app.goo.gl</strong> không chứa tọa độ
-          trực tiếp. Hãy mở link rút gọn trước, sau đó sao chép URL đầy đủ trên
-          thanh địa chỉ. Nếu chưa chọn vị trí, tin vẫn có thể lưu bằng địa chỉ chữ.
+          Ví dụ: nếu nhập <strong>Số Nhà 20 thôn Thái Bình</strong> và chọn khu
+          vực <strong>Hòa Lạc</strong>, nút mở Maps sẽ tìm theo chuỗi
+          <strong> Số Nhà 20 thôn Thái Bình, Hòa Lạc, Hà Nội</strong>. Link rút
+          gọn kiểu <strong>maps.app.goo.gl</strong> không chứa tọa độ trực tiếp;
+          hãy mở link trước rồi sao chép URL đầy đủ trên thanh địa chỉ.
         </p>
       </div>
     </div>
