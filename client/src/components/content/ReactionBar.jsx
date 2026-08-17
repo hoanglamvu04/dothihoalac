@@ -96,9 +96,12 @@ export default function ReactionBar({ content }) {
         </div>
         <div className="reaction-actions">
           {directionsUrl ? (
-            <a href={directionsUrl} target="_blank" rel="noreferrer">
+            <button
+              type="button"
+              onClick={() => window.open(directionsUrl, '_blank', 'noopener,noreferrer')}
+            >
               <Navigation size={18} /> Xem đường đi
-            </a>
+            </button>
           ) : null}
           <button type="button" className={bookmarked ? 'is-active' : ''} onClick={bookmark}><Bookmark size={18} /> {bookmarked ? 'Đã lưu' : 'Lưu'}</button>
           <button type="button" onClick={share}><Share2 size={18} /> Chia sẻ</button>
