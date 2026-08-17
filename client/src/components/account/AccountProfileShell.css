@@ -1,5 +1,6 @@
 .account-shell-profile {
-  overflow: hidden;
+  position: relative;
+  overflow: visible;
   border: 1px solid #dce7e0;
   border-radius: 18px;
   background: #fff;
@@ -8,8 +9,9 @@
 
 .account-shell-cover {
   position: relative;
-  height: 128px;
-  overflow: hidden;
+  height: clamp(170px, 12vw, 205px);
+  overflow: visible;
+  border-radius: 18px 18px 0 0;
   background: #dfe5e1;
 }
 
@@ -17,23 +19,28 @@
 .account-shell-cover__fallback {
   width: 100%;
   height: 100%;
+  border-radius: 18px 18px 0 0;
 }
 
 .account-shell-cover > img {
   display: block;
   object-fit: cover;
+  object-position: center 50%;
 }
 
 .account-shell-cover::after {
   position: absolute;
+  z-index: 1;
   inset: 0;
+  border-radius: 18px 18px 0 0;
   content: '';
   pointer-events: none;
-  background: linear-gradient(180deg, rgb(5 54 27 / 0.02), rgb(5 54 27 / 0.18));
+  background: linear-gradient(180deg, rgb(5 54 27 / 0.01), rgb(5 54 27 / 0.16));
 }
 
 .account-shell-cover__fallback {
   position: relative;
+  overflow: hidden;
   background:
     linear-gradient(120deg, rgb(9 77 40 / 0.92), rgb(31 163 75 / 0.72)),
     #0b5a31;
@@ -66,26 +73,33 @@
   bottom: -130px;
 }
 
-.account-shell-cover__edit {
+.account-shell-cover-actions {
   position: absolute;
-  z-index: 2;
+  z-index: 8;
   right: 18px;
   bottom: 16px;
+}
+
+.account-shell-cover__edit {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 38px;
+  min-height: 40px;
   padding: 0 13px;
   gap: 7px;
-  border: 1px solid rgb(255 255 255 / 0.6);
+  border: 1px solid rgb(255 255 255 / 0.68);
   border-radius: 10px;
   color: #153c25;
-  background: rgb(255 255 255 / 0.92);
+  background: rgb(255 255 255 / 0.94);
   font: inherit;
   font-size: 0.72rem;
   font-weight: 750;
   cursor: pointer;
   box-shadow: 0 5px 15px rgb(16 38 26 / 0.12);
+}
+
+.account-shell-cover__edit > svg:last-child {
+  margin-left: 1px;
 }
 
 .account-shell-cover__edit:disabled,
@@ -102,10 +116,13 @@
   min-height: 112px;
   padding: 16px 20px 17px 28px;
   gap: 18px;
+  border-radius: 0 0 18px 18px;
+  background: #fff;
 }
 
 .account-shell-avatar-wrap {
   position: relative;
+  z-index: 12;
   align-self: start;
   width: 112px;
   height: 112px;
@@ -156,6 +173,7 @@
 
 .account-shell-avatar__camera {
   position: absolute;
+  z-index: 2;
   right: 1px;
   bottom: 2px;
   display: grid;
@@ -167,6 +185,79 @@
   color: #153c25;
   background: #eef5f0;
   pointer-events: none;
+}
+
+.account-shell-image-menu {
+  position: absolute;
+  z-index: 40;
+  display: grid;
+  width: 258px;
+  padding: 7px;
+  gap: 3px;
+  border: 1px solid #d7e3db;
+  border-radius: 13px;
+  background: #fff;
+  box-shadow: 0 18px 42px rgb(16 38 26 / 0.18);
+}
+
+.account-shell-image-menu--cover {
+  right: 0;
+  bottom: calc(100% + 9px);
+}
+
+.account-shell-image-menu--avatar {
+  top: calc(100% + 9px);
+  left: 5px;
+}
+
+.account-shell-image-menu button {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  align-items: center;
+  width: 100%;
+  min-height: 54px;
+  padding: 8px 9px;
+  gap: 9px;
+  border: 0;
+  border-radius: 9px;
+  color: #263f31;
+  background: transparent;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.account-shell-image-menu button:hover:not(:disabled) {
+  color: #0d7738;
+  background: #eef8f1;
+}
+
+.account-shell-image-menu button:disabled {
+  cursor: not-allowed;
+  opacity: 0.46;
+}
+
+.account-shell-image-menu button > svg {
+  justify-self: center;
+}
+
+.account-shell-image-menu button > span,
+.account-shell-image-menu strong,
+.account-shell-image-menu small {
+  display: block;
+  min-width: 0;
+}
+
+.account-shell-image-menu strong {
+  font-size: 0.72rem;
+  font-weight: 750;
+}
+
+.account-shell-image-menu small {
+  margin-top: 2px;
+  color: #7a877f;
+  font-size: 0.61rem;
+  line-height: 1.35;
 }
 
 .account-shell-identity {
@@ -247,6 +338,7 @@
   border-radius: 11px;
   font-size: 0.72rem;
   font-weight: 750;
+  cursor: pointer;
   transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
 }
 
@@ -276,8 +368,8 @@
 }
 
 .account-shell-sidebar {
-  position: sticky;
-  top: 94px;
+  position: static;
+  align-self: start;
   overflow: hidden;
   border: 1px solid #dce7e0;
   border-radius: 15px;
@@ -397,6 +489,101 @@
   min-height: 39px;
 }
 
+.account-shell-viewer {
+  position: fixed;
+  z-index: 1200;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgb(4 18 10 / 0.76);
+  backdrop-filter: blur(8px);
+}
+
+.account-shell-viewer__panel {
+  display: grid;
+  width: min(980px, calc(100vw - 36px));
+  max-height: calc(100vh - 48px);
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.14);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 26px 70px rgb(0 0 0 / 0.32);
+}
+
+.account-shell-viewer__header,
+.account-shell-viewer__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 13px 15px;
+  background: #fff;
+}
+
+.account-shell-viewer__header {
+  border-bottom: 1px solid #e4ebe6;
+}
+
+.account-shell-viewer__header strong,
+.account-shell-viewer__header small {
+  display: block;
+}
+
+.account-shell-viewer__header strong {
+  color: #10261a;
+  font-size: 0.82rem;
+}
+
+.account-shell-viewer__header small {
+  margin-top: 2px;
+  color: #748078;
+  font-size: 0.62rem;
+}
+
+.account-shell-viewer__header > button {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: #4d5d53;
+  background: #f0f4f1;
+  cursor: pointer;
+}
+
+.account-shell-viewer__header > button:hover {
+  color: #0d7738;
+  background: #e7f5ec;
+}
+
+.account-shell-viewer__image {
+  display: grid;
+  place-items: center;
+  min-height: 260px;
+  max-height: 70vh;
+  overflow: auto;
+  padding: 12px;
+  background: #0d1610;
+}
+
+.account-shell-viewer__image img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: calc(70vh - 24px);
+  object-fit: contain;
+}
+
+.account-shell-viewer__footer {
+  justify-content: flex-end;
+  border-top: 1px solid #e4ebe6;
+}
+
 .account-shell-profile .is-spinning {
   animation: account-shell-spin 0.7s linear infinite;
 }
@@ -406,6 +593,10 @@
 }
 
 @media (max-width: 900px) {
+  .account-shell-cover {
+    height: 158px;
+  }
+
   .account-shell-profile__body {
     grid-template-columns: 104px minmax(0, 1fr);
     padding-inline: 18px;
@@ -431,16 +622,34 @@
 
 @media (max-width: 620px) {
   .account-shell-cover {
-    height: 104px;
+    height: 132px;
   }
 
-  .account-shell-cover__edit span {
+  .account-shell-cover-actions {
+    right: 10px;
+    bottom: 10px;
+  }
+
+  .account-shell-cover__edit span,
+  .account-shell-cover__edit > svg:last-child {
     display: none;
   }
 
   .account-shell-cover__edit {
-    width: 38px;
+    width: 40px;
     padding: 0;
+  }
+
+  .account-shell-image-menu--cover {
+    right: 0;
+  }
+
+  .account-shell-image-menu--avatar {
+    left: 0;
+  }
+
+  .account-shell-image-menu {
+    width: min(258px, calc(100vw - 28px));
   }
 
   .account-shell-profile__body {
@@ -490,5 +699,27 @@
 
   .account-shell-button--ghost span {
     display: none;
+  }
+
+  .account-shell-viewer {
+    padding: 10px;
+  }
+
+  .account-shell-viewer__panel {
+    width: calc(100vw - 20px);
+    max-height: calc(100vh - 20px);
+  }
+
+  .account-shell-viewer__header small {
+    display: none;
+  }
+
+  .account-shell-viewer__image {
+    min-height: 220px;
+    max-height: 68vh;
+  }
+
+  .account-shell-viewer__footer {
+    padding: 10px;
   }
 }
