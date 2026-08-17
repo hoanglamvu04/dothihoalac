@@ -14,12 +14,13 @@ export function AuthProvider({ children }) {
       const current = await authApi.me();
       let profile = current?.profile || null;
 
-      if (!profile) {
-        try {
-          profile = await userApi.myProfile();
-        } catch {
-          /* Hồ sơ có thể chưa được tạo. */
-        }
+      // /auth/me có thể chỉ chứa ObjectId của media. Luôn thử lấy profile
+      // riêng để avatar/cover/area được populate đầy đủ cho header toàn site.
+      try {
+        const hydratedProfile = await userApi.myProfile();
+        if (hydratedProfile) profile = hydratedProfile;
+      } catch {
+        /* Giữ profile từ /auth/me nếu endpoint hồ sơ tạm thời không khả dụng. */
       }
 
       const merged = { ...current, profile };
