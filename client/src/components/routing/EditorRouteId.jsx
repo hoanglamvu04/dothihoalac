@@ -11,6 +11,17 @@ import {
   isPersistedContentId,
 } from '../../utils/content';
 
+function withStableEditorState(state) {
+  if (state?.item && typeof state.item === 'object') {
+    return state;
+  }
+
+  return {
+    ...(state || {}),
+    item: {},
+  };
+}
+
 export default function EditorRouteId({
   basePath,
   sessionPrefix = 'draft',
@@ -29,33 +40,51 @@ export default function EditorRouteId({
       : '';
   }, [location.search]);
 
+  const hasStableEditorItem = Boolean(
+    location.state?.item &&
+      typeof location.state.item === 'object',
+  );
+
   useEffect(() => {
-    if (editorId) {
+    if (!editorId) {
+      const nextId =
+        legacyEditId ||
+        createEditorSessionId(sessionPrefix);
+
+      navigate(
+        `${basePath}/${encodeURIComponent(nextId)}${location.search}${location.hash || ''}`,
+        {
+          replace: true,
+          state: withStableEditorState(location.state),
+        },
+      );
+
       return;
     }
 
-    const nextId =
-      legacyEditId ||
-      createEditorSessionId(sessionPrefix);
-
-    navigate(
-      `${basePath}/${encodeURIComponent(nextId)}${location.search}`,
-      {
-        replace: true,
-        state: location.state,
-      },
-    );
+    if (!hasStableEditorItem) {
+      navigate(
+        `${location.pathname}${location.search}${location.hash || ''}`,
+        {
+          replace: true,
+          state: withStableEditorState(location.state),
+        },
+      );
+    }
   }, [
     basePath,
     editorId,
+    hasStableEditorItem,
     legacyEditId,
+    location.hash,
+    location.pathname,
     location.search,
     location.state,
     navigate,
     sessionPrefix,
   ]);
 
-  if (!editorId) {
+  if (!editorId || !hasStableEditorItem) {
     return <PageLoading />;
   }
 
