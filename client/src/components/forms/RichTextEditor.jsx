@@ -31,6 +31,7 @@ import {
   apiErrorMessage,
 } from '../../api/http';
 import './RichTextEditor.css';
+import './RichTextEditorCaption.css';
 
 const ALLOWED_IMAGE_TYPES = new Set([
   'image/jpeg',
@@ -549,6 +550,31 @@ export default function RichTextEditor({
     editingFigureRef.current = null;
   }, []);
 
+  const openFigureDialog = useCallback((figure) => {
+    const editor = editorRef.current;
+
+    if (!editor || !figure || !editor.contains(figure)) return;
+
+    const image = figure.querySelector('img');
+    const figcaption = figure.querySelector('figcaption');
+
+    if (!image) return;
+
+    editingFigureRef.current = figure;
+    setDialogError('');
+    setImageDialog({
+      mode: 'edit',
+      media: {
+        _id: figure.getAttribute('data-media-id'),
+        url: image.getAttribute('src'),
+        width: image.getAttribute('width'),
+        height: image.getAttribute('height'),
+      },
+      alt: image.getAttribute('alt') || '',
+      caption: figcaption?.textContent?.trim() || '',
+    });
+  }, []);
+
   const confirmImageDialog = useCallback(
     (event) => {
       event.preventDefault();
@@ -560,11 +586,6 @@ export default function RichTextEditor({
 
       if (!alt) {
         setDialogError('Vui lòng nhập văn bản thay thế cho ảnh.');
-        return;
-      }
-
-      if (!caption) {
-        setDialogError('Vui lòng nhập chú thích hoặc nguồn ảnh.');
         return;
       }
 
@@ -591,13 +612,19 @@ export default function RichTextEditor({
         image.setAttribute('alt', alt);
         image.setAttribute('loading', 'lazy');
         image.setAttribute('decoding', 'async');
+        figure.setAttribute('data-caption-optional', 'true');
 
-        if (!figcaption) {
-          figcaption = document.createElement('figcaption');
-          figure.appendChild(figcaption);
+        if (caption) {
+          if (!figcaption) {
+            figcaption = document.createElement('figcaption');
+            figure.appendChild(figcaption);
+          }
+
+          figcaption.textContent = caption;
+        } else if (figcaption) {
+          figcaption.remove();
         }
 
-        figcaption.textContent = caption;
         closeImageDialog();
         emitChange();
         return;
@@ -622,9 +649,12 @@ export default function RichTextEditor({
         Number.isFinite(height) && height > 0
           ? ` height="${height}"`
           : '';
+      const captionHtml = caption
+        ? `<figcaption>${escapeHtml(caption)}</figcaption>`
+        : '';
 
       const html = `
-        <figure class="article-figure" data-media-id="${escapeHtml(mediaId)}">
+        <figure class="article-figure" data-media-id="${escapeHtml(mediaId)}" data-caption-optional="true">
           <img
             src="${escapeHtml(mediaUrl)}"
             alt="${escapeHtml(alt)}"
@@ -632,7 +662,7 @@ export default function RichTextEditor({
             loading="lazy"
             decoding="async"${widthAttribute}${heightAttribute}
           />
-          <figcaption>${escapeHtml(caption)}</figcaption>
+          ${captionHtml}
         </figure>
         <p><br></p>
       `;
@@ -669,37 +699,38 @@ export default function RichTextEditor({
     emitChange();
   }, [closeImageDialog, emitChange]);
 
-  const handleEditorDoubleClick = useCallback((event) => {
-    const editor = editorRef.current;
-    const target = event.target;
+  const handleEditorDoubleClick = useCallback(
+    (event) => {
+      const target = event.target;
 
-    if (!editor || !(target instanceof Element)) return;
+      if (!(target instanceof Element)) return;
 
-    const figure = target.closest('figure[data-media-id]');
+      const figure = target.closest('figure[data-media-id]');
 
-    if (!figure || !editor.contains(figure)) return;
+      if (!figure) return;
 
-    const image = figure.querySelector('img');
-    const figcaption = figure.querySelector('figcaption');
+      event.preventDefault();
+      openFigureDialog(figure);
+    },
+    [openFigureDialog],
+  );
 
-    if (!image) return;
+  const handleEditorClick = useCallback(
+    (event) => {
+      const target = event.target;
 
-    event.preventDefault();
-    editingFigureRef.current = figure;
+      if (!(target instanceof Element)) return;
 
-    setDialogError('');
-    setImageDialog({
-      mode: 'edit',
-      media: {
-        _id: figure.getAttribute('data-media-id'),
-        url: image.getAttribute('src'),
-        width: image.getAttribute('width'),
-        height: image.getAttribute('height'),
-      },
-      alt: image.getAttribute('alt') || '',
-      caption: figcaption?.textContent?.trim() || '',
-    });
-  }, []);
+      const caption = target.closest('figcaption');
+      const figure = caption?.closest('figure[data-media-id]');
+
+      if (!caption || !figure) return;
+
+      event.preventDefault();
+      openFigureDialog(figure);
+    },
+    [openFigureDialog],
+  );
 
   const setCaretFromPoint = useCallback((clientX, clientY) => {
     const editor = editorRef.current;
@@ -806,7 +837,11 @@ export default function RichTextEditor({
     <div
       className={`rte${disabled ? ' is-disabled' : ''} ${className}`.trim()}
     >
-      <div className="rte-toolbar" role="toolbar" aria-label="Công cụ soạn thảo">
+      <div
+        className="rte-toolbar"
+        role="toolbar"
+        aria-label="Công cụ soạn thảo"
+      >
         <div className="rte-toolbar__group">
           <ToolButton
             label="Hoàn tác"
@@ -980,17 +1015,16 @@ export default function RichTextEditor({
         }}
         onPaste={handlePaste}
         onDrop={handleDrop}
+        onClick={handleEditorClick}
         onDoubleClick={handleEditorDoubleClick}
       />
 
       <div className="rte-footer">
         <span>{stats.words} từ</span>
         <span>{stats.characters} ký tự</span>
-        <span>
-          {stats.images}/{maxImages} ảnh
-        </span>
+        <span>{stats.images}/{maxImages} ảnh</span>
         <span className="rte-footer__hint">
-          Nhấp đúp vào ảnh để sửa chú thích hoặc xóa khỏi bài.
+          Bấm vào chú thích hoặc nhấp đúp vào ảnh để sửa ALT, chú thích hoặc xóa ảnh.
         </span>
       </div>
 
@@ -1019,7 +1053,7 @@ export default function RichTextEditor({
                     : 'Chèn ảnh vào bài viết'}
                 </strong>
                 <p>
-                  Ảnh phải có mô tả thay thế và chú thích như một bài báo.
+                  ALT là bắt buộc. Chú thích/nguồn ảnh là tùy chọn và chỉ hiển thị dưới ảnh khi có nội dung.
                 </p>
               </div>
 
@@ -1046,7 +1080,7 @@ export default function RichTextEditor({
 
               <label className="rte-field">
                 <span>
-                  Văn bản thay thế (alt) <b>*</b>
+                  Văn bản thay thế (ALT) <b>*</b>
                 </span>
                 <input
                   type="text"
@@ -1063,13 +1097,14 @@ export default function RichTextEditor({
                   }}
                 />
                 <small>
-                  Mô tả nội dung ảnh để hỗ trợ SEO và người dùng trình đọc màn hình.
+                  Bắt buộc. Dùng cho SEO và trình đọc màn hình; nội dung ALT không hiển thị dưới ảnh.
                 </small>
               </label>
 
               <label className="rte-field">
                 <span>
-                  Chú thích và nguồn ảnh <b>*</b>
+                  Chú thích và nguồn ảnh
+                  <em className="rte-field__optional">Tùy chọn</em>
                 </span>
                 <textarea
                   rows={3}
@@ -1084,7 +1119,9 @@ export default function RichTextEditor({
                     }));
                   }}
                 />
-                <small>{imageDialog.caption.length}/500 ký tự</small>
+                <small>
+                  {imageDialog.caption.length}/500 ký tự. Để trống nếu không muốn hiện chú thích dưới ảnh; có thể sửa lại bất cứ lúc nào bằng cách bấm vào chú thích hoặc nhấp đúp vào ảnh.
+                </small>
               </label>
 
               {dialogError ? (
