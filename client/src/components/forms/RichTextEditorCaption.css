@@ -1,0 +1,33 @@
+.rte-field__optional {
+  display: inline-flex;
+  margin-left: 8px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: #edf6f0;
+  color: #527060;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 650;
+  vertical-align: middle;
+}
+
+.rte-content .article-figure figcaption {
+  cursor: pointer;
+}
+
+.rte-content .article-figure figcaption:hover {
+  color: #0d7135;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-underline-offset: 3px;
+}
+
+.rte-content .article-figure:not(:has(figcaption))::after {
+  display: block;
+  margin-top: 8px;
+  color: #819087;
+  content: 'Chưa có chú thích · Nhấp đúp vào ảnh để thêm (tùy chọn)';
+  font-size: 13px;
+  font-style: italic;
+  line-height: 1.5;
+}
