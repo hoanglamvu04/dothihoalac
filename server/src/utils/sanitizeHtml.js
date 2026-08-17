@@ -36,7 +36,11 @@ export function cleanHtml(html = '') {
     allowedTags,
     allowedAttributes: {
       a: ['href', 'target', 'rel', 'title'],
-      figure: ['class', 'data-media-id'],
+      figure: [
+        'class',
+        'data-media-id',
+        'data-caption-optional',
+      ],
       img: [
         'src',
         'alt',
