@@ -1,0 +1,67 @@
+.job-detail-page .job-section-heading h2 {
+  font-size: 1.28rem;
+  line-height: 1.3;
+}
+
+.job-detail-page .job-section-heading p {
+  font-size: 0.92rem;
+  line-height: 1.55;
+}
+
+.job-detail-page .job-facts-grid article {
+  min-height: 118px;
+  padding: 18px;
+}
+
+.job-detail-page .job-facts-grid article > span {
+  width: 48px;
+  height: 48px;
+}
+
+.job-detail-page .job-facts-grid article small {
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.job-detail-page .job-facts-grid article strong {
+  margin-top: 4px;
+  font-size: 0.98rem;
+  line-height: 1.45;
+}
+
+.job-detail-page .job-description-lead,
+.job-detail-page .job-description-body,
+.job-detail-page .job-application-method__content p {
+  font-size: 0.98rem;
+  line-height: 1.72;
+}
+
+.job-detail-page .job-apply-card__salary > span,
+.job-detail-page .job-apply-card__company small,
+.job-detail-page .job-apply-deadline small,
+.job-detail-page .job-apply-card__contacts small {
+  font-size: 0.8rem;
+}
+
+.job-detail-page .job-apply-card__salary strong {
+  font-size: 1.24rem;
+  line-height: 1.35;
+}
+
+.job-detail-page .job-apply-card__company strong,
+.job-detail-page .job-apply-deadline strong,
+.job-detail-page .job-apply-card__contacts strong {
+  font-size: 0.92rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 720px) {
+  .job-detail-page .job-facts-grid article {
+    min-height: 102px;
+    padding: 15px;
+  }
+
+  .job-detail-page .job-facts-grid article strong {
+    font-size: 0.94rem;
+  }
+}
