@@ -21,6 +21,14 @@ import {
 } from '../../utils/pagination.js';
 import ApiError from '../../utils/ApiError.js';
 
+function escapeRegex(value) {
+  return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+function idString(value) {
+  return String(value?._id || value || '');
+}
+
 /**
  * Lấy danh sách tin bất động sản đã xuất bản.
  */
@@ -62,11 +70,18 @@ export async function list(query) {
     };
   }
 
-  const contentIds = (
-    await PropertyListing.find(propertyFilter)
-      .select('contentId')
-      .lean()
-  ).map((item) => item.contentId);
+  const priceSort =
+    query.sort === 'price_asc'
+      ? { price: 1, createdAt: -1 }
+      : query.sort === 'price_desc'
+        ? { price: -1, createdAt: -1 }
+        : null;
+
+  const propertyDetails = await PropertyListing.find(propertyFilter)
+    .sort(priceSort || { createdAt: -1 })
+    .lean();
+
+  const contentIds = propertyDetails.map((item) => item.contentId);
 
   const contentFilter = {
     _id: {
@@ -81,31 +96,20 @@ export async function list(query) {
     contentFilter.primaryAreaId = query.area;
   }
 
-  const sort =
-    query.sort === 'oldest'
-      ? { publishedAt: 1 }
-      : { publishedAt: -1 };
+  const queryText = String(query.q || '').trim();
 
-  const [items, total] = await Promise.all([
-    Content.find(contentFilter)
-      .populate('primaryAreaId', 'name slug')
-      .populate(
-        'thumbnailMediaId',
-        'url secureUrl altText width height',
-      )
-      .sort(sort)
-      .skip(skip)
-      .limit(limit)
-      .lean(),
+  if (queryText) {
+    const regex = new RegExp(escapeRegex(queryText), 'i');
+    const addressIds = propertyDetails
+      .filter((property) => regex.test(String(property.addressText || '')))
+      .map((property) => property.contentId);
 
-    Content.countDocuments(contentFilter),
-  ]);
-
-  const propertyDetails = await PropertyListing.find({
-    contentId: {
-      $in: items.map((item) => item._id),
-    },
-  }).lean();
+    contentFilter.$or = [
+      { title: regex },
+      { summary: regex },
+      ...(addressIds.length ? [{ _id: { $in: addressIds } }] : []),
+    ];
+  }
 
   const propertyMap = new Map(
     propertyDetails.map((property) => [
@@ -113,6 +117,63 @@ export async function list(query) {
       property,
     ]),
   );
+
+  let items = [];
+  let total = 0;
+
+  if (priceSort) {
+    const matching = await Content.find(contentFilter)
+      .select('_id')
+      .lean();
+
+    const matchingSet = new Set(matching.map((item) => idString(item._id)));
+    const orderedIds = contentIds.filter((id) => matchingSet.has(idString(id)));
+    const pageIds = orderedIds.slice(skip, skip + limit);
+
+    total = orderedIds.length;
+
+    if (pageIds.length) {
+      const pageItems = await Content.find({
+        _id: { $in: pageIds },
+        contentType: 'property',
+        status: 'published',
+        deletedAt: null,
+      })
+        .populate('primaryAreaId', 'name slug')
+        .populate(
+          'thumbnailMediaId',
+          'url secureUrl altText width height',
+        )
+        .lean();
+
+      const pageMap = new Map(
+        pageItems.map((item) => [String(item._id), item]),
+      );
+
+      items = pageIds
+        .map((id) => pageMap.get(idString(id)))
+        .filter(Boolean);
+    }
+  } else {
+    const sort =
+      query.sort === 'oldest'
+        ? { publishedAt: 1 }
+        : { publishedAt: -1 };
+
+    [items, total] = await Promise.all([
+      Content.find(contentFilter)
+        .populate('primaryAreaId', 'name slug')
+        .populate(
+          'thumbnailMediaId',
+          'url secureUrl altText width height',
+        )
+        .sort(sort)
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Content.countDocuments(contentFilter),
+    ]);
+  }
 
   return {
     items: items.map((item) => ({
