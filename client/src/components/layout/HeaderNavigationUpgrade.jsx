@@ -38,19 +38,14 @@ const navigationItems = [
     category: 'du-an-dtxd',
   },
   {
-    to: '/tin-tuc?category=bat-dong-san',
-    label: 'BĐS',
-    category: 'bat-dong-san',
+    to: '/bat-dong-san',
+    label: 'Bất động sản',
+    match: 'property',
   },
   {
     to: '/cong-dong',
     label: 'Cộng đồng',
     match: 'community',
-  },
-  {
-    to: '/nha-dat',
-    label: 'Nhà đất',
-    match: 'property',
   },
   {
     to: '/viec-lam',
@@ -139,7 +134,10 @@ function isItemActive(item, pathname, searchParams) {
   }
 
   if (item.match === 'property') {
-    return pathname.startsWith('/nha-dat');
+    return (
+      pathname.startsWith('/bat-dong-san') ||
+      pathname.startsWith('/nha-dat')
+    );
   }
 
   if (item.match === 'job') {
