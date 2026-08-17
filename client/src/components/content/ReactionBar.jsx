@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Bookmark, Flag, Navigation, Share2 } from 'lucide-react';
+import { Bookmark, Flag, Navigation, Share2, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { bookmarkApi, reactionApi } from '../../api/interaction.api';
@@ -32,6 +32,7 @@ export default function ReactionBar({ content }) {
   const [reportOpen, setReportOpen] = useState(false);
   const [count, setCount] = useState(content?.reactionCount || 0);
   const directionsUrl = propertyDirectionsUrl(content);
+  const isPreview = Boolean(content?.viewerAccess?.preview);
 
   const requireLogin = () => {
     if (!isAuthenticated) {
@@ -82,6 +83,30 @@ export default function ReactionBar({ content }) {
       // Người dùng có thể chủ động đóng hộp chia sẻ.
     }
   };
+
+  if (isPreview) {
+    return (
+      <div className="reaction-bar reaction-bar--preview">
+        <div className="reaction-picker">
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7 }}>
+            <ShieldCheck size={17} />
+            Bản xem trước · chỉ tác giả và quản trị viên truy cập được
+          </span>
+        </div>
+        <div className="reaction-actions">
+          {directionsUrl ? (
+            <button
+              type="button"
+              onClick={() => window.open(directionsUrl, '_blank', 'noopener,noreferrer')}
+            >
+              <Navigation size={18} /> Xem đường đi
+            </button>
+          ) : null}
+          <button type="button" onClick={share}><Share2 size={18} /> Sao chép/chia sẻ liên kết xem trước</button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
