@@ -9,6 +9,7 @@ import { createNotification } from '../../services/notification.service.js';
 import { NOTIFICATION_TYPES } from '../../constants/notificationTypes.js';
 import { writeAuditLog } from '../../services/audit.service.js';
 import { parsePagination, buildPaginationMeta } from '../../utils/pagination.js';
+import { isVietnamesePhone, normalizePhone } from '../../utils/normalizePhone.js';
 import ApiError from '../../utils/ApiError.js';
 const transitionMap = {
   approve: 'approved',
@@ -101,6 +102,7 @@ export async function users(q) {
       { email: new RegExp(q.q, 'i') },
       { username: new RegExp(q.q, 'i') },
       { displayName: new RegExp(q.q, 'i') },
+      { phone: new RegExp(q.q, 'i') },
     ];
   const [items, total] = await Promise.all([
     User.find(f).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
@@ -111,9 +113,69 @@ export async function users(q) {
 export async function updateUserStatus(admin, userId, d, ip) {
   const user = await User.findById(userId);
   if (!user) throw new ApiError(404, 'Không tìm thấy người dùng.', 'USER_NOT_FOUND');
-  const old = user.status;
-  user.status = d.status;
+
+  const oldData = {
+    status: user.status,
+    phone: user.phone || null,
+    phoneVerifiedAt: user.phoneVerifiedAt || null,
+  };
+
+  if (d.status) {
+    user.status = d.status;
+  }
+
+  if (d.phone !== undefined) {
+    const normalizedPhone = normalizePhone(d.phone);
+
+    if (normalizedPhone && !isVietnamesePhone(normalizedPhone)) {
+      throw new ApiError(
+        422,
+        'Số điện thoại không đúng định dạng số di động Việt Nam.',
+        'PHONE_INVALID',
+      );
+    }
+
+    if (normalizedPhone) {
+      const duplicated = await User.findOne({
+        _id: { $ne: userId },
+        phone: normalizedPhone,
+        deletedAt: null,
+      })
+        .select('_id')
+        .lean();
+
+      if (duplicated) {
+        throw new ApiError(
+          409,
+          'Số điện thoại này đã được dùng bởi tài khoản khác.',
+          'PHONE_ALREADY_USED',
+        );
+      }
+    }
+
+    const phoneChanged = normalizedPhone !== (user.phone || null);
+    user.phone = normalizedPhone || null;
+
+    if (!normalizedPhone) {
+      user.phoneVerifiedAt = null;
+    } else if (d.phoneVerified !== undefined) {
+      user.phoneVerifiedAt = d.phoneVerified ? new Date() : null;
+    } else if (phoneChanged) {
+      user.phoneVerifiedAt = null;
+    }
+  } else if (d.phoneVerified !== undefined) {
+    if (d.phoneVerified && !user.phone) {
+      throw new ApiError(
+        422,
+        'Phải có số điện thoại trước khi đánh dấu đã xác thực.',
+        'PHONE_REQUIRED',
+      );
+    }
+    user.phoneVerifiedAt = d.phoneVerified ? new Date() : null;
+  }
+
   await user.save();
+
   if (d.violationType)
     await UserViolation.create({
       userId,
@@ -122,21 +184,30 @@ export async function updateUserStatus(admin, userId, d, ip) {
       note: d.note || '',
       createdBy: admin._id,
     });
-  await createNotification({
-    recipientId: userId,
-    actorId: admin._id,
-    notificationType: NOTIFICATION_TYPES.ACCOUNT_WARNING,
-    targetType: 'user',
-    targetId: userId,
-    title: d.note || `Trạng thái tài khoản: ${d.status}`,
-  });
+
+  const statusChanged = oldData.status !== user.status;
+  if (statusChanged || d.violationType || d.note) {
+    await createNotification({
+      recipientId: userId,
+      actorId: admin._id,
+      notificationType: NOTIFICATION_TYPES.ACCOUNT_WARNING,
+      targetType: 'user',
+      targetId: userId,
+      title: d.note || `Trạng thái tài khoản: ${user.status}`,
+    });
+  }
+
   await writeAuditLog({
     adminId: admin._id,
-    action: 'user.status',
+    action: 'user.update',
     targetType: 'user',
     targetId: userId,
-    oldData: { status: old },
-    newData: { status: d.status },
+    oldData,
+    newData: {
+      status: user.status,
+      phone: user.phone || null,
+      phoneVerifiedAt: user.phoneVerifiedAt || null,
+    },
     ipAddress: ip,
   });
   return user;
