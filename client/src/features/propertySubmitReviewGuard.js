@@ -46,8 +46,8 @@ function showReview(form, submitter) {
 
       <div class="property-submit-review-dialog__body">
         <div class="property-submit-review-dialog__notice">
-          <strong>Sau khi gửi</strong>
-          <span>Trong thời gian chờ kiểm duyệt, chỉ bạn và quản trị viên có thể mở trang chi tiết của tin. Người dùng khác sẽ chưa nhìn thấy tin.</span>
+          <strong>Hãy đọc lại trước khi xác nhận</strong>
+          <span>Kiểm tra hạng tin, thời hạn, giá và tiêu đề. Trong thời gian chờ duyệt, chỉ bạn và quản trị viên có thể mở trang chi tiết; người dùng khác chưa nhìn thấy tin.</span>
         </div>
 
         <dl class="property-submit-review-dialog__facts">
@@ -62,7 +62,7 @@ function showReview(form, submitter) {
           <input type="checkbox" data-confirm-check />
           <span>
             <strong>Tôi đã kiểm tra hạng tin, thời hạn và thông tin đăng.</strong>
-            <small>Có thể quay lại để sửa trước khi gửi kiểm duyệt.</small>
+            <small>Nếu chưa chắc, chọn “Quay lại kiểm tra” để tiếp tục chỉnh sửa.</small>
           </span>
         </label>
       </div>
@@ -97,9 +97,11 @@ function showReview(form, submitter) {
 
   confirmButton.addEventListener('click', () => {
     if (!checkbox.checked) return;
+
     form.setAttribute(BYPASS_ATTRIBUTE, '1');
     closeReview();
 
+    // Phát lại đúng submit hiện có của React sau khi người dùng xác nhận.
     form.requestSubmit(submitter || undefined);
     window.setTimeout(() => form.removeAttribute(BYPASS_ATTRIBUTE), 0);
   });
@@ -130,37 +132,5 @@ function interceptSubmit(event) {
   showReview(form, event.submitter);
 }
 
-function addReadFirstHint() {
-  const step = document.querySelector(`${FORM_SELECTOR} [data-step="3"]`);
-  if (!step || step.querySelector('.property-submit-read-first')) return;
-
-  const hint = document.createElement('div');
-  hint.className = 'property-submit-read-first';
-  hint.innerHTML = `
-    <span aria-hidden="true">i</span>
-    <div>
-      <strong>Hãy dừng lại kiểm tra hạng tin trước khi gửi</strong>
-      <p>Chọn hạng và thời hạn, đọc phần tóm tắt bên trên. Nút đăng tin sẽ mở thêm một màn hình xác nhận cuối và chưa gửi ngay.</p>
-    </div>
-  `;
-
-  const checkout = step.querySelector('.property-post-checkout');
-  if (checkout) checkout.insertAdjacentElement('afterend', hint);
-  else step.appendChild(hint);
-}
-
 document.addEventListener('submit', interceptSubmit, true);
-
-const observer = new MutationObserver(() => {
-  if (activeOverlay && !document.querySelector(FORM_SELECTOR)) closeReview();
-  addReadFirstHint();
-});
-
-function startObserver() {
-  if (!document.body) return;
-  observer.observe(document.body, { childList: true, subtree: true });
-  addReadFirstHint();
-}
-
-if (document.body) startObserver();
-else window.addEventListener('DOMContentLoaded', startObserver, { once: true });
+window.addEventListener('popstate', closeReview);
