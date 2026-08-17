@@ -1,3 +1,5 @@
+import { PROPERTY_TYPES as LEGACY_PROPERTY_TYPES } from './constants';
+
 export const PROPERTY_POST_TYPES = {
   house: 'Nhà riêng',
   villa_townhouse: 'Nhà biệt thự, liền kề',
@@ -14,3 +16,8 @@ export const PROPERTY_POST_TYPES = {
 export const PROPERTY_POST_TYPE_OPTIONS = Object.entries(PROPERTY_POST_TYPES).map(
   ([value, label]) => ({ value, label }),
 );
+
+export function getPropertyTypeLabel(value, fallback = 'Bất động sản') {
+  if (!value) return fallback;
+  return PROPERTY_POST_TYPES[value] || LEGACY_PROPERTY_TYPES[value] || fallback;
+}
