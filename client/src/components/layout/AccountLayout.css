@@ -74,7 +74,7 @@
   margin: 0;
 }
 
-/* Trong bố cục mới đã có sidebar tài khoản cố định bên trái.
+/* Trong bố cục mới đã có sidebar điều hướng tài khoản bên trái.
    Ẩn sidebar xem trước cũ của trang hồ sơ để tránh lặp và giữ đúng Figma. */
 .account-center-content .profile-settings-layout {
   grid-template-columns: minmax(0, 1fr);
@@ -87,6 +87,23 @@
 .account-center-content .profile-settings-main {
   width: 100%;
   min-width: 0;
+}
+
+/* Các field ở cùng một hàng luôn bám mép trên.
+   Nếu một field có hint/error dài hơn, field bên cạnh không bị kéo lệch xuống. */
+.account-center-content .account-form-grid,
+.account-center-content .profile-settings-grid {
+  align-items: start;
+}
+
+.account-center-content .account-field,
+.account-center-content .profile-settings-field {
+  align-content: start;
+  align-self: start;
+}
+
+.account-center-content > .account-page-view > .pagination {
+  margin-top: 2px;
 }
 
 @media (max-width: 900px) {
@@ -129,6 +146,7 @@
   }
 
   .account-shell-nav__more {
+    position: relative;
     flex: 0 0 auto;
   }
 
@@ -140,7 +158,7 @@
   .account-shell-nav__more > div {
     position: absolute;
     z-index: 20;
-    right: 12px;
+    right: 0;
     width: 220px;
     padding: 7px;
     border: 1px solid var(--account-border);
