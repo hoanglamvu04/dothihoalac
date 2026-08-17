@@ -1,0 +1,494 @@
+.account-shell-profile {
+  overflow: hidden;
+  border: 1px solid #dce7e0;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 12px 34px rgb(16 38 26 / 0.07);
+}
+
+.account-shell-cover {
+  position: relative;
+  height: 128px;
+  overflow: hidden;
+  background: #dfe5e1;
+}
+
+.account-shell-cover > img,
+.account-shell-cover__fallback {
+  width: 100%;
+  height: 100%;
+}
+
+.account-shell-cover > img {
+  display: block;
+  object-fit: cover;
+}
+
+.account-shell-cover::after {
+  position: absolute;
+  inset: 0;
+  content: '';
+  pointer-events: none;
+  background: linear-gradient(180deg, rgb(5 54 27 / 0.02), rgb(5 54 27 / 0.18));
+}
+
+.account-shell-cover__fallback {
+  position: relative;
+  background:
+    linear-gradient(120deg, rgb(9 77 40 / 0.92), rgb(31 163 75 / 0.72)),
+    #0b5a31;
+}
+
+.account-shell-cover__fallback span {
+  position: absolute;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 0.08);
+}
+
+.account-shell-cover__fallback span:nth-child(1) {
+  width: 260px;
+  height: 260px;
+  left: -80px;
+  top: -160px;
+}
+
+.account-shell-cover__fallback span:nth-child(2) {
+  width: 330px;
+  height: 330px;
+  right: 13%;
+  top: -235px;
+}
+
+.account-shell-cover__fallback span:nth-child(3) {
+  width: 190px;
+  height: 190px;
+  right: -55px;
+  bottom: -130px;
+}
+
+.account-shell-cover__edit {
+  position: absolute;
+  z-index: 2;
+  right: 18px;
+  bottom: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 0 13px;
+  gap: 7px;
+  border: 1px solid rgb(255 255 255 / 0.6);
+  border-radius: 10px;
+  color: #153c25;
+  background: rgb(255 255 255 / 0.92);
+  font: inherit;
+  font-size: 0.72rem;
+  font-weight: 750;
+  cursor: pointer;
+  box-shadow: 0 5px 15px rgb(16 38 26 / 0.12);
+}
+
+.account-shell-cover__edit:disabled,
+.account-shell-avatar:disabled {
+  cursor: wait;
+  opacity: 0.72;
+}
+
+.account-shell-profile__body {
+  position: relative;
+  display: grid;
+  grid-template-columns: 128px minmax(0, 1fr) auto;
+  align-items: center;
+  min-height: 112px;
+  padding: 16px 20px 17px 28px;
+  gap: 18px;
+}
+
+.account-shell-avatar-wrap {
+  position: relative;
+  align-self: start;
+  width: 112px;
+  height: 112px;
+  margin-top: -58px;
+}
+
+.account-shell-avatar {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 112px;
+  height: 112px;
+  padding: 0;
+  overflow: hidden;
+  border: 6px solid #fff;
+  border-radius: 50%;
+  color: #fff;
+  background: linear-gradient(135deg, #0e6a38, #21a750);
+  box-shadow: 0 9px 22px rgb(16 38 26 / 0.16);
+  cursor: pointer;
+}
+
+.account-shell-avatar img,
+.account-shell-sidebar__mini-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.account-shell-avatar__fallback {
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  font-size: 1.4rem;
+  font-weight: 850;
+  letter-spacing: -0.04em;
+}
+
+.account-shell-avatar__loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  background: rgb(4 43 22 / 0.58);
+}
+
+.account-shell-avatar__camera {
+  position: absolute;
+  right: 1px;
+  bottom: 2px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border: 4px solid #fff;
+  border-radius: 50%;
+  color: #153c25;
+  background: #eef5f0;
+  pointer-events: none;
+}
+
+.account-shell-identity {
+  min-width: 0;
+}
+
+.account-shell-identity__title {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.account-shell-identity__title h1 {
+  margin: 0;
+  overflow: hidden;
+  color: #10261a;
+  font-size: clamp(1.45rem, 2.3vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -0.04em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-shell-identity__title > span {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  color: #fff;
+  background: #1fa34b;
+}
+
+.account-shell-identity > p {
+  margin: 4px 0 0;
+  color: #6e7d73;
+  font-size: 0.78rem;
+  font-weight: 650;
+}
+
+.account-shell-identity__meta {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-top: 9px;
+  gap: 6px;
+}
+
+.account-shell-identity__meta span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  color: #516158;
+  background: #f0f4f1;
+  font-size: 0.64rem;
+  font-weight: 700;
+}
+
+.account-shell-profile__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.account-shell-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 14px;
+  gap: 7px;
+  border: 1px solid transparent;
+  border-radius: 11px;
+  font-size: 0.72rem;
+  font-weight: 750;
+  transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+}
+
+.account-shell-button:hover {
+  transform: translateY(-1px);
+}
+
+.account-shell-button--ghost {
+  border-color: #dce7e0;
+  color: #244331;
+  background: #f7f9f8;
+}
+
+.account-shell-button--ghost:hover {
+  border-color: #c7ddd0;
+  background: #eef5f0;
+}
+
+.account-shell-button--primary {
+  color: #fff;
+  background: #159447;
+  box-shadow: 0 7px 18px rgb(21 148 71 / 0.18);
+}
+
+.account-shell-button--primary:hover {
+  background: #117d3d;
+}
+
+.account-shell-sidebar {
+  position: sticky;
+  top: 94px;
+  overflow: hidden;
+  border: 1px solid #dce7e0;
+  border-radius: 15px;
+  background: #fff;
+  box-shadow: 0 7px 22px rgb(16 38 26 / 0.045);
+}
+
+.account-shell-sidebar__intro {
+  display: grid;
+  grid-template-columns: 42px minmax(0, 1fr);
+  align-items: center;
+  padding: 15px 15px 13px;
+  gap: 10px;
+  border-bottom: 1px solid #edf1ee;
+}
+
+.account-shell-sidebar__mini-avatar {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  overflow: hidden;
+  border-radius: 50%;
+  color: #fff;
+  background: linear-gradient(135deg, #0e6a38, #21a750);
+}
+
+.account-shell-sidebar__mini-avatar .account-shell-avatar__fallback {
+  font-size: 0.74rem;
+}
+
+.account-shell-sidebar__intro small,
+.account-shell-sidebar__intro strong {
+  display: block;
+}
+
+.account-shell-sidebar__intro small {
+  color: #849087;
+  font-size: 0.61rem;
+}
+
+.account-shell-sidebar__intro strong {
+  margin-top: 2px;
+  overflow: hidden;
+  color: #10261a;
+  font-size: 0.76rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.account-shell-nav {
+  display: grid;
+  padding: 7px;
+  gap: 2px;
+}
+
+.account-shell-nav > a,
+.account-shell-nav__more a,
+.account-shell-nav__more summary {
+  display: flex;
+  align-items: center;
+  min-height: 42px;
+  padding: 0 10px;
+  gap: 9px;
+  border-radius: 9px;
+  color: #59675e;
+  font-size: 0.68rem;
+  font-weight: 680;
+  transition: color 150ms ease, background 150ms ease;
+}
+
+.account-shell-nav > a:hover,
+.account-shell-nav__more a:hover,
+.account-shell-nav > a.is-active,
+.account-shell-nav__more a.is-active {
+  color: #0d7738;
+  background: #eaf8ef;
+}
+
+.account-shell-nav > a svg,
+.account-shell-nav__more a svg,
+.account-shell-nav__more summary svg {
+  flex: 0 0 auto;
+}
+
+.account-shell-nav__more {
+  margin: 0;
+}
+
+.account-shell-nav__more summary {
+  justify-content: space-between;
+  list-style: none;
+  cursor: pointer;
+}
+
+.account-shell-nav__more summary::-webkit-details-marker {
+  display: none;
+}
+
+.account-shell-nav__more summary > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+}
+
+.account-shell-nav__more[open] .account-shell-nav__chevron {
+  transform: rotate(180deg);
+}
+
+.account-shell-nav__more > div {
+  display: grid;
+  padding: 2px 0 0 12px;
+  gap: 2px;
+}
+
+.account-shell-nav__more a {
+  min-height: 39px;
+}
+
+.account-shell-profile .is-spinning {
+  animation: account-shell-spin 0.7s linear infinite;
+}
+
+@keyframes account-shell-spin {
+  to { transform: rotate(360deg); }
+}
+
+@media (max-width: 900px) {
+  .account-shell-profile__body {
+    grid-template-columns: 104px minmax(0, 1fr);
+    padding-inline: 18px;
+  }
+
+  .account-shell-avatar-wrap,
+  .account-shell-avatar {
+    width: 94px;
+    height: 94px;
+  }
+
+  .account-shell-avatar-wrap {
+    margin-top: -45px;
+  }
+
+  .account-shell-profile__actions {
+    grid-column: 1 / -1;
+    justify-content: flex-start;
+    padding-left: 104px;
+    margin-top: -3px;
+  }
+}
+
+@media (max-width: 620px) {
+  .account-shell-cover {
+    height: 104px;
+  }
+
+  .account-shell-cover__edit span {
+    display: none;
+  }
+
+  .account-shell-cover__edit {
+    width: 38px;
+    padding: 0;
+  }
+
+  .account-shell-profile__body {
+    grid-template-columns: 76px minmax(0, 1fr);
+    min-height: 104px;
+    padding: 12px 13px 14px;
+    gap: 10px;
+  }
+
+  .account-shell-avatar-wrap,
+  .account-shell-avatar {
+    width: 72px;
+    height: 72px;
+  }
+
+  .account-shell-avatar-wrap {
+    margin-top: -37px;
+  }
+
+  .account-shell-avatar {
+    border-width: 4px;
+  }
+
+  .account-shell-avatar__camera {
+    width: 26px;
+    height: 26px;
+    border-width: 3px;
+  }
+
+  .account-shell-identity__title h1 {
+    font-size: 1.2rem;
+  }
+
+  .account-shell-identity__meta span:nth-child(n + 2) {
+    display: none;
+  }
+
+  .account-shell-profile__actions {
+    padding-left: 82px;
+    gap: 7px;
+  }
+
+  .account-shell-button {
+    min-height: 38px;
+    padding: 0 11px;
+  }
+
+  .account-shell-button--ghost span {
+    display: none;
+  }
+}
