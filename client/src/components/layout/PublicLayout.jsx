@@ -10,7 +10,12 @@ function pageTopAdSlot(pathname) {
   if (pathname === '/tin-tuc') return 'news_top';
   if (pathname.startsWith('/tin-tuc/')) return 'article_top';
   if (pathname === '/cong-dong') return 'community_top';
-  if (pathname === '/nha-dat' || pathname.startsWith('/nha-dat/')) return 'property_top';
+  if (
+    pathname === '/bat-dong-san' ||
+    pathname.startsWith('/bat-dong-san/') ||
+    pathname === '/nha-dat' ||
+    pathname.startsWith('/nha-dat/')
+  ) return 'property_top';
   if (pathname === '/viec-lam' || pathname.startsWith('/viec-lam/')) return 'jobs_top';
   if (pathname === '/tim-kiem') return 'search_top';
   return '';
