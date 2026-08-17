@@ -17,6 +17,8 @@ import {
   CalendarDays,
   Check,
   CheckCircle2,
+  ChevronLeft,
+  ChevronRight,
   CircleDollarSign,
   Compass,
   Eye,
@@ -40,13 +42,12 @@ import {
   UserRound,
   WalletCards,
   X,
-  ChevronLeft,
-  ChevronRight,
 } from 'lucide-react';
 
 import Seo from '../../components/common/Seo';
-import RichTextEditor from '../../components/forms/RichTextEditor';
+import GoogleMapLocationPicker from '../../components/forms/GoogleMapLocationPicker';
 import PropertyGalleryUploader from '../../components/forms/PropertyGalleryUploader';
+import RichTextEditor from '../../components/forms/RichTextEditor';
 import TaxonomyFields from '../../components/forms/TaxonomyFields';
 
 import { propertyApi } from '../../api/content.api';
@@ -63,7 +64,7 @@ import {
   PROPERTY_TYPES,
   TRANSACTION_TYPES,
 } from '../../utils/constants';
-
+import { PROPERTY_POST_TYPES } from '../../utils/propertyPosting';
 import { mediaUrl } from '../../utils/media';
 import { toNumber } from '../../utils/validators';
 
@@ -83,18 +84,20 @@ const INFORMATION_PAGES = [
   },
   {
     id: 2,
-    title: 'Địa chỉ',
-    description: 'Chọn khu vực và mô tả vị trí bất động sản.',
+    title: 'Loại BĐS & địa chỉ',
+    description:
+      'Chọn đúng loại bất động sản, khu vực, địa chỉ chi tiết và ghim vị trí trên bản đồ.',
   },
   {
     id: 3,
     title: 'Thông tin chính',
-    description: 'Nhập loại bất động sản, diện tích và mức giá.',
+    description: 'Nhập diện tích và mức giá của bất động sản.',
   },
   {
     id: 4,
     title: 'Thông tin khác',
-    description: 'Bổ sung pháp lý, phòng ngủ, hướng, mặt tiền và các thông số khác.',
+    description:
+      'Bổ sung pháp lý, phòng ngủ, hướng, mặt tiền và các thông số khác.',
   },
   {
     id: 5,
@@ -142,6 +145,7 @@ const LISTING_TIERS = [
 const DURATION_OPTIONS = [15, 30, 60];
 
 const REQUIRED_COMPLETION_FIELDS = [
+  'propertyType',
   'title',
   'bodyHtml',
   'price',
@@ -328,7 +332,7 @@ export default function PropertyEditorPage() {
       summary: source.summary || source.excerpt || '',
       bodyHtml: source.bodyHtml || source.body?.html || '',
       transactionType: propertySource.transactionType || 'sale',
-      propertyType: propertySource.propertyType || 'residential_land',
+      propertyType: propertySource.propertyType || '',
       ownerType: propertySource.ownerType || 'owner',
       price: propertySource.price ?? '',
       priceUnit: propertySource.priceUnit || 'total',
@@ -385,6 +389,10 @@ export default function PropertyEditorPage() {
   const change = (key, value) => {
     setForm((current) => ({ ...current, [key]: value }));
     setErrors((current) => ({ ...current, [key]: '' }));
+  };
+
+  const changeLocation = ({ latitude, longitude }) => {
+    setForm((current) => ({ ...current, latitude, longitude }));
   };
 
   const changeGallery = (next) => {
@@ -459,10 +467,17 @@ export default function PropertyEditorPage() {
     return `${formatNumber(form.price)} ${unitLabel}`.trim();
   }, [form.isNegotiable, form.price, form.priceUnit]);
 
-  const propertyLabel = PROPERTY_TYPES[form.propertyType] || 'Bất động sản';
+  const propertyLabel =
+    PROPERTY_POST_TYPES[form.propertyType] ||
+    PROPERTY_TYPES[form.propertyType] ||
+    'Bất động sản';
   const transactionLabel = TRANSACTION_TYPES[form.transactionType] || 'Đăng tin';
   const previewImage = mediaUrl(form.thumbnailMediaId);
   const currentInformationPage = INFORMATION_PAGES[informationPage - 1];
+  const legacyPropertyType =
+    form.propertyType && !PROPERTY_POST_TYPES[form.propertyType]
+      ? PROPERTY_TYPES[form.propertyType] || 'Loại BĐS hiện tại'
+      : '';
 
   const scrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -488,11 +503,14 @@ export default function PropertyEditorPage() {
     const include = (target) => page === null || page === target;
 
     if (include(2)) {
+      if (!form.propertyType) {
+        nextErrors.propertyType = 'Vui lòng chọn loại bất động sản.';
+      }
       if (!form.primaryAreaId) {
         nextErrors.primaryAreaId = 'Vui lòng chọn khu vực.';
       }
       if (form.addressText.trim().length < 3) {
-        nextErrors.addressText = 'Vui lòng nhập địa chỉ mô tả.';
+        nextErrors.addressText = 'Vui lòng nhập địa chỉ chi tiết.';
       }
     }
 
@@ -546,8 +564,7 @@ export default function PropertyEditorPage() {
   const validateInformationPage = (page) =>
     scrollToError(getInformationErrors(page));
 
-  const validateInformation = () =>
-    scrollToError(getInformationErrors());
+  const validateInformation = () => scrollToError(getInformationErrors());
 
   const validateMedia = () => {
     if (getMediaId(form.thumbnailMediaId)) {
@@ -566,7 +583,11 @@ export default function PropertyEditorPage() {
     if (Object.keys(informationErrors).length) {
       setStep(1);
 
-      if (informationErrors.primaryAreaId || informationErrors.addressText) {
+      if (
+        informationErrors.propertyType ||
+        informationErrors.primaryAreaId ||
+        informationErrors.addressText
+      ) {
         setInformationPage(2);
       } else if (informationErrors.landArea || informationErrors.price) {
         setInformationPage(3);
@@ -910,9 +931,34 @@ export default function PropertyEditorPage() {
               {informationPage === 2 ? (
                 <SectionCard
                   icon={MapPin}
-                  title="Địa chỉ"
-                  description="Chọn khu vực trước, sau đó mô tả vị trí đủ rõ cho người xem."
+                  title="Loại bất động sản & địa chỉ"
+                  description="Phân loại BĐS ở đây là dữ liệu của sàn nhà đất, tách hoàn toàn khỏi chuyên mục và thẻ của hệ thống tin tức."
                 >
+                  <div data-field="propertyType">
+                    <EditorField
+                      label="Loại bất động sản"
+                      required
+                      error={errors.propertyType}
+                      hint="Chọn loại gần nhất với tài sản đang đăng."
+                    >
+                      <div className="property-post-input">
+                        <Building2 size={18} />
+                        <select
+                          value={form.propertyType}
+                          onChange={(event) => change('propertyType', event.target.value)}
+                        >
+                          <option value="">Chọn loại bất động sản</option>
+                          {legacyPropertyType ? (
+                            <option value={form.propertyType}>{legacyPropertyType}</option>
+                          ) : null}
+                          {Object.entries(PROPERTY_POST_TYPES).map(([value, label]) => (
+                            <option key={value} value={value}>{label}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </EditorField>
+                  </div>
+
                   <div
                     data-field="primaryAreaId"
                     className={
@@ -920,6 +966,7 @@ export default function PropertyEditorPage() {
                         ? 'property-post-taxonomy has-error'
                         : 'property-post-taxonomy'
                     }
+                    style={{ marginTop: 14 }}
                   >
                     <TaxonomyFields
                       scope="property"
@@ -928,6 +975,8 @@ export default function PropertyEditorPage() {
                       tagIds={form.tagIds}
                       onChange={change}
                       areaRequired
+                      showCategory={false}
+                      showTags={false}
                     />
                     {errors.primaryAreaId ? (
                       <small className="property-post-field__error">
@@ -936,12 +985,12 @@ export default function PropertyEditorPage() {
                     ) : null}
                   </div>
 
-                  <div data-field="addressText">
+                  <div data-field="addressText" style={{ marginTop: 14 }}>
                     <EditorField
-                      label="Địa chỉ mô tả"
+                      label="Địa chỉ chi tiết"
                       required
                       error={errors.addressText}
-                      hint="Ví dụ: gần ĐHQGHN, xã Thạch Hòa. Không cần công khai số nhà nếu không muốn."
+                      hint="Nhập số nhà, tên đường/ngõ, thôn/xóm hoặc mốc nhận biết. Có thể dùng địa chỉ Google Maps ở bên dưới."
                     >
                       <div className="property-post-input">
                         <MapPin size={18} />
@@ -949,41 +998,20 @@ export default function PropertyEditorPage() {
                           type="text"
                           value={form.addressText}
                           onChange={(event) => change('addressText', event.target.value)}
-                          placeholder="Nhập địa chỉ hoặc mô tả vị trí"
+                          placeholder="Ví dụ: số 12 đường ..., thôn ..., xã Hòa Lạc"
                           maxLength={500}
                         />
                       </div>
                     </EditorField>
                   </div>
 
-                  <div style={{ marginTop: 16 }}>
-                    <div className="property-post-grid property-post-grid--2">
-                      <EditorField label="Vĩ độ" hint="Không bắt buộc">
-                        <div className="property-post-input">
-                          <MapPin size={18} />
-                          <input
-                            type="number"
-                            step="any"
-                            value={form.latitude}
-                            onChange={(event) => change('latitude', event.target.value)}
-                            placeholder="21.000000"
-                          />
-                        </div>
-                      </EditorField>
-                      <EditorField label="Kinh độ" hint="Không bắt buộc">
-                        <div className="property-post-input">
-                          <MapPin size={18} />
-                          <input
-                            type="number"
-                            step="any"
-                            value={form.longitude}
-                            onChange={(event) => change('longitude', event.target.value)}
-                            placeholder="105.500000"
-                          />
-                        </div>
-                      </EditorField>
-                    </div>
-                  </div>
+                  <GoogleMapLocationPicker
+                    address={form.addressText}
+                    latitude={form.latitude}
+                    longitude={form.longitude}
+                    onLocationChange={changeLocation}
+                    onAddressResolved={(value) => change('addressText', value)}
+                  />
                 </SectionCard>
               ) : null}
 
@@ -991,23 +1019,9 @@ export default function PropertyEditorPage() {
                 <SectionCard
                   icon={Building2}
                   title="Thông tin chính"
-                  description="Chỉ nhập những thông tin quyết định trực tiếp đến việc tìm kiếm tin."
+                  description="Loại BĐS đã được chọn ở bước địa chỉ; tại đây chỉ nhập diện tích và giá."
                 >
                   <div className="property-post-grid property-post-grid--2">
-                    <EditorField label="Loại bất động sản" required>
-                      <div className="property-post-input">
-                        <Building2 size={18} />
-                        <select
-                          value={form.propertyType}
-                          onChange={(event) => change('propertyType', event.target.value)}
-                        >
-                          {Object.entries(PROPERTY_TYPES).map(([value, label]) => (
-                            <option key={value} value={value}>{label}</option>
-                          ))}
-                        </select>
-                      </div>
-                    </EditorField>
-
                     <div data-field="landArea">
                       <EditorField
                         label="Diện tích"
@@ -1218,7 +1232,7 @@ export default function PropertyEditorPage() {
                           type="text"
                           value={form.title}
                           onChange={(event) => change('title', event.target.value)}
-                          placeholder="Ví dụ: Bán đất 120 m² tại Thạch Hòa, đường ô tô"
+                          placeholder="Ví dụ: Bán đất 120 m² tại Hòa Lạc, đường ô tô"
                           maxLength={250}
                         />
                       </div>
@@ -1548,17 +1562,7 @@ export default function PropertyEditorPage() {
             </div>
           ) : null}
 
-          <footer
-            className="property-post-footer"
-            style={{
-              position: 'static',
-              bottom: 'auto',
-              zIndex: 'auto',
-              marginTop: 24,
-              boxShadow: 'none',
-              backdropFilter: 'none',
-            }}
-          >
+          <footer className="property-post-footer">
             <div>
               {step === 1 && informationPage === 1 ? (
                 <Link
@@ -1676,10 +1680,16 @@ export default function PropertyEditorPage() {
               <div className="property-post-preview-modal__meta">
                 <span>
                   <LandPlot size={16} />{' '}
-                  {form.landArea ? `${formatNumber(form.landArea)} m²` : 'Chưa có diện tích'}
+                  {form.landArea
+                    ? `${formatNumber(form.landArea)} m²`
+                    : 'Chưa có diện tích'}
                 </span>
-                <span><MapPin size={16} /> {form.addressText || 'Chưa có địa chỉ'}</span>
-                <span><UserRound size={16} /> {OWNER_TYPES[form.ownerType]}</span>
+                <span>
+                  <MapPin size={16} /> {form.addressText || 'Chưa có địa chỉ'}
+                </span>
+                <span>
+                  <UserRound size={16} /> {OWNER_TYPES[form.ownerType]}
+                </span>
               </div>
               {form.summary ? <p>{form.summary}</p> : null}
             </div>
