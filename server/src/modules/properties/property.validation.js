@@ -1,6 +1,8 @@
 import { z } from 'zod';
-const oid = z.string().regex(/^[0-9a-fA-F]{24}$/),
-  empty = z.object({}).passthrough();
+
+const oid = z.string().regex(/^[0-9a-fA-F]{24}$/);
+const empty = z.object({}).passthrough();
+
 const body = z.object({
   title: z.string().min(10).max(250),
   summary: z.string().max(1000).optional(),
@@ -61,19 +63,32 @@ const body = z.object({
   tagIds: z.array(oid).optional(),
   areaIds: z.array(oid).optional(),
   thumbnailMediaId: oid,
+  galleryMediaIds: z.array(oid).max(20).optional(),
+  listingTier: z.enum(['diamond', 'gold', 'silver', 'standard']).optional(),
+  listingDurationDays: z.union([z.literal(15), z.literal(30), z.literal(60)]).optional(),
+  listingStartAt: z.coerce.date().optional(),
 });
+
 export const createSchema = z.object({ body, params: empty, query: empty });
+
 export const updateSchema = z.object({
   body: body.partial(),
   params: z.object({ id: oid }),
   query: empty,
 });
-export const idSchema = z.object({ body: empty, params: z.object({ id: oid }), query: empty });
+
+export const idSchema = z.object({
+  body: empty,
+  params: z.object({ id: oid }),
+  query: empty,
+});
+
 export const slugSchema = z.object({
   body: empty,
   params: z.object({ slug: z.string().min(1) }),
   query: empty,
 });
+
 export const contactSchema = z.object({
   body: z.object({
     contactType: z.enum(['reveal_phone', 'call', 'send_request', 'open_chat', 'copy_phone']),
