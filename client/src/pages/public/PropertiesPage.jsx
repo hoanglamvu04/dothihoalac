@@ -13,6 +13,8 @@ import {
 
 import {
   Building2,
+  Check,
+  ChevronDown,
   Clock3,
   FileCheck2,
   Filter,
@@ -54,8 +56,7 @@ import {
 
 import './PropertiesPage.css';
 
-const VIEW_MODE_KEY =
-  'dothihoalac.property-view-mode';
+const VIEW_MODE_KEY = 'dothihoalac.property-view-mode';
 
 const QUERY_KEYS = [
   'transactionType',
@@ -72,78 +73,38 @@ const QUERY_KEYS = [
   'page',
 ];
 
+const FILTER_ONLY_KEYS = [
+  'propertyType',
+  'area',
+  'ownerType',
+  'legalStatus',
+  'minPrice',
+  'maxPrice',
+  'minArea',
+  'maxArea',
+  'sort',
+];
+
 const PRICE_PRESETS = [
-  {
-    label: 'Dưới 1 tỷ',
-    min: '',
-    max: '1000000000',
-  },
-  {
-    label: '1–3 tỷ',
-    min: '1000000000',
-    max: '3000000000',
-  },
-  {
-    label: '3–5 tỷ',
-    min: '3000000000',
-    max: '5000000000',
-  },
-  {
-    label: '5–10 tỷ',
-    min: '5000000000',
-    max: '10000000000',
-  },
-  {
-    label: 'Trên 10 tỷ',
-    min: '10000000000',
-    max: '',
-  },
+  { label: 'Dưới 1 tỷ', min: '', max: '1000000000' },
+  { label: '1–3 tỷ', min: '1000000000', max: '3000000000' },
+  { label: '3–5 tỷ', min: '3000000000', max: '5000000000' },
+  { label: '5–10 tỷ', min: '5000000000', max: '10000000000' },
+  { label: 'Trên 10 tỷ', min: '10000000000', max: '' },
 ];
 
 const AREA_PRESETS = [
-  {
-    label: 'Dưới 50 m²',
-    min: '',
-    max: '50',
-  },
-  {
-    label: '50–100 m²',
-    min: '50',
-    max: '100',
-  },
-  {
-    label: '100–200 m²',
-    min: '100',
-    max: '200',
-  },
-  {
-    label: '200–500 m²',
-    min: '200',
-    max: '500',
-  },
-  {
-    label: 'Trên 500 m²',
-    min: '500',
-    max: '',
-  },
+  { label: 'Dưới 50 m²', min: '', max: '50' },
+  { label: '50–100 m²', min: '50', max: '100' },
+  { label: '100–200 m²', min: '100', max: '200' },
+  { label: '200–500 m²', min: '200', max: '500' },
+  { label: 'Trên 500 m²', min: '500', max: '' },
 ];
 
 const SORT_OPTIONS = [
-  {
-    value: '',
-    label: 'Mới nhất',
-    icon: Clock3,
-  },
-  {
-    value: 'price_asc',
-    label: 'Giá tăng dần',
-    icon: TrendingUp,
-  },
-  {
-    value: 'price_desc',
-    label: 'Giá giảm dần',
-    icon: TrendingDown,
-  },
+  { value: '', label: 'Mới nhất', icon: Clock3 },
+  { value: 'price_asc', label: 'Giá tăng dần', icon: TrendingUp },
+  { value: 'price_desc', label: 'Giá giảm dần', icon: TrendingDown },
 ];
 
 const TRANSACTION_ICONS = {
@@ -184,289 +145,144 @@ function getPageSize(meta, itemCount) {
 }
 
 function sanitizeNumber(value) {
-  const cleanValue =
-    String(value ?? '').trim();
-
-  if (!cleanValue) {
-    return '';
-  }
+  const cleanValue = String(value ?? '').trim();
+  if (!cleanValue) return '';
 
   const number = Number(cleanValue);
-
-  if (
-    !Number.isFinite(number) ||
-    number < 0
-  ) {
-    return '';
-  }
+  if (!Number.isFinite(number) || number < 0) return '';
 
   return String(number);
 }
 
 function formatNumber(value) {
   const number = Number(value);
+  if (!Number.isFinite(number)) return '';
 
-  if (!Number.isFinite(number)) {
-    return '';
-  }
-
-  return new Intl.NumberFormat(
-    'vi-VN',
-    {
-      maximumFractionDigits: 2,
-    },
-  ).format(number);
+  return new Intl.NumberFormat('vi-VN', {
+    maximumFractionDigits: 2,
+  }).format(number);
 }
 
 function formatPrice(value) {
   const number = Number(value);
-
-  if (!Number.isFinite(number)) {
-    return '';
-  }
+  if (!Number.isFinite(number)) return '';
 
   if (number >= 1_000_000_000) {
-    return `${new Intl.NumberFormat(
-      'vi-VN',
-      {
-        maximumFractionDigits: 2,
-      },
-    ).format(
-      number / 1_000_000_000,
-    )} tỷ`;
+    return `${new Intl.NumberFormat('vi-VN', {
+      maximumFractionDigits: 2,
+    }).format(number / 1_000_000_000)} tỷ`;
   }
 
   if (number >= 1_000_000) {
-    return `${new Intl.NumberFormat(
-      'vi-VN',
-      {
-        maximumFractionDigits: 1,
-      },
-    ).format(
-      number / 1_000_000,
-    )} triệu`;
+    return `${new Intl.NumberFormat('vi-VN', {
+      maximumFractionDigits: 1,
+    }).format(number / 1_000_000)} triệu`;
   }
 
   return `${formatNumber(number)} đồng`;
 }
 
-function getRangeLabel({
-  min,
-  max,
-  formatter,
-  suffix = '',
-}) {
+function getRangeLabel({ min, max, formatter, suffix = '' }) {
   if (min && max) {
-    return `${formatter(min)} – ${formatter(
-      max,
-    )}${suffix}`;
+    return `${formatter(min)} – ${formatter(max)}${suffix}`;
   }
 
-  if (min) {
-    return `Từ ${formatter(
-      min,
-    )}${suffix}`;
-  }
-
-  if (max) {
-    return `Đến ${formatter(
-      max,
-    )}${suffix}`;
-  }
-
+  if (min) return `Từ ${formatter(min)}${suffix}`;
+  if (max) return `Đến ${formatter(max)}${suffix}`;
   return '';
 }
 
 function getTransactionIcon(value) {
-  return (
-    TRANSACTION_ICONS[value] ||
-    Building2
-  );
+  return TRANSACTION_ICONS[value] || Building2;
 }
 
 function findByIdOrSlug(items, value) {
   return items.find(
     (item) =>
-      String(item?._id || '') ===
-        String(value) ||
-      String(item?.slug || '') ===
-        String(value),
+      String(item?._id || '') === String(value) ||
+      String(item?.slug || '') === String(value),
   );
 }
 
 export default function PropertiesPage() {
-  const [
-    searchParams,
-    setSearchParams,
-  ] = useSearchParams();
-
-  const {
-    areas = [],
-  } = useTaxonomy();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const { areas = [] } = useTaxonomy();
 
   const resultsRef = useRef(null);
+  const quickToolbarRef = useRef(null);
 
-  const [
-    mobileFiltersOpen,
-    setMobileFiltersOpen,
-  ] = useState(false);
+  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [quickFilterOpen, setQuickFilterOpen] = useState('');
 
-  const [
-    viewMode,
-    setViewMode,
-  ] = useState(() => {
+  const [viewMode, setViewMode] = useState(() => {
     try {
-      const savedValue =
-        localStorage.getItem(
-          VIEW_MODE_KEY,
-        );
-
-      return ['grid', 'list'].includes(
-        savedValue,
-      )
-        ? savedValue
-        : 'grid';
+      const savedValue = localStorage.getItem(VIEW_MODE_KEY);
+      return ['grid', 'list'].includes(savedValue) ? savedValue : 'grid';
     } catch {
       return 'grid';
     }
   });
 
-  const [
-    searchInput,
-    setSearchInput,
-  ] = useState(
+  const [searchInput, setSearchInput] = useState(
     searchParams.get('q') || '',
   );
 
-  const [
-    rangeValues,
-    setRangeValues,
-  ] = useState({
-    minPrice:
-      searchParams.get('minPrice') ||
-      '',
-
-    maxPrice:
-      searchParams.get('maxPrice') ||
-      '',
-
-    minArea:
-      searchParams.get('minArea') ||
-      '',
-
-    maxArea:
-      searchParams.get('maxArea') ||
-      '',
+  const [rangeValues, setRangeValues] = useState({
+    minPrice: searchParams.get('minPrice') || '',
+    maxPrice: searchParams.get('maxPrice') || '',
+    minArea: searchParams.get('minArea') || '',
+    maxArea: searchParams.get('maxArea') || '',
   });
 
-  const [
-    rangeError,
-    setRangeError,
-  ] = useState('');
+  const [rangeError, setRangeError] = useState('');
 
-  const searchKey =
-    searchParams.toString();
+  const searchKey = searchParams.toString();
 
   const params = useMemo(() => {
-    const source =
-      new URLSearchParams(searchKey);
-
+    const source = new URLSearchParams(searchKey);
     const nextParams = {};
 
     QUERY_KEYS.forEach((key) => {
       const value = source.get(key);
-
-      if (value) {
-        nextParams[key] = value;
-      }
+      if (value) nextParams[key] = value;
     });
 
     return nextParams;
   }, [searchKey]);
 
-  const result = useListPage(
-    propertyApi.list,
-    params,
-  );
+  const result = useListPage(propertyApi.list, params);
 
-  const currentTransaction =
-    searchParams.get(
-      'transactionType',
-    ) || '';
-
-  const currentPropertyType =
-    searchParams.get(
-      'propertyType',
-    ) || '';
-
-  const currentArea =
-    searchParams.get('area') || '';
-
-  const currentOwnerType =
-    searchParams.get('ownerType') ||
-    '';
-
-  const currentLegalStatus =
-    searchParams.get('legalStatus') ||
-    '';
-
-  const currentSort =
-    searchParams.get('sort') || '';
-
-  const currentQuery =
-    searchParams.get('q') || '';
-
-  const currentMinPrice =
-    searchParams.get('minPrice') ||
-    '';
-
-  const currentMaxPrice =
-    searchParams.get('maxPrice') ||
-    '';
-
-  const currentMinArea =
-    searchParams.get('minArea') ||
-    '';
-
-  const currentMaxArea =
-    searchParams.get('maxArea') ||
-    '';
+  const currentTransaction = searchParams.get('transactionType') || '';
+  const currentPropertyType = searchParams.get('propertyType') || '';
+  const currentArea = searchParams.get('area') || '';
+  const currentOwnerType = searchParams.get('ownerType') || '';
+  const currentLegalStatus = searchParams.get('legalStatus') || '';
+  const currentSort = searchParams.get('sort') || '';
+  const currentQuery = searchParams.get('q') || '';
+  const currentMinPrice = searchParams.get('minPrice') || '';
+  const currentMaxPrice = searchParams.get('maxPrice') || '';
+  const currentMinArea = searchParams.get('minArea') || '';
+  const currentMaxArea = searchParams.get('maxArea') || '';
 
   const selectedArea = useMemo(
-    () =>
-      findByIdOrSlug(
-        areas,
-        currentArea,
-      ),
+    () => findByIdOrSlug(areas, currentArea),
     [areas, currentArea],
   );
 
   const currentSortOption =
-    SORT_OPTIONS.find(
-      (item) =>
-        item.value === currentSort,
-    ) || SORT_OPTIONS[0];
+    SORT_OPTIONS.find((item) => item.value === currentSort) ||
+    SORT_OPTIONS[0];
 
-  const SortIcon =
-    currentSortOption.icon;
+  const SortIcon = currentSortOption.icon;
 
   const setUrlParams = useCallback(
     (mutator, options = {}) => {
       setSearchParams(
         (current) => {
-          const next =
-            new URLSearchParams(
-              current,
-            );
-
+          const next = new URLSearchParams(current);
           mutator(next);
 
-          if (
-            next.get('page') === '1'
-          ) {
-            next.delete('page');
-          }
-
+          if (next.get('page') === '1') next.delete('page');
           return next;
         },
         options,
@@ -484,10 +300,7 @@ export default function PropertiesPage() {
             value !== null &&
             String(value).trim() !== ''
           ) {
-            next.set(
-              key,
-              String(value),
-            );
+            next.set(key, String(value));
           } else {
             next.delete(key);
           }
@@ -500,55 +313,34 @@ export default function PropertiesPage() {
     [setUrlParams],
   );
 
-  const updateMultiple =
-    useCallback(
-      (values) => {
-        setUrlParams((next) => {
-          Object.entries(
-            values,
-          ).forEach(
-            ([key, value]) => {
-              if (
-                value !== undefined &&
-                value !== null &&
-                String(value).trim() !==
-                  ''
-              ) {
-                next.set(
-                  key,
-                  String(value),
-                );
-              } else {
-                next.delete(key);
-              }
-            },
-          );
-
-          next.delete('page');
+  const updateMultiple = useCallback(
+    (values) => {
+      setUrlParams((next) => {
+        Object.entries(values).forEach(([key, value]) => {
+          if (
+            value !== undefined &&
+            value !== null &&
+            String(value).trim() !== ''
+          ) {
+            next.set(key, String(value));
+          } else {
+            next.delete(key);
+          }
         });
-      },
-      [setUrlParams],
-    );
 
-  useEffect(() => {
-    setSearchInput(currentQuery);
-  }, [currentQuery]);
+        next.delete('page');
+      });
+    },
+    [setUrlParams],
+  );
 
-  useEffect(() => {
+  const syncRangeDrafts = useCallback(() => {
     setRangeValues({
-      minPrice:
-        currentMinPrice,
-
-      maxPrice:
-        currentMaxPrice,
-
-      minArea:
-        currentMinArea,
-
-      maxArea:
-        currentMaxArea,
+      minPrice: currentMinPrice,
+      maxPrice: currentMaxPrice,
+      minArea: currentMinArea,
+      maxArea: currentMaxArea,
     });
-
     setRangeError('');
   }, [
     currentMinPrice,
@@ -558,315 +350,238 @@ export default function PropertiesPage() {
   ]);
 
   useEffect(() => {
-    const cleanValue =
-      searchInput.trim();
+    setSearchInput(currentQuery);
+  }, [currentQuery]);
 
-    if (cleanValue === currentQuery) {
-      return undefined;
-    }
+  useEffect(() => {
+    syncRangeDrafts();
+  }, [syncRangeDrafts]);
 
-    const timer =
-      window.setTimeout(() => {
-        update(
-          'q',
-          cleanValue,
-          {
-            replace: true,
-          },
-        );
-      }, 450);
+  useEffect(() => {
+    const cleanValue = searchInput.trim();
+    if (cleanValue === currentQuery) return undefined;
 
-    return () => {
-      window.clearTimeout(timer);
-    };
-  }, [
-    searchInput,
-    currentQuery,
-    update,
-  ]);
+    const timer = window.setTimeout(() => {
+      update('q', cleanValue, { replace: true });
+    }, 450);
+
+    return () => window.clearTimeout(timer);
+  }, [searchInput, currentQuery, update]);
 
   useEffect(() => {
     try {
-      localStorage.setItem(
-        VIEW_MODE_KEY,
-        viewMode,
-      );
+      localStorage.setItem(VIEW_MODE_KEY, viewMode);
     } catch {
       // Không ảnh hưởng giao diện.
     }
   }, [viewMode]);
 
   useEffect(() => {
-    if (!mobileFiltersOpen) {
-      return undefined;
-    }
+    if (!quickFilterOpen) return undefined;
 
-    const previousOverflow =
-      document.body.style.overflow;
-
-    const closeWithEscape = (
-      event,
-    ) => {
-      if (event.key === 'Escape') {
-        setMobileFiltersOpen(false);
+    const closeOutside = (event) => {
+      if (!quickToolbarRef.current?.contains(event.target)) {
+        setQuickFilterOpen('');
       }
     };
 
-    document.body.style.overflow =
-      'hidden';
+    const closeWithEscape = (event) => {
+      if (event.key === 'Escape') setQuickFilterOpen('');
+    };
 
-    document.addEventListener(
-      'keydown',
-      closeWithEscape,
-    );
+    document.addEventListener('pointerdown', closeOutside);
+    document.addEventListener('keydown', closeWithEscape);
 
     return () => {
-      document.body.style.overflow =
-        previousOverflow;
-
-      document.removeEventListener(
-        'keydown',
-        closeWithEscape,
-      );
+      document.removeEventListener('pointerdown', closeOutside);
+      document.removeEventListener('keydown', closeWithEscape);
     };
-  }, [mobileFiltersOpen]);
+  }, [quickFilterOpen]);
 
-  const applyRangeFilters =
-    useCallback(() => {
-      const minPrice =
-        sanitizeNumber(
-          rangeValues.minPrice,
-        );
+  useEffect(() => {
+    if (!filtersOpen) return undefined;
 
-      const maxPrice =
-        sanitizeNumber(
-          rangeValues.maxPrice,
-        );
+    const previousOverflow = document.body.style.overflow;
 
-      const minArea =
-        sanitizeNumber(
-          rangeValues.minArea,
-        );
-
-      const maxArea =
-        sanitizeNumber(
-          rangeValues.maxArea,
-        );
-
-      if (
-        minPrice &&
-        maxPrice &&
-        Number(minPrice) >
-          Number(maxPrice)
-      ) {
-        setRangeError(
-          'Giá tối thiểu không được lớn hơn giá tối đa.',
-        );
-
-        return;
+    const closeWithEscape = (event) => {
+      if (event.key === 'Escape') {
+        syncRangeDrafts();
+        setFiltersOpen(false);
       }
+    };
 
-      if (
-        minArea &&
-        maxArea &&
-        Number(minArea) >
-          Number(maxArea)
-      ) {
-        setRangeError(
-          'Diện tích tối thiểu không được lớn hơn diện tích tối đa.',
-        );
+    document.body.style.overflow = 'hidden';
+    document.addEventListener('keydown', closeWithEscape);
 
-        return;
-      }
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', closeWithEscape);
+    };
+  }, [filtersOpen, syncRangeDrafts]);
 
-      setRangeError('');
+  const applyRangeFilters = useCallback(() => {
+    const minPrice = sanitizeNumber(rangeValues.minPrice);
+    const maxPrice = sanitizeNumber(rangeValues.maxPrice);
+    const minArea = sanitizeNumber(rangeValues.minArea);
+    const maxArea = sanitizeNumber(rangeValues.maxArea);
 
-      updateMultiple({
-        minPrice,
-        maxPrice,
-        minArea,
-        maxArea,
-      });
-    }, [
-      rangeValues,
-      updateMultiple,
-    ]);
+    if (minPrice && maxPrice && Number(minPrice) > Number(maxPrice)) {
+      setRangeError('Giá tối thiểu không được lớn hơn giá tối đa.');
+      return false;
+    }
 
-  const applyPricePreset =
-    useCallback(
-      (preset) => {
-        const nextRangeValues = {
-          ...rangeValues,
-          minPrice: preset.min,
-          maxPrice: preset.max,
-        };
+    if (minArea && maxArea && Number(minArea) > Number(maxArea)) {
+      setRangeError('Diện tích tối thiểu không được lớn hơn diện tích tối đa.');
+      return false;
+    }
 
-        setRangeValues(
-          nextRangeValues,
-        );
+    setRangeError('');
+    updateMultiple({ minPrice, maxPrice, minArea, maxArea });
+    return true;
+  }, [rangeValues, updateMultiple]);
 
-        setRangeError('');
+  const applyPricePreset = useCallback((preset) => {
+    setRangeValues((current) => ({
+      ...current,
+      minPrice: preset.min,
+      maxPrice: preset.max,
+    }));
+    setRangeError('');
+  }, []);
 
-        updateMultiple({
-          minPrice: preset.min,
-          maxPrice: preset.max,
-        });
-      },
-      [
-        rangeValues,
-        updateMultiple,
-      ],
-    );
+  const applyAreaPreset = useCallback((preset) => {
+    setRangeValues((current) => ({
+      ...current,
+      minArea: preset.min,
+      maxArea: preset.max,
+    }));
+    setRangeError('');
+  }, []);
 
-  const applyAreaPreset =
-    useCallback(
-      (preset) => {
-        const nextRangeValues = {
-          ...rangeValues,
-          minArea: preset.min,
-          maxArea: preset.max,
-        };
+  const clearFiltersOnly = useCallback(() => {
+    setRangeValues({
+      minPrice: '',
+      maxPrice: '',
+      minArea: '',
+      maxArea: '',
+    });
+    setRangeError('');
 
-        setRangeValues(
-          nextRangeValues,
-        );
+    setUrlParams((next) => {
+      FILTER_ONLY_KEYS.forEach((key) => next.delete(key));
+      next.delete('page');
+    });
+  }, [setUrlParams]);
 
-        setRangeError('');
+  const clearAllFilters = useCallback(() => {
+    setSearchInput('');
+    setRangeValues({
+      minPrice: '',
+      maxPrice: '',
+      minArea: '',
+      maxArea: '',
+    });
+    setRangeError('');
 
-        updateMultiple({
-          minArea: preset.min,
-          maxArea: preset.max,
-        });
-      },
-      [
-        rangeValues,
-        updateMultiple,
-      ],
-    );
+    setUrlParams((next) => {
+      QUERY_KEYS.forEach((key) => next.delete(key));
+    });
+  }, [setUrlParams]);
 
-  const clearAllFilters =
-    useCallback(() => {
-      setSearchInput('');
+  const toggleQuickFilter = useCallback(
+    (name) => {
+      syncRangeDrafts();
+      setQuickFilterOpen((current) => (current === name ? '' : name));
+    },
+    [syncRangeDrafts],
+  );
 
-      setRangeValues({
-        minPrice: '',
-        maxPrice: '',
-        minArea: '',
-        maxArea: '',
-      });
+  const openFilterModal = useCallback(() => {
+    syncRangeDrafts();
+    setQuickFilterOpen('');
+    setFiltersOpen(true);
+  }, [syncRangeDrafts]);
 
-      setRangeError('');
+  const closeFilterModal = useCallback(() => {
+    syncRangeDrafts();
+    setFiltersOpen(false);
+  }, [syncRangeDrafts]);
 
-      setUrlParams((next) => {
-        QUERY_KEYS.forEach((key) => {
-          next.delete(key);
-        });
-      });
-    }, [setUrlParams]);
+  const showFilterResults = useCallback(() => {
+    if (!applyRangeFilters()) return;
+    setFiltersOpen(false);
+  }, [applyRangeFilters]);
 
   const setPage = useCallback(
     (page) => {
       setUrlParams((next) => {
-        if (Number(page) <= 1) {
-          next.delete('page');
-        } else {
-          next.set(
-            'page',
-            String(page),
-          );
-        }
+        if (Number(page) <= 1) next.delete('page');
+        else next.set('page', String(page));
       });
 
       window.setTimeout(() => {
-        resultsRef.current?.scrollIntoView(
-          {
-            behavior: 'smooth',
-            block: 'start',
-          },
-        );
+        resultsRef.current?.scrollIntoView({
+          behavior: 'smooth',
+          block: 'start',
+        });
       }, 30);
     },
     [setUrlParams],
   );
 
-  const activeFilterCount =
-    (currentTransaction ? 1 : 0) +
+  const filterCount =
     (currentPropertyType ? 1 : 0) +
     (currentArea ? 1 : 0) +
     (currentOwnerType ? 1 : 0) +
     (currentLegalStatus ? 1 : 0) +
-    (currentMinPrice ||
-    currentMaxPrice
-      ? 1
-      : 0) +
-    (currentMinArea ||
-    currentMaxArea
-      ? 1
-      : 0) +
-    (currentSort ? 1 : 0) +
-    (currentQuery ? 1 : 0);
+    (currentMinPrice || currentMaxPrice ? 1 : 0) +
+    (currentMinArea || currentMaxArea ? 1 : 0);
 
-  const hasFilters =
-    activeFilterCount > 0;
-
-  const total = getTotal(
-    result.meta,
-    result.items.length,
+  const hasFilters = Boolean(
+    filterCount ||
+      currentTransaction ||
+      currentSort ||
+      currentQuery,
   );
 
-  const currentPage =
-    getCurrentPage(
-      result.meta,
-      searchParams,
-    );
-
-  const pageSize =
-    getPageSize(
-      result.meta,
-      result.items.length,
-    );
+  const total = getTotal(result.meta, result.items.length);
+  const currentPage = getCurrentPage(result.meta, searchParams);
+  const pageSize = getPageSize(result.meta, result.items.length);
 
   const fromItem =
     total > 0
-      ? (currentPage - 1) *
-          Math.max(pageSize, 1) +
-        1
+      ? (currentPage - 1) * Math.max(pageSize, 1) + 1
       : 0;
 
   const toItem =
     total > 0
-      ? Math.min(
-          fromItem +
-            result.items.length -
-            1,
-          total,
-        )
+      ? Math.min(fromItem + result.items.length - 1, total)
       : 0;
 
-  const priceRangeLabel =
-    getRangeLabel({
-      min: currentMinPrice,
-      max: currentMaxPrice,
-      formatter: formatPrice,
-    });
+  const priceRangeLabel = getRangeLabel({
+    min: currentMinPrice,
+    max: currentMaxPrice,
+    formatter: formatPrice,
+  });
 
-  const areaRangeLabel =
-    getRangeLabel({
-      min: currentMinArea,
-      max: currentMaxArea,
-      formatter: formatNumber,
-      suffix: ' m²',
-    });
+  const areaRangeLabel = getRangeLabel({
+    min: currentMinArea,
+    max: currentMaxArea,
+    formatter: formatNumber,
+    suffix: ' m²',
+  });
 
   const rangeChanged =
-    String(rangeValues.minPrice) !==
-      String(currentMinPrice) ||
-    String(rangeValues.maxPrice) !==
-      String(currentMaxPrice) ||
-    String(rangeValues.minArea) !==
-      String(currentMinArea) ||
-    String(rangeValues.maxArea) !==
-      String(currentMaxArea);
+    String(rangeValues.minPrice) !== String(currentMinPrice) ||
+    String(rangeValues.maxPrice) !== String(currentMaxPrice) ||
+    String(rangeValues.minArea) !== String(currentMinArea) ||
+    String(rangeValues.maxArea) !== String(currentMaxArea);
+
+  const propertyTypeButtonLabel =
+    PROPERTY_TYPES[currentPropertyType] || 'Loại BĐS';
+  const areaButtonLabel = selectedArea?.name || 'Khu vực';
+  const priceButtonLabel = priceRangeLabel || 'Khoảng giá';
+  const sizeButtonLabel = areaRangeLabel || 'Diện tích';
 
   return (
     <section className="properties-page">
@@ -880,19 +595,14 @@ export default function PropertiesPage() {
           <div className="properties-hero__content">
             <span className="properties-hero__eyebrow">
               <Building2 size={17} />
-              Nhà đất Hòa Lạc
+              Bất động sản Hòa Lạc
             </span>
 
-            <h1>
-              Bất động sản Hòa Lạc
-            </h1>
+            <h1>Bất động sản Hòa Lạc</h1>
 
             <p>
-              Tìm kiếm nhà, đất, căn hộ,
-              biệt thự và bất động sản cho
-              thuê theo khu vực, mức giá,
-              diện tích và thông tin pháp
-              lý rõ ràng.
+              Tìm kiếm nhà, đất, căn hộ, biệt thự và bất động sản cho thuê
+              theo khu vực, mức giá, diện tích và thông tin pháp lý rõ ràng.
             </p>
 
             <div className="properties-hero__actions">
@@ -918,41 +628,16 @@ export default function PropertiesPage() {
             className="properties-hero__search"
             onSubmit={(event) => {
               event.preventDefault();
-
-              update(
-                'q',
-                searchInput.trim(),
-              );
+              update('q', searchInput.trim());
             }}
           >
-            <div className="properties-hero__search-heading">
-              <span>
-                <Search size={21} />
-              </span>
-
-              <div>
-                <strong>
-                  Tìm nhanh bất động sản
-                </strong>
-
-                <small>
-                  Tìm theo tiêu đề, vị trí
-                  hoặc nội dung tin đăng.
-                </small>
-              </div>
-            </div>
-
             <label>
-              <Search size={18} />
+              <Search size={19} />
 
               <input
                 type="search"
                 value={searchInput}
-                onChange={(event) =>
-                  setSearchInput(
-                    event.target.value,
-                  )
-                }
+                onChange={(event) => setSearchInput(event.target.value)}
                 placeholder="Ví dụ: đất Yên Bình, nhà Thạch Hòa..."
                 aria-label="Tìm kiếm bất động sản"
               />
@@ -984,825 +669,777 @@ export default function PropertiesPage() {
         >
           <button
             type="button"
-            className={
-              !currentTransaction
-                ? 'is-active'
-                : ''
-            }
-            onClick={() =>
-              update(
-                'transactionType',
-                '',
-              )
-            }
+            className={!currentTransaction ? 'is-active' : ''}
+            onClick={() => update('transactionType', '')}
           >
             <Building2 size={16} />
             Tất cả giao dịch
           </button>
 
-          {Object.entries(
-            TRANSACTION_TYPES,
-          ).map(([value, label]) => {
-            const TransactionIcon =
-              getTransactionIcon(value);
-
-            const selected =
-              currentTransaction ===
-              value;
+          {Object.entries(TRANSACTION_TYPES).map(([value, label]) => {
+            const TransactionIcon = getTransactionIcon(value);
+            const selected = currentTransaction === value;
 
             return (
               <button
                 type="button"
                 key={value}
-                className={
-                  selected
-                    ? 'is-active'
-                    : ''
-                }
+                className={selected ? 'is-active' : ''}
                 onClick={() =>
-                  update(
-                    'transactionType',
-                    selected
-                      ? ''
-                      : value,
-                  )
+                  update('transactionType', selected ? '' : value)
                 }
               >
-                <TransactionIcon
-                  size={16}
-                />
-
+                <TransactionIcon size={16} />
                 {label}
               </button>
             );
           })}
         </nav>
 
-        <div className="properties-mobile-controls">
+        <div
+          className="properties-filter-toolbar"
+          ref={quickToolbarRef}
+        >
           <button
             type="button"
-            onClick={() =>
-              setMobileFiltersOpen(true)
-            }
+            className="properties-filter-toolbar__main"
+            onClick={openFilterModal}
           >
-            <SlidersHorizontal
-              size={17}
-            />
-
-            Bộ lọc
-
-            {activeFilterCount ? (
-              <span>
-                {activeFilterCount}
-              </span>
-            ) : null}
+            <Filter size={18} />
+            <span>Lọc</span>
+            {filterCount ? <b>{filterCount}</b> : null}
           </button>
 
-          <label>
-            <SortIcon size={16} />
+          <div className="properties-quick-filter">
+            <button
+              type="button"
+              className={currentPropertyType ? 'is-selected' : ''}
+              aria-expanded={quickFilterOpen === 'propertyType'}
+              onClick={() => toggleQuickFilter('propertyType')}
+            >
+              <Building2 size={17} />
+              <span>{propertyTypeButtonLabel}</span>
+              <ChevronDown size={16} />
+            </button>
 
+            {quickFilterOpen === 'propertyType' ? (
+              <div className="properties-filter-popover properties-filter-popover--list">
+                <header>
+                  <strong>Loại bất động sản</strong>
+                  <button
+                    type="button"
+                    aria-label="Đóng"
+                    onClick={() => setQuickFilterOpen('')}
+                  >
+                    <X size={19} />
+                  </button>
+                </header>
+
+                <div className="properties-filter-option-list">
+                  <button
+                    type="button"
+                    className={!currentPropertyType ? 'is-active' : ''}
+                    onClick={() => {
+                      update('propertyType', '');
+                      setQuickFilterOpen('');
+                    }}
+                  >
+                    <span>Tất cả loại BĐS</span>
+                    {!currentPropertyType ? <Check size={17} /> : null}
+                  </button>
+
+                  {Object.entries(PROPERTY_TYPES).map(([value, label]) => (
+                    <button
+                      type="button"
+                      key={value}
+                      className={currentPropertyType === value ? 'is-active' : ''}
+                      onClick={() => {
+                        update('propertyType', value);
+                        setQuickFilterOpen('');
+                      }}
+                    >
+                      <span>{label}</span>
+                      {currentPropertyType === value ? <Check size={17} /> : null}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+          </div>
+
+          <div className="properties-quick-filter">
+            <button
+              type="button"
+              className={currentArea ? 'is-selected' : ''}
+              aria-expanded={quickFilterOpen === 'location'}
+              onClick={() => toggleQuickFilter('location')}
+            >
+              <MapPin size={17} />
+              <span>{areaButtonLabel}</span>
+              <ChevronDown size={16} />
+            </button>
+
+            {quickFilterOpen === 'location' ? (
+              <div className="properties-filter-popover properties-filter-popover--list properties-filter-popover--location">
+                <header>
+                  <strong>Khu vực</strong>
+                  <button
+                    type="button"
+                    aria-label="Đóng"
+                    onClick={() => setQuickFilterOpen('')}
+                  >
+                    <X size={19} />
+                  </button>
+                </header>
+
+                <div className="properties-filter-option-list">
+                  <button
+                    type="button"
+                    className={!currentArea ? 'is-active' : ''}
+                    onClick={() => {
+                      update('area', '');
+                      setQuickFilterOpen('');
+                    }}
+                  >
+                    <span>Tất cả khu vực</span>
+                    {!currentArea ? <Check size={17} /> : null}
+                  </button>
+
+                  {areas.map((item) => (
+                    <button
+                      type="button"
+                      key={item._id}
+                      className={
+                        String(currentArea) === String(item._id) ||
+                        String(currentArea) === String(item.slug)
+                          ? 'is-active'
+                          : ''
+                      }
+                      onClick={() => {
+                        update('area', item._id);
+                        setQuickFilterOpen('');
+                      }}
+                    >
+                      <span>{item.name}</span>
+                      {String(currentArea) === String(item._id) ||
+                      String(currentArea) === String(item.slug) ? (
+                        <Check size={17} />
+                      ) : null}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : null}
+          </div>
+
+          <div className="properties-quick-filter">
+            <button
+              type="button"
+              className={priceRangeLabel ? 'is-selected' : ''}
+              aria-expanded={quickFilterOpen === 'price'}
+              onClick={() => toggleQuickFilter('price')}
+            >
+              <WalletCards size={17} />
+              <span>{priceButtonLabel}</span>
+              <ChevronDown size={16} />
+            </button>
+
+            {quickFilterOpen === 'price' ? (
+              <div className="properties-filter-popover properties-filter-popover--range">
+                <header>
+                  <strong>Khoảng giá</strong>
+                  <button
+                    type="button"
+                    aria-label="Đóng"
+                    onClick={() => setQuickFilterOpen('')}
+                  >
+                    <X size={19} />
+                  </button>
+                </header>
+
+                <div className="properties-popover-range-inputs">
+                  <label>
+                    <span>Giá thấp nhất</span>
+                    <input
+                      type="number"
+                      min="0"
+                      value={rangeValues.minPrice}
+                      onChange={(event) =>
+                        setRangeValues((current) => ({
+                          ...current,
+                          minPrice: event.target.value,
+                        }))
+                      }
+                      placeholder="Từ"
+                    />
+                  </label>
+
+                  <span>→</span>
+
+                  <label>
+                    <span>Giá cao nhất</span>
+                    <input
+                      type="number"
+                      min="0"
+                      value={rangeValues.maxPrice}
+                      onChange={(event) =>
+                        setRangeValues((current) => ({
+                          ...current,
+                          maxPrice: event.target.value,
+                        }))
+                      }
+                      placeholder="Đến"
+                    />
+                  </label>
+                </div>
+
+                <div className="properties-popover-presets">
+                  {PRICE_PRESETS.map((preset) => {
+                    const selected =
+                      String(rangeValues.minPrice) === String(preset.min) &&
+                      String(rangeValues.maxPrice) === String(preset.max);
+
+                    return (
+                      <button
+                        type="button"
+                        key={preset.label}
+                        className={selected ? 'is-active' : ''}
+                        onClick={() => applyPricePreset(preset)}
+                      >
+                        {preset.label}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {rangeError ? (
+                  <div className="properties-range-error">{rangeError}</div>
+                ) : null}
+
+                <footer>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setRangeValues((current) => ({
+                        ...current,
+                        minPrice: '',
+                        maxPrice: '',
+                      }))
+                    }
+                  >
+                    Đặt lại
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (applyRangeFilters()) setQuickFilterOpen('');
+                    }}
+                  >
+                    Áp dụng
+                  </button>
+                </footer>
+              </div>
+            ) : null}
+          </div>
+
+          <div className="properties-quick-filter">
+            <button
+              type="button"
+              className={areaRangeLabel ? 'is-selected' : ''}
+              aria-expanded={quickFilterOpen === 'size'}
+              onClick={() => toggleQuickFilter('size')}
+            >
+              <Ruler size={17} />
+              <span>{sizeButtonLabel}</span>
+              <ChevronDown size={16} />
+            </button>
+
+            {quickFilterOpen === 'size' ? (
+              <div className="properties-filter-popover properties-filter-popover--range properties-filter-popover--size">
+                <header>
+                  <strong>Diện tích</strong>
+                  <button
+                    type="button"
+                    aria-label="Đóng"
+                    onClick={() => setQuickFilterOpen('')}
+                  >
+                    <X size={19} />
+                  </button>
+                </header>
+
+                <div className="properties-popover-range-inputs">
+                  <label>
+                    <span>Diện tích nhỏ nhất</span>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.1"
+                      value={rangeValues.minArea}
+                      onChange={(event) =>
+                        setRangeValues((current) => ({
+                          ...current,
+                          minArea: event.target.value,
+                        }))
+                      }
+                      placeholder="Từ"
+                    />
+                  </label>
+
+                  <span>→</span>
+
+                  <label>
+                    <span>Diện tích lớn nhất</span>
+                    <input
+                      type="number"
+                      min="0"
+                      step="0.1"
+                      value={rangeValues.maxArea}
+                      onChange={(event) =>
+                        setRangeValues((current) => ({
+                          ...current,
+                          maxArea: event.target.value,
+                        }))
+                      }
+                      placeholder="Đến"
+                    />
+                  </label>
+                </div>
+
+                <div className="properties-popover-presets">
+                  {AREA_PRESETS.map((preset) => {
+                    const selected =
+                      String(rangeValues.minArea) === String(preset.min) &&
+                      String(rangeValues.maxArea) === String(preset.max);
+
+                    return (
+                      <button
+                        type="button"
+                        key={preset.label}
+                        className={selected ? 'is-active' : ''}
+                        onClick={() => applyAreaPreset(preset)}
+                      >
+                        {preset.label}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {rangeError ? (
+                  <div className="properties-range-error">{rangeError}</div>
+                ) : null}
+
+                <footer>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setRangeValues((current) => ({
+                        ...current,
+                        minArea: '',
+                        maxArea: '',
+                      }))
+                    }
+                  >
+                    Đặt lại
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      if (applyRangeFilters()) setQuickFilterOpen('');
+                    }}
+                  >
+                    Áp dụng
+                  </button>
+                </footer>
+              </div>
+            ) : null}
+          </div>
+
+          <label className="properties-filter-toolbar__sort">
+            <SortIcon size={17} />
             <select
               value={currentSort}
-              onChange={(event) =>
-                update(
-                  'sort',
-                  event.target.value,
-                )
-              }
+              onChange={(event) => update('sort', event.target.value)}
+              aria-label="Sắp xếp bất động sản"
             >
-              {SORT_OPTIONS.map(
-                (option) => (
-                  <option
-                    key={option.value}
-                    value={option.value}
-                  >
-                    {option.label}
-                  </option>
-                ),
-              )}
+              {SORT_OPTIONS.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
             </select>
           </label>
         </div>
 
-        <section
-          className={[
-            'properties-filter-panel',
-            mobileFiltersOpen
-              ? 'is-open'
-              : '',
-          ]
-            .filter(Boolean)
-            .join(' ')}
-        >
-          <div className="properties-filter-panel__mobile-header">
-            <div>
-              <Filter size={19} />
+        {filterCount ? (
+          <div className="properties-active-filters properties-active-filters--compact">
+            <span>Đang lọc:</span>
 
-              <strong>
-                Bộ lọc bất động sản
-              </strong>
-            </div>
-
-            <button
-              type="button"
-              aria-label="Đóng bộ lọc"
-              onClick={() =>
-                setMobileFiltersOpen(false)
-              }
-            >
-              <X size={21} />
-            </button>
-          </div>
-
-          <div className="properties-filter-panel__heading">
-            <div>
-              <span>
-                <SlidersHorizontal
-                  size={18}
-                />
-              </span>
-
-              <div>
-                <h2>
-                  Bộ lọc tìm kiếm
-                </h2>
-
-                <p>
-                  Thu hẹp kết quả theo loại
-                  hình, vị trí, giá, diện
-                  tích và pháp lý.
-                </p>
-              </div>
-            </div>
-
-            {hasFilters ? (
-              <button
-                type="button"
-                onClick={clearAllFilters}
-              >
-                <RotateCcw size={16} />
-                Xóa tất cả
+            {currentPropertyType ? (
+              <button type="button" onClick={() => update('propertyType', '')}>
+                {PROPERTY_TYPES[currentPropertyType] || currentPropertyType}
+                <X size={13} />
               </button>
             ) : null}
-          </div>
 
-          <div className="properties-filter-selects">
-            <label className="properties-filter-field">
-              <span>
-                Loại bất động sản
-              </span>
+            {currentArea ? (
+              <button type="button" onClick={() => update('area', '')}>
+                {selectedArea?.name || 'Khu vực'}
+                <X size={13} />
+              </button>
+            ) : null}
 
-              <div>
-                <Building2 size={18} />
+            {priceRangeLabel ? (
+              <button
+                type="button"
+                onClick={() =>
+                  updateMultiple({ minPrice: '', maxPrice: '' })
+                }
+              >
+                {priceRangeLabel}
+                <X size={13} />
+              </button>
+            ) : null}
 
-                <select
-                  value={
-                    currentPropertyType
-                  }
-                  onChange={(event) =>
-                    update(
-                      'propertyType',
-                      event.target.value,
-                    )
-                  }
-                >
-                  <option value="">
-                    Tất cả loại BĐS
-                  </option>
+            {areaRangeLabel ? (
+              <button
+                type="button"
+                onClick={() => updateMultiple({ minArea: '', maxArea: '' })}
+              >
+                {areaRangeLabel}
+                <X size={13} />
+              </button>
+            ) : null}
 
-                  {Object.entries(
-                    PROPERTY_TYPES,
-                  ).map(
-                    ([value, label]) => (
-                      <option
-                        key={value}
-                        value={value}
-                      >
-                        {label}
-                      </option>
-                    ),
-                  )}
-                </select>
-              </div>
-            </label>
+            {currentOwnerType ? (
+              <button type="button" onClick={() => update('ownerType', '')}>
+                {OWNER_TYPES[currentOwnerType] || currentOwnerType}
+                <X size={13} />
+              </button>
+            ) : null}
 
-            <label className="properties-filter-field">
-              <span>Khu vực</span>
-
-              <div>
-                <MapPin size={18} />
-
-                <select
-                  value={currentArea}
-                  onChange={(event) =>
-                    update(
-                      'area',
-                      event.target.value,
-                    )
-                  }
-                >
-                  <option value="">
-                    Tất cả khu vực
-                  </option>
-
-                  {areas.map((item) => (
-                    <option
-                      key={item._id}
-                      value={item._id}
-                    >
-                      {item.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-            </label>
-
-            <label className="properties-filter-field">
-              <span>Người đăng</span>
-
-              <div>
-                <UserRound size={18} />
-
-                <select
-                  value={
-                    currentOwnerType
-                  }
-                  onChange={(event) =>
-                    update(
-                      'ownerType',
-                      event.target.value,
-                    )
-                  }
-                >
-                  <option value="">
-                    Tất cả người đăng
-                  </option>
-
-                  {Object.entries(
-                    OWNER_TYPES,
-                  ).map(
-                    ([value, label]) => (
-                      <option
-                        key={value}
-                        value={value}
-                      >
-                        {label}
-                      </option>
-                    ),
-                  )}
-                </select>
-              </div>
-            </label>
-
-            <label className="properties-filter-field">
-              <span>Pháp lý</span>
-
-              <div>
-                <ShieldCheck size={18} />
-
-                <select
-                  value={
-                    currentLegalStatus
-                  }
-                  onChange={(event) =>
-                    update(
-                      'legalStatus',
-                      event.target.value,
-                    )
-                  }
-                >
-                  <option value="">
-                    Tất cả pháp lý
-                  </option>
-
-                  {Object.entries(
-                    LEGAL_STATUS,
-                  ).map(
-                    ([value, label]) => (
-                      <option
-                        key={value}
-                        value={value}
-                      >
-                        {label}
-                      </option>
-                    ),
-                  )}
-                </select>
-              </div>
-            </label>
-
-            <label className="properties-filter-field">
-              <span>Sắp xếp</span>
-
-              <div>
-                <SortIcon size={18} />
-
-                <select
-                  value={currentSort}
-                  onChange={(event) =>
-                    update(
-                      'sort',
-                      event.target.value,
-                    )
-                  }
-                >
-                  {SORT_OPTIONS.map(
-                    (option) => (
-                      <option
-                        key={
-                          option.value
-                        }
-                        value={
-                          option.value
-                        }
-                      >
-                        {option.label}
-                      </option>
-                    ),
-                  )}
-                </select>
-              </div>
-            </label>
-          </div>
-
-          <div className="properties-range-section">
-            <div className="properties-range-group">
-              <div className="properties-range-group__heading">
-                <span>
-                  <WalletCards
-                    size={18}
-                  />
-                </span>
-
-                <div>
-                  <strong>
-                    Khoảng giá
-                  </strong>
-
-                  <small>
-                    Đơn vị tính theo tổng giá
-                    tin đăng
-                  </small>
-                </div>
-              </div>
-
-              <div className="properties-range-inputs">
-                <label>
-                  <span>Từ</span>
-
-                  <input
-                    type="number"
-                    min="0"
-                    value={
-                      rangeValues.minPrice
-                    }
-                    onChange={(event) =>
-                      setRangeValues(
-                        (current) => ({
-                          ...current,
-                          minPrice:
-                            event.target
-                              .value,
-                        }),
-                      )
-                    }
-                    placeholder="0"
-                  />
-
-                  <small>VNĐ</small>
-                </label>
-
-                <span className="properties-range-separator">
-                  –
-                </span>
-
-                <label>
-                  <span>Đến</span>
-
-                  <input
-                    type="number"
-                    min="0"
-                    value={
-                      rangeValues.maxPrice
-                    }
-                    onChange={(event) =>
-                      setRangeValues(
-                        (current) => ({
-                          ...current,
-                          maxPrice:
-                            event.target
-                              .value,
-                        }),
-                      )
-                    }
-                    placeholder="Không giới hạn"
-                  />
-
-                  <small>VNĐ</small>
-                </label>
-              </div>
-
-              <div className="properties-range-presets">
-                {PRICE_PRESETS.map(
-                  (preset) => {
-                    const selected =
-                      String(
-                        currentMinPrice,
-                      ) ===
-                        String(
-                          preset.min,
-                        ) &&
-                      String(
-                        currentMaxPrice,
-                      ) ===
-                        String(
-                          preset.max,
-                        );
-
-                    return (
-                      <button
-                        type="button"
-                        key={preset.label}
-                        className={
-                          selected
-                            ? 'is-active'
-                            : ''
-                        }
-                        onClick={() =>
-                          applyPricePreset(
-                            preset,
-                          )
-                        }
-                      >
-                        {preset.label}
-                      </button>
-                    );
-                  },
-                )}
-              </div>
-            </div>
-
-            <div className="properties-range-group">
-              <div className="properties-range-group__heading">
-                <span>
-                  <Ruler size={18} />
-                </span>
-
-                <div>
-                  <strong>
-                    Khoảng diện tích
-                  </strong>
-
-                  <small>
-                    Diện tích đất theo mét
-                    vuông
-                  </small>
-                </div>
-              </div>
-
-              <div className="properties-range-inputs">
-                <label>
-                  <span>Từ</span>
-
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.1"
-                    value={
-                      rangeValues.minArea
-                    }
-                    onChange={(event) =>
-                      setRangeValues(
-                        (current) => ({
-                          ...current,
-                          minArea:
-                            event.target
-                              .value,
-                        }),
-                      )
-                    }
-                    placeholder="0"
-                  />
-
-                  <small>m²</small>
-                </label>
-
-                <span className="properties-range-separator">
-                  –
-                </span>
-
-                <label>
-                  <span>Đến</span>
-
-                  <input
-                    type="number"
-                    min="0"
-                    step="0.1"
-                    value={
-                      rangeValues.maxArea
-                    }
-                    onChange={(event) =>
-                      setRangeValues(
-                        (current) => ({
-                          ...current,
-                          maxArea:
-                            event.target
-                              .value,
-                        }),
-                      )
-                    }
-                    placeholder="Không giới hạn"
-                  />
-
-                  <small>m²</small>
-                </label>
-              </div>
-
-              <div className="properties-range-presets">
-                {AREA_PRESETS.map(
-                  (preset) => {
-                    const selected =
-                      String(
-                        currentMinArea,
-                      ) ===
-                        String(
-                          preset.min,
-                        ) &&
-                      String(
-                        currentMaxArea,
-                      ) ===
-                        String(
-                          preset.max,
-                        );
-
-                    return (
-                      <button
-                        type="button"
-                        key={preset.label}
-                        className={
-                          selected
-                            ? 'is-active'
-                            : ''
-                        }
-                        onClick={() =>
-                          applyAreaPreset(
-                            preset,
-                          )
-                        }
-                      >
-                        {preset.label}
-                      </button>
-                    );
-                  },
-                )}
-              </div>
-            </div>
-          </div>
-
-          {rangeError ? (
-            <div className="properties-range-error">
-              {rangeError}
-            </div>
-          ) : null}
-
-          <div className="properties-range-actions">
-            <span>
-              {rangeChanged
-                ? 'Khoảng giá hoặc diện tích chưa được áp dụng.'
-                : 'Các khoảng tìm kiếm đã được đồng bộ.'}
-            </span>
+            {currentLegalStatus ? (
+              <button type="button" onClick={() => update('legalStatus', '')}>
+                {LEGAL_STATUS[currentLegalStatus] || currentLegalStatus}
+                <X size={13} />
+              </button>
+            ) : null}
 
             <button
               type="button"
-              disabled={!rangeChanged}
-              onClick={applyRangeFilters}
-            >
-              <Filter size={16} />
-              Áp dụng khoảng tìm kiếm
-            </button>
-          </div>
-
-          {hasFilters ? (
-            <div className="properties-active-filters">
-              <span>
-                Đang lọc:
-              </span>
-
-              {currentTransaction ? (
-                <button
-                  type="button"
-                  onClick={() =>
-                    update(
-                      'transactionType',
-                      '',
-                    )
-                  }
-                >
-                  <Home size={14} />
-
-                  {TRANSACTION_TYPES[
-                    currentTransaction
-                  ] ||
-                    currentTransaction}
-
-                  <X size={14} />
-                </button>
-              ) : null}
-
-              {currentPropertyType ? (
-                <button
-                  type="button"
-                  onClick={() =>
-                    update(
-                      'propertyType',
-                      '',
-                    )
-                  }
-                >
-                  <Building2
-                    size={14}
-                  />
-
-                  {PROPERTY_TYPES[
-                    currentPropertyType
-                  ] ||
-                    currentPropertyType}
-
-                  <X size={14} />
-                </button>
-              ) : null}
-
-              {currentArea ? (
-                <button
-                  type="button"
-                  onClick={() =>
-                    update('area', '')
-                  }
-                >
-                  <MapPin size={14} />
-
-                  {selectedArea?.name ||
-                    'Khu vực'}
-
-                  <X size={14} />
-                </button>
-              ) : null}
-
-              {currentOwnerType ? (
-                <button
-                  type="button"
-                  onClick={() =>
-                    update(
-                      'ownerType',
-                      '',
-                    )
-                  }
-                >
-                  <UserRound size={14} />
-
-                  {OWNER_TYPES[
-                    currentOwnerType
-                  ] || currentOwnerType}
-
-                  <X size={14} />
-                </button>
-              ) : null}
-
-              {currentLegalStatus ? (
-                <button
-                  type="button"
-                  onClick={() =>
-                    update(
-                      'legalStatus',
-                      '',
-                    )
-                  }
-                >
-                  <ShieldCheck
-                    size={14}
-                  />
-
-                  {LEGAL_STATUS[
-                    currentLegalStatus
-                  ] ||
-                    currentLegalStatus}
-
-                  <X size={14} />
-                </button>
-              ) : null}
-
-              {priceRangeLabel ? (
-                <button
-                  type="button"
-                  onClick={() =>
-                    updateMultiple({
-                      minPrice: '',
-                      maxPrice: '',
-                    })
-                  }
-                >
-                  <WalletCards
-                    size={14}
-                  />
-
-                  {priceRangeLabel}
-
-                  <X size={14} />
-                </button>
-              ) : null}
-
-              {areaRangeLabel ? (
-                <button
-                  type="button"
-                  onClick={() =>
-                    updateMultiple({
-                      minArea: '',
-                      maxArea: '',
-                    })
-                  }
-                >
-                  <Ruler size={14} />
-
-                  {areaRangeLabel}
-
-                  <X size={14} />
-                </button>
-              ) : null}
-
-              {currentSort ? (
-                <button
-                  type="button"
-                  onClick={() =>
-                    update('sort', '')
-                  }
-                >
-                  <SortIcon size={14} />
-
-                  {
-                    currentSortOption.label
-                  }
-
-                  <X size={14} />
-                </button>
-              ) : null}
-
-              {currentQuery ? (
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSearchInput('');
-                    update('q', '');
-                  }}
-                >
-                  <Search size={14} />
-
-                  “{currentQuery}”
-
-                  <X size={14} />
-                </button>
-              ) : null}
-            </div>
-          ) : null}
-
-          <div className="properties-filter-panel__mobile-actions">
-            <button
-              type="button"
-              onClick={clearAllFilters}
-              disabled={!hasFilters}
+              className="properties-active-filters__clear"
+              onClick={clearFiltersOnly}
             >
               Xóa bộ lọc
             </button>
+          </div>
+        ) : null}
 
+        {filtersOpen ? (
+          <div className="properties-filter-modal-layer">
             <button
               type="button"
-              onClick={() => {
-                if (rangeChanged) {
-                  applyRangeFilters();
+              className="properties-filter-modal-backdrop"
+              aria-label="Đóng bộ lọc"
+              onClick={closeFilterModal}
+            />
 
-                  if (rangeError) {
-                    return;
-                  }
-                }
-
-                setMobileFiltersOpen(
-                  false,
-                );
-              }}
+            <section
+              className="properties-filter-modal"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Bộ lọc bất động sản"
             >
-              Xem kết quả
-            </button>
-          </div>
-        </section>
+              <header className="properties-filter-modal__header">
+                <div>
+                  <SlidersHorizontal size={20} />
+                  <strong>Bộ lọc</strong>
+                </div>
 
-        {mobileFiltersOpen ? (
-          <button
-            type="button"
-            className="properties-filter-overlay"
-            aria-label="Đóng bộ lọc"
-            onClick={() =>
-              setMobileFiltersOpen(false)
-            }
-          />
+                <button
+                  type="button"
+                  aria-label="Đóng bộ lọc"
+                  onClick={closeFilterModal}
+                >
+                  <X size={22} />
+                </button>
+              </header>
+
+              <div className="properties-filter-modal__body">
+                <section className="properties-filter-modal__section">
+                  <h3>Loại bất động sản & khu vực</h3>
+
+                  <div className="properties-modal-select-grid">
+                    <label>
+                      <span>Loại bất động sản</span>
+                      <div>
+                        <Building2 size={18} />
+                        <select
+                          value={currentPropertyType}
+                          onChange={(event) =>
+                            update('propertyType', event.target.value)
+                          }
+                        >
+                          <option value="">Tất cả loại BĐS</option>
+                          {Object.entries(PROPERTY_TYPES).map(
+                            ([value, label]) => (
+                              <option key={value} value={value}>
+                                {label}
+                              </option>
+                            ),
+                          )}
+                        </select>
+                      </div>
+                    </label>
+
+                    <label>
+                      <span>Khu vực</span>
+                      <div>
+                        <MapPin size={18} />
+                        <select
+                          value={currentArea}
+                          onChange={(event) => update('area', event.target.value)}
+                        >
+                          <option value="">Tất cả khu vực</option>
+                          {areas.map((item) => (
+                            <option key={item._id} value={item._id}>
+                              {item.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </label>
+                  </div>
+                </section>
+
+                <section className="properties-filter-modal__section">
+                  <div className="properties-filter-modal__section-heading">
+                    <div>
+                      <WalletCards size={18} />
+                      <h3>Khoảng giá</h3>
+                    </div>
+                    {priceRangeLabel ? <span>{priceRangeLabel}</span> : null}
+                  </div>
+
+                  <div className="properties-modal-range-inputs">
+                    <label>
+                      <span>Từ</span>
+                      <input
+                        type="number"
+                        min="0"
+                        value={rangeValues.minPrice}
+                        onChange={(event) =>
+                          setRangeValues((current) => ({
+                            ...current,
+                            minPrice: event.target.value,
+                          }))
+                        }
+                        placeholder="0"
+                      />
+                      <small>VNĐ</small>
+                    </label>
+
+                    <span>–</span>
+
+                    <label>
+                      <span>Đến</span>
+                      <input
+                        type="number"
+                        min="0"
+                        value={rangeValues.maxPrice}
+                        onChange={(event) =>
+                          setRangeValues((current) => ({
+                            ...current,
+                            maxPrice: event.target.value,
+                          }))
+                        }
+                        placeholder="Không giới hạn"
+                      />
+                      <small>VNĐ</small>
+                    </label>
+                  </div>
+
+                  <div className="properties-modal-preset-grid">
+                    {PRICE_PRESETS.map((preset) => {
+                      const selected =
+                        String(rangeValues.minPrice) === String(preset.min) &&
+                        String(rangeValues.maxPrice) === String(preset.max);
+
+                      return (
+                        <button
+                          type="button"
+                          key={preset.label}
+                          className={selected ? 'is-active' : ''}
+                          onClick={() => applyPricePreset(preset)}
+                        >
+                          {preset.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </section>
+
+                <section className="properties-filter-modal__section">
+                  <div className="properties-filter-modal__section-heading">
+                    <div>
+                      <Ruler size={18} />
+                      <h3>Diện tích</h3>
+                    </div>
+                    {areaRangeLabel ? <span>{areaRangeLabel}</span> : null}
+                  </div>
+
+                  <div className="properties-modal-range-inputs">
+                    <label>
+                      <span>Từ</span>
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.1"
+                        value={rangeValues.minArea}
+                        onChange={(event) =>
+                          setRangeValues((current) => ({
+                            ...current,
+                            minArea: event.target.value,
+                          }))
+                        }
+                        placeholder="0"
+                      />
+                      <small>m²</small>
+                    </label>
+
+                    <span>–</span>
+
+                    <label>
+                      <span>Đến</span>
+                      <input
+                        type="number"
+                        min="0"
+                        step="0.1"
+                        value={rangeValues.maxArea}
+                        onChange={(event) =>
+                          setRangeValues((current) => ({
+                            ...current,
+                            maxArea: event.target.value,
+                          }))
+                        }
+                        placeholder="Không giới hạn"
+                      />
+                      <small>m²</small>
+                    </label>
+                  </div>
+
+                  <div className="properties-modal-preset-grid">
+                    {AREA_PRESETS.map((preset) => {
+                      const selected =
+                        String(rangeValues.minArea) === String(preset.min) &&
+                        String(rangeValues.maxArea) === String(preset.max);
+
+                      return (
+                        <button
+                          type="button"
+                          key={preset.label}
+                          className={selected ? 'is-active' : ''}
+                          onClick={() => applyAreaPreset(preset)}
+                        >
+                          {preset.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </section>
+
+                <section className="properties-filter-modal__section">
+                  <h3>Thông tin tin đăng</h3>
+
+                  <div className="properties-modal-select-grid properties-modal-select-grid--three">
+                    <label>
+                      <span>Người đăng</span>
+                      <div>
+                        <UserRound size={18} />
+                        <select
+                          value={currentOwnerType}
+                          onChange={(event) =>
+                            update('ownerType', event.target.value)
+                          }
+                        >
+                          <option value="">Tất cả người đăng</option>
+                          {Object.entries(OWNER_TYPES).map(([value, label]) => (
+                            <option key={value} value={value}>
+                              {label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </label>
+
+                    <label>
+                      <span>Pháp lý</span>
+                      <div>
+                        <ShieldCheck size={18} />
+                        <select
+                          value={currentLegalStatus}
+                          onChange={(event) =>
+                            update('legalStatus', event.target.value)
+                          }
+                        >
+                          <option value="">Tất cả pháp lý</option>
+                          {Object.entries(LEGAL_STATUS).map(([value, label]) => (
+                            <option key={value} value={value}>
+                              {label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </label>
+
+                    <label>
+                      <span>Sắp xếp</span>
+                      <div>
+                        <SortIcon size={18} />
+                        <select
+                          value={currentSort}
+                          onChange={(event) => update('sort', event.target.value)}
+                        >
+                          {SORT_OPTIONS.map((option) => (
+                            <option key={option.value} value={option.value}>
+                              {option.label}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    </label>
+                  </div>
+                </section>
+
+                {rangeError ? (
+                  <div className="properties-range-error properties-range-error--modal">
+                    {rangeError}
+                  </div>
+                ) : null}
+              </div>
+
+              <footer className="properties-filter-modal__footer">
+                <button
+                  type="button"
+                  className="properties-filter-modal__reset"
+                  onClick={clearFiltersOnly}
+                >
+                  <RotateCcw size={17} />
+                  Đặt lại
+                </button>
+
+                <button
+                  type="button"
+                  className="properties-filter-modal__apply"
+                  onClick={showFilterResults}
+                >
+                  Xem kết quả
+                  {filterCount ? <span>{filterCount}</span> : null}
+                </button>
+              </footer>
+            </section>
+          </div>
         ) : null}
 
         <section
@@ -1825,22 +1462,12 @@ export default function PropertiesPage() {
                     : 'Tin bất động sản mới nhất'}
               </h2>
 
-              {!result.loading &&
-              !result.error ? (
+              {!result.loading && !result.error ? (
                 <p>
                   {total > 0 ? (
                     <>
-                      Hiển thị{' '}
-                      <strong>
-                        {fromItem}–{toItem}
-                      </strong>{' '}
-                      trong tổng số{' '}
-                      <strong>
-                        {total.toLocaleString(
-                          'vi-VN',
-                        )}
-                      </strong>{' '}
-                      tin đăng.
+                      Hiển thị <strong>{fromItem}–{toItem}</strong> trong tổng số{' '}
+                      <strong>{total.toLocaleString('vi-VN')}</strong> tin đăng.
                     </>
                   ) : (
                     'Chưa có tin đăng phù hợp.'
@@ -1858,45 +1485,28 @@ export default function PropertiesPage() {
               >
                 <RefreshCw
                   size={16}
-                  className={
-                    result.loading
-                      ? 'is-spinning'
-                      : ''
-                  }
+                  className={result.loading ? 'is-spinning' : ''}
                 />
-
                 Làm mới
               </button>
 
               <div className="properties-view-switch">
                 <button
                   type="button"
-                  className={
-                    viewMode === 'grid'
-                      ? 'is-active'
-                      : ''
-                  }
+                  className={viewMode === 'grid' ? 'is-active' : ''}
                   aria-label="Hiển thị dạng lưới"
                   title="Dạng lưới"
-                  onClick={() =>
-                    setViewMode('grid')
-                  }
+                  onClick={() => setViewMode('grid')}
                 >
                   <Grid3X3 size={18} />
                 </button>
 
                 <button
                   type="button"
-                  className={
-                    viewMode === 'list'
-                      ? 'is-active'
-                      : ''
-                  }
+                  className={viewMode === 'list' ? 'is-active' : ''}
                   aria-label="Hiển thị dạng danh sách"
                   title="Dạng danh sách"
-                  onClick={() =>
-                    setViewMode('list')
-                  }
+                  onClick={() => setViewMode('list')}
                 >
                   <List size={19} />
                 </button>
@@ -1908,31 +1518,19 @@ export default function PropertiesPage() {
             {result.loading ? (
               <LoadingBlock />
             ) : result.error ? (
-              <ErrorState
-                error={result.error}
-                onRetry={result.reload}
-              />
+              <ErrorState error={result.error} onRetry={result.reload} />
             ) : result.items.length ? (
               <div
                 className={[
                   'properties-grid',
-                  viewMode === 'list'
-                    ? 'is-list'
-                    : 'is-grid',
+                  viewMode === 'list' ? 'is-list' : 'is-grid',
                 ].join(' ')}
               >
-                {result.items.map(
-                  (item) => (
-                    <article
-                      className="properties-item"
-                      key={item._id}
-                    >
-                      <PropertyCard
-                        item={item}
-                      />
-                    </article>
-                  ),
-                )}
+                {result.items.map((item) => (
+                  <article className="properties-item" key={item._id}>
+                    <PropertyCard item={item} />
+                  </article>
+                ))}
               </div>
             ) : (
               <div className="properties-empty-state">
@@ -1940,9 +1538,7 @@ export default function PropertiesPage() {
                   <Building2 size={39} />
                 </span>
 
-                <h3>
-                  Không có tin phù hợp
-                </h3>
+                <h3>Không có tin phù hợp</h3>
 
                 <p>
                   {hasFilters
@@ -1952,16 +1548,8 @@ export default function PropertiesPage() {
 
                 <div>
                   {hasFilters ? (
-                    <button
-                      type="button"
-                      onClick={
-                        clearAllFilters
-                      }
-                    >
-                      <RotateCcw
-                        size={17}
-                      />
-
+                    <button type="button" onClick={clearAllFilters}>
+                      <RotateCcw size={17} />
                       Xóa tất cả bộ lọc
                     </button>
                   ) : null}
@@ -1976,19 +1564,13 @@ export default function PropertiesPage() {
           </div>
         </section>
 
-        {!result.loading &&
-        !result.error &&
-        result.items.length ? (
+        {!result.loading && !result.error && result.items.length ? (
           <div className="properties-pagination">
-            <Pagination
-              meta={result.meta}
-              onPageChange={setPage}
-            />
+            <Pagination meta={result.meta} onPageChange={setPage} />
 
             {result.meta?.totalPages ? (
               <p>
-                Trang {currentPage} /{' '}
-                {result.meta.totalPages}
+                Trang {currentPage} / {result.meta.totalPages}
               </p>
             ) : null}
           </div>
