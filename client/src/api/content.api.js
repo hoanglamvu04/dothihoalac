@@ -34,6 +34,7 @@ export const propertyApi = {
 export const jobApi = {
   list: async (params = {}) => unwrapList(await api.get('/jobs', { params })),
   detail: async (slug) => unwrap(await api.get(`/jobs/${slug}`)),
+  editDetail: async (id) => unwrap(await api.get(`/jobs/${id}/edit`)),
   create: async (payload) => unwrap(await api.post('/jobs', payload)),
   update: async (id, payload) => unwrap(await api.patch(`/jobs/${id}`, payload)),
   submit: async (id) => unwrap(await api.post(`/jobs/${id}/submit`)),
