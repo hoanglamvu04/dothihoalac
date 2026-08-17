@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { getOrCreateModel } from '../../utils/modelHelpers.js';
+
 const pointSchema = new mongoose.Schema(
   {
     type: { type: String, enum: ['Point'], required: true },
@@ -45,7 +46,12 @@ const schema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    ownerType: { type: String, enum: ['owner', 'broker', 'business'], required: true, index: true },
+    ownerType: {
+      type: String,
+      enum: ['owner', 'broker', 'business'],
+      required: true,
+      index: true,
+    },
     price: { type: Number, min: 0, default: 0, index: true },
     priceUnit: {
       type: String,
@@ -93,12 +99,42 @@ const schema = new mongoose.Schema(
     contactPhone: { type: String, required: true },
     contactEmail: { type: String, default: '' },
     featureIds: [{ type: mongoose.Schema.Types.ObjectId, ref: 'PropertyFeature' }],
+    galleryMediaIds: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Media',
+      },
+    ],
+    listingTier: {
+      type: String,
+      enum: ['diamond', 'gold', 'silver', 'standard'],
+      default: 'standard',
+      index: true,
+    },
+    listingPriority: {
+      type: Number,
+      min: 0,
+      default: 0,
+      index: true,
+    },
+    listingDurationDays: {
+      type: Number,
+      enum: [15, 30, 60],
+      default: 15,
+    },
+    listingStartAt: {
+      type: Date,
+      default: Date.now,
+    },
     expiresAt: { type: Date, required: true, index: true },
     soldAt: { type: Date, default: null },
     rentedAt: { type: Date, default: null },
   },
   { timestamps: true, collection: 'propertylistings' },
 );
+
 schema.index({ transactionType: 1, propertyType: 1, price: 1, landArea: 1 });
+schema.index({ listingPriority: -1, createdAt: -1 });
 schema.index({ location: '2dsphere' }, { sparse: true });
+
 export default getOrCreateModel('PropertyListing', schema, 'propertylistings');
