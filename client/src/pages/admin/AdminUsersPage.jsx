@@ -21,6 +21,15 @@ const statusLabels = {
   banned: 'Đã khóa',
 };
 
+const emptyForm = {
+  status: 'active',
+  phone: '',
+  phoneVerified: false,
+  violationType: '',
+  severity: 'medium',
+  note: '',
+};
+
 export default function AdminUsersPage() {
   const toast = useToast();
   const [items, setItems] = useState([]);
@@ -31,7 +40,7 @@ export default function AdminUsersPage() {
   const [appliedQuery, setAppliedQuery] = useState('');
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState(null);
-  const [form, setForm] = useState({ status: 'active', violationType: '', severity: 'medium', note: '' });
+  const [form, setForm] = useState(emptyForm);
 
   const load = () => {
     setLoading(true);
@@ -53,7 +62,14 @@ export default function AdminUsersPage() {
 
   const openUser = (user) => {
     setSelected(user);
-    setForm({ status: user.status || 'active', violationType: '', severity: 'medium', note: '' });
+    setForm({
+      status: user.status || 'active',
+      phone: user.phone || '',
+      phoneVerified: Boolean(user.phoneVerifiedAt),
+      violationType: '',
+      severity: 'medium',
+      note: '',
+    });
   };
 
   const submitSearch = (event) => {
@@ -66,7 +82,7 @@ export default function AdminUsersPage() {
     event.preventDefault();
     try {
       await adminApi.updateUserStatus(selected._id, form);
-      toast.success('Đã cập nhật trạng thái tài khoản.');
+      toast.success('Đã cập nhật tài khoản và thông tin số điện thoại.');
       setSelected(null);
       load();
     } catch (error) {
@@ -114,7 +130,7 @@ export default function AdminUsersPage() {
                 <tr key={user._id}>
                   <td><strong>{user.displayName}</strong><small>@{user.username}</small></td>
                   <td>{user.email}<small>{user.phone || 'Chưa có số điện thoại'}</small></td>
-                  <td><small>Email: {user.emailVerifiedAt ? 'Đã xác thực' : 'Chưa xác thực'}</small><small>SĐT: {user.phoneVerifiedAt ? 'Đã xác thực' : 'Chưa xác thực'}</small></td>
+                  <td><small>Email: {user.emailVerifiedAt ? 'Đã xác thực' : 'Chưa xác thực'}</small><small>SĐT: {user.phone && user.phoneVerifiedAt ? 'Đã xác thực' : 'Chưa xác thực'}</small></td>
                   <td><Badge tone={user.status === 'active' ? 'success' : 'warning'}>{statusLabels[user.status] || user.status}</Badge></td>
                   <td>{formatDateTime(user.createdAt)}</td>
                   <td><Button size="sm" variant="outline" onClick={() => openUser(user)}>Quản lý</Button></td>
@@ -130,6 +146,29 @@ export default function AdminUsersPage() {
       <Modal open={Boolean(selected)} onClose={() => setSelected(null)} title="Cập nhật tài khoản">
         <form className="stack-form" onSubmit={submit}>
           <div className="moderation-preview"><h3>{selected?.displayName}</h3><p>@{selected?.username} · {selected?.email}</p></div>
+
+          <div className="form-grid form-grid--2">
+            <FormField label="Số điện thoại">
+              <input
+                type="tel"
+                value={form.phone}
+                onChange={(event) => setForm({ ...form, phone: event.target.value })}
+                placeholder="Ví dụ: 0984305725"
+                autoComplete="off"
+              />
+            </FormField>
+            <FormField label="Xác thực số điện thoại">
+              <select
+                value={form.phoneVerified ? 'verified' : 'unverified'}
+                onChange={(event) => setForm({ ...form, phoneVerified: event.target.value === 'verified' })}
+                disabled={!form.phone.trim()}
+              >
+                <option value="unverified">Chưa xác thực</option>
+                <option value="verified">Đã xác thực (quản trị)</option>
+              </select>
+            </FormField>
+          </div>
+
           <FormField label="Trạng thái"><select value={form.status} onChange={(event) => setForm({ ...form, status: event.target.value })}><option value="active">Hoạt động</option><option value="restricted">Hạn chế</option><option value="suspended">Tạm khóa</option><option value="banned">Khóa tài khoản</option></select></FormField>
           <div className="form-grid form-grid--2">
             <FormField label="Loại vi phạm (nếu có)"><input value={form.violationType} onChange={(event) => setForm({ ...form, violationType: event.target.value })} placeholder="spam, scam, harassment..." /></FormField>
