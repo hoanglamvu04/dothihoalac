@@ -3,7 +3,29 @@ import { z } from 'zod';
 const oid = z.string().regex(/^[0-9a-fA-F]{24}$/);
 const empty = z.object({}).passthrough();
 
-const body = z.object({
+function normalizePropertyPrice(data) {
+  if (data.price === undefined) return data;
+
+  if (data.priceUnit === 'million') {
+    return {
+      ...data,
+      price: data.price * 1_000_000,
+      priceUnit: 'total',
+    };
+  }
+
+  if (data.priceUnit === 'billion') {
+    return {
+      ...data,
+      price: data.price * 1_000_000_000,
+      priceUnit: 'total',
+    };
+  }
+
+  return data;
+}
+
+const bodyBase = z.object({
   title: z.string().min(10).max(250),
   summary: z.string().max(1000).optional(),
   bodyHtml: z.string().min(1),
@@ -79,10 +101,12 @@ const body = z.object({
   listingStartAt: z.coerce.date().optional(),
 });
 
+const body = bodyBase.transform(normalizePropertyPrice);
+
 export const createSchema = z.object({ body, params: empty, query: empty });
 
 export const updateSchema = z.object({
-  body: body.partial(),
+  body: bodyBase.partial().transform(normalizePropertyPrice),
   params: z.object({ id: oid }),
   query: empty,
 });
