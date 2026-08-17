@@ -4,6 +4,7 @@ import UserSession from './userSession.model.js';
 import UsernameHistory from './usernameHistory.model.js';
 import Content from '../contents/content.model.js';
 import ContentBody from '../contents/contentBody.model.js';
+import PropertyListing from '../properties/propertyListing.model.js';
 import Media from '../media/media.model.js';
 import Bookmark from '../bookmarks/bookmark.model.js';
 import Report from '../reports/report.model.js';
@@ -207,8 +208,41 @@ async function listContents(userId, query, contentType) {
     meta: buildPaginationMeta({ page, limit, total }),
   };
 }
+
 export const listMyPosts = (userId, query) => listContents(userId, query);
-export const listMyListings = (userId, query) => listContents(userId, query, 'property');
+
+export async function listMyListings(userId, query) {
+  const result = await listContents(userId, query, 'property');
+  const contentIds = result.items.map((item) => item._id);
+
+  if (!contentIds.length) return result;
+
+  const [properties, bodies] = await Promise.all([
+    PropertyListing.find({ contentId: { $in: contentIds } })
+      .populate('galleryMediaIds', 'url secureUrl altText width height resourceType')
+      .lean(),
+    ContentBody.find({ contentId: { $in: contentIds } })
+      .select('contentId bodyHtml')
+      .lean(),
+  ]);
+
+  const propertyMap = new Map(
+    properties.map((property) => [String(property.contentId), property]),
+  );
+  const bodyMap = new Map(
+    bodies.map((body) => [String(body.contentId), body.bodyHtml || '']),
+  );
+
+  return {
+    ...result,
+    items: result.items.map((item) => ({
+      ...item,
+      bodyHtml: bodyMap.get(String(item._id)) || '',
+      property: propertyMap.get(String(item._id)) || null,
+    })),
+  };
+}
+
 export async function listMyBookmarks(userId, query) {
   const { page, limit, skip } = parsePagination(query);
   const [items, total] = await Promise.all([
