@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   CheckCircle2,
   Laptop,
@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 
 import Seo from '../../components/common/Seo';
+import Pagination from '../../components/common/Pagination';
 import EmptyState from '../../components/common/EmptyState';
 import { LoadingBlock } from '../../components/common/Loading';
 import { userApi } from '../../api/user.api';
@@ -18,6 +19,8 @@ import { useToast } from '../../context/ToastContext';
 import { formatDateTime } from '../../utils/formatters';
 
 import './AccountPages.css';
+
+const PAGE_SIZE = 8;
 
 function SessionIcon({ session }) {
   const agent = String(session?.userAgent || '').toLowerCase();
@@ -29,6 +32,7 @@ function SessionIcon({ session }) {
 export default function SessionsPage() {
   const toast = useToast();
   const [items, setItems] = useState([]);
+  const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(true);
   const [revokingId, setRevokingId] = useState('');
 
@@ -47,6 +51,19 @@ export default function SessionsPage() {
   useEffect(() => {
     load();
   }, [load]);
+
+  const totalPages = Math.max(1, Math.ceil(items.length / PAGE_SIZE));
+
+  useEffect(() => {
+    if (page > totalPages) {
+      setPage(totalPages);
+    }
+  }, [page, totalPages]);
+
+  const visibleItems = useMemo(() => {
+    const start = (page - 1) * PAGE_SIZE;
+    return items.slice(start, start + PAGE_SIZE);
+  }, [items, page]);
 
   const revoke = async (session) => {
     const confirmed = window.confirm(
@@ -90,15 +107,18 @@ export default function SessionsPage() {
         <div className="account-page-card__header">
           <div>
             <h3>Thiết bị đang đăng nhập</h3>
-            <p>Mỗi phiên đại diện cho một trình duyệt hoặc thiết bị đã đăng nhập.</p>
+            <p>
+              Mỗi phiên đại diện cho một trình duyệt hoặc thiết bị đã đăng nhập.
+              {!loading && items.length ? ` Tổng cộng ${items.length} phiên.` : ''}
+            </p>
           </div>
         </div>
 
         {loading ? (
           <LoadingBlock />
-        ) : items.length ? (
+        ) : visibleItems.length ? (
           <div className="account-session-list">
-            {items.map((session) => (
+            {visibleItems.map((session) => (
               <article className="account-session-item" key={session._id}>
                 <span className="account-session-item__icon">
                   <SessionIcon session={session} />
@@ -140,6 +160,18 @@ export default function SessionsPage() {
           />
         )}
       </section>
+
+      {!loading && items.length > PAGE_SIZE ? (
+        <Pagination
+          meta={{
+            page,
+            totalPages,
+            total: items.length,
+            limit: PAGE_SIZE,
+          }}
+          onPageChange={setPage}
+        />
+      ) : null}
     </div>
   );
 }
