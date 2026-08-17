@@ -1,10 +1,13 @@
 import { Link, useOutletContext } from 'react-router-dom';
 import {
   Bell,
+  Bookmark,
   CheckCircle2,
   FileText,
   Home,
+  Lock,
   MapPin,
+  Pencil,
   ShieldCheck,
   UserRound,
 } from 'lucide-react';
@@ -12,7 +15,27 @@ import {
 import Seo from '../../components/common/Seo';
 import { useAuth } from '../../context/AuthContext';
 
-import './AccountPages.css';
+import './AccountOverviewV2.css';
+
+function getAreaName(profile) {
+  if (!profile?.areaId) return 'Chưa chọn';
+  if (typeof profile.areaId === 'object') return profile.areaId?.name || 'Chưa chọn';
+  return profile?.areaName || 'Chưa chọn';
+}
+
+function InfoField({ label, value, icon: Icon }) {
+  return (
+    <div className="account-overview-v2__field">
+      <span className="account-overview-v2__field-icon">
+        <Icon size={17} />
+      </span>
+      <div>
+        <small>{label}</small>
+        <strong>{value || 'Chưa cập nhật'}</strong>
+      </div>
+    </div>
+  );
+}
 
 export default function AccountOverviewPage() {
   const { user } = useAuth();
@@ -29,141 +52,134 @@ export default function AccountOverviewPage() {
   ].filter(Boolean).length;
 
   const completion = Math.round((completedFields / 7) * 100);
+  const displayName = accountProfile?.displayName || user?.displayName || user?.username;
+  const publicProfile = accountProfile?.publicProfile !== false;
+  const areaName = getAreaName(accountProfile);
 
   return (
-    <div className="account-page-view">
+    <div className="account-overview-v2">
       <Seo title="Tổng quan tài khoản" />
 
-      <div className="account-page-heading">
+      <div className="account-overview-v2__topline">
         <div>
-          <span className="account-page-heading__eyebrow">
-            <UserRound size={15} />
-            Trung tâm tài khoản
-          </span>
-          <h2>Xin chào, {user?.displayName || user?.username}</h2>
-          <p>
-            Theo dõi trạng thái hồ sơ, xác thực tài khoản và truy cập nhanh các công cụ thường dùng.
-          </p>
+          <span>Tổng quan tài khoản</span>
+          <h2>Thông tin và hoạt động của bạn</h2>
         </div>
-
-        <Link className="account-page-button account-page-button--primary" to="/tai-khoan/ho-so">
-          Chỉnh sửa hồ sơ
+        <Link to="/tai-khoan/ho-so" className="account-overview-v2__edit">
+          <Pencil size={16} />
+          Chỉnh sửa
         </Link>
       </div>
 
-      <div className="account-stat-grid">
-        <article className="account-stat-card">
-          <span><UserRound size={22} /></span>
-          <div>
-            <strong>{completion}%</strong>
-            <small>Mức hoàn thiện hồ sơ</small>
-          </div>
-        </article>
+      <nav className="account-overview-v2__tabs" aria-label="Lối tắt tài khoản">
+        <Link to="/tai-khoan/bai-viet">
+          <FileText size={16} />
+          Bài viết
+        </Link>
+        <Link to="/tai-khoan/tin-nha-dat">
+          <Home size={16} />
+          Tin BĐS
+        </Link>
+        <Link to="/tai-khoan/da-luu">
+          <Bookmark size={16} />
+          Đã lưu
+        </Link>
+        <Link to="/tai-khoan/thong-bao">
+          <Bell size={16} />
+          Thông báo
+        </Link>
+      </nav>
 
-        <article className="account-stat-card">
-          <span><ShieldCheck size={22} /></span>
+      <section className="account-overview-v2__section">
+        <div className="account-overview-v2__section-heading">
           <div>
-            <strong>{user?.emailVerifiedAt ? 'Đã xác thực' : 'Chưa xác thực'}</strong>
-            <small>Trạng thái email</small>
-          </div>
-        </article>
-
-        <article className="account-stat-card">
-          <span><CheckCircle2 size={22} /></span>
-          <div>
-            <strong>{accountProfile?.publicProfile !== false ? 'Công khai' : 'Riêng tư'}</strong>
-            <small>Chế độ hồ sơ</small>
-          </div>
-        </article>
-
-        <article className="account-stat-card">
-          <span><MapPin size={22} /></span>
-          <div>
-            <strong>
-              {typeof accountProfile?.areaId === 'object'
-                ? accountProfile.areaId?.name || 'Chưa chọn'
-                : 'Chưa chọn'}
-            </strong>
-            <small>Khu vực quan tâm</small>
-          </div>
-        </article>
-      </div>
-
-      <section className="account-page-card">
-        <div className="account-page-card__header">
-          <div>
-            <h3>Truy cập nhanh</h3>
-            <p>Các thao tác thường dùng trên Đô Thị Hòa Lạc.</p>
+            <h3>Tin nổi bật</h3>
+            <p>Các trạng thái quan trọng nhất của tài khoản.</p>
           </div>
         </div>
 
-        <div className="account-quick-grid">
-          <Link to="/dang-bai/cong-dong">
-            <span><FileText size={22} /></span>
-            <strong>Đăng bài cộng đồng</strong>
-            <small>Chia sẻ thông tin, hỏi đáp hoặc thảo luận với cư dân.</small>
-          </Link>
+        <div className="account-overview-v2__highlight-grid">
+          <article>
+            <span><UserRound size={20} /></span>
+            <div>
+              <small>Hoàn thiện hồ sơ</small>
+              <strong>{completion}%</strong>
+              <p>{completion >= 80 ? 'Hồ sơ của bạn đã khá đầy đủ.' : 'Bổ sung thêm thông tin để hồ sơ rõ ràng hơn.'}</p>
+            </div>
+          </article>
 
-          <Link to="/dang-bai/nha-dat">
-            <span><Home size={22} /></span>
-            <strong>Đăng tin nhà đất</strong>
-            <small>Tạo và quản lý tin bất động sản trong khu vực Hòa Lạc.</small>
-          </Link>
+          <article>
+            <span><ShieldCheck size={20} /></span>
+            <div>
+              <small>Xác thực</small>
+              <strong>{user?.emailVerifiedAt ? 'Đã xác thực' : 'Chưa hoàn tất'}</strong>
+              <p>{user?.emailVerifiedAt ? 'Email đang được bảo vệ và xác thực.' : 'Nên xác thực email để tăng độ an toàn.'}</p>
+            </div>
+          </article>
 
-          <Link to="/tai-khoan/thong-bao">
-            <span><Bell size={22} /></span>
-            <strong>Xem thông báo</strong>
-            <small>Theo dõi kiểm duyệt, bình luận và các cập nhật tài khoản.</small>
-          </Link>
+          <article>
+            <span><CheckCircle2 size={20} /></span>
+            <div>
+              <small>Quyền riêng tư</small>
+              <strong>{publicProfile ? 'Công khai' : 'Riêng tư'}</strong>
+              <p>{publicProfile ? 'Người khác có thể xem hồ sơ công khai.' : 'Chỉ bạn quản lý được thông tin hồ sơ.'}</p>
+            </div>
+          </article>
         </div>
       </section>
 
-      {!user?.emailVerifiedAt || !user?.phoneVerifiedAt ? (
-        <section className="account-page-card">
-          <div className="account-page-card__header">
-            <div>
-              <h3>Hoàn thiện xác thực tài khoản</h3>
-              <p>Xác thực giúp bảo vệ tài khoản và mở khóa đầy đủ các chức năng.</p>
-            </div>
+      <section className="account-overview-v2__section account-overview-v2__account-info">
+        <div className="account-overview-v2__section-heading">
+          <div>
+            <h3>Thông tin tài khoản</h3>
+            <p>Bố cục gọn theo bản thiết kế mới, tập trung vào các trường chính.</p>
           </div>
+          <Link to="/tai-khoan/ho-so">Cập nhật thông tin</Link>
+        </div>
 
-          <div className="account-verification-grid">
-            <article className="account-verification-card">
-              <span className="account-verification-card__icon">
-                <ShieldCheck size={21} />
-              </span>
-              <div>
-                <strong>Email</strong>
-                <small>{user?.email || 'Chưa cập nhật'}</small>
-              </div>
-              {user?.emailVerifiedAt ? (
-                <span className="account-verification-status is-verified">Đã xác thực</span>
-              ) : (
-                <Link className="account-page-button account-page-button--soft" to="/xac-thuc-email">
-                  Xác thực
-                </Link>
-              )}
-            </article>
+        <div className="account-overview-v2__info-grid">
+          <InfoField label="Tên hiển thị" value={displayName} icon={UserRound} />
+          <InfoField label="Email" value={user?.email} icon={ShieldCheck} />
+          <InfoField label="Tên đăng nhập" value={`@${user?.username || 'chua-cap-nhat'}`} icon={UserRound} />
+          <InfoField label="Nghề nghiệp" value={accountProfile?.occupation || 'Chưa cập nhật'} icon={FileText} />
+          <InfoField label="Mật khẩu" value="••••••••" icon={Lock} />
+          <InfoField label="Khu vực" value={areaName} icon={MapPin} />
+        </div>
+      </section>
 
-            <article className="account-verification-card">
-              <span className="account-verification-card__icon">
-                <ShieldCheck size={21} />
-              </span>
-              <div>
-                <strong>Số điện thoại</strong>
-                <small>{user?.phone || 'Chưa cập nhật'}</small>
-              </div>
-              {user?.phoneVerifiedAt ? (
-                <span className="account-verification-status is-verified">Đã xác thực</span>
-              ) : (
-                <Link className="account-page-button account-page-button--soft" to="/xac-thuc-so-dien-thoai">
-                  Xác thực
-                </Link>
-              )}
-            </article>
-          </div>
-        </section>
-      ) : null}
+      <section className="account-overview-v2__quick">
+        <Link to="/dang-bai/cong-dong">
+          <FileText size={19} />
+          <span>
+            <strong>Đăng bài cộng đồng</strong>
+            <small>Chia sẻ tin, hỏi đáp hoặc thảo luận.</small>
+          </span>
+        </Link>
+        <Link to="/dang-bai/nha-dat">
+          <Home size={19} />
+          <span>
+            <strong>Đăng tin bất động sản</strong>
+            <small>Tạo tin bán, cho thuê hoặc sang nhượng.</small>
+          </span>
+        </Link>
+        {!user?.emailVerifiedAt || !user?.phoneVerifiedAt ? (
+          <Link to="/tai-khoan/bao-mat">
+            <ShieldCheck size={19} />
+            <span>
+              <strong>Hoàn thiện xác thực</strong>
+              <small>Kiểm tra email và số điện thoại của tài khoản.</small>
+            </span>
+          </Link>
+        ) : (
+          <Link to="/tai-khoan/thong-bao">
+            <Bell size={19} />
+            <span>
+              <strong>Xem thông báo</strong>
+              <small>Theo dõi các cập nhật mới nhất.</small>
+            </span>
+          </Link>
+        )}
+      </section>
     </div>
   );
 }
