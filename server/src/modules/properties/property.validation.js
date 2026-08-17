@@ -3,6 +3,26 @@ import { z } from 'zod';
 const oid = z.string().regex(/^[0-9a-fA-F]{24}$/);
 const empty = z.object({}).passthrough();
 
+const isGoogleMapsUrl = (value) => {
+  const clean = String(value || '').trim();
+  if (!clean) return true;
+
+  try {
+    const url = new URL(clean);
+    const host = url.hostname.toLowerCase();
+
+    if (host === 'maps.app.goo.gl' || host === 'maps.google.com') return true;
+    if (host === 'goo.gl') return url.pathname.startsWith('/maps');
+    if (host === 'google.com' || host === 'www.google.com') {
+      return url.pathname.startsWith('/maps');
+    }
+
+    return false;
+  } catch {
+    return false;
+  }
+};
+
 const body = z.object({
   title: z.string().min(10).max(250),
   summary: z.string().max(1000).optional(),
@@ -60,6 +80,11 @@ const body = z.object({
     .enum(['red_book', 'contract', 'waiting_certificate', 'shared_certificate', 'other', 'unknown'])
     .optional(),
   addressText: z.string().min(3).max(500),
+  googleMapsUrl: z
+    .string()
+    .max(1200)
+    .refine(isGoogleMapsUrl, 'Liên kết Google Maps không hợp lệ.')
+    .optional(),
   longitude: z.number().min(-180).max(180).optional(),
   latitude: z.number().min(-90).max(90).optional(),
   contactName: z.string().min(2).max(100),
