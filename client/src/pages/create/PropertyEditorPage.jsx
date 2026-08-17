@@ -143,6 +143,7 @@ const LISTING_TIERS = [
 ];
 
 const DURATION_OPTIONS = [15, 30, 60];
+const LOCAL_DRAFT_PREFIX = 'dthl:property-draft:';
 
 const REQUIRED_COMPLETION_FIELDS = [
   'propertyType',
@@ -230,6 +231,19 @@ function serializeForm(form) {
   });
 }
 
+function readLocalDraft(key) {
+  if (!key || typeof window === 'undefined') return null;
+
+  try {
+    const raw = window.localStorage.getItem(key);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return parsed?.form && typeof parsed.form === 'object' ? parsed : null;
+  } catch {
+    return null;
+  }
+}
+
 function EditorField({
   label,
   required = false,
@@ -306,7 +320,7 @@ function StepperField({ label, value, onChange, icon: Icon }) {
 }
 
 export default function PropertyEditorPage() {
-  const { user } = useAuth();
+  const { user, refreshUser } = useAuth();
   const toast = useToast();
   const navigate = useNavigate();
   const location = useLocation();
@@ -315,9 +329,11 @@ export default function PropertyEditorPage() {
   const editingId = params.get('edit');
   const source = location.state?.item || {};
   const propertySource = source.property || source;
+  const localDraftKey = `${LOCAL_DRAFT_PREFIX}${editingId || location.pathname}`;
 
   const phoneVerified = Boolean(
-    user?.phoneVerifiedAt || user?.phoneVerified || user?.isPhoneVerified,
+    user?.phone &&
+      (user?.phoneVerifiedAt || user?.phoneVerified || user?.isPhoneVerified),
   );
 
   const initialForm = useMemo(() => {
@@ -375,9 +391,13 @@ export default function PropertyEditorPage() {
     user?.phone,
   ]);
 
-  const [form, setForm] = useState(initialForm);
+  const [form, setForm] = useState(() => {
+    if (editingId) return initialForm;
+    const saved = readLocalDraft(localDraftKey);
+    return saved?.form ? { ...initialForm, ...saved.form } : initialForm;
+  });
   const [initialSnapshot, setInitialSnapshot] = useState(() =>
-    serializeForm(initialForm),
+    serializeForm(form),
   );
   const [errors, setErrors] = useState({});
   const [loadingAction, setLoadingAction] = useState('');
@@ -385,6 +405,34 @@ export default function PropertyEditorPage() {
   const [informationPage, setInformationPage] = useState(1);
   const [furthestStep, setFurthestStep] = useState(1);
   const [previewOpen, setPreviewOpen] = useState(false);
+
+  useEffect(() => {
+    refreshUser();
+  }, [refreshUser]);
+
+  useEffect(() => {
+    const nextPhone = phoneVerified ? user?.phone || '' : '';
+
+    setForm((current) => {
+      const nextName = current.contactName || user?.displayName || '';
+      const nextEmail = current.contactEmail || user?.email || '';
+
+      if (
+        current.contactPhone === nextPhone &&
+        current.contactName === nextName &&
+        current.contactEmail === nextEmail
+      ) {
+        return current;
+      }
+
+      return {
+        ...current,
+        contactPhone: nextPhone,
+        contactName: nextName,
+        contactEmail: nextEmail,
+      };
+    });
+  }, [phoneVerified, user?.displayName, user?.email, user?.phone]);
 
   const change = (key, value) => {
     setForm((current) => ({ ...current, [key]: value }));
@@ -548,7 +596,7 @@ export default function PropertyEditorPage() {
         nextErrors.contactName = 'Vui lòng nhập tên liên hệ.';
       }
       if (!form.contactPhone.trim()) {
-        nextErrors.contactPhone = 'Tài khoản chưa có số điện thoại.';
+        nextErrors.contactPhone = 'Tài khoản chưa có số điện thoại đã xác thực.';
       }
       if (
         form.contactEmail &&
@@ -650,8 +698,36 @@ export default function PropertyEditorPage() {
     listingStartAt: form.listingStartAt || undefined,
   });
 
+  const saveLocalDraft = () => {
+    try {
+      window.localStorage.setItem(
+        localDraftKey,
+        JSON.stringify({
+          form: JSON.parse(serializeForm(form)),
+          savedAt: new Date().toISOString(),
+        }),
+      );
+      setInitialSnapshot(serializeForm(form));
+      toast.success('Đã lưu nháp tạm trên trình duyệt. Bạn có thể tiếp tục hoàn thiện sau.');
+    } catch {
+      toast.error('Không thể lưu nháp trên trình duyệt này.');
+    }
+  };
+
   const save = async (submitAfter = false) => {
-    if (loadingAction || !validateAll()) return;
+    if (loadingAction) return;
+
+    if (submitAfter && !validateAll()) return;
+
+    if (!submitAfter) {
+      const informationErrors = getInformationErrors();
+      const mediaReady = Boolean(getMediaId(form.thumbnailMediaId));
+
+      if (Object.keys(informationErrors).length || !mediaReady) {
+        saveLocalDraft();
+        return;
+      }
+    }
 
     setLoadingAction(submitAfter ? 'submit' : 'draft');
 
@@ -667,11 +743,17 @@ export default function PropertyEditorPage() {
         await propertyApi.submit(contentId);
       }
 
+      try {
+        window.localStorage.removeItem(localDraftKey);
+      } catch {
+        /* Không ảnh hưởng tới việc lưu trên máy chủ. */
+      }
+
       setInitialSnapshot(serializeForm(form));
       toast.success(
         submitAfter
           ? 'Đã lưu và gửi tin đi duyệt. Phí đăng tin hiện tại: 0đ.'
-          : 'Đã lưu tin nháp.',
+          : 'Đã lưu tin nháp vào tài khoản.',
       );
       navigate('/tai-khoan/tin-nha-dat');
     } catch (error) {
@@ -679,6 +761,13 @@ export default function PropertyEditorPage() {
     } finally {
       setLoadingAction('');
     }
+  };
+
+  const confirmExit = () => {
+    if (hasChanges && !window.confirm('Bạn có thay đổi chưa lưu. Bạn vẫn muốn thoát?')) {
+      return;
+    }
+    navigate('/tai-khoan/tin-nha-dat');
   };
 
   const goNext = () => {
@@ -828,13 +917,14 @@ export default function PropertyEditorPage() {
               <Eye size={18} />
               Xem trước
             </button>
-            <Link
+            <button
+              type="button"
               className="property-post-button property-post-button--ghost"
-              to="/tai-khoan/tin-nha-dat"
+              onClick={confirmExit}
             >
               <X size={18} />
               Thoát
-            </Link>
+            </button>
           </div>
         </header>
 
@@ -1333,7 +1423,7 @@ export default function PropertyEditorPage() {
                     <div>
                       <strong>Thông tin xác thực</strong>
                       <p>
-                        Kiểm tra lại tên và email. Số điện thoại được lấy từ tài khoản đã xác thực.
+                        Kiểm tra lại tên và email. Số điện thoại được lấy trực tiếp từ tài khoản đã xác thực và tự đồng bộ khi quản trị viên cập nhật.
                       </p>
                     </div>
                   </div>
@@ -1565,13 +1655,15 @@ export default function PropertyEditorPage() {
           <footer className="property-post-footer">
             <div>
               {step === 1 && informationPage === 1 ? (
-                <Link
+                <button
+                  type="button"
                   className="property-post-button property-post-button--ghost"
-                  to="/tai-khoan/tin-nha-dat"
+                  onClick={confirmExit}
+                  disabled={Boolean(loadingAction)}
                 >
                   <ArrowLeft size={18} />
                   Hủy
-                </Link>
+                </button>
               ) : (
                 <button
                   type="button"
@@ -1593,49 +1685,48 @@ export default function PropertyEditorPage() {
                 </span>
               ) : null}
 
+              <button
+                type="button"
+                className="property-post-button property-post-button--ghost"
+                disabled={Boolean(loadingAction)}
+                onClick={() => save(false)}
+              >
+                {loadingAction === 'draft' ? (
+                  <LoaderCircle className="is-spinning" size={18} />
+                ) : (
+                  <Save size={18} />
+                )}
+                Lưu nháp
+              </button>
+
               {step < 3 ? (
                 <button
                   type="button"
                   className="property-post-button property-post-button--primary"
                   onClick={goNext}
+                  disabled={Boolean(loadingAction)}
                 >
                   Tiếp tục
                   <ChevronRight size={18} />
                 </button>
               ) : (
-                <>
-                  <button
-                    type="button"
-                    className="property-post-button property-post-button--ghost"
-                    disabled={Boolean(loadingAction)}
-                    onClick={() => save(false)}
-                  >
-                    {loadingAction === 'draft' ? (
+                <button
+                  type="submit"
+                  className="property-post-button property-post-button--primary"
+                  disabled={Boolean(loadingAction)}
+                >
+                  {loadingAction === 'submit' ? (
+                    <>
                       <LoaderCircle className="is-spinning" size={18} />
-                    ) : (
-                      <Save size={18} />
-                    )}
-                    Lưu nháp
-                  </button>
-
-                  <button
-                    type="submit"
-                    className="property-post-button property-post-button--primary"
-                    disabled={Boolean(loadingAction)}
-                  >
-                    {loadingAction === 'submit' ? (
-                      <>
-                        <LoaderCircle className="is-spinning" size={18} />
-                        Đang gửi...
-                      </>
-                    ) : (
-                      <>
-                        <Send size={18} />
-                        Đăng tin miễn phí
-                      </>
-                    )}
-                  </button>
-                </>
+                      Đang gửi...
+                    </>
+                  ) : (
+                    <>
+                      <Send size={18} />
+                      Đăng tin miễn phí
+                    </>
+                  )}
+                </button>
               )}
             </div>
           </footer>
