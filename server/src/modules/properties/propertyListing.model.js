@@ -27,11 +27,21 @@ const schema = new mongoose.Schema(
     propertyType: {
       type: String,
       enum: [
+        // Canonical marketplace types used by the current property posting flow.
+        'house',
+        'villa_townhouse',
+        'street_house',
+        'shophouse',
+        'project_land',
+        'land',
+        'farm_resort',
+        'condotel',
+        'warehouse',
+        'other_property',
+        // Legacy values kept for backwards compatibility with existing listings.
         'residential_land',
         'land_plot',
-        'project_land',
         'service_land',
-        'house',
         'townhouse',
         'villa',
         'apartment',
@@ -40,7 +50,6 @@ const schema = new mongoose.Schema(
         'whole_house',
         'commercial_space',
         'office',
-        'warehouse',
         'farm',
       ],
       required: true,
