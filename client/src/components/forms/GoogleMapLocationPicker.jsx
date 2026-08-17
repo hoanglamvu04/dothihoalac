@@ -37,9 +37,11 @@ function loadGoogleMaps(apiKey) {
     };
 
     if (existing) {
-      existing.addEventListener('error', () => reject(new Error('Không tải được Google Maps.')), {
-        once: true,
-      });
+      existing.addEventListener(
+        'error',
+        () => reject(new Error('Không tải được Google Maps.')),
+        { once: true },
+      );
       return;
     }
 
@@ -76,6 +78,9 @@ export default function GoogleMapLocationPicker({
   const mapRef = useRef(null);
   const markerRef = useRef(null);
   const geocoderRef = useRef(null);
+  const onLocationChangeRef = useRef(onLocationChange);
+  const onAddressResolvedRef = useRef(onAddressResolved);
+  const initialPositionRef = useRef(null);
   const [status, setStatus] = useState(apiKey ? 'loading' : 'unconfigured');
   const [message, setMessage] = useState('');
   const [query, setQuery] = useState(address);
@@ -88,11 +93,25 @@ export default function GoogleMapLocationPicker({
     return lat === null || lng === null ? null : { lat, lng };
   }, [latitude, longitude]);
 
+  if (initialPositionRef.current === null) {
+    initialPositionRef.current = selectedPosition;
+  }
+
+  useEffect(() => {
+    onLocationChangeRef.current = onLocationChange;
+  }, [onLocationChange]);
+
+  useEffect(() => {
+    onAddressResolvedRef.current = onAddressResolved;
+  }, [onAddressResolved]);
+
   const googleMapsSearchUrl = useMemo(() => {
     const searchValue =
       resolvedAddress ||
       address ||
-      (selectedPosition ? `${selectedPosition.lat},${selectedPosition.lng}` : 'Hòa Lạc, Hà Nội');
+      (selectedPosition
+        ? `${selectedPosition.lat},${selectedPosition.lng}`
+        : 'Hòa Lạc, Hà Nội');
     return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(searchValue)}`;
   }, [address, resolvedAddress, selectedPosition]);
 
@@ -113,14 +132,13 @@ export default function GoogleMapLocationPicker({
       try {
         const response = await geocoderRef.current.geocode({ location: position });
         if (cancelled) return;
-        const formatted = response?.results?.[0]?.formatted_address || '';
-        setResolvedAddress(formatted);
+        setResolvedAddress(response?.results?.[0]?.formatted_address || '');
       } catch {
         if (!cancelled) setResolvedAddress('');
       }
     };
 
-    const selectPosition = async (position, shouldCenter = false) => {
+    const selectPosition = async (position) => {
       if (!position || cancelled) return;
 
       const lat = typeof position.lat === 'function' ? position.lat() : position.lat;
@@ -131,12 +149,10 @@ export default function GoogleMapLocationPicker({
       };
 
       if (markerRef.current) markerRef.current.position = next;
-      if (shouldCenter && mapRef.current) {
-        mapRef.current.panTo(next);
-        mapRef.current.setZoom(17);
-      }
-
-      onLocationChange?.({ latitude: next.lat, longitude: next.lng });
+      onLocationChangeRef.current?.({
+        latitude: next.lat,
+        longitude: next.lng,
+      });
       await reverseGeocode(next);
     };
 
@@ -151,10 +167,10 @@ export default function GoogleMapLocationPicker({
 
         if (cancelled || !mapElementRef.current) return;
 
-        const initialPosition = selectedPosition || DEFAULT_CENTER;
+        const initialPosition = initialPositionRef.current || DEFAULT_CENTER;
         const map = new Map(mapElementRef.current, {
           center: initialPosition,
-          zoom: selectedPosition ? 17 : 13,
+          zoom: initialPositionRef.current ? 17 : 13,
           mapId,
           mapTypeControl: false,
           streetViewControl: false,
@@ -182,7 +198,9 @@ export default function GoogleMapLocationPicker({
         setStatus('ready');
         setMessage('');
 
-        if (selectedPosition) reverseGeocode(selectedPosition);
+        if (initialPositionRef.current) {
+          reverseGeocode(initialPositionRef.current);
+        }
       } catch (error) {
         if (cancelled) return;
         setStatus('error');
@@ -196,20 +214,19 @@ export default function GoogleMapLocationPicker({
       cancelled = true;
       clickListener?.remove?.();
       dragListener?.remove?.();
-      markerRef.current?.setMap?.(null);
+      if (markerRef.current) markerRef.current.map = null;
       markerRef.current = null;
       mapRef.current = null;
       geocoderRef.current = null;
     };
-  }, [apiKey, mapId, onLocationChange, selectedPosition]);
+  }, [apiKey, mapId]);
 
   useEffect(() => {
     if (!mapRef.current || !markerRef.current || !selectedPosition) return;
     markerRef.current.position = selectedPosition;
   }, [selectedPosition]);
 
-  const searchAddress = async (event) => {
-    event?.preventDefault?.();
+  const searchAddress = async () => {
     const cleanQuery = query.trim();
     if (!cleanQuery || !geocoderRef.current || !mapRef.current) return;
 
@@ -228,18 +245,19 @@ export default function GoogleMapLocationPicker({
         return;
       }
 
-      const lat = result.geometry.location.lat();
-      const lng = result.geometry.location.lng();
       const position = {
-        lat: Number(lat.toFixed(7)),
-        lng: Number(lng.toFixed(7)),
+        lat: Number(result.geometry.location.lat().toFixed(7)),
+        lng: Number(result.geometry.location.lng().toFixed(7)),
       };
 
       mapRef.current.panTo(position);
       mapRef.current.setZoom(17);
       markerRef.current.position = position;
       setResolvedAddress(result.formatted_address || cleanQuery);
-      onLocationChange?.({ latitude: position.lat, longitude: position.lng });
+      onLocationChangeRef.current?.({
+        latitude: position.lat,
+        longitude: position.lng,
+      });
     } catch {
       setMessage('Không thể tìm địa chỉ lúc này. Vui lòng thử lại.');
     } finally {
@@ -263,7 +281,10 @@ export default function GoogleMapLocationPicker({
         mapRef.current.panTo(position);
         mapRef.current.setZoom(17);
         markerRef.current.position = position;
-        onLocationChange?.({ latitude: position.lat, longitude: position.lng });
+        onLocationChangeRef.current?.({
+          latitude: position.lat,
+          longitude: position.lng,
+        });
         geocoderRef.current
           ?.geocode({ location: position })
           .then((response) => {
@@ -271,10 +292,23 @@ export default function GoogleMapLocationPicker({
           })
           .catch(() => setResolvedAddress(''));
       },
-      () => setMessage('Không lấy được vị trí hiện tại. Hãy kiểm tra quyền vị trí của trình duyệt.'),
+      () =>
+        setMessage(
+          'Không lấy được vị trí hiện tại. Hãy kiểm tra quyền vị trí của trình duyệt.',
+        ),
       { enableHighAccuracy: true, timeout: 10000 },
     );
   };
+
+  const handleSearchKeyDown = (event) => {
+    if (event.key !== 'Enter') return;
+    event.preventDefault();
+    searchAddress();
+  };
+
+  const canUseResolvedAddress = Boolean(
+    resolvedAddress && onAddressResolvedRef.current,
+  );
 
   return (
     <div className="property-map-picker">
@@ -295,8 +329,9 @@ export default function GoogleMapLocationPicker({
           <div>
             <strong>Chưa cấu hình Google Maps cho môi trường này</strong>
             <p>
-              Thêm <code>VITE_GOOGLE_MAPS_API_KEY</code> và <code>VITE_GOOGLE_MAPS_MAP_ID</code>{' '}
-              vào file <code>client/.env</code>. Không đưa API key vào GitHub.
+              Thêm <code>VITE_GOOGLE_MAPS_API_KEY</code> và{' '}
+              <code>VITE_GOOGLE_MAPS_MAP_ID</code> vào file <code>client/.env</code>.
+              Không đưa API key vào GitHub.
             </p>
             <a href={googleMapsSearchUrl} target="_blank" rel="noreferrer">
               <MapPin size={16} />
@@ -306,16 +341,25 @@ export default function GoogleMapLocationPicker({
         </div>
       ) : (
         <>
-          <form className="property-map-picker__search" onSubmit={searchAddress}>
+          <div className="property-map-picker__search">
             <Search size={18} />
             <input
               type="text"
               value={query}
               onChange={(event) => setQuery(event.target.value)}
+              onKeyDown={handleSearchKeyDown}
               placeholder="Tìm địa chỉ trên Google Maps"
             />
-            <button type="submit" disabled={status !== 'ready' || searching || !query.trim()}>
-              {searching ? <LoaderCircle className="is-spinning" size={17} /> : <Search size={17} />}
+            <button
+              type="button"
+              onClick={searchAddress}
+              disabled={status !== 'ready' || searching || !query.trim()}
+            >
+              {searching ? (
+                <LoaderCircle className="is-spinning" size={17} />
+              ) : (
+                <Search size={17} />
+              )}
               Tìm
             </button>
             <button
@@ -327,7 +371,7 @@ export default function GoogleMapLocationPicker({
             >
               <LocateFixed size={18} />
             </button>
-          </form>
+          </div>
 
           <div className="property-map-picker__canvas-wrap">
             {status === 'loading' ? (
@@ -345,10 +389,18 @@ export default function GoogleMapLocationPicker({
                 <CheckCircle2 size={18} />
                 <div>
                   <strong>Đã ghim vị trí bất động sản</strong>
-                  <span>{resolvedAddress || 'Có thể kéo ghim để chỉnh vị trí chính xác hơn.'}</span>
+                  <span>
+                    {resolvedAddress ||
+                      'Có thể kéo ghim để chỉnh vị trí chính xác hơn.'}
+                  </span>
                 </div>
-                {resolvedAddress && onAddressResolved ? (
-                  <button type="button" onClick={() => onAddressResolved(resolvedAddress)}>
+                {canUseResolvedAddress ? (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      onAddressResolvedRef.current?.(resolvedAddress)
+                    }
+                  >
                     Dùng địa chỉ này
                   </button>
                 ) : null}
@@ -361,7 +413,9 @@ export default function GoogleMapLocationPicker({
             )}
           </div>
 
-          {message ? <p className="property-map-picker__message">{message}</p> : null}
+          {message ? (
+            <p className="property-map-picker__message">{message}</p>
+          ) : null}
         </>
       )}
     </div>
