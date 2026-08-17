@@ -13,9 +13,9 @@ import { formatCurrency, formatNumber } from '../../utils/formatters';
 import {
   LEGAL_STATUS,
   OWNER_TYPES,
-  PROPERTY_TYPES,
   TRANSACTION_TYPES,
 } from '../../utils/constants';
+import { getPropertyTypeLabel } from '../../utils/propertyPosting';
 import { contentPath } from '../../utils/content';
 
 function compactSummary(item) {
@@ -60,7 +60,7 @@ export default function PropertyCard({ item }) {
           {property.bathrooms !== null && property.bathrooms !== undefined ? (
             <span><Bath size={16} /> {property.bathrooms} WC</span>
           ) : null}
-          <span>{PROPERTY_TYPES[property.propertyType] || 'Bất động sản'}</span>
+          <span>{getPropertyTypeLabel(property.propertyType)}</span>
         </div>
 
         <p className="property-card__location">
