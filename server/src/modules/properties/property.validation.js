@@ -35,7 +35,9 @@ const body = z.object({
   ]),
   ownerType: z.enum(['owner', 'broker', 'business']),
   price: z.number().min(0),
-  priceUnit: z.enum(['total', 'per_m2', 'per_month', 'negotiable']).default('total'),
+  priceUnit: z
+    .enum(['total', 'million', 'billion', 'per_m2', 'per_month', 'negotiable'])
+    .default('total'),
   isNegotiable: z.boolean().default(false),
   landArea: z.number().positive(),
   usableArea: z.number().min(0).nullable().optional(),
