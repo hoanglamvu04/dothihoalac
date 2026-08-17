@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import {
   Bell,
@@ -77,6 +77,10 @@ function getAreaName(profile) {
 function ProfileImage({ src, name }) {
   const [failed, setFailed] = useState(false);
   const url = mediaUrl(src);
+
+  useEffect(() => {
+    setFailed(false);
+  }, [url]);
 
   if (!url || failed) {
     return <span className="account-shell-avatar__fallback">{initials(name)}</span>;
