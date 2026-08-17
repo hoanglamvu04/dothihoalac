@@ -2,6 +2,7 @@ import { lazy, Suspense } from 'react';
 import {
   createBrowserRouter,
   createRoutesFromElements,
+  Navigate,
   Outlet,
   Route,
   RouterProvider,
@@ -145,7 +146,11 @@ const router = createBrowserRouter(
         <Route path="cong-dong/:id/:slug" element={<CommunityDetailPage />} />
         <Route path="cong-dong/:slug" element={<CommunityDetailPage />} />
 
-        <Route path="nha-dat" element={<PropertiesPage />} />
+        <Route path="bat-dong-san" element={<PropertiesPage />} />
+        <Route path="bat-dong-san/:id/:slug" element={<PropertyDetailPage />} />
+        <Route path="bat-dong-san/:slug" element={<PropertyDetailPage />} />
+
+        <Route path="nha-dat" element={<Navigate to="/bat-dong-san" replace />} />
         <Route path="nha-dat/:id/:slug" element={<PropertyDetailPage />} />
         <Route path="nha-dat/:slug" element={<PropertyDetailPage />} />
 
