@@ -11,6 +11,7 @@ import FormField from '../../components/common/FormField';
 import { LoadingBlock } from '../../components/common/Loading';
 import { adminApi } from '../../api/admin.api';
 import { apiErrorMessage } from '../../api/http';
+import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { formatDateTime } from '../../utils/formatters';
 
@@ -30,8 +31,15 @@ const emptyForm = {
   note: '',
 };
 
+const USER_SYNC_STORAGE_KEY = 'dthl:user-updated';
+
+function userIdOf(user) {
+  return String(user?._id || user?.id || '');
+}
+
 export default function AdminUsersPage() {
   const toast = useToast();
+  const { user: currentUser, refreshUser } = useAuth();
   const [items, setItems] = useState([]);
   const [meta, setMeta] = useState({});
   const [page, setPage] = useState(1);
@@ -65,7 +73,7 @@ export default function AdminUsersPage() {
     setForm({
       status: user.status || 'active',
       phone: user.phone || '',
-      phoneVerified: Boolean(user.phoneVerifiedAt),
+      phoneVerified: Boolean(user.phone && user.phoneVerifiedAt),
       violationType: '',
       severity: 'medium',
       note: '',
@@ -80,9 +88,22 @@ export default function AdminUsersPage() {
 
   const submit = async (event) => {
     event.preventDefault();
+    if (!selected) return;
+
     try {
       await adminApi.updateUserStatus(selected._id, form);
-      toast.success('Đã cập nhật tài khoản và thông tin số điện thoại.');
+
+      try {
+        localStorage.setItem(USER_SYNC_STORAGE_KEY, `${Date.now()}:${selected._id}`);
+      } catch {
+        /* Trình duyệt có thể chặn localStorage. */
+      }
+
+      if (userIdOf(selected) && userIdOf(selected) === userIdOf(currentUser)) {
+        await refreshUser();
+      }
+
+      toast.success('Đã cập nhật tài khoản và đồng bộ thông tin số điện thoại.');
       setSelected(null);
       load();
     } catch (error) {
@@ -145,7 +166,11 @@ export default function AdminUsersPage() {
 
       <Modal open={Boolean(selected)} onClose={() => setSelected(null)} title="Cập nhật tài khoản">
         <form className="stack-form" onSubmit={submit}>
-          <div className="moderation-preview"><h3>{selected?.displayName}</h3><p>@{selected?.username} · {selected?.email}</p></div>
+          <div className="moderation-preview">
+            <h3>{selected?.displayName}</h3>
+            <p>@{selected?.username} · {selected?.email}</p>
+            {userIdOf(selected) === userIdOf(currentUser) ? <small>Đây là tài khoản bạn đang đăng nhập.</small> : null}
+          </div>
 
           <div className="form-grid form-grid--2">
             <FormField label="Số điện thoại">
