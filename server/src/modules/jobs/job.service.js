@@ -1,4 +1,5 @@
 import Content from '../contents/content.model.js';
+import ContentBody from '../contents/contentBody.model.js';
 import JobPost from './jobPost.model.js';
 
 import {
@@ -158,6 +159,39 @@ export async function detail(slug) {
   return { ...b, job };
 }
 
+export async function editorDetail(id, userId) {
+  const content = await getOwnedContentOrThrow(id, userId, 'job');
+
+  await content.populate([
+    {
+      path: 'primaryAreaId',
+      select: 'name slug areaType description',
+    },
+    {
+      path: 'thumbnailMediaId',
+      select: 'url secureUrl altText width height format resourceType status',
+    },
+  ]);
+
+  const [body, job] = await Promise.all([
+    ContentBody.findOne({ contentId: content._id }).lean(),
+    JobPost.findOne({ contentId: content._id }).lean(),
+  ]);
+
+  return {
+    ...content.toObject(),
+    body: body || {
+      contentId: content._id,
+      bodyHtml: '',
+      bodyText: '',
+      wordCount: 0,
+      readingTime: 1,
+      inlineMediaIds: [],
+    },
+    job: job || null,
+  };
+}
+
 export async function create(userId, d) {
   if (new Date(d.deadline) <= new Date()) {
     throw new ApiError(422, 'Hạn nộp phải ở tương lai.', 'DEADLINE_INVALID');
@@ -188,6 +222,15 @@ export async function update(id, userId, d) {
 
 export async function submit(id, userId) {
   const c = await getOwnedContentOrThrow(id, userId, 'job');
+
+  if (!['draft', 'needs_revision', 'rejected'].includes(c.status)) {
+    throw new ApiError(
+      409,
+      'Tin tuyển dụng không thể gửi duyệt ở trạng thái hiện tại.',
+      'INVALID_STATUS',
+    );
+  }
+
   c.status = 'pending_review';
   await c.save();
   return c;
