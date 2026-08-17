@@ -17,9 +17,6 @@ import {
   CalendarDays,
   Check,
   CheckCircle2,
-  ChevronDown,
-  ChevronLeft,
-  ChevronRight,
   CircleDollarSign,
   Compass,
   Eye,
@@ -43,6 +40,8 @@ import {
   UserRound,
   WalletCards,
   X,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 
 import Seo from '../../components/common/Seo';
@@ -71,23 +70,41 @@ import { toNumber } from '../../utils/validators';
 import './PropertyEditorPage.css';
 
 const STEPS = [
+  { id: 1, label: 'Thông tin BĐS', icon: Home },
+  { id: 2, label: 'Hình ảnh', icon: ImagePlus },
+  { id: 3, label: 'Hạng tin & xuất bản', icon: Star },
+];
+
+const INFORMATION_PAGES = [
   {
     id: 1,
-    label: 'Thông tin BĐS',
-    shortLabel: 'Thông tin',
-    icon: Home,
+    title: 'Nhu cầu',
+    description: 'Chọn mục đích đăng tin trước khi nhập các thông tin khác.',
   },
   {
     id: 2,
-    label: 'Hình ảnh',
-    shortLabel: 'Hình ảnh',
-    icon: ImagePlus,
+    title: 'Địa chỉ',
+    description: 'Chọn khu vực và mô tả vị trí bất động sản.',
   },
   {
     id: 3,
-    label: 'Hạng tin & xuất bản',
-    shortLabel: 'Xuất bản',
-    icon: Star,
+    title: 'Thông tin chính',
+    description: 'Nhập loại bất động sản, diện tích và mức giá.',
+  },
+  {
+    id: 4,
+    title: 'Thông tin khác',
+    description: 'Bổ sung pháp lý, phòng ngủ, hướng, mặt tiền và các thông số khác.',
+  },
+  {
+    id: 5,
+    title: 'Tiêu đề & mô tả',
+    description: 'Viết nội dung rõ ràng, đúng thực tế và dễ đọc.',
+  },
+  {
+    id: 6,
+    title: 'Thông tin liên hệ',
+    description: 'Kiểm tra người liên hệ trước khi chuyển sang phần hình ảnh.',
   },
 ];
 
@@ -226,9 +243,7 @@ function EditorField({
         </label>
         {counter ? <span>{counter}</span> : null}
       </div>
-
       {children}
-
       {error ? (
         <small className="property-post-field__error">{error}</small>
       ) : hint ? (
@@ -238,17 +253,9 @@ function EditorField({
   );
 }
 
-function SectionCard({
-  title,
-  description = '',
-  icon: Icon,
-  children,
-  className = '',
-}) {
+function SectionCard({ title, description = '', icon: Icon, children }) {
   return (
-    <section
-      className={['property-post-card', className].filter(Boolean).join(' ')}
-    >
+    <section className="property-post-card">
       <header className="property-post-card__header">
         <span className="property-post-card__icon">
           <Icon size={20} />
@@ -272,7 +279,6 @@ function StepperField({ label, value, onChange, icon: Icon }) {
         {Icon ? <Icon size={18} /> : null}
         {label}
       </span>
-
       <div>
         <button
           type="button"
@@ -372,6 +378,7 @@ export default function PropertyEditorPage() {
   const [errors, setErrors] = useState({});
   const [loadingAction, setLoadingAction] = useState('');
   const [step, setStep] = useState(1);
+  const [informationPage, setInformationPage] = useState(1);
   const [furthestStep, setFurthestStep] = useState(1);
   const [previewOpen, setPreviewOpen] = useState(false);
 
@@ -418,6 +425,7 @@ export default function PropertyEditorPage() {
     };
 
     document.addEventListener('keydown', close);
+
     return () => {
       document.body.style.overflow = previousOverflow;
       document.removeEventListener('keydown', close);
@@ -454,9 +462,14 @@ export default function PropertyEditorPage() {
   const propertyLabel = PROPERTY_TYPES[form.propertyType] || 'Bất động sản';
   const transactionLabel = TRANSACTION_TYPES[form.transactionType] || 'Đăng tin';
   const previewImage = mediaUrl(form.thumbnailMediaId);
+  const currentInformationPage = INFORMATION_PAGES[informationPage - 1];
+
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
   const scrollToError = (nextErrors) => {
-    setErrors(nextErrors);
+    setErrors((current) => ({ ...current, ...nextErrors }));
     const firstError = Object.keys(nextErrors)[0];
 
     if (!firstError) return true;
@@ -470,56 +483,71 @@ export default function PropertyEditorPage() {
     return false;
   };
 
-  const validateInformation = () => {
+  const getInformationErrors = (page = null) => {
     const nextErrors = {};
-    const cleanTitle = form.title.trim();
+    const include = (target) => page === null || page === target;
 
-    if (!cleanTitle) nextErrors.title = 'Vui lòng nhập tiêu đề.';
-    else if (cleanTitle.length < 10) {
-      nextErrors.title = 'Tiêu đề cần có ít nhất 10 ký tự.';
-    } else if (cleanTitle.length > 250) {
-      nextErrors.title = 'Tiêu đề không được vượt quá 250 ký tự.';
+    if (include(2)) {
+      if (!form.primaryAreaId) {
+        nextErrors.primaryAreaId = 'Vui lòng chọn khu vực.';
+      }
+      if (form.addressText.trim().length < 3) {
+        nextErrors.addressText = 'Vui lòng nhập địa chỉ mô tả.';
+      }
     }
 
-    if (form.summary.length > 1000) {
-      nextErrors.summary = 'Mô tả ngắn không được vượt quá 1.000 ký tự.';
+    if (include(3)) {
+      if (form.landArea === '' || Number(form.landArea) <= 0) {
+        nextErrors.landArea = 'Diện tích phải lớn hơn 0.';
+      }
+      if (!form.isNegotiable && (form.price === '' || Number(form.price) <= 0)) {
+        nextErrors.price = 'Vui lòng nhập mức giá lớn hơn 0.';
+      }
     }
 
-    if (!stripHtml(form.bodyHtml)) {
-      nextErrors.bodyHtml = 'Vui lòng nhập mô tả chi tiết.';
+    if (include(5)) {
+      const cleanTitle = form.title.trim();
+
+      if (!cleanTitle) {
+        nextErrors.title = 'Vui lòng nhập tiêu đề.';
+      } else if (cleanTitle.length < 10) {
+        nextErrors.title = 'Tiêu đề cần có ít nhất 10 ký tự.';
+      } else if (cleanTitle.length > 250) {
+        nextErrors.title = 'Tiêu đề không được vượt quá 250 ký tự.';
+      }
+
+      if (form.summary.length > 1000) {
+        nextErrors.summary = 'Mô tả ngắn không được vượt quá 1.000 ký tự.';
+      }
+
+      if (!stripHtml(form.bodyHtml)) {
+        nextErrors.bodyHtml = 'Vui lòng nhập mô tả chi tiết.';
+      }
     }
 
-    if (!form.isNegotiable && (form.price === '' || Number(form.price) <= 0)) {
-      nextErrors.price = 'Vui lòng nhập mức giá lớn hơn 0.';
+    if (include(6)) {
+      if (!form.contactName.trim()) {
+        nextErrors.contactName = 'Vui lòng nhập tên liên hệ.';
+      }
+      if (!form.contactPhone.trim()) {
+        nextErrors.contactPhone = 'Tài khoản chưa có số điện thoại.';
+      }
+      if (
+        form.contactEmail &&
+        !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.contactEmail)
+      ) {
+        nextErrors.contactEmail = 'Địa chỉ email không hợp lệ.';
+      }
     }
 
-    if (form.landArea === '' || Number(form.landArea) <= 0) {
-      nextErrors.landArea = 'Diện tích phải lớn hơn 0.';
-    }
-
-    if (!form.primaryAreaId) nextErrors.primaryAreaId = 'Vui lòng chọn khu vực.';
-
-    if (form.addressText.trim().length < 3) {
-      nextErrors.addressText = 'Vui lòng nhập địa chỉ mô tả.';
-    }
-
-    if (!form.contactName.trim()) {
-      nextErrors.contactName = 'Vui lòng nhập tên liên hệ.';
-    }
-
-    if (!form.contactPhone.trim()) {
-      nextErrors.contactPhone = 'Tài khoản chưa có số điện thoại.';
-    }
-
-    if (
-      form.contactEmail &&
-      !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.contactEmail)
-    ) {
-      nextErrors.contactEmail = 'Địa chỉ email không hợp lệ.';
-    }
-
-    return scrollToError(nextErrors);
+    return nextErrors;
   };
+
+  const validateInformationPage = (page) =>
+    scrollToError(getInformationErrors(page));
+
+  const validateInformation = () =>
+    scrollToError(getInformationErrors());
 
   const validateMedia = () => {
     if (getMediaId(form.thumbnailMediaId)) {
@@ -533,22 +561,35 @@ export default function PropertyEditorPage() {
   };
 
   const validateAll = () => {
-    if (!validateInformation()) {
+    const informationErrors = getInformationErrors();
+
+    if (Object.keys(informationErrors).length) {
       setStep(1);
+
+      if (informationErrors.primaryAreaId || informationErrors.addressText) {
+        setInformationPage(2);
+      } else if (informationErrors.landArea || informationErrors.price) {
+        setInformationPage(3);
+      } else if (
+        informationErrors.title ||
+        informationErrors.summary ||
+        informationErrors.bodyHtml
+      ) {
+        setInformationPage(5);
+      } else {
+        setInformationPage(6);
+      }
+
+      window.setTimeout(() => scrollToError(informationErrors), 0);
       return false;
     }
 
     if (!getMediaId(form.thumbnailMediaId)) {
+      setStep(2);
       setErrors((current) => ({
         ...current,
         thumbnailMediaId: 'Vui lòng tải ít nhất một ảnh cho tin đăng.',
       }));
-      setStep(2);
-      window.setTimeout(() => {
-        document
-          .querySelector('[data-field="thumbnailMediaId"]')
-          ?.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      }, 0);
       return false;
     }
 
@@ -620,33 +661,76 @@ export default function PropertyEditorPage() {
   };
 
   const goNext = () => {
-    if (step === 1 && !validateInformation()) return;
-    if (step === 2 && !validateMedia()) return;
+    if (step === 1) {
+      if (!validateInformationPage(informationPage)) return;
 
-    const next = Math.min(3, step + 1);
-    setStep(next);
-    setFurthestStep((current) => Math.max(current, next));
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+      if (informationPage < INFORMATION_PAGES.length) {
+        setInformationPage((current) => current + 1);
+        scrollToTop();
+        return;
+      }
 
-  const goBack = () => {
-    setStep((current) => Math.max(1, current - 1));
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
+      if (!validateInformation()) return;
 
-  const jumpToStep = (target) => {
-    if (target < step || target <= furthestStep) {
-      setStep(target);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      setStep(2);
+      setFurthestStep((current) => Math.max(current, 2));
+      scrollToTop();
       return;
     }
 
-    if (step === 1 && validateInformation()) {
-      setStep(2);
-      setFurthestStep((current) => Math.max(current, 2));
-    } else if (step === 2 && validateMedia()) {
+    if (step === 2) {
+      if (!validateMedia()) return;
       setStep(3);
       setFurthestStep(3);
+      scrollToTop();
+    }
+  };
+
+  const goBack = () => {
+    if (step === 1 && informationPage > 1) {
+      setInformationPage((current) => current - 1);
+      scrollToTop();
+      return;
+    }
+
+    if (step === 2) {
+      setStep(1);
+      setInformationPage(INFORMATION_PAGES.length);
+      scrollToTop();
+      return;
+    }
+
+    if (step === 3) {
+      setStep(2);
+      scrollToTop();
+    }
+  };
+
+  const jumpToStep = (target) => {
+    if (target === 1) {
+      setStep(1);
+      setInformationPage(1);
+      scrollToTop();
+      return;
+    }
+
+    if (target === 2) {
+      if (!validateInformation()) return;
+      setStep(2);
+      setFurthestStep((current) => Math.max(current, 2));
+      scrollToTop();
+      return;
+    }
+
+    if (target === 3) {
+      if (!validateInformation()) return;
+      if (!validateMedia()) {
+        setStep(2);
+        return;
+      }
+      setStep(3);
+      setFurthestStep(3);
+      scrollToTop();
     }
   };
 
@@ -654,7 +738,6 @@ export default function PropertyEditorPage() {
     return (
       <main className="property-verification-page">
         <Seo title="Xác thực số điện thoại" />
-
         <section className="property-verification-card">
           <span className="property-verification-card__icon">
             <Phone size={31} />
@@ -667,7 +750,6 @@ export default function PropertyEditorPage() {
             Tin bất động sản chỉ được đăng bằng số điện thoại đã xác thực để
             hạn chế tin rác và bảo vệ người dùng.
           </p>
-
           <div className="property-verification-card__note">
             <ShieldCheck size={19} />
             <span>
@@ -675,7 +757,6 @@ export default function PropertyEditorPage() {
               chính trên tin đăng.
             </span>
           </div>
-
           <div className="property-verification-card__actions">
             <Link
               className="property-post-button property-post-button--ghost"
@@ -698,7 +779,7 @@ export default function PropertyEditorPage() {
   }
 
   return (
-    <main className="property-editor-page">
+    <main className="property-editor-page" style={{ paddingBottom: 42 }}>
       <Seo
         title={editingId ? 'Chỉnh sửa tin bất động sản' : 'Tạo tin bất động sản'}
       />
@@ -754,7 +835,9 @@ export default function PropertyEditorPage() {
                   .join(' ')}
                 onClick={() => jumpToStep(item.id)}
               >
-                <span>{done && !active ? <Check size={17} /> : <Icon size={17} />}</span>
+                <span>
+                  {done && !active ? <Check size={17} /> : <Icon size={17} />}
+                </span>
                 <div>
                   <small>Bước {item.id}</small>
                   <strong>{item.label}</strong>
@@ -789,457 +872,459 @@ export default function PropertyEditorPage() {
           {step === 1 ? (
             <div className="property-post-step" data-step="1">
               <div className="property-post-step__intro">
-                <span>Bước 1</span>
-                <h2>Thông tin bất động sản</h2>
-                <p>
-                  Chỉ nhập các thông tin cần thiết trước. Những thông số nâng cao
-                  được gom vào một phần riêng để màn hình bớt rối.
-                </p>
+                <span>
+                  Bước 1 · Mục {informationPage}/{INFORMATION_PAGES.length}
+                </span>
+                <h2>{currentInformationPage.title}</h2>
+                <p>{currentInformationPage.description}</p>
               </div>
 
-              <SectionCard
-                icon={WalletCards}
-                title="Nhu cầu"
-                description="Chọn mục đích của tin đăng."
-              >
-                <div className="property-post-choice-grid">
-                  {Object.entries(TRANSACTION_TYPES).map(([value, label]) => {
-                    const Icon = TRANSACTION_ICONS[value] || Home;
-                    const selected = form.transactionType === value;
-
-                    return (
-                      <button
-                        type="button"
-                        key={value}
-                        className={selected ? 'is-selected' : ''}
-                        onClick={() => change('transactionType', value)}
-                      >
-                        <span><Icon size={21} /></span>
-                        <strong>{label}</strong>
-                        {selected ? <CheckCircle2 size={20} /> : null}
-                      </button>
-                    );
-                  })}
-                </div>
-              </SectionCard>
-
-              <SectionCard
-                icon={MapPin}
-                title="Địa chỉ"
-                description="Chọn khu vực trước, sau đó mô tả vị trí đủ rõ cho người xem."
-              >
-                <div
-                  data-field="primaryAreaId"
-                  className={
-                    errors.primaryAreaId
-                      ? 'property-post-taxonomy has-error'
-                      : 'property-post-taxonomy'
-                  }
+              {informationPage === 1 ? (
+                <SectionCard
+                  icon={WalletCards}
+                  title="Nhu cầu"
+                  description="Chọn một nhu cầu. Các thông tin tiếp theo sẽ được nhập ở màn hình kế tiếp."
                 >
-                  <TaxonomyFields
-                    scope="property"
-                    categoryId={null}
-                    areaId={form.primaryAreaId}
-                    tagIds={form.tagIds}
-                    onChange={change}
-                    areaRequired
-                  />
-                  {errors.primaryAreaId ? (
-                    <small className="property-post-field__error">
-                      {errors.primaryAreaId}
-                    </small>
-                  ) : null}
-                </div>
+                  <div className="property-post-choice-grid">
+                    {Object.entries(TRANSACTION_TYPES).map(([value, label]) => {
+                      const Icon = TRANSACTION_ICONS[value] || Home;
+                      const selected = form.transactionType === value;
 
-                <div data-field="addressText">
-                  <EditorField
-                    label="Địa chỉ mô tả"
-                    required
-                    error={errors.addressText}
-                    hint="Ví dụ: gần ĐHQGHN, xã Thạch Hòa. Không cần công khai số nhà nếu không muốn."
+                      return (
+                        <button
+                          type="button"
+                          key={value}
+                          className={selected ? 'is-selected' : ''}
+                          onClick={() => change('transactionType', value)}
+                        >
+                          <span><Icon size={21} /></span>
+                          <strong>{label}</strong>
+                          {selected ? <CheckCircle2 size={20} /> : null}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </SectionCard>
+              ) : null}
+
+              {informationPage === 2 ? (
+                <SectionCard
+                  icon={MapPin}
+                  title="Địa chỉ"
+                  description="Chọn khu vực trước, sau đó mô tả vị trí đủ rõ cho người xem."
+                >
+                  <div
+                    data-field="primaryAreaId"
+                    className={
+                      errors.primaryAreaId
+                        ? 'property-post-taxonomy has-error'
+                        : 'property-post-taxonomy'
+                    }
                   >
-                    <div className="property-post-input">
-                      <MapPin size={18} />
-                      <input
-                        type="text"
-                        value={form.addressText}
-                        onChange={(event) => change('addressText', event.target.value)}
-                        placeholder="Nhập địa chỉ hoặc mô tả vị trí"
-                        maxLength={500}
-                      />
-                    </div>
-                  </EditorField>
-                </div>
+                    <TaxonomyFields
+                      scope="property"
+                      categoryId={null}
+                      areaId={form.primaryAreaId}
+                      tagIds={form.tagIds}
+                      onChange={change}
+                      areaRequired
+                    />
+                    {errors.primaryAreaId ? (
+                      <small className="property-post-field__error">
+                        {errors.primaryAreaId}
+                      </small>
+                    ) : null}
+                  </div>
 
-                <details className="property-post-collapsible property-post-collapsible--small">
-                  <summary>
-                    <span>
-                      <Compass size={17} />
-                      Thêm tọa độ bản đồ
-                    </span>
-                    <ChevronDown size={18} />
-                  </summary>
-                  <div className="property-post-grid property-post-grid--2">
-                    <EditorField label="Vĩ độ">
+                  <div data-field="addressText">
+                    <EditorField
+                      label="Địa chỉ mô tả"
+                      required
+                      error={errors.addressText}
+                      hint="Ví dụ: gần ĐHQGHN, xã Thạch Hòa. Không cần công khai số nhà nếu không muốn."
+                    >
                       <div className="property-post-input">
                         <MapPin size={18} />
                         <input
-                          type="number"
-                          step="any"
-                          value={form.latitude}
-                          onChange={(event) => change('latitude', event.target.value)}
-                          placeholder="21.000000"
-                        />
-                      </div>
-                    </EditorField>
-                    <EditorField label="Kinh độ">
-                      <div className="property-post-input">
-                        <MapPin size={18} />
-                        <input
-                          type="number"
-                          step="any"
-                          value={form.longitude}
-                          onChange={(event) => change('longitude', event.target.value)}
-                          placeholder="105.500000"
+                          type="text"
+                          value={form.addressText}
+                          onChange={(event) => change('addressText', event.target.value)}
+                          placeholder="Nhập địa chỉ hoặc mô tả vị trí"
+                          maxLength={500}
                         />
                       </div>
                     </EditorField>
                   </div>
-                </details>
-              </SectionCard>
 
-              <SectionCard
-                icon={Building2}
-                title="Thông tin chính"
-                description="Loại bất động sản, diện tích và mức giá."
-              >
-                <div className="property-post-grid property-post-grid--2">
-                  <EditorField label="Loại bất động sản" required>
-                    <div className="property-post-input">
-                      <Building2 size={18} />
-                      <select
-                        value={form.propertyType}
-                        onChange={(event) => change('propertyType', event.target.value)}
-                      >
-                        {Object.entries(PROPERTY_TYPES).map(([value, label]) => (
-                          <option key={value} value={value}>{label}</option>
-                        ))}
-                      </select>
+                  <div style={{ marginTop: 16 }}>
+                    <div className="property-post-grid property-post-grid--2">
+                      <EditorField label="Vĩ độ" hint="Không bắt buộc">
+                        <div className="property-post-input">
+                          <MapPin size={18} />
+                          <input
+                            type="number"
+                            step="any"
+                            value={form.latitude}
+                            onChange={(event) => change('latitude', event.target.value)}
+                            placeholder="21.000000"
+                          />
+                        </div>
+                      </EditorField>
+                      <EditorField label="Kinh độ" hint="Không bắt buộc">
+                        <div className="property-post-input">
+                          <MapPin size={18} />
+                          <input
+                            type="number"
+                            step="any"
+                            value={form.longitude}
+                            onChange={(event) => change('longitude', event.target.value)}
+                            placeholder="105.500000"
+                          />
+                        </div>
+                      </EditorField>
                     </div>
-                  </EditorField>
+                  </div>
+                </SectionCard>
+              ) : null}
 
-                  <div data-field="landArea">
-                    <EditorField
-                      label="Diện tích"
-                      required
-                      error={errors.landArea}
-                    >
+              {informationPage === 3 ? (
+                <SectionCard
+                  icon={Building2}
+                  title="Thông tin chính"
+                  description="Chỉ nhập những thông tin quyết định trực tiếp đến việc tìm kiếm tin."
+                >
+                  <div className="property-post-grid property-post-grid--2">
+                    <EditorField label="Loại bất động sản" required>
+                      <div className="property-post-input">
+                        <Building2 size={18} />
+                        <select
+                          value={form.propertyType}
+                          onChange={(event) => change('propertyType', event.target.value)}
+                        >
+                          {Object.entries(PROPERTY_TYPES).map(([value, label]) => (
+                            <option key={value} value={value}>{label}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </EditorField>
+
+                    <div data-field="landArea">
+                      <EditorField
+                        label="Diện tích"
+                        required
+                        error={errors.landArea}
+                      >
+                        <div className="property-post-input property-post-input--suffix">
+                          <LandPlot size={18} />
+                          <input
+                            type="number"
+                            min="0.1"
+                            step="0.1"
+                            value={form.landArea}
+                            onChange={(event) => change('landArea', event.target.value)}
+                            placeholder="Nhập diện tích"
+                          />
+                          <span>m²</span>
+                        </div>
+                      </EditorField>
+                    </div>
+
+                    <div data-field="price">
+                      <EditorField
+                        label="Giá"
+                        required={!form.isNegotiable}
+                        error={errors.price}
+                      >
+                        <div className="property-post-input">
+                          <CircleDollarSign size={18} />
+                          <input
+                            type="number"
+                            min="0"
+                            step="any"
+                            value={form.price}
+                            onChange={(event) => change('price', event.target.value)}
+                            placeholder={form.isNegotiable ? 'Giá thỏa thuận' : 'Nhập giá'}
+                            disabled={form.isNegotiable}
+                          />
+                        </div>
+                      </EditorField>
+                    </div>
+
+                    <EditorField label="Đơn vị giá">
+                      <div className="property-post-input">
+                        <WalletCards size={18} />
+                        <select
+                          value={form.priceUnit}
+                          onChange={(event) => change('priceUnit', event.target.value)}
+                          disabled={form.isNegotiable}
+                        >
+                          {Object.entries(PRICE_UNITS)
+                            .filter(([value]) => value !== 'negotiable')
+                            .map(([value, label]) => (
+                              <option key={value} value={value}>{label}</option>
+                            ))}
+                        </select>
+                      </div>
+                    </EditorField>
+                  </div>
+
+                  <label className="property-post-switch-row">
+                    <span>
+                      <Sparkles size={18} />
+                      <div>
+                        <strong>Giá thỏa thuận</strong>
+                        <small>Không bắt buộc nhập giá cụ thể.</small>
+                      </div>
+                    </span>
+                    <input
+                      type="checkbox"
+                      checked={form.isNegotiable}
+                      onChange={(event) => change('isNegotiable', event.target.checked)}
+                    />
+                    <i><b /></i>
+                  </label>
+                </SectionCard>
+              ) : null}
+
+              {informationPage === 4 ? (
+                <SectionCard
+                  icon={Ruler}
+                  title="Thông tin khác"
+                  description="Các trường này không bắt buộc; có thể bỏ qua nếu chưa có thông tin."
+                >
+                  <div className="property-post-grid property-post-grid--2">
+                    <EditorField label="Giấy tờ pháp lý">
+                      <div className="property-post-input">
+                        <ShieldCheck size={18} />
+                        <select
+                          value={form.legalStatus}
+                          onChange={(event) => change('legalStatus', event.target.value)}
+                        >
+                          {Object.entries(LEGAL_STATUS).map(([value, label]) => (
+                            <option key={value} value={value}>{label}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </EditorField>
+
+                    <EditorField label="Người đăng">
+                      <div className="property-post-input">
+                        <UserRound size={18} />
+                        <select
+                          value={form.ownerType}
+                          onChange={(event) => change('ownerType', event.target.value)}
+                        >
+                          {Object.entries(OWNER_TYPES).map(([value, label]) => (
+                            <option key={value} value={value}>{label}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </EditorField>
+
+                    <EditorField label="Diện tích sử dụng">
                       <div className="property-post-input property-post-input--suffix">
-                        <LandPlot size={18} />
+                        <Maximize2 size={18} />
                         <input
                           type="number"
-                          min="0.1"
+                          min="0"
                           step="0.1"
-                          value={form.landArea}
-                          onChange={(event) => change('landArea', event.target.value)}
-                          placeholder="Nhập diện tích"
+                          value={form.usableArea}
+                          onChange={(event) => change('usableArea', event.target.value)}
+                          placeholder="0"
                         />
                         <span>m²</span>
                       </div>
                     </EditorField>
-                  </div>
 
-                  <div data-field="price">
-                    <EditorField
-                      label="Giá"
-                      required={!form.isNegotiable}
-                      error={errors.price}
-                    >
+                    <EditorField label="Hướng">
                       <div className="property-post-input">
-                        <CircleDollarSign size={18} />
+                        <Compass size={18} />
+                        <select
+                          value={form.direction}
+                          onChange={(event) => change('direction', event.target.value)}
+                        >
+                          {Object.entries(DIRECTIONS).map(([value, label]) => (
+                            <option key={value} value={value}>{label}</option>
+                          ))}
+                        </select>
+                      </div>
+                    </EditorField>
+
+                    <EditorField label="Mặt tiền">
+                      <div className="property-post-input property-post-input--suffix">
+                        <Ruler size={18} />
                         <input
                           type="number"
                           min="0"
-                          step="any"
-                          value={form.price}
-                          onChange={(event) => change('price', event.target.value)}
-                          placeholder={form.isNegotiable ? 'Giá thỏa thuận' : 'Nhập giá'}
-                          disabled={form.isNegotiable}
+                          step="0.1"
+                          value={form.frontage}
+                          onChange={(event) => change('frontage', event.target.value)}
+                          placeholder="0"
                         />
+                        <span>m</span>
+                      </div>
+                    </EditorField>
+
+                    <EditorField label="Đường vào">
+                      <div className="property-post-input property-post-input--suffix">
+                        <Ruler size={18} />
+                        <input
+                          type="number"
+                          min="0"
+                          step="0.1"
+                          value={form.roadWidth}
+                          onChange={(event) => change('roadWidth', event.target.value)}
+                          placeholder="0"
+                        />
+                        <span>m</span>
                       </div>
                     </EditorField>
                   </div>
 
-                  <EditorField label="Đơn vị giá">
-                    <div className="property-post-input">
-                      <WalletCards size={18} />
-                      <select
-                        value={form.priceUnit}
-                        onChange={(event) => change('priceUnit', event.target.value)}
-                        disabled={form.isNegotiable}
-                      >
-                        {Object.entries(PRICE_UNITS)
-                          .filter(([value]) => value !== 'negotiable')
-                          .map(([value, label]) => (
-                            <option key={value} value={value}>{label}</option>
-                          ))}
-                      </select>
-                    </div>
-                  </EditorField>
-                </div>
+                  <div className="property-post-steppers" style={{ marginTop: 16 }}>
+                    <StepperField
+                      label="Số phòng ngủ"
+                      value={form.bedrooms}
+                      onChange={(value) => change('bedrooms', value)}
+                      icon={BedDouble}
+                    />
+                    <StepperField
+                      label="Số phòng tắm, vệ sinh"
+                      value={form.bathrooms}
+                      onChange={(value) => change('bathrooms', value)}
+                      icon={Bath}
+                    />
+                  </div>
+                </SectionCard>
+              ) : null}
 
-                <label className="property-post-switch-row">
-                  <span>
-                    <Sparkles size={18} />
-                    <div>
-                      <strong>Giá thỏa thuận</strong>
-                      <small>Không bắt buộc nhập giá cụ thể.</small>
-                    </div>
-                  </span>
-                  <input
-                    type="checkbox"
-                    checked={form.isNegotiable}
-                    onChange={(event) => change('isNegotiable', event.target.checked)}
-                  />
-                  <i><b /></i>
-                </label>
-              </SectionCard>
-
-              <details className="property-post-collapsible property-post-card">
-                <summary>
-                  <span>
-                    <span className="property-post-card__icon"><Ruler size={20} /></span>
-                    <div>
-                      <strong>Thông tin khác</strong>
-                      <small>Pháp lý, phòng ngủ, mặt tiền, hướng... (không bắt buộc)</small>
-                    </div>
-                  </span>
-                  <ChevronDown size={20} />
-                </summary>
-
-                <div className="property-post-grid property-post-grid--2 property-post-collapsible__content">
-                  <EditorField label="Giấy tờ pháp lý">
-                    <div className="property-post-input">
-                      <ShieldCheck size={18} />
-                      <select
-                        value={form.legalStatus}
-                        onChange={(event) => change('legalStatus', event.target.value)}
-                      >
-                        {Object.entries(LEGAL_STATUS).map(([value, label]) => (
-                          <option key={value} value={value}>{label}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </EditorField>
-
-                  <EditorField label="Người đăng">
-                    <div className="property-post-input">
-                      <UserRound size={18} />
-                      <select
-                        value={form.ownerType}
-                        onChange={(event) => change('ownerType', event.target.value)}
-                      >
-                        {Object.entries(OWNER_TYPES).map(([value, label]) => (
-                          <option key={value} value={value}>{label}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </EditorField>
-
-                  <EditorField label="Diện tích sử dụng">
-                    <div className="property-post-input property-post-input--suffix">
-                      <Maximize2 size={18} />
-                      <input
-                        type="number"
-                        min="0"
-                        step="0.1"
-                        value={form.usableArea}
-                        onChange={(event) => change('usableArea', event.target.value)}
-                        placeholder="0"
-                      />
-                      <span>m²</span>
-                    </div>
-                  </EditorField>
-
-                  <EditorField label="Hướng">
-                    <div className="property-post-input">
-                      <Compass size={18} />
-                      <select
-                        value={form.direction}
-                        onChange={(event) => change('direction', event.target.value)}
-                      >
-                        {Object.entries(DIRECTIONS).map(([value, label]) => (
-                          <option key={value} value={value}>{label}</option>
-                        ))}
-                      </select>
-                    </div>
-                  </EditorField>
-
-                  <EditorField label="Mặt tiền">
-                    <div className="property-post-input property-post-input--suffix">
-                      <Ruler size={18} />
-                      <input
-                        type="number"
-                        min="0"
-                        step="0.1"
-                        value={form.frontage}
-                        onChange={(event) => change('frontage', event.target.value)}
-                        placeholder="0"
-                      />
-                      <span>m</span>
-                    </div>
-                  </EditorField>
-
-                  <EditorField label="Đường vào">
-                    <div className="property-post-input property-post-input--suffix">
-                      <Ruler size={18} />
-                      <input
-                        type="number"
-                        min="0"
-                        step="0.1"
-                        value={form.roadWidth}
-                        onChange={(event) => change('roadWidth', event.target.value)}
-                        placeholder="0"
-                      />
-                      <span>m</span>
-                    </div>
-                  </EditorField>
-                </div>
-
-                <div className="property-post-steppers">
-                  <StepperField
-                    label="Số phòng ngủ"
-                    value={form.bedrooms}
-                    onChange={(value) => change('bedrooms', value)}
-                    icon={BedDouble}
-                  />
-                  <StepperField
-                    label="Số phòng tắm, vệ sinh"
-                    value={form.bathrooms}
-                    onChange={(value) => change('bathrooms', value)}
-                    icon={Bath}
-                  />
-                </div>
-              </details>
-
-              <SectionCard
-                icon={FileText}
-                title="Nội dung tiêu đề & mô tả"
-                description="Viết ngắn gọn, đúng thực tế và tập trung vào điểm người mua/thuê quan tâm."
-              >
-                <div data-field="title">
-                  <EditorField
-                    label="Tiêu đề"
-                    required
-                    error={errors.title}
-                    counter={`${form.title.length}/250`}
-                    hint="Nên có loại BĐS, khu vực, diện tích và điểm nổi bật."
-                  >
-                    <div className="property-post-input">
-                      <FileText size={18} />
-                      <input
-                        type="text"
-                        value={form.title}
-                        onChange={(event) => change('title', event.target.value)}
-                        placeholder="Ví dụ: Bán đất 120 m² tại Thạch Hòa, đường ô tô"
-                        maxLength={250}
-                      />
-                    </div>
-                  </EditorField>
-                </div>
-
-                <EditorField
-                  label="Mô tả ngắn"
-                  error={errors.summary}
-                  counter={`${form.summary.length}/1000`}
-                  hint="Không bắt buộc. Dùng 1–3 câu để tóm tắt ưu điểm chính."
+              {informationPage === 5 ? (
+                <SectionCard
+                  icon={FileText}
+                  title="Nội dung tiêu đề & mô tả"
+                  description="Viết ngắn gọn, đúng thực tế và tập trung vào điểm người mua hoặc người thuê quan tâm."
                 >
-                  <textarea
-                    className="property-post-textarea"
-                    rows={3}
-                    value={form.summary}
-                    onChange={(event) => change('summary', event.target.value)}
-                    placeholder="Tóm tắt vị trí, pháp lý, đường vào, ưu điểm nổi bật..."
-                    maxLength={1000}
-                  />
-                </EditorField>
-
-                <div data-field="bodyHtml">
-                  <EditorField
-                    label="Mô tả chi tiết"
-                    required
-                    error={errors.bodyHtml}
-                  >
-                    <div className="property-post-richtext">
-                      <RichTextEditor
-                        value={form.bodyHtml}
-                        onChange={(value) => change('bodyHtml', value)}
-                      />
-                    </div>
-                  </EditorField>
-                </div>
-              </SectionCard>
-
-              <details className="property-post-collapsible property-post-card">
-                <summary>
-                  <span>
-                    <span className="property-post-card__icon"><Phone size={20} /></span>
-                    <div>
-                      <strong>Thông tin liên hệ</strong>
-                      <small>{form.contactPhone || 'Số điện thoại đã xác thực'}</small>
-                    </div>
-                  </span>
-                  <ChevronDown size={20} />
-                </summary>
-
-                <div className="property-post-grid property-post-grid--2 property-post-collapsible__content">
-                  <div data-field="contactName">
+                  <div data-field="title">
                     <EditorField
-                      label="Tên liên hệ"
+                      label="Tiêu đề"
                       required
-                      error={errors.contactName}
+                      error={errors.title}
+                      counter={`${form.title.length}/250`}
+                      hint="Nên có loại BĐS, khu vực, diện tích và điểm nổi bật."
                     >
                       <div className="property-post-input">
-                        <UserRound size={18} />
+                        <FileText size={18} />
                         <input
                           type="text"
-                          value={form.contactName}
-                          onChange={(event) => change('contactName', event.target.value)}
-                          placeholder="Tên người liên hệ"
+                          value={form.title}
+                          onChange={(event) => change('title', event.target.value)}
+                          placeholder="Ví dụ: Bán đất 120 m² tại Thạch Hòa, đường ô tô"
+                          maxLength={250}
                         />
                       </div>
                     </EditorField>
                   </div>
 
-                  <div data-field="contactPhone">
+                  <div style={{ marginTop: 14 }}>
                     <EditorField
-                      label="Số điện thoại"
-                      required
-                      error={errors.contactPhone}
+                      label="Mô tả ngắn"
+                      error={errors.summary}
+                      counter={`${form.summary.length}/1000`}
+                      hint="Không bắt buộc. Dùng 1–3 câu để tóm tắt ưu điểm chính."
                     >
-                      <div className="property-post-input is-readonly">
-                        <Phone size={18} />
-                        <input type="text" value={form.contactPhone} readOnly />
-                        <BadgeCheck size={18} />
-                      </div>
+                      <textarea
+                        className="property-post-textarea"
+                        rows={3}
+                        value={form.summary}
+                        onChange={(event) => change('summary', event.target.value)}
+                        placeholder="Tóm tắt vị trí, pháp lý, đường vào, ưu điểm nổi bật..."
+                        maxLength={1000}
+                      />
                     </EditorField>
                   </div>
 
-                  <div data-field="contactEmail">
-                    <EditorField label="Email" error={errors.contactEmail}>
-                      <div className="property-post-input">
-                        <Mail size={18} />
-                        <input
-                          type="email"
-                          value={form.contactEmail}
-                          onChange={(event) => change('contactEmail', event.target.value)}
-                          placeholder="email@example.com"
+                  <div data-field="bodyHtml" style={{ marginTop: 14 }}>
+                    <EditorField
+                      label="Mô tả chi tiết"
+                      required
+                      error={errors.bodyHtml}
+                    >
+                      <div className="property-post-richtext">
+                        <RichTextEditor
+                          value={form.bodyHtml}
+                          onChange={(value) => change('bodyHtml', value)}
                         />
                       </div>
                     </EditorField>
                   </div>
-                </div>
-              </details>
+                </SectionCard>
+              ) : null}
+
+              {informationPage === 6 ? (
+                <SectionCard
+                  icon={Phone}
+                  title="Thông tin liên hệ"
+                  description="Số điện thoại xác thực là thông tin liên hệ chính của tin đăng."
+                >
+                  <div className="property-post-grid property-post-grid--2">
+                    <div data-field="contactName">
+                      <EditorField
+                        label="Tên liên hệ"
+                        required
+                        error={errors.contactName}
+                      >
+                        <div className="property-post-input">
+                          <UserRound size={18} />
+                          <input
+                            type="text"
+                            value={form.contactName}
+                            onChange={(event) => change('contactName', event.target.value)}
+                            placeholder="Tên người liên hệ"
+                          />
+                        </div>
+                      </EditorField>
+                    </div>
+
+                    <div data-field="contactPhone">
+                      <EditorField
+                        label="Số điện thoại"
+                        required
+                        error={errors.contactPhone}
+                      >
+                        <div className="property-post-input is-readonly">
+                          <Phone size={18} />
+                          <input type="text" value={form.contactPhone} readOnly />
+                          <BadgeCheck size={18} />
+                        </div>
+                      </EditorField>
+                    </div>
+
+                    <div data-field="contactEmail">
+                      <EditorField label="Email" error={errors.contactEmail}>
+                        <div className="property-post-input">
+                          <Mail size={18} />
+                          <input
+                            type="email"
+                            value={form.contactEmail}
+                            onChange={(event) => change('contactEmail', event.target.value)}
+                            placeholder="email@example.com"
+                          />
+                        </div>
+                      </EditorField>
+                    </div>
+                  </div>
+
+                  <div className="property-post-notice" style={{ marginTop: 16 }}>
+                    <ShieldCheck size={18} />
+                    <div>
+                      <strong>Thông tin xác thực</strong>
+                      <p>
+                        Kiểm tra lại tên và email. Số điện thoại được lấy từ tài khoản đã xác thực.
+                      </p>
+                    </div>
+                  </div>
+                </SectionCard>
+              ) : null}
             </div>
           ) : null}
 
@@ -1360,7 +1445,11 @@ export default function PropertyEditorPage() {
                         <span className="property-post-tier-card__bars"><i /><i /><i /></span>
                         <strong>{tier.label}</strong>
                         <small>{tier.description}</small>
-                        {tier.multiplier ? <em>{tier.multiplier} mức ưu tiên</em> : <em>Tiêu chuẩn</em>}
+                        {tier.multiplier ? (
+                          <em>{tier.multiplier} mức ưu tiên</em>
+                        ) : (
+                          <em>Tiêu chuẩn</em>
+                        )}
                         <b>{formatMoney(tier.referencePrice)}/ngày</b>
                         <mark>MIỄN PHÍ HIỆN TẠI</mark>
                         {selected ? <CheckCircle2 size={22} /> : null}
@@ -1459,9 +1548,27 @@ export default function PropertyEditorPage() {
             </div>
           ) : null}
 
-          <footer className="property-post-footer">
+          <footer
+            className="property-post-footer"
+            style={{
+              position: 'static',
+              bottom: 'auto',
+              zIndex: 'auto',
+              marginTop: 24,
+              boxShadow: 'none',
+              backdropFilter: 'none',
+            }}
+          >
             <div>
-              {step > 1 ? (
+              {step === 1 && informationPage === 1 ? (
+                <Link
+                  className="property-post-button property-post-button--ghost"
+                  to="/tai-khoan/tin-nha-dat"
+                >
+                  <ArrowLeft size={18} />
+                  Hủy
+                </Link>
+              ) : (
                 <button
                   type="button"
                   className="property-post-button property-post-button--ghost"
@@ -1471,14 +1578,6 @@ export default function PropertyEditorPage() {
                   <ChevronLeft size={18} />
                   Quay lại
                 </button>
-              ) : (
-                <Link
-                  className="property-post-button property-post-button--ghost"
-                  to="/tai-khoan/tin-nha-dat"
-                >
-                  <ArrowLeft size={18} />
-                  Hủy
-                </Link>
               )}
             </div>
 
@@ -1575,7 +1674,10 @@ export default function PropertyEditorPage() {
               <h2>{form.title || 'Tiêu đề tin bất động sản'}</h2>
               <strong>{pricePreview}</strong>
               <div className="property-post-preview-modal__meta">
-                <span><LandPlot size={16} /> {form.landArea ? `${formatNumber(form.landArea)} m²` : 'Chưa có diện tích'}</span>
+                <span>
+                  <LandPlot size={16} />{' '}
+                  {form.landArea ? `${formatNumber(form.landArea)} m²` : 'Chưa có diện tích'}
+                </span>
                 <span><MapPin size={16} /> {form.addressText || 'Chưa có địa chỉ'}</span>
                 <span><UserRound size={16} /> {OWNER_TYPES[form.ownerType]}</span>
               </div>
