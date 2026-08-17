@@ -15,6 +15,7 @@ async function resolveAuth(req, required) {
     if (required) throw new ApiError(401, 'Bạn cần đăng nhập.', 'AUTH_REQUIRED');
     return null;
   }
+
   let payload;
   try {
     payload = verifyAccessToken(token);
@@ -22,14 +23,24 @@ async function resolveAuth(req, required) {
     if (required) throw new ApiError(401, 'Phiên đăng nhập đã hết hạn.', 'ACCESS_TOKEN_INVALID');
     return null;
   }
+
   const user = await User.findOne({ _id: payload.sub, deletedAt: null });
   if (!user) {
     if (required) throw new ApiError(401, 'Tài khoản không tồn tại.', 'USER_NOT_FOUND');
     return null;
   }
+
+  // Không cho tồn tại trạng thái "đã xác thực" nhưng lại không có số điện thoại.
+  // Dữ liệu seed/cũ có thể từng rơi vào trạng thái này và làm UI hiểu nhầm.
+  if (!user.phone && user.phoneVerifiedAt) {
+    user.phoneVerifiedAt = null;
+    await user.save();
+  }
+
   if (['suspended', 'banned'].includes(user.status)) {
     throw new ApiError(403, 'Tài khoản đang bị khóa hoặc tạm đình chỉ.', 'ACCOUNT_BLOCKED');
   }
+
   const authorization = await getUserAuthorization(user._id);
   req.user = user;
   req.auth = { userId: user._id, sessionId: payload.sid, ...authorization };
