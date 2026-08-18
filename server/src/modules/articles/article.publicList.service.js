@@ -107,6 +107,12 @@ export async function listPublicArticles(query = {}) {
     deletedAt: null,
   };
 
+  if (query.featured === 'true') {
+    filter.isFeatured = true;
+  } else if (query.featured === 'false') {
+    filter.isFeatured = false;
+  }
+
   const and = [];
 
   if (categoryIds.length) {

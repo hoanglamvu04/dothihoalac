@@ -46,6 +46,7 @@ jobs:
           src/pages/account/NotificationsPage.jsx
           src/pages/account/SessionsPage.jsx
           src/pages/admin/AdminDashboardPage.jsx
+          src/pages/admin/AdminEditorialPage.jsx
           src/pages/admin/AdminProjectsPage.jsx
           src/pages/admin/ArticleWorkspacePage.jsx
           src/pages/admin/GoogleDocsArticleLauncher.jsx
@@ -111,6 +112,7 @@ jobs:
           src/modules/jobs/job.service.js
           src/modules/articles/article.model.js
           src/modules/articles/article.routes.js
+          src/modules/articles/article.publicList.service.js
           src/modules/articles/article.validation.js
           src/modules/articles/article.metadata.service.js
           src/modules/projects/project.model.js
