@@ -28,11 +28,20 @@ export const followApi = {
     unwrap(await api.delete(`/follows/${targetType}/${targetId}`)),
 };
 
+const markNotificationRead = async (id) =>
+  unwrap(await api.patch(`/notifications/${id}/read`));
+
+const markAllNotificationsRead = async () =>
+  unwrap(await api.patch('/notifications/read-all'));
+
 export const notificationApi = {
   list: async (params = {}) => unwrapList(await api.get('/notifications', { params })),
   unreadCount: async () => unwrap(await api.get('/notifications/unread-count')),
-  read: async (id) => unwrap(await api.patch(`/notifications/${id}/read`)),
-  readAll: async () => unwrap(await api.patch('/notifications/read-all')),
+  read: markNotificationRead,
+  markRead: markNotificationRead,
+  readAll: markAllNotificationsRead,
+  markAllRead: markAllNotificationsRead,
+  markAllAsRead: markAllNotificationsRead,
   remove: async (id) => unwrap(await api.delete(`/notifications/${id}`)),
   preferences: async () => unwrap(await api.get('/notification-preferences')),
   updatePreferences: async (items) =>
