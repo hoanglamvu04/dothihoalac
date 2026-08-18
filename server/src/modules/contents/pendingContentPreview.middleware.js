@@ -1,5 +1,6 @@
 import Content from './content.model.js';
 import ContentBody from './contentBody.model.js';
+import Article from '../articles/article.model.js';
 import CommunityPost from '../community/communityPost.model.js';
 import JobPost from '../jobs/jobPost.model.js';
 import { ADMIN_ROLES } from '../../constants/roles.js';
@@ -16,6 +17,7 @@ const AUTHOR_PREVIEW_STATUSES = new Set([
 ]);
 
 const DETAIL_CONFIG = {
+  article: { key: 'article', Model: Article },
   community: { key: 'community', Model: CommunityPost },
   job: { key: 'job', Model: JobPost },
 };
