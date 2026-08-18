@@ -1,0 +1,50 @@
+name: Content Studio V2 checks
+
+on:
+  push:
+    branches:
+      - upgrade/content-studio-v2
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  client:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: client
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+      - run: npm ci
+      - run: npm run check
+
+  server:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    env:
+      NODE_ENV: test
+      JWT_ACCESS_SECRET: content-studio-v2-access-secret-000000000000000000000000
+      JWT_REFRESH_SECRET: content-studio-v2-refresh-secret-00000000000000000000000
+      ADMIN_PASSWORD: content-studio-v2-admin-password
+      UPLOAD_PROVIDER: local
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
