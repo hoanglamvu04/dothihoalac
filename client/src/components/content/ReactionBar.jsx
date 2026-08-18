@@ -1,10 +1,29 @@
 import { useState } from 'react';
-import { Bookmark, Flag, Navigation, Share2, ShieldCheck } from 'lucide-react';
+import {
+  Bookmark,
+  Eye,
+  Flag,
+  Lightbulb,
+  Navigation,
+  Share2,
+  ShieldCheck,
+  Sparkles,
+  ThumbsDown,
+  ThumbsUp,
+} from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { bookmarkApi, reactionApi } from '../../api/interaction.api';
 import { REACTIONS } from '../../utils/constants';
 import ReportModal from './ReportModal';
+
+const REACTION_ICONS = {
+  like: ThumbsUp,
+  interested: Eye,
+  helpful: Lightbulb,
+  surprised: Sparkles,
+  disagree: ThumbsDown,
+};
 
 function propertyDirectionsUrl(content) {
   if (content?.contentType !== 'property') return '';
@@ -88,7 +107,7 @@ export default function ReactionBar({ content }) {
     return (
       <div className="reaction-bar reaction-bar--preview">
         <div className="reaction-picker">
-          <span style={{ display: 'inline-flex', alignItems: 'center', gap: 7 }}>
+          <span className="reaction-picker__summary">
             <ShieldCheck size={17} />
             Bản xem trước · chỉ tác giả và quản trị viên truy cập được
           </span>
@@ -102,7 +121,9 @@ export default function ReactionBar({ content }) {
               <Navigation size={18} /> Xem đường đi
             </button>
           ) : null}
-          <button type="button" onClick={share}><Share2 size={18} /> Sao chép/chia sẻ liên kết xem trước</button>
+          <button type="button" onClick={share}>
+            <Share2 size={18} /> Sao chép/chia sẻ liên kết xem trước
+          </button>
         </div>
       </div>
     );
@@ -112,13 +133,33 @@ export default function ReactionBar({ content }) {
     <>
       <div className="reaction-bar">
         <div className="reaction-picker">
-          <span>{count} cảm xúc</span>
-          {REACTIONS.map((item) => (
-            <button key={item.value} type="button" className={reaction === item.value ? 'is-active' : ''} onClick={() => react(item.value)} title={item.label}>
-              <span>{item.emoji}</span><small>{item.label}</small>
-            </button>
-          ))}
+          <span className="reaction-picker__summary">
+            <Sparkles size={16} aria-hidden="true" />
+            <strong>{count}</strong>
+            <span>cảm xúc</span>
+          </span>
+
+          <div className="reaction-picker__choices" aria-label="Cảm xúc về bài viết">
+            {REACTIONS.map((item) => {
+              const Icon = REACTION_ICONS[item.value] || Sparkles;
+
+              return (
+                <button
+                  key={item.value}
+                  type="button"
+                  className={reaction === item.value ? 'is-active' : ''}
+                  onClick={() => react(item.value)}
+                  title={item.label}
+                  aria-pressed={reaction === item.value}
+                >
+                  <Icon size={16} strokeWidth={1.9} aria-hidden="true" />
+                  <small>{item.label}</small>
+                </button>
+              );
+            })}
+          </div>
         </div>
+
         <div className="reaction-actions">
           {directionsUrl ? (
             <button
@@ -128,12 +169,30 @@ export default function ReactionBar({ content }) {
               <Navigation size={18} /> Xem đường đi
             </button>
           ) : null}
-          <button type="button" className={bookmarked ? 'is-active' : ''} onClick={bookmark}><Bookmark size={18} /> {bookmarked ? 'Đã lưu' : 'Lưu'}</button>
-          <button type="button" onClick={share}><Share2 size={18} /> Chia sẻ</button>
-          <button type="button" onClick={() => (requireLogin() ? setReportOpen(true) : null)}><Flag size={18} /> Báo cáo</button>
+          <button type="button" className={bookmarked ? 'is-active' : ''} onClick={bookmark}>
+            <Bookmark size={18} /> {bookmarked ? 'Đã lưu' : 'Lưu'}
+          </button>
+          <button type="button" onClick={share}>
+            <Share2 size={18} /> Chia sẻ
+          </button>
+          <button type="button" onClick={() => (requireLogin() ? setReportOpen(true) : null)}>
+            <Flag size={18} /> Báo cáo
+          </button>
         </div>
       </div>
-      <ReportModal open={reportOpen} onClose={() => setReportOpen(false)} targetType={content.contentType === 'property' ? 'property' : content.contentType === 'job' ? 'job' : 'content'} targetId={content._id} />
+
+      <ReportModal
+        open={reportOpen}
+        onClose={() => setReportOpen(false)}
+        targetType={
+          content.contentType === 'property'
+            ? 'property'
+            : content.contentType === 'job'
+              ? 'job'
+              : 'content'
+        }
+        targetId={content._id}
+      />
     </>
   );
 }
