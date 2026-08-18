@@ -31,29 +31,71 @@ const allowedTags = [
   'td',
 ];
 
+const layoutStyleTags = [
+  'p',
+  'blockquote',
+  'ul',
+  'ol',
+  'li',
+  'h2',
+  'h3',
+  'h4',
+  'figure',
+  'figcaption',
+  'table',
+  'th',
+  'td',
+];
+
+const safeLength = /^(?:0|auto|\d+(?:\.\d+)?(?:px|pt|em|rem|%))$/i;
+const safeLineHeight = /^(?:normal|\d+(?:\.\d+)?|\d+(?:\.\d+)?(?:px|pt|em|rem|%))$/i;
+
 export function cleanHtml(html = '') {
+  const allowedAttributes = {
+    a: ['href', 'target', 'rel', 'title'],
+    figure: [
+      'class',
+      'style',
+      'data-media-id',
+      'data-caption-optional',
+    ],
+    img: [
+      'src',
+      'alt',
+      'title',
+      'width',
+      'height',
+      'loading',
+      'decoding',
+      'data-media-id',
+    ],
+    figcaption: ['class', 'style'],
+    th: ['colspan', 'rowspan', 'style'],
+    td: ['colspan', 'rowspan', 'style'],
+  };
+
+  for (const tag of layoutStyleTags) {
+    allowedAttributes[tag] = [
+      ...(allowedAttributes[tag] || []),
+      'style',
+    ];
+  }
+
   return sanitizeHtmlLibrary(String(html), {
     allowedTags,
-    allowedAttributes: {
-      a: ['href', 'target', 'rel', 'title'],
-      figure: [
-        'class',
-        'data-media-id',
-        'data-caption-optional',
-      ],
-      img: [
-        'src',
-        'alt',
-        'title',
-        'width',
-        'height',
-        'loading',
-        'decoding',
-        'data-media-id',
-      ],
-      figcaption: ['class'],
-      th: ['colspan', 'rowspan'],
-      td: ['colspan', 'rowspan'],
+    allowedAttributes,
+    allowedStyles: {
+      '*': {
+        'text-align': [/^(?:left|right|center|justify|start|end)$/i],
+        'margin-top': [safeLength],
+        'margin-right': [safeLength],
+        'margin-bottom': [safeLength],
+        'margin-left': [safeLength],
+        'padding-left': [safeLength],
+        width: [safeLength],
+        'max-width': [safeLength],
+        'line-height': [safeLineHeight],
+      },
     },
     allowedSchemes: ['http', 'https', 'mailto', 'tel'],
     allowedSchemesByTag: {
