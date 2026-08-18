@@ -182,7 +182,11 @@ export async function create(userId, contentId, data) {
       ? 'Có người trả lời bình luận của bạn'
       : 'Bài viết của bạn có bình luận mới',
     message: data.body.slice(0, 160),
-    payload: { contentId },
+    payload: {
+      contentId: content._id,
+      contentType: content.contentType,
+      slug: content.slug,
+    },
   });
 
   return comment;

@@ -1,9 +1,6 @@
-name: Content Studio V2 checks
+name: DTHL application checks
 
 on:
-  push:
-    branches:
-      - upgrade/content-studio-v2
   pull_request:
     branches:
       - main
@@ -24,22 +21,22 @@ jobs:
           node-version: 22
           cache: npm
           cache-dependency-path: client/package-lock.json
-      # package.json đã đi trước package-lock ở main từ trước PR này. Dùng install
-      # để vẫn kiểm chứng được source mới và production bundle.
+      # package.json hiện đi trước package-lock ở client; dùng install để kiểm tra
+      # source và production bundle mà không để lockfile cũ chặn CI.
       - run: npm install --no-audit --no-fund
-      # Repo main còn một số React Compiler lint debt ở các màn hình cũ không
-      # thuộc PR. Lint đầy đủ toàn bộ source mà Content Studio V2 trực tiếp đổi,
-      # sau đó build toàn ứng dụng để bắt lỗi import, route và bundle.
-      - name: Lint Content Studio client changes
+      - name: Lint changed application surfaces
         run: >-
           npx eslint
           src/api/content.api.js
+          src/api/interaction.api.js
           src/app/App.jsx
           src/components/account/AccountContentNav.jsx
+          src/components/content/ArticleBody.jsx
           src/components/content/ContentImage.jsx
           src/components/layout/AccountLayout.jsx
           src/components/studio/ContentEditorShell.jsx
           src/pages/account/MyContentPage.jsx
+          src/pages/account/NotificationsPage.jsx
           src/pages/admin/ArticleWorkspacePage.jsx
           src/pages/admin/GoogleDocsArticleLauncher.jsx
           src/pages/create/CommunityStudioPage.jsx
@@ -47,6 +44,7 @@ jobs:
           src/pages/create/CreateHubPage.jsx
           src/pages/create/JobStudioPage.jsx
           src/pages/create/PropertyStudioAdapter.jsx
+          src/pages/public/SearchPage.jsx
           src/utils/content.js
       - run: npm run build
 
@@ -70,11 +68,20 @@ jobs:
           cache: npm
           cache-dependency-path: server/package-lock.json
       - run: npm ci
-      # Repo main hiện có lint debt ở các module Google Workspace/SourceWatch cũ.
-      # PR này lint toàn bộ các file server mà Content Studio V2 trực tiếp thay đổi.
-      - name: Lint Content Studio server changes
+      - name: Lint changed server surfaces
         run: >-
           npx eslint
+          src/constants/notificationTypes.js
+          src/services/notification.service.js
+          src/modules/notifications/notification.service.js
+          src/modules/comments/comment.service.js
+          src/modules/reactions/reaction.service.js
+          src/modules/follows/follow.service.js
+          src/modules/search/search.service.js
+          src/jobs/expirePropertyListings.job.js
+          src/jobs/expireJobPosts.job.js
+          src/jobs/publishScheduledContent.job.js
+          src/utils/sanitizeHtml.js
           src/modules/contents/contentDraft.controller.js
           src/modules/contents/contentDraft.routes.js
           src/modules/contents/contentDraft.service.js

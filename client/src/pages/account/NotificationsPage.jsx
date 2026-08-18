@@ -1,10 +1,17 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Bell,
   BellRing,
+  BriefcaseBusiness,
+  Building2,
   CheckCheck,
+  FileCheck2,
+  Heart,
+  MessageCircle,
   RefreshCw,
   Trash2,
+  UserPlus,
 } from 'lucide-react';
 
 import Seo from '../../components/common/Seo';
@@ -18,8 +25,29 @@ import { formatRelativeTime } from '../../utils/formatters';
 
 import './AccountPages.css';
 
+function notificationType(item) {
+  return String(item?.notificationType || item?.type || '').toLowerCase();
+}
+
+function NotificationIcon({ item }) {
+  const type = notificationType(item);
+
+  if (type.includes('comment') || type.includes('reply') || type.includes('mention')) {
+    return <MessageCircle size={20} />;
+  }
+
+  if (type.includes('reaction')) return <Heart size={20} />;
+  if (type.includes('follower')) return <UserPlus size={20} />;
+  if (type.includes('listing')) return <Building2 size={20} />;
+  if (type.includes('job')) return <BriefcaseBusiness size={20} />;
+  if (type.includes('post_')) return <FileCheck2 size={20} />;
+
+  return <Bell size={20} />;
+}
+
 export default function NotificationsPage() {
   const toast = useToast();
+  const navigate = useNavigate();
   const [items, setItems] = useState([]);
   const [meta, setMeta] = useState({});
   const [page, setPage] = useState(1);
@@ -29,6 +57,7 @@ export default function NotificationsPage() {
 
   const load = useCallback(async () => {
     setLoading(true);
+
     try {
       const result = await notificationApi.list({ page, limit: 20 });
       setItems(result.items || []);
@@ -55,7 +84,7 @@ export default function NotificationsPage() {
   const unreadCount = items.filter((item) => !item.readAt).length;
 
   const markRead = async (item) => {
-    if (item.readAt) return;
+    if (item.readAt) return true;
 
     try {
       await notificationApi.read(item._id);
@@ -66,8 +95,26 @@ export default function NotificationsPage() {
             : value,
         ),
       );
+      return true;
     } catch (error) {
       toast.error(apiErrorMessage(error));
+      return false;
+    }
+  };
+
+  const openNotification = async (item) => {
+    const marked = await markRead(item);
+    if (!marked) return;
+
+    const destination = String(item?.url || '/tai-khoan/thong-bao');
+
+    if (/^https?:\/\//i.test(destination)) {
+      window.location.assign(destination);
+      return;
+    }
+
+    if (destination !== '/tai-khoan/thong-bao') {
+      navigate(destination);
     }
   };
 
@@ -112,24 +159,42 @@ export default function NotificationsPage() {
             Trung tâm thông báo
           </span>
           <h2>Thông báo của bạn</h2>
-          <p>Theo dõi kiểm duyệt bài viết, bình luận, phản hồi và cập nhật tài khoản.</p>
+          <p>Theo dõi kiểm duyệt, bình luận, phản hồi, tin đăng, việc làm và cập nhật tài khoản.</p>
         </div>
 
         <div className="account-form-actions">
-          <button type="button" className="account-page-button account-page-button--neutral" onClick={load} disabled={loading}>
+          <button
+            type="button"
+            className="account-page-button account-page-button--neutral"
+            onClick={load}
+            disabled={loading}
+          >
             <RefreshCw size={16} /> Làm mới
           </button>
-          <button type="button" className="account-page-button account-page-button--soft" onClick={readAll} disabled={!unreadCount || working}>
+          <button
+            type="button"
+            className="account-page-button account-page-button--soft"
+            onClick={readAll}
+            disabled={!unreadCount || working}
+          >
             <CheckCheck size={16} /> Đọc tất cả
           </button>
         </div>
       </div>
 
       <div className="account-filter-tabs" aria-label="Lọc thông báo">
-        <button type="button" className={filter === 'all' ? 'is-active' : ''} onClick={() => setFilter('all')}>
+        <button
+          type="button"
+          className={filter === 'all' ? 'is-active' : ''}
+          onClick={() => setFilter('all')}
+        >
           Tất cả ({items.length})
         </button>
-        <button type="button" className={filter === 'unread' ? 'is-active' : ''} onClick={() => setFilter('unread')}>
+        <button
+          type="button"
+          className={filter === 'unread' ? 'is-active' : ''}
+          onClick={() => setFilter('unread')}
+        >
           Chưa đọc ({unreadCount})
         </button>
       </div>
@@ -143,10 +208,10 @@ export default function NotificationsPage() {
               <article
                 key={item._id}
                 className={`account-notification-item ${item.readAt ? '' : 'is-unread'}`}
-                onClick={() => markRead(item)}
+                onClick={() => openNotification(item)}
               >
                 <span className="account-notification-item__icon">
-                  <Bell size={20} />
+                  <NotificationIcon item={item} />
                 </span>
 
                 <div>
