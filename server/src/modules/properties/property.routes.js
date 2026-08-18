@@ -12,9 +12,12 @@ import {
   contactSchema,
 } from './property.validation.js';
 import asyncHandler from '../../utils/asyncHandler.js';
+
 const r = Router();
+
 r.get('/', asyncHandler(c.list));
 r.post('/', requireAuth, contentCreateLimiter, validate(createSchema), asyncHandler(c.create));
+r.get('/:id/edit', requireAuth, validate(idSchema), asyncHandler(c.editor));
 r.patch('/:id', requireAuth, validate(updateSchema), asyncHandler(c.update));
 r.post('/:id/submit', requireAuth, validate(idSchema), asyncHandler(c.submit));
 r.post('/:id/renew', requireAuth, validate(idSchema), asyncHandler(c.renew));
@@ -28,4 +31,5 @@ r.get(
   asyncHandler(servePropertyPreviewIfAllowed),
   asyncHandler(c.detail),
 );
+
 export default r;
