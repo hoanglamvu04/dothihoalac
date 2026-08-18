@@ -1,36 +1,29 @@
-import { memo } from 'react';
-import { Image as ImageIcon } from 'lucide-react';
+import { useState } from 'react';
 import { mediaUrl } from '../../utils/media';
 
-function ContentImage({
+/** Shared image renderer for populated media or URL strings. */
+export default function ContentImage({
+  image,
   media,
-  alt = '',
-  ratio = 'wide',
+  alt,
   className = '',
+  fallback = null,
+  loading = 'lazy',
+  ...props
 }) {
-  const url = mediaUrl(media);
-  const isPriority = ratio === 'hero';
+  const [failed, setFailed] = useState(false);
+  const resolvedImage = image || media;
+  const src = mediaUrl(resolvedImage);
+  if (!src || failed) return fallback;
 
   return (
-    <div
-      className={`content-image content-image--${ratio} ${className}`.trim()}
-    >
-      {url ? (
-        <img
-          src={url}
-          alt={alt}
-          loading={isPriority ? 'eager' : 'lazy'}
-          decoding="async"
-          fetchPriority={isPriority ? 'high' : 'auto'}
-        />
-      ) : (
-        <div className="content-image__placeholder">
-          <ImageIcon size={30} />
-          <span>Đô Thị Hòa Lạc</span>
-        </div>
-      )}
-    </div>
+    <img
+      src={src}
+      alt={alt || resolvedImage?.altText || ''}
+      loading={loading}
+      className={className}
+      onError={() => setFailed(true)}
+      {...props}
+    />
   );
 }
-
-export default memo(ContentImage);
