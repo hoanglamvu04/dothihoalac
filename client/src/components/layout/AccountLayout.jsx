@@ -7,9 +7,8 @@ import { Outlet } from 'react-router-dom';
 import { RefreshCw, TriangleAlert } from 'lucide-react';
 
 import Seo from '../common/Seo';
-import AccountProfileShell, {
-  AccountSidebarNav,
-} from '../account/AccountProfileShell';
+import AccountProfileShell from '../account/AccountProfileShell';
+import AccountContentNav from '../account/AccountContentNav';
 import { userApi } from '../../api/user.api';
 import { apiErrorMessage } from '../../api/http';
 import { useAuth } from '../../context/AuthContext';
@@ -101,7 +100,7 @@ export default function AccountLayout() {
         ) : null}
 
         <div className="account-center-workspace">
-          <AccountSidebarNav profile={accountProfile} />
+          <AccountContentNav profile={accountProfile} />
 
           <section
             className="account-center-content"
