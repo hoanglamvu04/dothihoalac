@@ -40,6 +40,7 @@ jobs:
       JWT_REFRESH_SECRET: content-studio-v2-refresh-secret-00000000000000000000000
       ADMIN_PASSWORD: content-studio-v2-admin-password
       UPLOAD_PROVIDER: local
+      CLOUDINARY_URL: cloudinary://123456789012345:test-api-secret@content-studio-test
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
