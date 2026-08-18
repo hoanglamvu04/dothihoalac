@@ -1,24 +1,14 @@
-/* Vietnamese-safe newsroom typography overrides.
- * Loaded after ArticleNewsroomTheme.css so legacy article-body rules cannot
- * enlarge Google Docs content or carry document-like sizing into the website.
+/*
+ * Article detail fidelity layer.
+ * This file is loaded after ArticleNewsroomTheme.css and intentionally makes
+ * the public article body follow the same rhythm as the content editor:
+ * compact paragraphs, predictable heading spacing, attached image captions,
+ * responsive media and no newspaper-style over-expansion of Google Docs HTML.
  */
 
-.article-view-page .article-view-header h1,
-.article-view-page .article-view-lead,
-.article-view-page .article-view-body,
-.article-view-page .article-view-body .article-body,
-.article-view-page .article-view-body .article-body :is(p, li, h2, h3, h4, blockquote, figcaption) {
-  font-family: "Times New Roman", "Noto Serif", serif;
-  font-kerning: normal;
-  font-variant-ligatures: common-ligatures;
-  text-rendering: optimizeLegibility;
-  letter-spacing: normal;
-  word-spacing: normal;
-}
-
-/* Headline: prominent, but no longer oversized like a document cover. */
 .article-view-page .article-view-header h1 {
   max-width: 960px;
+  font-family: Georgia, "Times New Roman", serif;
   font-size: clamp(40px, 3.15vw, 50px);
   font-weight: 700;
   line-height: 1.08;
@@ -26,41 +16,72 @@
   text-wrap: balance;
 }
 
-/* Sapo should introduce the article, not compete visually with the headline. */
 .article-view-page .article-view-lead {
   max-width: 900px;
-  margin-top: 18px;
-  font-size: clamp(18.5px, 1.22vw, 20px);
+  margin-top: 16px;
+  font-family: Arial, "Segoe UI", sans-serif;
+  font-size: clamp(17px, 1.1vw, 19px);
   font-weight: 600;
-  line-height: 1.58;
-  letter-spacing: -0.004em;
+  line-height: 1.52;
+  letter-spacing: 0;
 }
 
-/* Main reading size: closer to Vietnamese newspaper sites on desktop. */
 .article-view-page .article-view-body,
 .article-view-page .article-view-body .article-body {
+  width: 100%;
   max-width: 900px;
-  color: #202020;
-  font-size: 19px;
+  color: #24382d;
+  font-family: Arial, "Segoe UI", sans-serif;
+  font-size: 17px;
   font-weight: 400;
-  line-height: 1.72;
+  line-height: 1.68;
+  letter-spacing: normal;
+  word-spacing: normal;
+  text-rendering: optimizeLegibility;
 }
 
-.article-view-page .article-view-body .article-body :is(p, ul, ol) {
+.article-view-page .article-view-body .article-body > :first-child {
   margin-top: 0;
-  margin-bottom: 1.18em;
-  font-size: inherit;
-  font-weight: 400;
+}
+
+.article-view-page .article-view-body .article-body > :last-child {
+  margin-bottom: 0;
+}
+
+.article-view-page .article-view-body .article-body p {
+  margin: 0 0 16px;
+  color: inherit;
+  font: inherit;
+  line-height: inherit;
+}
+
+.article-view-page .article-view-body .article-body .article-paragraph-spacer {
+  min-height: 0.85em;
+  margin: 0 0 8px;
+}
+
+.article-view-page .article-view-body .article-body :is(ul, ol) {
+  margin: 0 0 18px;
+  padding-left: 26px;
+  color: inherit;
+  font: inherit;
   line-height: inherit;
 }
 
 .article-view-page .article-view-body .article-body li {
-  margin-bottom: 0.34em;
-  font-size: inherit;
+  margin: 0 0 5px;
+  padding-left: 2px;
+  color: inherit;
+  font: inherit;
   line-height: inherit;
 }
 
+.article-view-page .article-view-body .article-body li:last-child {
+  margin-bottom: 0;
+}
+
 .article-view-page .article-view-body .article-body :is(strong, b) {
+  color: #14271c;
   font-family: inherit;
   font-size: inherit;
   font-weight: 700;
@@ -68,41 +89,137 @@
   word-spacing: normal;
 }
 
+.article-view-page .article-view-body .article-body :is(em, i) {
+  font-family: inherit;
+}
+
+.article-view-page .article-view-body .article-body :is(h2, h3, h4) {
+  color: #102d1d;
+  font-family: Arial, "Segoe UI", sans-serif;
+  font-weight: 760;
+  letter-spacing: -0.018em;
+}
+
 .article-view-page .article-view-body .article-body h2 {
-  margin: 1.7em 0 0.58em;
-  font-size: 26px;
-  font-weight: 700;
-  line-height: 1.32;
+  margin: 30px 0 14px;
+  font-size: 28px;
+  line-height: 1.3;
 }
 
 .article-view-page .article-view-body .article-body h3 {
-  margin: 1.55em 0 0.52em;
-  font-size: 23px;
-  font-weight: 700;
+  margin: 25px 0 12px;
+  font-size: 22px;
   line-height: 1.34;
 }
 
 .article-view-page .article-view-body .article-body h4 {
-  margin: 1.45em 0 0.48em;
-  font-size: 21px;
-  font-weight: 700;
+  margin: 22px 0 10px;
+  font-size: 19px;
   line-height: 1.38;
 }
 
 .article-view-page .article-view-body .article-body blockquote {
-  font-size: 19px;
-  line-height: 1.68;
+  margin: 22px 0;
+  padding: 14px 18px;
+  border-left: 4px solid var(--article-green, #1fa34b);
+  border-radius: 0 9px 9px 0;
+  color: #30463a;
+  background: #f2f8f4;
+  font-family: Arial, "Segoe UI", sans-serif;
+  font-size: 17px;
+  font-style: italic;
+  line-height: 1.62;
 }
 
-.article-view-page .article-view-body .article-body figcaption {
-  margin-top: 7px;
-  color: #777;
+.article-view-page .article-view-body .article-body a {
+  color: var(--article-green-dark, #116a32);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+/* Media follows the editor instead of being stretched into a newspaper hero. */
+.article-view-page .article-view-body .article-body figure,
+.article-view-page .article-view-body .article-body .article-figure {
+  width: 100%;
+  margin: 22px 0 20px;
+  padding: 0;
+}
+
+.article-view-page .article-view-body .article-body :is(img, video, iframe),
+.article-view-page .article-view-body .article-body .article-figure__image {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  margin: 0;
+  border-radius: 8px;
+  background: #edf2ef;
+  object-fit: contain;
+}
+
+.article-view-page .article-view-body .article-body figcaption,
+.article-view-page .article-view-body .article-body .article-figure__caption {
+  margin: 7px 0 0;
+  padding: 0;
+  color: #68756e;
+  font-family: Arial, "Segoe UI", sans-serif;
   font-size: 14px;
   font-weight: 400;
+  font-style: italic;
+  line-height: 1.5;
+  text-align: center;
+}
+
+.article-view-page .article-view-body .article-body figcaption :is(em, i) {
+  font-style: inherit;
+}
+
+.article-view-page .article-view-body .article-body figure + :is(p, h2, h3, h4, ul, ol) {
+  margin-top: 0;
+}
+
+.article-view-page .article-view-body .article-body hr {
+  margin: 26px 0;
+  border: 0;
+  border-top: 1px solid #d8e1dc;
+}
+
+.article-view-page .article-view-body .article-body table {
+  display: block;
+  width: 100%;
+  margin: 20px 0;
+  overflow-x: auto;
+  border-collapse: collapse;
+  font-family: Arial, "Segoe UI", sans-serif;
+  font-size: 15px;
   line-height: 1.5;
 }
 
-/* Metadata stays sans-serif so the page has a clearer editorial hierarchy. */
+.article-view-page .article-view-body .article-body :is(th, td) {
+  padding: 9px 11px;
+  border: 1px solid #d8e1dc;
+  vertical-align: top;
+}
+
+/* Preserve editor / imported HTML alignment when it exists. */
+.article-view-page .article-view-body .article-body [style*="text-align: center"],
+.article-view-page .article-view-body .article-body [style*="text-align:center"] {
+  text-align: center;
+}
+
+.article-view-page .article-view-body .article-body [style*="text-align: right"],
+.article-view-page .article-view-body .article-body [style*="text-align:right"] {
+  text-align: right;
+}
+
+.article-view-page .article-view-body .article-body [style*="text-align: justify"],
+.article-view-page .article-view-body .article-body [style*="text-align:justify"] {
+  text-align: justify;
+}
+
+/* Metadata remains compact and sans-serif. */
 .article-view-page .article-view-author strong,
 .article-view-page .article-view-author a,
 .article-view-page .article-view-byline span,
@@ -120,11 +237,9 @@
   font-size: 13px;
 }
 
-/* Right rail remains editorial but should not overpower the main article. */
 .article-view-page .article-popular-sidebar__header h2,
 .article-view-page .article-popular-sidebar__copy h3,
 .article-view-page .article-popular-sidebar__item::before {
-  font-family: "Times New Roman", "Noto Serif", serif;
   letter-spacing: normal;
   word-spacing: normal;
 }
@@ -150,7 +265,7 @@
 
   .article-view-page .article-view-body,
   .article-view-page .article-view-body .article-body {
-    font-size: 18.5px;
+    font-size: 16.5px;
   }
 }
 
@@ -162,35 +277,44 @@
   }
 
   .article-view-page .article-view-lead {
-    margin-top: 14px;
-    font-size: 18px;
-    font-weight: 600;
-    line-height: 1.55;
+    margin-top: 13px;
+    font-size: 17px;
+    line-height: 1.5;
   }
 
   .article-view-page .article-view-body,
   .article-view-page .article-view-body .article-body {
-    font-size: 17.5px;
-    line-height: 1.68;
+    font-size: 16px;
+    line-height: 1.64;
+  }
+
+  .article-view-page .article-view-body .article-body p {
+    margin-bottom: 14px;
   }
 
   .article-view-page .article-view-body .article-body h2 {
+    margin-top: 26px;
     font-size: 24px;
   }
 
   .article-view-page .article-view-body .article-body h3 {
-    font-size: 21px;
+    margin-top: 22px;
+    font-size: 20px;
   }
 
   .article-view-page .article-view-body .article-body h4 {
-    font-size: 19px;
+    margin-top: 20px;
+    font-size: 18px;
   }
 
-  .article-view-page .article-view-body .article-body blockquote {
-    font-size: 17.5px;
+  .article-view-page .article-view-body .article-body figure,
+  .article-view-page .article-view-body .article-body .article-figure {
+    margin: 18px 0 17px;
   }
 
-  .article-view-page .article-view-body .article-body figcaption {
+  .article-view-page .article-view-body .article-body figcaption,
+  .article-view-page .article-view-body .article-body .article-figure__caption {
+    margin-top: 6px;
     font-size: 13px;
   }
 }
