@@ -14,14 +14,9 @@ function launchKey() {
   if (!value) {
     value =
       window.crypto?.randomUUID?.() ||
-      `docs-${Date.now()}-${Math.random()
-        .toString(36)
-        .slice(2)}`;
+      `docs-${Date.now()}-${Math.random().toString(36).slice(2)}`;
 
-    window.sessionStorage.setItem(
-      storageKey,
-      value,
-    );
+    window.sessionStorage.setItem(storageKey, value);
   }
 
   return value;
@@ -36,9 +31,7 @@ function sharedLaunchTask(key, factory) {
 
   task.finally(() => {
     window.setTimeout(() => {
-      if (launchTasks.get(key) === task) {
-        launchTasks.delete(key);
-      }
+      if (launchTasks.get(key) === task) launchTasks.delete(key);
     }, LAUNCH_TASK_CACHE_MS);
   });
 
@@ -46,15 +39,9 @@ function sharedLaunchTask(key, factory) {
 }
 
 function launcherError(error) {
-  if (
-    error?.code === 'ECONNABORTED' ||
-    /timeout/i.test(
-      String(error?.message || ''),
-    )
-  ) {
-    return 'Google phản hồi quá chậm nên yêu cầu đã dừng để tránh màn hình treo. Bản nháp được giữ bằng mã phiên; bấm “Thử lại” sẽ tiếp tục đúng bản nháp thay vì tạo trùng.';
+  if (error?.code === 'ECONNABORTED' || /timeout/i.test(String(error?.message || ''))) {
+    return 'Google phản hồi quá chậm. Bản nháp vẫn được giữ; bấm Thử lại sẽ tiếp tục đúng bài thay vì tạo trùng.';
   }
-
   return apiErrorMessage(error);
 }
 
@@ -62,15 +49,11 @@ export default function GoogleDocsArticleLauncher() {
   const { id } = useParams();
   const navigate = useNavigate();
   const postId = id || 'new';
-
-  const listUrl = useMemo(
-    () => '/quan-tri/bai-viet',
-    [],
-  );
+  const listUrl = useMemo(() => '/quan-tri/bai-viet', []);
 
   const [state, setState] = useState({
     phase: 'starting',
-    message: 'Đang chuẩn bị Google Docs…',
+    message: 'Đang chuẩn bị Article Workspace…',
     error: '',
   });
 
@@ -78,90 +61,64 @@ export default function GoogleDocsArticleLauncher() {
     let active = true;
     let slowTimer;
 
-    const draftToken =
-      postId === 'new' ? launchKey() : '';
-
-    const taskKey =
-      postId === 'new'
-        ? `new:${draftToken}`
-        : `post:${postId}`;
+    const draftToken = postId === 'new' ? launchKey() : '';
+    const taskKey = postId === 'new' ? `new:${draftToken}` : `post:${postId}`;
 
     const run = async () => {
       try {
-        let result;
-
         slowTimer = window.setTimeout(() => {
           if (!active) return;
-
           setState((current) => ({
             ...current,
-            message:
-              'Google đang phản hồi chậm hơn bình thường… hệ thống vẫn giữ nguyên bản nháp.',
+            message: 'Google đang phản hồi chậm hơn bình thường… bản nháp vẫn an toàn.',
           }));
         }, 8000);
 
+        let result;
         if (postId === 'new') {
           setState({
             phase: 'creating',
-            message:
-              'Đang tạo bản nháp và Google Docs trong 01_ĐANG_SOẠN…',
+            message: 'Đang tạo bản nháp bài viết và liên kết Google Docs…',
             error: '',
           });
-
-          result = await sharedLaunchTask(
-            taskKey,
-            () =>
-              adminApi.createGoogleDraft({
-                draftToken,
-                seed: null,
-              }),
+          result = await sharedLaunchTask(taskKey, () =>
+            adminApi.createGoogleDraft({ draftToken, seed: null }),
           );
         } else {
           setState({
             phase: 'opening',
-            message:
-              'Đang tìm hoặc tạo Google Docs của bài viết…',
+            message: 'Đang kiểm tra Google Docs của bài viết…',
             error: '',
           });
-
-          result = await sharedLaunchTask(
-            taskKey,
-            () =>
-              adminApi.ensureGoogleDoc(postId),
-          );
+          result = await sharedLaunchTask(taskKey, () => adminApi.ensureGoogleDoc(postId));
         }
 
         if (!active) return;
 
-        if (!result?.docUrl) {
-          throw new Error(
-            'Backend chưa trả về đường dẫn Google Docs.',
-          );
-        }
+        const resolvedId = String(result?.postId || (postId !== 'new' ? postId : ''));
+        if (!resolvedId) throw new Error('Backend chưa trả về ID bài viết.');
 
         if (postId === 'new') {
-          window.sessionStorage.removeItem(
-            'dthl-google-docs-launch-key',
-          );
+          window.sessionStorage.removeItem('dthl-google-docs-launch-key');
         }
 
         setState({
           phase: 'redirecting',
-          message:
-            'Đã sẵn sàng. Đang mở phòng soạn Google Docs…',
+          message: 'Đã sẵn sàng. Đang mở Article Workspace…',
           error: '',
         });
 
-        window.location.replace(
-          result.docUrl,
-        );
+        // Không đẩy người dùng ra khỏi CMS nữa. Google Docs trở thành phòng soạn
+        // được mở theo nhu cầu bên trong Article Workspace.
+        navigate(`/quan-tri/bai-viet/${encodeURIComponent(resolvedId)}`, {
+          replace: true,
+          state: { docUrl: result?.docUrl || '' },
+        });
       } catch (error) {
         if (!active) return;
-
         setState({
           phase: 'error',
-          message:
-            'Không mở được Google Docs.',
+          message: 'Không mở được Article Workspace.',
           error: launcherError(error),
         });
       } finally {
@@ -169,75 +126,40 @@ export default function GoogleDocsArticleLauncher() {
       }
     };
 
-    run();
+    void run();
 
     return () => {
       active = false;
       window.clearTimeout(slowTimer);
     };
-  }, [postId]);
+  }, [navigate, postId]);
 
   return (
     <main className="admin-doc-launcher">
       <section className="admin-doc-launcher-card">
-        <div className="admin-doc-launcher-orb">
-          G
-        </div>
-
-        <p className="admin-kicker">
-          Google Docs · DTHL Content Studio
-        </p>
-
+        <div className="admin-doc-launcher-orb">G</div>
+        <p className="admin-kicker">Google Docs · DTHL Content Studio</p>
         <h1>{state.message}</h1>
 
         {state.phase !== 'error' ? (
           <>
             <p>
-              {postId === 'new'
-                ? 'Bài viết được tạo trên máy chủ trước rồi mở thẳng Google Docs. Tiêu đề, nội dung và ảnh sẽ được kéo về DTHL khi bấm Đồng bộ hoặc Xuất bản.'
-                : 'Nếu bài đã có Google Docs, hệ thống mở đúng tài liệu cũ; nếu chưa có, hệ thống tạo tài liệu từ bài hiện tại.'}
+              Nội dung dài vẫn có thể soạn trong Google Docs, nhưng phân loại, ảnh đại diện,
+              xem trước và xuất bản được quản lý tập trung trong DTHL CMS.
             </p>
-
-            <div className="admin-doc-launcher-progress">
-              <span />
-            </div>
+            <div className="admin-doc-launcher-progress"><span /></div>
           </>
         ) : (
           <>
-            <div className="admin-alert error">
-              {state.error}
-            </div>
-
+            <div className="admin-alert error">{state.error}</div>
             <div className="admin-doc-launcher-actions">
-              <button
-                type="button"
-                className="admin-primary"
-                onClick={() =>
-                  window.location.reload()
-                }
-              >
+              <button type="button" className="admin-primary" onClick={() => window.location.reload()}>
                 Thử lại
               </button>
-
-              <button
-                type="button"
-                className="admin-secondary"
-                onClick={() =>
-                  navigate(listUrl)
-                }
-              >
+              <button type="button" className="admin-secondary" onClick={() => navigate(listUrl)}>
                 Quay lại danh sách bài viết
               </button>
-
-              <button
-                type="button"
-                className="admin-secondary"
-                onClick={() =>
-                  navigate(
-                    '/quan-tri/google-workspace',
-                  )
-                }
-              >
+              <button type="button" className="admin-secondary" onClick={() => navigate('/quan-tri/google-workspace')}>
                 Kiểm tra Google Workspace
               </button>
             </div>

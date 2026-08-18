@@ -17,6 +17,7 @@ const articleStatus = z.enum([
   'scheduled',
   'published',
 ]);
+const coverMode = z.enum(['first_doc_image', 'custom']);
 
 export const listArticlesSchema = z.object({
   body: empty,
@@ -100,6 +101,7 @@ export const articleMetadataSchema = z.object({
     tagIds: z.array(oid).max(50).optional(),
     areaIds: z.array(oid).max(20).optional(),
     thumbnailMediaId: oid.nullable().optional(),
+    coverMode: coverMode.optional(),
     status: articleStatus.optional(),
     scheduledAt: z.coerce.date().nullable().optional(),
     sourceNote: z.string().max(2000).optional(),

@@ -1,0 +1,93 @@
+name: Content Studio V2 checks
+
+on:
+  push:
+    branches:
+      - upgrade/content-studio-v2
+  pull_request:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  client:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: client
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: client/package-lock.json
+      # package.json đã đi trước package-lock ở main từ trước PR này. Dùng install
+      # để vẫn kiểm chứng được source mới và production bundle.
+      - run: npm install --no-audit --no-fund
+      # Repo main còn một số React Compiler lint debt ở các màn hình cũ không
+      # thuộc PR. Lint đầy đủ toàn bộ source mà Content Studio V2 trực tiếp đổi,
+      # sau đó build toàn ứng dụng để bắt lỗi import, route và bundle.
+      - name: Lint Content Studio client changes
+        run: >-
+          npx eslint
+          src/api/content.api.js
+          src/app/App.jsx
+          src/components/account/AccountContentNav.jsx
+          src/components/content/ContentImage.jsx
+          src/components/layout/AccountLayout.jsx
+          src/components/studio/ContentEditorShell.jsx
+          src/pages/account/MyContentPage.jsx
+          src/pages/admin/ArticleWorkspacePage.jsx
+          src/pages/admin/GoogleDocsArticleLauncher.jsx
+          src/pages/create/CommunityStudioPage.jsx
+          src/pages/create/ContentStudioEntryPage.jsx
+          src/pages/create/CreateHubPage.jsx
+          src/pages/create/JobStudioPage.jsx
+          src/pages/create/PropertyStudioAdapter.jsx
+          src/utils/content.js
+      - run: npm run build
+
+  server:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    env:
+      NODE_ENV: test
+      JWT_ACCESS_SECRET: content-studio-v2-access-secret-000000000000000000000000
+      JWT_REFRESH_SECRET: content-studio-v2-refresh-secret-00000000000000000000000
+      ADMIN_PASSWORD: content-studio-v2-admin-password
+      UPLOAD_PROVIDER: local
+      CLOUDINARY_URL: cloudinary://123456789012345:test-api-secret@content-studio-test
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      - run: npm ci
+      # Repo main hiện có lint debt ở các module Google Workspace/SourceWatch cũ.
+      # PR này lint toàn bộ các file server mà Content Studio V2 trực tiếp thay đổi.
+      - name: Lint Content Studio server changes
+        run: >-
+          npx eslint
+          src/modules/contents/contentDraft.controller.js
+          src/modules/contents/contentDraft.routes.js
+          src/modules/contents/contentDraft.service.js
+          src/modules/contents/contentDraft.validation.js
+          src/modules/contents/pendingContentPreview.middleware.js
+          src/modules/properties/property.controller.js
+          src/modules/properties/property.routes.js
+          src/modules/properties/property.service.js
+          src/modules/jobs/job.service.js
+          src/modules/articles/article.model.js
+          src/modules/articles/article.routes.js
+          src/modules/articles/article.validation.js
+          src/modules/articles/article.metadata.service.js
+          src/modules/users/user.service.js
+          src/routes/index.js
+      - run: npm test

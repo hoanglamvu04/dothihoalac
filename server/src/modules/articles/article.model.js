@@ -46,6 +46,12 @@ const schema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    coverMode: {
+      type: String,
+      enum: ['first_doc_image', 'custom'],
+      default: 'first_doc_image',
+      index: true,
+    },
 
     documentCode: {
       type: String,

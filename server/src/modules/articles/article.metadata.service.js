@@ -82,6 +82,10 @@ function applyArticleChanges(
       normalizeText(data.sourceNote);
   }
 
+  if (data.coverMode !== undefined) {
+    article.coverMode = data.coverMode;
+  }
+
   if (data.factCheckedAt !== undefined) {
     article.factCheckedAt =
       parseOptionalDate(
