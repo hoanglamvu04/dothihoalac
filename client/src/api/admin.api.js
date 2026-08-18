@@ -48,6 +48,17 @@ export const adminApi = {
   bulkDeleteArticles: async (ids) =>
     unwrap(await api.post('/admin/articles/bulk-delete', { ids })),
 
+  projects: async (params = {}) =>
+    unwrapList(await api.get('/admin/projects', { params })),
+  projectDetail: async (id) => unwrap(await api.get(`/admin/projects/${id}`)),
+  createProject: async (payload) => unwrap(await api.post('/admin/projects', payload)),
+  updateProject: async (id, payload) => unwrap(await api.patch(`/admin/projects/${id}`, payload)),
+  deleteProject: async (id) => unwrap(await api.delete(`/admin/projects/${id}`)),
+  addProjectUpdate: async (id, payload) =>
+    unwrap(await api.post(`/admin/projects/${id}/updates`, payload)),
+  deleteProjectUpdate: async (id, updateId) =>
+    unwrap(await api.delete(`/admin/projects/${id}/updates/${updateId}`)),
+
   sourceWatchOverview: async () => unwrap(await api.get('/admin/source-watch/overview')),
   sourceWatchSources: async () => unwrap(await api.get('/admin/source-watch/sources')),
   createSourceWatchSource: async (payload) =>
