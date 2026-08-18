@@ -2,11 +2,34 @@ import * as authService from './auth.service.js';
 import { REFRESH_COOKIE, setAuthCookies, clearAuthCookies } from '../../services/token.service.js';
 import { sendCreated, sendSuccess } from '../../utils/apiResponse.js';
 
+function readableDeviceName(userAgent = '') {
+  const agent = String(userAgent || '');
+
+  let browser = 'Trình duyệt web';
+  if (/Edg\//i.test(agent)) browser = 'Microsoft Edge';
+  else if (/OPR\//i.test(agent)) browser = 'Opera';
+  else if (/Firefox\//i.test(agent)) browser = 'Firefox';
+  else if (/Chrome\//i.test(agent) || /CriOS\//i.test(agent)) browser = 'Google Chrome';
+  else if (/Safari\//i.test(agent)) browser = 'Safari';
+
+  let platform = '';
+  if (/Windows NT/i.test(agent)) platform = 'Windows';
+  else if (/iPhone/i.test(agent)) platform = 'iPhone';
+  else if (/iPad/i.test(agent)) platform = 'iPad';
+  else if (/Android/i.test(agent)) platform = 'Android';
+  else if (/Macintosh|Mac OS X/i.test(agent)) platform = 'macOS';
+  else if (/Linux/i.test(agent)) platform = 'Linux';
+
+  return platform ? `${browser} · ${platform}` : browser;
+}
+
 function requestMeta(req) {
+  const userAgent = req.get('user-agent') || '';
+
   return {
     ipAddress: req.ip,
-    userAgent: req.get('user-agent') || '',
-    deviceName: req.get('sec-ch-ua') || 'Trình duyệt web',
+    userAgent,
+    deviceName: readableDeviceName(userAgent),
   };
 }
 
