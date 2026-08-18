@@ -82,7 +82,12 @@ export function cleanHtml(html = '') {
 }
 
 export function htmlToPlainText(html = '') {
-  return sanitizeHtmlLibrary(String(html), {
+  const withoutCaptions = String(html).replace(
+    /<figcaption\b[^>]*>[\s\S]*?<\/figcaption>/gi,
+    ' ',
+  );
+
+  return sanitizeHtmlLibrary(withoutCaptions, {
     allowedTags: [],
     allowedAttributes: {},
   })
