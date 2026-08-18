@@ -30,6 +30,7 @@ export const listArticlesSchema = z.object({
       area: z.string().optional(),
       tag: z.string().optional(),
       sort: z.string().optional(),
+      featured: z.enum(['true', 'false']).optional(),
       q: z.string().max(200).optional(),
     })
     .passthrough(),
