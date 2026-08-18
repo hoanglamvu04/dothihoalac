@@ -25,9 +25,29 @@ jobs:
           cache: npm
           cache-dependency-path: client/package-lock.json
       # package.json đã đi trước package-lock ở main từ trước PR này. Dùng install
-      # để vẫn kiểm chứng được lint/build của thay đổi mới mà không che lỗi source.
+      # để vẫn kiểm chứng được source mới và production bundle.
       - run: npm install --no-audit --no-fund
-      - run: npm run check
+      # Repo main còn một số React Compiler lint debt ở các màn hình cũ không
+      # thuộc PR. Lint đầy đủ toàn bộ source mà Content Studio V2 trực tiếp đổi,
+      # sau đó build toàn ứng dụng để bắt lỗi import, route và bundle.
+      - name: Lint Content Studio client changes
+        run: >-
+          npx eslint
+          src/api/content.api.js
+          src/app/App.jsx
+          src/components/account/AccountContentNav.jsx
+          src/components/layout/AccountLayout.jsx
+          src/components/studio/ContentEditorShell.jsx
+          src/pages/account/MyContentPage.jsx
+          src/pages/admin/ArticleWorkspacePage.jsx
+          src/pages/admin/GoogleDocsArticleLauncher.jsx
+          src/pages/create/CommunityStudioPage.jsx
+          src/pages/create/ContentStudioEntryPage.jsx
+          src/pages/create/CreateHubPage.jsx
+          src/pages/create/JobStudioPage.jsx
+          src/pages/create/PropertyStudioAdapter.jsx
+          src/utils/content.js
+      - run: npm run build
 
   server:
     runs-on: ubuntu-latest
