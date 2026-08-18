@@ -27,6 +27,7 @@ jobs:
       - name: Lint changed application surfaces
         run: >-
           npx eslint
+          src/api/admin.api.js
           src/api/content.api.js
           src/api/interaction.api.js
           src/api/user.api.js
@@ -38,13 +39,17 @@ jobs:
           src/components/content/NewsContextRail.jsx
           src/components/content/ReactionBar.jsx
           src/components/layout/AccountLayout.jsx
+          src/components/layout/AdminLayout.jsx
           src/components/studio/ContentEditorShell.jsx
           src/pages/account/ActivityPage.jsx
           src/pages/account/MyContentPage.jsx
           src/pages/account/NotificationsPage.jsx
           src/pages/account/SessionsPage.jsx
+          src/pages/admin/AdminDashboardPage.jsx
+          src/pages/admin/AdminProjectsPage.jsx
           src/pages/admin/ArticleWorkspacePage.jsx
           src/pages/admin/GoogleDocsArticleLauncher.jsx
+          src/pages/admin/ProjectWorkspacePage.jsx
           src/pages/create/CommunityStudioPage.jsx
           src/pages/create/ContentStudioEntryPage.jsx
           src/pages/create/CreateHubPage.jsx
@@ -54,6 +59,7 @@ jobs:
           src/pages/public/ArticlesPage.jsx
           src/pages/public/SearchPage.jsx
           src/utils/content.js
+          src/utils/projects.js
       - run: npm run build
 
   server:
@@ -107,6 +113,12 @@ jobs:
           src/modules/articles/article.routes.js
           src/modules/articles/article.validation.js
           src/modules/articles/article.metadata.service.js
+          src/modules/projects/project.model.js
+          src/modules/projects/project.validation.js
+          src/modules/projects/project.service.js
+          src/modules/projects/project.controller.js
+          src/modules/projects/project.routes.js
+          src/modules/projects/project.admin.routes.js
           src/modules/users/user.controller.js
           src/modules/users/user.routes.js
           src/modules/users/user.service.js

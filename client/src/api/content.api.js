@@ -33,6 +33,11 @@ export const articleApi = {
   submitTip: async (payload) => unwrap(await api.post('/articles/tips', payload)),
 };
 
+export const projectApi = {
+  list: async (params = {}) => unwrapList(await api.get('/projects', { params })),
+  detail: async (slug) => unwrap(await api.get(`/projects/${slug}`)),
+};
+
 export const communityApi = {
   list: async (params = {}) => unwrapList(await api.get('/community', { params })),
   detail: async (slug) => unwrap(await api.get(`/community/${slug}`)),

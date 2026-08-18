@@ -17,63 +17,78 @@ import {
   Wind,
 } from 'lucide-react';
 
-import { articleApi, communityApi } from '../../api/content.api';
+import { articleApi, communityApi, projectApi } from '../../api/content.api';
 import { getHoaLacForecast } from '../../api/weather.api';
 import { contentPath } from '../../utils/content';
 import { mediaUrl } from '../../utils/media';
+import { projectStatusLabel } from '../../utils/projects';
 
 const CONTEXT_BY_CATEGORY = {
   'quy-hoach': {
-    category: 'du-an-dtxd',
+    source: 'projects',
+    type: 'urban',
     title: 'Dự án & tiến độ',
     label: 'Theo dõi triển khai',
+    link: '/tin-tuc?category=du-an-dtxd',
   },
   'ha-tang-giao-thong': {
-    category: 'du-an-dtxd',
+    source: 'projects',
+    type: 'transport',
     title: 'Dự án & tiến độ',
     label: 'Liên quan hạ tầng',
+    link: '/tin-tuc?category=du-an-dtxd',
   },
   'du-an-dtxd': {
-    category: 'ha-tang-giao-thong',
-    title: 'Hạ tầng liên quan',
-    label: 'Kết nối dự án',
+    source: 'projects',
+    type: '',
+    title: 'Project Tracker',
+    label: 'Tiến độ dự án',
+    link: '/tin-tuc?category=du-an-dtxd',
   },
   'bat-dong-san-hoa-lac': {
+    source: 'articles',
     category: 'chinh-sach',
     title: 'Chính sách mới',
     label: 'Pháp lý & thị trường',
   },
   'hanh-chinh': {
+    source: 'articles',
     category: 'chinh-sach',
     title: 'Chính sách mới',
     label: 'Quy định cần biết',
   },
   'chinh-sach': {
+    source: 'articles',
     category: 'hanh-chinh',
     title: 'Hành chính mới',
     label: 'Thủ tục & quản lý',
   },
   'giao-duc': {
+    source: 'articles',
     category: 'khoa-hoc-cong-nghe',
     title: 'Khoa học - Công nghệ',
     label: 'Nghiên cứu & đổi mới',
   },
   'khoa-hoc-cong-nghe': {
+    source: 'articles',
     category: 'giao-duc',
     title: 'Giáo dục & nghiên cứu',
     label: 'Đào tạo tại Hòa Lạc',
   },
   'kinh-te-doanh-nghiep': {
+    source: 'articles',
     category: 'bat-dong-san-hoa-lac',
     title: 'BĐS Hòa Lạc',
     label: 'Thị trường mới',
   },
   'doi-song-dan-cu': {
+    source: 'articles',
     category: 'moi-truong-do-thi',
     title: 'Môi trường - Đô thị',
     label: 'Dân sinh khu vực',
   },
   'moi-truong-do-thi': {
+    source: 'articles',
     category: 'doi-song-dan-cu',
     title: 'Đời sống dân cư',
     label: 'Thông tin gần dân',
@@ -81,9 +96,11 @@ const CONTEXT_BY_CATEGORY = {
 };
 
 const DEFAULT_CONTEXT = {
-  category: 'du-an-dtxd',
+  source: 'projects',
+  type: '',
   title: 'Dự án & tiến độ',
   label: 'Đang được quan tâm',
+  link: '/tin-tuc?category=du-an-dtxd',
 };
 
 function idOf(item) {
@@ -150,6 +167,42 @@ function RailArticleList({ items, emptyText = 'Chưa có dữ liệu phù hợp.
                 {Number(item?.viewCount || 0).toLocaleString('vi-VN')} lượt xem
               </small>
             </span>
+          </Link>
+        );
+      })}
+    </div>
+  );
+}
+
+function ProjectRailList({ items }) {
+  if (!items.length) {
+    return <p className="news-rail-empty">Chưa có hồ sơ dự án công khai.</p>;
+  }
+
+  return (
+    <div className="news-project-list">
+      {items.map((project) => {
+        const progress = Math.min(100, Math.max(0, Number(project.progressPercent || 0)));
+        const area = project.primaryAreaId?.name || project.locationText || 'Khu vực Hòa Lạc';
+
+        return (
+          <Link
+            key={idOf(project)}
+            className="news-project-item"
+            to={`/tin-tuc?q=${encodeURIComponent(project.name)}`}
+          >
+            <div className="news-project-item__top">
+              <span>{project.code || 'DTHL PROJECT'}</span>
+              <b>{Math.round(progress)}%</b>
+            </div>
+            <strong>{project.name}</strong>
+            <div className="news-project-item__progress" aria-label={`Tiến độ ${Math.round(progress)}%`}>
+              <i style={{ width: `${progress}%` }} />
+            </div>
+            <small>
+              <span>{projectStatusLabel(project.status)}</span>
+              <span>{area}</span>
+            </small>
           </Link>
         );
       })}
@@ -265,16 +318,23 @@ export default function NewsContextRail({ category = '', excludeIds = [] }) {
     const load = async () => {
       setState((current) => ({ ...current, loading: true }));
 
+      const contextRequest = contextConfig.source === 'projects'
+        ? projectApi.list({
+            limit: 5,
+            ...(contextConfig.type ? { type: contextConfig.type } : {}),
+          })
+        : articleApi.list({
+            category: contextConfig.category,
+            limit: 5,
+          });
+
       const [relatedResult, contextResult, discussionResult] = await Promise.allSettled([
         articleApi.list({
           sort: 'popular',
           limit: 7,
           ...(category ? { category } : {}),
         }),
-        articleApi.list({
-          category: contextConfig.category,
-          limit: 5,
-        }),
+        contextRequest,
         communityApi.list({
           sort: 'popular',
           limit: 5,
@@ -326,7 +386,10 @@ export default function NewsContextRail({ category = '', excludeIds = [] }) {
       active = false;
       controller.abort();
     };
-  }, [category, contextConfig.category, excludeKey]);
+  }, [category, contextConfig.category, contextConfig.source, contextConfig.type, excludeKey]);
+
+  const contextLink = contextConfig.link
+    || `/tin-tuc?category=${encodeURIComponent(contextConfig.category || '')}`;
 
   return (
     <aside className="news-context-rail" aria-label="Thông tin liên quan">
@@ -357,11 +420,15 @@ export default function NewsContextRail({ category = '', excludeIds = [] }) {
               <span><Building2 size={13} /> {contextConfig.label}</span>
               <h2>{contextConfig.title}</h2>
             </div>
-            <Link to={`/tin-tuc?category=${encodeURIComponent(contextConfig.category)}`}>
-              <ArrowRight size={15} aria-label="Xem chuyên mục" />
+            <Link to={contextLink}>
+              <ArrowRight size={15} aria-label="Xem thêm" />
             </Link>
           </header>
-          <RailArticleList items={state.contextItems} />
+          {contextConfig.source === 'projects' ? (
+            <ProjectRailList items={state.contextItems} />
+          ) : (
+            <RailArticleList items={state.contextItems} />
+          )}
         </section>
       ) : null}
 

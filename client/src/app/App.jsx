@@ -67,6 +67,8 @@ const ActivityPage = lazy(() => import('../pages/account/ActivityPage'));
 const AdminDashboardPage = lazy(() => import('../pages/admin/AdminDashboardPage'));
 const ModerationQueuePage = lazy(() => import('../pages/admin/ModerationQueuePage'));
 const AdminArticlesPage = lazy(() => import('../pages/admin/AdminArticlesPage'));
+const AdminProjectsPage = lazy(() => import('../pages/admin/AdminProjectsPage'));
+const ProjectWorkspacePage = lazy(() => import('../pages/admin/ProjectWorkspacePage'));
 const AdminManagedContentPage = lazy(() => import('../pages/admin/AdminManagedContentPage'));
 const AdminCommentsPage = lazy(() => import('../pages/admin/AdminCommentsPage'));
 const AdminSourceWatchPage = lazy(() => import('../pages/admin/AdminSourceWatchPage'));
@@ -142,6 +144,9 @@ const router = createBrowserRouter(
         <Route index element={<AdminDashboardPage />} />
         <Route path="kiem-duyet" element={<ModerationQueuePage />} />
         <Route path="bai-viet" element={<AdminArticlesPage />} />
+        <Route path="du-an" element={<AdminProjectsPage />} />
+        <Route path="du-an/moi" element={<ProjectWorkspacePage />} />
+        <Route path="du-an/:id" element={<ProjectWorkspacePage />} />
         <Route path="cong-dong" element={<AdminManagedContentPage type="community" />} />
         <Route path="nha-dat" element={<AdminManagedContentPage type="property" />} />
         <Route path="viec-lam" element={<AdminManagedContentPage type="job" />} />

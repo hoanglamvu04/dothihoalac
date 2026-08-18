@@ -9,6 +9,7 @@ import {
   Cloud,
   FileText,
   Flag,
+  FolderKanban,
   FolderTree,
   LayoutDashboard,
   LogOut,
@@ -25,25 +26,53 @@ import {
 
 import { useAuth } from '../../context/AuthContext';
 
+import './AdminLayoutProjectNav.css';
+
 const SIDEBAR_STORAGE_KEY = 'dthl-admin-sidebar-collapsed';
 
-const links = [
-  ['/quan-tri', 'Tổng quan', LayoutDashboard, true],
-  ['/quan-tri/kiem-duyet', 'Hàng chờ kiểm duyệt', MessageSquareWarning],
-  ['/quan-tri/bai-viet', 'Bài viết / Tin tức', FileText],
-  ['/quan-tri/cong-dong', 'Cộng đồng', MessageSquareText],
-  ['/quan-tri/binh-luan', 'Bình luận', MessageCircle],
-  ['/quan-tri/nha-dat', 'Bất động sản', Building2],
-  ['/quan-tri/viec-lam', 'Việc làm', BriefcaseBusiness],
-  ['/quan-tri/theo-doi-nguon', 'Theo dõi nguồn', Rss],
-  ['/quan-tri/nguoi-dung', 'Người dùng', Users],
-  ['/quan-tri/bao-cao', 'Báo cáo vi phạm', Flag],
-  ['/quan-tri/khach-hang', 'Khách hàng tiềm năng', BarChart3],
-  ['/quan-tri/quang-cao', 'Quảng cáo', Megaphone],
-  ['/quan-tri/phan-loai', 'Danh mục và khu vực', FolderTree],
-  ['/quan-tri/google-workspace', 'Google Workspace', Cloud],
-  ['/quan-tri/he-thong', 'Trang và cấu hình', Settings],
-  ['/quan-tri/nhat-ky', 'Nhật ký quản trị', Megaphone],
+const navGroups = [
+  {
+    label: 'Tổng quan',
+    items: [
+      ['/quan-tri', 'Tổng quan vận hành', LayoutDashboard, true],
+    ],
+  },
+  {
+    label: 'Nội dung & dữ liệu',
+    items: [
+      ['/quan-tri/bai-viet', 'Bài viết / Tin tức', FileText],
+      ['/quan-tri/du-an', 'Project Tracker', FolderKanban],
+      ['/quan-tri/theo-doi-nguon', 'Theo dõi nguồn', Rss],
+      ['/quan-tri/binh-luan', 'Bình luận', MessageCircle],
+    ],
+  },
+  {
+    label: 'Cộng đồng & thị trường',
+    items: [
+      ['/quan-tri/cong-dong', 'Cộng đồng', MessageSquareText],
+      ['/quan-tri/nha-dat', 'Bất động sản', Building2],
+      ['/quan-tri/viec-lam', 'Việc làm', BriefcaseBusiness],
+    ],
+  },
+  {
+    label: 'Vận hành & kiểm soát',
+    items: [
+      ['/quan-tri/kiem-duyet', 'Hàng chờ kiểm duyệt', MessageSquareWarning],
+      ['/quan-tri/nguoi-dung', 'Người dùng', Users],
+      ['/quan-tri/bao-cao', 'Báo cáo vi phạm', Flag],
+      ['/quan-tri/khach-hang', 'Khách hàng tiềm năng', BarChart3],
+      ['/quan-tri/quang-cao', 'Quảng cáo', Megaphone],
+    ],
+  },
+  {
+    label: 'Hệ thống',
+    items: [
+      ['/quan-tri/phan-loai', 'Danh mục và khu vực', FolderTree],
+      ['/quan-tri/google-workspace', 'Google Workspace', Cloud],
+      ['/quan-tri/he-thong', 'Trang và cấu hình', Settings],
+      ['/quan-tri/nhat-ky', 'Nhật ký quản trị', Megaphone],
+    ],
+  },
 ];
 
 function isStudioPath(pathname) {
@@ -106,16 +135,23 @@ export default function AdminLayout() {
           </span>
           <span className="admin-brand-copy">
             <strong>Đô Thị Hòa Lạc</strong>
-            <small>Content & Community Studio</small>
+            <small>Operations & Content Studio</small>
           </span>
         </Link>
 
-        <nav className="admin-nav">
-          {links.map(([to, label, Icon, end]) => (
-            <NavLink key={to} to={to} end={Boolean(end)} title={collapsed ? label : undefined}>
-              <Icon size={19} strokeWidth={1.9} />
-              <span>{label}</span>
-            </NavLink>
+        <nav className="admin-nav admin-nav--grouped">
+          {navGroups.map((group) => (
+            <div className="admin-nav-group" key={group.label}>
+              <span className="admin-nav-group__label">{group.label}</span>
+              <div className="admin-nav-group__items">
+                {group.items.map(([to, label, Icon, end]) => (
+                  <NavLink key={to} to={to} end={Boolean(end)} title={collapsed ? label : undefined}>
+                    <Icon size={19} strokeWidth={1.9} />
+                    <span>{label}</span>
+                  </NavLink>
+                ))}
+              </div>
+            </div>
           ))}
         </nav>
 
