@@ -67,6 +67,7 @@ export default function AdminTaxonomyPage() {
   const toast = useToast();
   const [type, setType] = useState('categories');
   const [categoryScope, setCategoryScope] = useState('article');
+  const [showInactive, setShowInactive] = useState(false);
   const [data, setData] = useState({ categories: [], areas: [], tags: [] });
   const [loading, setLoading] = useState(true);
   const [selected, setSelected] = useState(null);
@@ -89,7 +90,7 @@ export default function AdminTaxonomyPage() {
   const scopeCounts = useMemo(() => {
     const counts = Object.fromEntries(categoryScopeOrder.map((scope) => [scope, 0]));
     data.categories.forEach((item) => {
-      if (Object.prototype.hasOwnProperty.call(counts, item.contentScope)) {
+      if (item.isActive && Object.prototype.hasOwnProperty.call(counts, item.contentScope)) {
         counts[item.contentScope] += 1;
       }
     });
@@ -98,10 +99,14 @@ export default function AdminTaxonomyPage() {
 
   const items = useMemo(() => {
     if (type === 'categories') {
-      return data.categories.filter((item) => item.contentScope === categoryScope);
+      return data.categories.filter(
+        (item) =>
+          item.contentScope === categoryScope &&
+          (showInactive || item.isActive),
+      );
     }
     return data[type] || [];
-  }, [data, type, categoryScope]);
+  }, [data, type, categoryScope, showInactive]);
 
   const openCreate = () => {
     setSelected({ mode: 'create' });
@@ -199,6 +204,13 @@ export default function AdminTaxonomyPage() {
                 {scopes[scope]} ({scopeCounts[scope] || 0})
               </button>
             ))}
+            <button
+              type="button"
+              className={showInactive ? 'is-active' : ''}
+              onClick={() => setShowInactive((value) => !value)}
+            >
+              {showInactive ? 'Ẩn mục đã tắt' : 'Hiện mục đã tắt'}
+            </button>
           </div>
           <p className="form-hint">
             Tin tức chỉ dùng danh mục thuộc phạm vi “Tin tức”. Các địa danh như Hòa
