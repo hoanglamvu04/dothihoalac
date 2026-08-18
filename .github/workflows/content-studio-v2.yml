@@ -36,6 +36,7 @@ jobs:
           src/api/content.api.js
           src/app/App.jsx
           src/components/account/AccountContentNav.jsx
+          src/components/content/ContentImage.jsx
           src/components/layout/AccountLayout.jsx
           src/components/studio/ContentEditorShell.jsx
           src/pages/account/MyContentPage.jsx
