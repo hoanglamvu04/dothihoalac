@@ -8,9 +8,10 @@ const CONTENT_SECTIONS = {
 };
 
 const EDITOR_SECTIONS = {
-  community: '/dang-bai/cong-dong',
-  property: '/dang-bai/nha-dat',
-  job: '/dang-bai/viec-lam',
+  community: '/studio/cong-dong',
+  property: '/studio/bat-dong-san',
+  job: '/studio/viec-lam',
+  article: '/quan-tri/bai-viet',
   news_tip: '/gui-tin',
 };
 
@@ -28,6 +29,8 @@ export function isPersistedContentId(value) {
   return /^[0-9a-fA-F]{24}$/.test(String(value || ''));
 }
 
+// Giữ helper này cho các URL cũ trong thời gian chuyển tiếp. Content Studio V2
+// không dùng session id làm định danh chính nữa; URL editor dùng Content._id thật.
 export function createEditorSessionId(prefix = 'draft') {
   const safePrefix = String(prefix || 'draft')
     .toLowerCase()
@@ -61,7 +64,6 @@ export function editorPath(item) {
 export function contentPath(item) {
   const type = item?.contentType;
   const slug = String(item?.slug || '').trim();
-  const id = contentId(item);
   const section = CONTENT_SECTIONS[type];
 
   if (!section || !slug) {
@@ -81,14 +83,10 @@ export function contentPath(item) {
     if (username) {
       return `/${section}/${encodeURIComponent(username)}/${encodedSlug}`;
     }
-
-    return `/${section}/${encodedSlug}`;
   }
 
-  if (id) {
-    return `/${section}/${encodeURIComponent(id)}/${encodedSlug}`;
-  }
-
+  // URL công khai canonical không chứa MongoDB id. Các route id/slug cũ vẫn
+  // được giữ trong router để backlink không gãy nhưng link mới luôn dùng slug.
   return `/${section}/${encodedSlug}`;
 }
 
