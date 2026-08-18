@@ -63,7 +63,7 @@ export default function JobStudioPage() {
     const syncRecovery = async () => {
       if (savingRef.current) return;
 
-      let raw = '';
+      let raw;
       try {
         raw = window.localStorage.getItem(storageKey) || '';
       } catch {
