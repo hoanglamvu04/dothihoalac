@@ -4,11 +4,18 @@ import {
 } from 'react';
 import DOMPurify from 'dompurify';
 
+function removeLegacyAutoCaptions(html = '') {
+  return String(html).replace(
+    /<figcaption\b[^>]*>\s*(?:Hình|Ảnh)\s+minh\s+họa\s+cho[\s\S]*?<\/figcaption>/giu,
+    '',
+  );
+}
+
 function ArticleBody({ html }) {
   const sanitizedHtml = useMemo(() => {
-    const normalizedHtml = String(
-      html || '',
-    ).normalize('NFC');
+    const normalizedHtml = removeLegacyAutoCaptions(
+      String(html || '').normalize('NFC'),
+    );
 
     return DOMPurify.sanitize(
       normalizedHtml,
