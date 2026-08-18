@@ -23,6 +23,7 @@ import {
 import Seo from '../../components/common/Seo';
 import ContentImage from '../../components/content/ContentImage';
 import ContentMeta from '../../components/content/ContentMeta';
+import NewsContextRail from '../../components/content/NewsContextRail';
 import Pagination from '../../components/common/Pagination';
 import ErrorState from '../../components/common/ErrorState';
 import EmptyState from '../../components/common/EmptyState';
@@ -39,6 +40,7 @@ import {
 } from '../../utils/constants';
 
 import './ArticlesPageV3.css';
+import './NewsPortalEnhancements.css';
 
 const PAGE_SIZE = 12;
 
@@ -245,6 +247,10 @@ export default function ArticlesPage() {
   const leadStory = editorialMode ? result.items[0] : null;
   const sideStories = editorialMode ? result.items.slice(1, 3) : [];
   const streamStories = editorialMode ? result.items.slice(3) : result.items;
+  const railExcludeIds = useMemo(
+    () => [leadStory, ...sideStories].map((item) => item?._id).filter(Boolean),
+    [leadStory, sideStories],
+  );
 
   const resultTitle = query
     ? `Kết quả cho “${query}”`
@@ -369,54 +375,60 @@ export default function ArticlesPage() {
             <button type="button" onClick={result.reload}>Tải lại</button>
           </div>
         ) : result.items.length ? (
-          <>
-            {editorialMode && leadStory ? (
-              <section className="news-lead-grid" aria-label="Tin nổi bật">
-                <StoryCard item={leadStory} variant="lead" eager />
-                <div className="news-lead-grid__side">
-                  {sideStories.map((item) => (
-                    <StoryCard key={item._id} item={item} variant="side" />
-                  ))}
-                </div>
-              </section>
-            ) : null}
-
-            <section ref={resultsRef} className="news-stream">
-              <header className="news-stream__heading">
-                <div>
-                  <span><Filter size={14} /> {pageCopy.resultsEyebrow || 'Dòng tin cập nhật'}</span>
-                  <h2>{resultTitle}</h2>
-                </div>
-                <p>{total.toLocaleString('vi-VN')} bài viết</p>
-              </header>
-
-              {streamStories.length ? (
-                <div className="news-stream__list">
-                  {streamStories.map((item) => (
-                    <StoryCard key={item._id} item={item} variant="feed" />
-                  ))}
-                </div>
-              ) : editorialMode ? (
-                <div className="news-stream__continue">
-                  <span>Bạn đã xem các tin nổi bật mới nhất.</span>
-                  {totalPages > 1 ? (
-                    <button type="button" onClick={() => onPageChange(2)}>
-                      Xem thêm tin <ChevronRight size={16} />
-                    </button>
+          <div className="news-content-layout">
+            <main className="news-content-layout__main">
+              {editorialMode && leadStory ? (
+                <section className="news-lead-grid" aria-label="Tin nổi bật">
+                  <StoryCard item={leadStory} variant="lead" eager />
+                  {sideStories.length ? (
+                    <div className="news-lead-grid__side">
+                      {sideStories.map((item) => (
+                        <StoryCard key={item._id} item={item} variant="side" />
+                      ))}
+                    </div>
                   ) : null}
+                </section>
+              ) : null}
+
+              <section ref={resultsRef} className="news-stream">
+                <header className="news-stream__heading">
+                  <div>
+                    <span><Filter size={14} /> {pageCopy.resultsEyebrow || 'Dòng tin cập nhật'}</span>
+                    <h2>{resultTitle}</h2>
+                  </div>
+                  <p>{total.toLocaleString('vi-VN')} bài viết</p>
+                </header>
+
+                {streamStories.length ? (
+                  <div className="news-stream__list">
+                    {streamStories.map((item) => (
+                      <StoryCard key={item._id} item={item} variant="feed" />
+                    ))}
+                  </div>
+                ) : editorialMode ? (
+                  <div className="news-stream__continue">
+                    <span>Bạn đã xem các tin nổi bật mới nhất.</span>
+                    {totalPages > 1 ? (
+                      <button type="button" onClick={() => onPageChange(2)}>
+                        Xem thêm tin <ChevronRight size={16} />
+                      </button>
+                    ) : null}
+                  </div>
+                ) : null}
+              </section>
+
+              {totalPages > 1 ? (
+                <div className="news-pagination">
+                  <Pagination
+                    meta={{ ...result.meta, page: currentPage, totalPages, total }}
+                    onPageChange={onPageChange}
+                  />
                 </div>
               ) : null}
-            </section>
+            </main>
 
-            {totalPages > 1 ? (
-              <div className="news-pagination">
-                <Pagination
-                  meta={{ ...result.meta, page: currentPage, totalPages, total }}
-                  onPageChange={onPageChange}
-                />
-              </div>
-            ) : null}
-          </>
+            <NewsContextRail category={category} excludeIds={railExcludeIds} />
+          </div>
         ) : (
           <div className="news-hub__empty">
             <EmptyState
