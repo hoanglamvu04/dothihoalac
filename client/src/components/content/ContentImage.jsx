@@ -7,6 +7,7 @@ export default function ContentImage({
   media,
   alt,
   className = '',
+  ratio = '',
   fallback = null,
   loading = 'lazy',
   ...props
@@ -16,12 +17,19 @@ export default function ContentImage({
   const src = mediaUrl(resolvedImage);
   if (!src || failed) return fallback;
 
+  const classes = [
+    className,
+    ratio ? `content-image--${ratio}` : '',
+  ]
+    .filter(Boolean)
+    .join(' ');
+
   return (
     <img
       src={src}
       alt={alt || resolvedImage?.altText || ''}
       loading={loading}
-      className={className}
+      className={classes}
       onError={() => setFailed(true)}
       {...props}
     />
