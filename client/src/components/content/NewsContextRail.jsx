@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowRight,
@@ -243,10 +243,11 @@ function DiscussionsCard({ items }) {
 
 export default function NewsContextRail({ category = '', excludeIds = [] }) {
   const contextConfig = CONTEXT_BY_CATEGORY[category] || DEFAULT_CONTEXT;
-  const excluded = useMemo(
-    () => new Set(excludeIds.filter(Boolean).map(String)),
-    [excludeIds],
-  );
+  const excludeKey = excludeIds
+    .filter(Boolean)
+    .map(String)
+    .sort()
+    .join('|');
 
   const [state, setState] = useState({
     loading: true,
@@ -259,6 +260,7 @@ export default function NewsContextRail({ category = '', excludeIds = [] }) {
   useEffect(() => {
     let active = true;
     const controller = new AbortController();
+    const excluded = new Set(excludeKey ? excludeKey.split('|') : []);
 
     const load = async () => {
       setState((current) => ({ ...current, loading: true }));
@@ -291,9 +293,11 @@ export default function NewsContextRail({ category = '', excludeIds = [] }) {
         excluded,
       ).slice(0, 4);
 
-      const discussions = (
-        discussionResult.status === 'fulfilled' ? discussionResult.value?.items : []
-      ).slice(0, 4);
+      const discussionItems =
+        discussionResult.status === 'fulfilled'
+          ? discussionResult.value?.items ?? []
+          : [];
+      const discussions = discussionItems.slice(0, 4);
 
       let forecast = null;
 
@@ -322,7 +326,7 @@ export default function NewsContextRail({ category = '', excludeIds = [] }) {
       active = false;
       controller.abort();
     };
-  }, [category, contextConfig.category, excluded]);
+  }, [category, contextConfig.category, excludeKey]);
 
   return (
     <aside className="news-context-rail" aria-label="Thông tin liên quan">
