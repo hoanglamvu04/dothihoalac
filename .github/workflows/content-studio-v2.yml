@@ -30,10 +30,13 @@ jobs:
           src/api/content.api.js
           src/api/interaction.api.js
           src/api/user.api.js
+          src/api/weather.api.js
           src/app/App.jsx
           src/components/account/AccountContentNav.jsx
           src/components/content/ArticleBody.jsx
           src/components/content/ContentImage.jsx
+          src/components/content/NewsContextRail.jsx
+          src/components/content/ReactionBar.jsx
           src/components/layout/AccountLayout.jsx
           src/components/studio/ContentEditorShell.jsx
           src/pages/account/ActivityPage.jsx
@@ -47,6 +50,7 @@ jobs:
           src/pages/create/CreateHubPage.jsx
           src/pages/create/JobStudioPage.jsx
           src/pages/create/PropertyStudioAdapter.jsx
+          src/pages/public/ArticleDetailPage.jsx
           src/pages/public/ArticlesPage.jsx
           src/pages/public/SearchPage.jsx
           src/utils/content.js
