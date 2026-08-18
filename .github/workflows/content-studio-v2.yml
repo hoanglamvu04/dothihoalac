@@ -79,11 +79,13 @@ jobs:
           src/modules/contents/contentDraft.routes.js
           src/modules/contents/contentDraft.service.js
           src/modules/contents/contentDraft.validation.js
+          src/modules/contents/pendingContentPreview.middleware.js
           src/modules/properties/property.controller.js
           src/modules/properties/property.routes.js
           src/modules/properties/property.service.js
           src/modules/jobs/job.service.js
           src/modules/articles/article.model.js
+          src/modules/articles/article.routes.js
           src/modules/articles/article.validation.js
           src/modules/articles/article.metadata.service.js
           src/modules/users/user.service.js
