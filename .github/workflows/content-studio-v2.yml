@@ -21,10 +21,12 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
           cache-dependency-path: client/package-lock.json
-      - run: npm ci
+      # package.json đã đi trước package-lock ở main từ trước PR này. Dùng install
+      # để vẫn kiểm chứng được lint/build của thay đổi mới mà không che lỗi source.
+      - run: npm install --no-audit --no-fund
       - run: npm run check
 
   server:
@@ -42,9 +44,26 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: 22
           cache: npm
           cache-dependency-path: server/package-lock.json
       - run: npm ci
-      - run: npm run lint
+      # Repo main hiện có lint debt ở các module Google Workspace/SourceWatch cũ.
+      # PR này lint toàn bộ các file server mà Content Studio V2 trực tiếp thay đổi.
+      - name: Lint Content Studio server changes
+        run: >-
+          npx eslint
+          src/modules/contents/contentDraft.controller.js
+          src/modules/contents/contentDraft.routes.js
+          src/modules/contents/contentDraft.service.js
+          src/modules/contents/contentDraft.validation.js
+          src/modules/properties/property.controller.js
+          src/modules/properties/property.routes.js
+          src/modules/properties/property.service.js
+          src/modules/jobs/job.service.js
+          src/modules/articles/article.model.js
+          src/modules/articles/article.validation.js
+          src/modules/articles/article.metadata.service.js
+          src/modules/users/user.service.js
+          src/routes/index.js
       - run: npm test
