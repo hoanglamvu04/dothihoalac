@@ -13,6 +13,8 @@ import { env } from '../../config/env.js';
 import { parsePagination, buildPaginationMeta } from '../../utils/pagination.js';
 import ApiError from '../../utils/ApiError.js';
 
+const MEMBER_CONTENT_TYPES = new Set(['community', 'property', 'job', 'article']);
+
 export async function getPublicProfile(username) {
   const user = await User.findOne({
     username: username.toLowerCase(),
@@ -46,9 +48,11 @@ export async function getPublicProfile(username) {
     counts: { postCount, listingCount },
   };
 }
+
 export async function getPrivateProfile(userId) {
   return UserProfile.findOne({ userId }).populate('avatarMediaId coverMediaId areaId').lean();
 }
+
 export async function updateProfile(user, data) {
   if (data.displayName !== undefined) {
     user.displayName = data.displayName;
@@ -62,6 +66,7 @@ export async function updateProfile(user, data) {
     runValidators: true,
   }).populate('avatarMediaId coverMediaId areaId');
 }
+
 export async function changeUsername(user, username) {
   const exists = await User.exists({ username, _id: { $ne: user._id } });
   if (exists) throw new ApiError(409, 'Tên người dùng đã tồn tại.', 'USERNAME_EXISTS');
@@ -79,12 +84,14 @@ export async function changeUsername(user, username) {
   await UsernameHistory.create({ userId: user._id, oldUsername, newUsername: username });
   return { username };
 }
+
 export async function listSessions(userId) {
   return UserSession.find({ userId, revokedAt: null, expiresAt: { $gt: new Date() } })
     .select('-refreshTokenHash')
     .sort({ lastActiveAt: -1 })
     .lean();
 }
+
 export async function revokeSession(userId, sessionId) {
   const result = await UserSession.updateOne({ _id: sessionId, userId }, { revokedAt: new Date() });
   if (!result.matchedCount)
@@ -160,6 +167,10 @@ async function loadCommunityCoverFallback(items = []) {
 function buildPublicUrl(item) {
   if (!item?.slug) return '';
 
+  if (item.contentType === 'article') {
+    return `/tin-tuc/${encodeURIComponent(item.slug)}`;
+  }
+
   if (item.contentType === 'community') {
     const username = String(item.authorId?.username || '').trim();
     return username
@@ -168,7 +179,7 @@ function buildPublicUrl(item) {
   }
 
   if (item.contentType === 'property') {
-    return `/nha-dat/${encodeURIComponent(item.slug)}`;
+    return `/bat-dong-san/${encodeURIComponent(item.slug)}`;
   }
 
   if (item.contentType === 'job') {
@@ -180,14 +191,22 @@ function buildPublicUrl(item) {
 
 async function listContents(userId, query, contentType) {
   const { page, limit, skip } = parsePagination(query);
-  const filter = { authorId: userId, deletedAt: null, ...(contentType ? { contentType } : {}) };
+  const requestedType = contentType || String(query.type || '').trim();
+  const filter = {
+    authorId: userId,
+    deletedAt: null,
+    ...(requestedType && MEMBER_CONTENT_TYPES.has(requestedType)
+      ? { contentType: requestedType }
+      : {}),
+  };
+
   if (query.status) filter.status = query.status;
 
   const [items, total] = await Promise.all([
     Content.find(filter)
       .populate('authorId', 'username displayName')
       .populate('thumbnailMediaId', 'url secureUrl altText width height')
-      .sort({ createdAt: -1 })
+      .sort({ updatedAt: -1, createdAt: -1 })
       .skip(skip)
       .limit(limit)
       .lean(),
@@ -256,11 +275,12 @@ export async function listMyBookmarks(userId, query) {
   ]);
   return { items, meta: buildPaginationMeta({ page, limit, total }) };
 }
+
 export async function listMyReports(userId, query) {
   const { page, limit, skip } = parsePagination(query);
   const [items, total] = await Promise.all([
     Report.find({ reporterId: userId }).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
-    Report.countDocuments({ reporterId: userId }),
+    Report.countDocuments({ userId }),
   ]);
   return { items, meta: buildPaginationMeta({ page, limit, total }) };
 }
