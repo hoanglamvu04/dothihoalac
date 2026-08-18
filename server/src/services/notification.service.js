@@ -10,14 +10,36 @@ export async function createNotification({
   title,
   message = '',
   payload = {},
+  dedupeKey = '',
 }) {
   if (!recipientId) return null;
   if (actorId && String(recipientId) === String(actorId)) return null;
+
   const preference = await NotificationPreference.findOne({
     userId: recipientId,
     notificationType,
   }).lean();
+
   if (preference && !preference.inAppEnabled) return null;
+
+  const normalizedPayload = {
+    ...(payload || {}),
+    ...(dedupeKey ? { dedupeKey } : {}),
+  };
+
+  if (dedupeKey) {
+    const existing = await Notification.findOne({
+      recipientId,
+      notificationType,
+      targetType,
+      targetId,
+      'payload.dedupeKey': dedupeKey,
+      deletedAt: null,
+    }).lean();
+
+    if (existing) return existing;
+  }
+
   return Notification.create({
     recipientId,
     actorId,
@@ -26,6 +48,6 @@ export async function createNotification({
     targetId,
     title,
     message,
-    payload,
+    payload: normalizedPayload,
   });
 }
