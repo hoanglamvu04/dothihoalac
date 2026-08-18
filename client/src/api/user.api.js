@@ -12,4 +12,8 @@ export const userApi = {
   myListings: async (params = {}) => unwrapList(await api.get('/users/me/listings', { params })),
   myBookmarks: async (params = {}) => unwrapList(await api.get('/users/me/bookmarks', { params })),
   myReports: async (params = {}) => unwrapList(await api.get('/users/me/reports', { params })),
+  myActivity: async (params = {}) =>
+    unwrapList(await api.get('/users/me/activity', { params })),
+  clearSearchActivity: async () =>
+    unwrap(await api.delete('/users/me/activity/searches')),
 };
