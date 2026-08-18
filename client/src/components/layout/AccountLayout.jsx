@@ -3,7 +3,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
 import { RefreshCw, TriangleAlert } from 'lucide-react';
 
 import Seo from '../common/Seo';
@@ -41,11 +41,15 @@ function buildProfile(user, profile) {
 
 export default function AccountLayout() {
   const { user } = useAuth();
+  const location = useLocation();
 
   const [accountProfile, setAccountProfile] =
     useState(() => buildProfile(user, user?.profile));
   const [profileLoading, setProfileLoading] = useState(true);
   const [profileError, setProfileError] = useState('');
+
+  const normalizedPath = location.pathname.replace(/\/+$/, '') || '/';
+  const isOverview = normalizedPath === '/tai-khoan';
 
   const reloadAccountProfile = useCallback(async () => {
     setProfileLoading(true);
@@ -76,17 +80,24 @@ export default function AccountLayout() {
   }, [reloadAccountProfile]);
 
   return (
-    <main className="account-center-page">
+    <main
+      className={[
+        'account-center-page',
+        isOverview ? 'is-overview' : 'is-subpage',
+      ].join(' ')}
+    >
       <Seo
         title="Trung tâm tài khoản"
-        description="Quản lý hồ sơ, bảo mật, thông báo và nội dung của bạn."
+        description="Quản lý hồ sơ, bảo mật, thông báo, hoạt động và nội dung của bạn."
       />
 
       <div className="account-center-container">
-        <AccountProfileShell
-          profile={accountProfile}
-          onProfileChange={setAccountProfile}
-        />
+        {isOverview ? (
+          <AccountProfileShell
+            profile={accountProfile}
+            onProfileChange={setAccountProfile}
+          />
+        ) : null}
 
         {profileError ? (
           <div className="account-center-warning" role="status">
