@@ -12,10 +12,8 @@ import {
   FilePenLine,
   MapPin,
   MessageSquareText,
-  Newspaper,
   RefreshCw,
   Send,
-  UsersRound,
 } from 'lucide-react';
 
 import Seo from '../../components/common/Seo';
