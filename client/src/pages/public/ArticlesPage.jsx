@@ -5,29 +5,33 @@ import {
   useRef,
   useState,
 } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import {
   CalendarDays,
+  ChevronRight,
   Clock3,
-  Grid3X3,
-  List,
+  Filter,
   MapPin,
   Newspaper,
   RotateCcw,
   Search,
   SlidersHorizontal,
-  Tags,
+  Sparkles,
   TrendingUp,
 } from 'lucide-react';
 
 import Seo from '../../components/common/Seo';
-import ArticleCard from '../../components/content/ArticleCard';
+import ContentImage from '../../components/content/ContentImage';
+import ContentMeta from '../../components/content/ContentMeta';
 import Pagination from '../../components/common/Pagination';
 import ErrorState from '../../components/common/ErrorState';
+import EmptyState from '../../components/common/EmptyState';
 import { LoadingBlock } from '../../components/common/Loading';
 import { articleApi } from '../../api/content.api';
 import { useListPage } from '../../hooks/useListPage';
 import { useTaxonomy } from '../../context/TaxonomyContext';
+import { contentPath } from '../../utils/content';
+import { truncate } from '../../utils/formatters';
 import {
   ARTICLE_CATEGORY_PAGE_COPY,
   ARTICLE_CATEGORY_RAIL,
@@ -37,7 +41,6 @@ import {
 import './ArticlesPageV3.css';
 
 const PAGE_SIZE = 12;
-const VIEW_MODE_KEY = 'dothihoalac.article-view-mode';
 
 function valueOf(item) {
   return String(item?.slug || item?._id || item?.id || '');
@@ -76,36 +79,63 @@ function getPageCopy(category, categoryName) {
   const name = categoryName || 'Chuyên mục tin tức';
   return {
     ...ARTICLE_DEFAULT_PAGE_COPY,
+    theme: 'news',
     seoTitle: `${name} | Đô Thị Hòa Lạc`,
     seoDescription: `Tin mới thuộc chuyên mục ${name} tại khu vực Đô Thị Hòa Lạc.`,
     eyebrow: name,
-    title: `${name} tại khu vực Đô Thị Hòa Lạc`,
-    description: `Tổng hợp thông tin mới thuộc chuyên mục ${name}, ưu tiên những nội dung gắn với địa bàn và thay đổi có ảnh hưởng trực tiếp đến khu vực.`,
-    resultsEyebrow: name,
+    title: name,
+    description: `Những cập nhật mới nhất thuộc chuyên mục ${name}, ưu tiên thông tin gắn với Hòa Lạc và khu vực lân cận.`,
     latestTitle: `${name} mới nhất`,
     filteredTitle: `${name} theo bộ lọc`,
   };
 }
 
-function facetMap(rows) {
-  return new Map(
-    (Array.isArray(rows) ? rows : []).map((row) => [
-      String(row?.id || ''),
-      Number(row?.count || 0),
-    ]),
+function StoryImage({ item, className = '', eager = false }) {
+  return (
+    <ContentImage
+      media={item?.thumbnailMediaId}
+      alt={item?.title}
+      className={className}
+      loading={eager ? 'eager' : 'lazy'}
+      fallback={
+        <div className={`${className} news-story__image-fallback`} aria-hidden="true">
+          <Newspaper size={28} />
+        </div>
+      }
+    />
   );
 }
 
-function facetCount(map, item) {
-  const id = String(item?._id || item?.id || '');
-  return id ? Number(map.get(id) || 0) : 0;
-}
+function StoryCard({ item, variant = 'feed', eager = false }) {
+  if (!item) return null;
 
-function isSelected(item, value) {
-  if (!value) return false;
+  const href = contentPath(item);
+  const Heading = variant === 'lead' ? 'h2' : 'h3';
+  const category = item?.primaryCategoryId?.name || 'Tin Hòa Lạc';
+
   return (
-    valueOf(item) === String(value) ||
-    String(item?._id || item?.id || '') === String(value)
+    <article className={`news-story news-story--${variant}`}>
+      <Link className="news-story__media" to={href} aria-label={item.title}>
+        <StoryImage item={item} className="news-story__image" eager={eager} />
+      </Link>
+
+      <div className="news-story__body">
+        <div className="news-story__kicker">
+          <span>{category}</span>
+          {item?.isSponsored ? <i>Tài trợ</i> : null}
+        </div>
+
+        <Heading>
+          <Link to={href}>{item.title}</Link>
+        </Heading>
+
+        {(variant === 'lead' || variant === 'feed') && item.summary ? (
+          <p>{truncate(item.summary, variant === 'lead' ? 210 : 150)}</p>
+        ) : null}
+
+        <ContentMeta item={item} compact={variant !== 'lead'} />
+      </div>
+    </article>
   );
 }
 
@@ -127,38 +157,13 @@ export default function ArticlesPage() {
   const date = searchParams.get('date') || '';
   const sort = searchParams.get('sort') || '';
   const query = searchParams.get('q') || '';
-  const isCategoryPage = Boolean(category);
 
   const [searchDraft, setSearchDraft] = useState(query);
-  const [categoryDraft, setCategoryDraft] = useState(category);
-  const [areaDraft, setAreaDraft] = useState(area);
-  const [dateDraft, setDateDraft] = useState(date);
-  const [sortDraft, setSortDraft] = useState(sort);
-  const [viewMode, setViewMode] = useState(() => {
-    try {
-      return localStorage.getItem(VIEW_MODE_KEY) === 'list'
-        ? 'list'
-        : 'grid';
-    } catch {
-      return 'grid';
-    }
-  });
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   useEffect(() => {
     setSearchDraft(query);
-    setCategoryDraft(category);
-    setAreaDraft(area);
-    setDateDraft(date);
-    setSortDraft(sort);
-  }, [query, category, area, date, sort]);
-
-  useEffect(() => {
-    try {
-      localStorage.setItem(VIEW_MODE_KEY, viewMode);
-    } catch {
-      // Không chặn giao diện nếu localStorage bị vô hiệu hóa.
-    }
-  }, [viewMode]);
+  }, [query]);
 
   const categoryItem = useMemo(
     () => findTaxonomy(articleCategories, category),
@@ -173,7 +178,6 @@ export default function ArticlesPage() {
     categoryItem?.name ||
     ARTICLE_CATEGORY_RAIL.find((item) => item.slug === category)?.label ||
     '';
-  const areaName = areaItem?.name || '';
   const pageCopy = useMemo(
     () => getPageCopy(category, categoryName),
     [category, categoryName],
@@ -196,33 +200,6 @@ export default function ArticlesPage() {
 
   const result = useListPage(articleApi.list, listParams);
 
-  const categoryCounts = useMemo(
-    () => facetMap(result.meta?.facets?.categories),
-    [result.meta?.facets?.categories],
-  );
-  const areaCounts = useMemo(
-    () => facetMap(result.meta?.facets?.areas),
-    [result.meta?.facets?.areas],
-  );
-
-  const categoryOptions = useMemo(
-    () =>
-      articleCategories.filter((item) => {
-        const count = facetCount(categoryCounts, item);
-        return result.loading || count > 0 || isSelected(item, category);
-      }),
-    [articleCategories, categoryCounts, result.loading, category],
-  );
-
-  const areaOptions = useMemo(
-    () =>
-      areas.filter((item) => {
-        const count = facetCount(areaCounts, item);
-        return result.loading || count > 0 || isSelected(item, area);
-      }),
-    [areas, areaCounts, result.loading, area],
-  );
-
   const updateUrl = useCallback(
     (values) => {
       setSearchParams((current) => {
@@ -236,39 +213,12 @@ export default function ArticlesPage() {
           }
         });
 
-        next.delete('categories');
-        next.delete('areas');
         next.delete('page');
         return next;
       });
     },
     [setSearchParams],
   );
-
-  const applyFilters = useCallback(() => {
-    updateUrl({
-      category: categoryDraft,
-      area: areaDraft,
-      date: dateDraft,
-      sort: sortDraft,
-    });
-  }, [categoryDraft, areaDraft, dateDraft, sortDraft, updateUrl]);
-
-  const clearFilters = useCallback(() => {
-    setAreaDraft('');
-    setDateDraft('');
-    setSortDraft('');
-    updateUrl({ area: '', date: '', sort: '' });
-  }, [updateUrl]);
-
-  const clearAll = useCallback(() => {
-    setSearchDraft('');
-    setCategoryDraft('');
-    setAreaDraft('');
-    setDateDraft('');
-    setSortDraft('');
-    setSearchParams(new URLSearchParams());
-  }, [setSearchParams]);
 
   const onPageChange = useCallback(
     (page) => {
@@ -280,11 +230,8 @@ export default function ArticlesPage() {
       });
 
       window.setTimeout(() => {
-        resultsRef.current?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start',
-        });
-      }, 30);
+        resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }, 20);
     },
     [setSearchParams],
   );
@@ -292,10 +239,12 @@ export default function ArticlesPage() {
   const total = Number(result.meta?.total || 0);
   const currentPage = Number(result.meta?.page || 1);
   const totalPages = Math.max(1, Number(result.meta?.totalPages || 1));
-  const limit = Number(result.meta?.limit || PAGE_SIZE);
-  const pageStart = total ? (currentPage - 1) * limit + 1 : 0;
-  const pageEnd = total ? Math.min(total, currentPage * limit) : 0;
   const hasSecondaryFilter = Boolean(area || date || sort || query);
+  const editorialMode = currentPage === 1 && !hasSecondaryFilter;
+
+  const leadStory = editorialMode ? result.items[0] : null;
+  const sideStories = editorialMode ? result.items.slice(1, 3) : [];
+  const streamStories = editorialMode ? result.items.slice(3) : result.items;
 
   const resultTitle = query
     ? `Kết quả cho “${query}”`
@@ -303,291 +252,182 @@ export default function ArticlesPage() {
       ? pageCopy.filteredTitle
       : pageCopy.latestTitle;
 
+  const submitSearch = (event) => {
+    event.preventDefault();
+    updateUrl({ q: searchDraft.trim() });
+  };
+
+  const clearSecondaryFilters = () => {
+    setSearchDraft('');
+    updateUrl({ q: '', area: '', date: '', sort: '' });
+    setFiltersOpen(false);
+  };
+
   return (
-    <section
-      className={`articles-page articles-page-v3 articles-page--${pageCopy.theme}`}
-    >
+    <section className={`news-hub news-hub--${pageCopy.theme || 'news'}`}>
       <Seo title={pageCopy.seoTitle} description={pageCopy.seoDescription} />
 
-      <div className="articles-page__container">
-        {!isCategoryPage ? (
-          <>
-            <header className="articles-hero articles-v3-hero">
-              <div className="articles-hero__content">
-                <span className="articles-hero__eyebrow">
-                  <Newspaper size={15} />
-                  {pageCopy.eyebrow}
-                </span>
-                <h1>{pageCopy.title}</h1>
-                <p>{pageCopy.description}</p>
-              </div>
+      <div className="news-hub__container">
+        <header className="news-masthead">
+          <div className="news-masthead__identity">
+            <span className="news-masthead__eyebrow">
+              <Sparkles size={15} />
+              {category ? 'Chuyên mục' : 'Dòng tin Hòa Lạc'}
+            </span>
+            <h1>{category ? categoryName || pageCopy.title : 'Tin tức'}</h1>
+            <p>{pageCopy.description}</p>
+          </div>
 
-              <form
-                className="articles-hero__search articles-v3-search"
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  updateUrl({ q: searchDraft.trim() });
-                }}
-              >
-                <Search size={19} />
-                <input
-                  type="search"
-                  value={searchDraft}
-                  onChange={(event) => setSearchDraft(event.target.value)}
-                  placeholder={pageCopy.searchPlaceholder}
-                  aria-label="Tìm kiếm tin tức"
-                />
-                <button
-                  type="submit"
-                  className="articles-hero__search-submit"
-                  disabled={!searchDraft.trim()}
-                >
-                  <Search size={16} />
-                  Tìm kiếm
-                </button>
-              </form>
-            </header>
+          <form className="news-masthead__search" onSubmit={submitSearch} role="search">
+            <Search size={18} aria-hidden="true" />
+            <input
+              type="search"
+              value={searchDraft}
+              onChange={(event) => setSearchDraft(event.target.value)}
+              placeholder={pageCopy.searchPlaceholder || 'Tìm tin, dự án, địa bàn...'}
+              aria-label="Tìm kiếm tin tức"
+            />
+            <button type="submit" disabled={!searchDraft.trim()}>
+              Tìm
+            </button>
+          </form>
+        </header>
 
-            <div className="articles-v3-category-shell">
-              <span className="articles-v3-category-label">Theo chuyên mục</span>
-              <nav
-                className="articles-category-rail articles-v3-category-rail"
-                aria-label="Chuyên mục tin tức"
-              >
-                <button
-                  type="button"
-                  className={!category ? 'is-active' : ''}
-                  onClick={() => {
-                    setCategoryDraft('');
-                    updateUrl({ category: '' });
-                  }}
-                >
-                  Tin mới
-                </button>
-                {ARTICLE_CATEGORY_RAIL.map((item) => (
-                  <button
-                    type="button"
-                    key={item.slug}
-                    className={category === item.slug ? 'is-active' : ''}
-                    onClick={() => {
-                      setCategoryDraft(item.slug);
-                      updateUrl({ category: item.slug });
-                    }}
-                  >
-                    {item.label}
-                  </button>
-                ))}
-              </nav>
-            </div>
-
-            <section
-              className="articles-v3-filterbar"
-              aria-label="Bộ lọc tin tức"
+        <div className="news-category-bar">
+          <nav aria-label="Chuyên mục tin tức">
+            <button
+              type="button"
+              className={!category ? 'is-active' : ''}
+              onClick={() => updateUrl({ category: '' })}
             >
-              <div className="articles-v3-filterbar__title">
-                <SlidersHorizontal size={17} />
-                <strong>Lọc nội dung</strong>
-              </div>
+              Mới nhất
+            </button>
+            {ARTICLE_CATEGORY_RAIL.map((item) => (
+              <button
+                type="button"
+                key={item.slug}
+                className={category === item.slug ? 'is-active' : ''}
+                onClick={() => updateUrl({ category: item.slug })}
+              >
+                {item.label}
+              </button>
+            ))}
+          </nav>
 
-              <label className="articles-v3-field">
-                <span>Chuyên mục</span>
-                <div>
-                  <Tags size={16} />
-                  <select
-                    value={categoryDraft}
-                    onChange={(event) => setCategoryDraft(event.target.value)}
-                  >
-                    <option value="">Tất cả chuyên mục</option>
-                    {categoryOptions.map((item) => (
-                      <option
-                        key={item._id || valueOf(item)}
-                        value={valueOf(item)}
-                      >
-                        {item.name} ({facetCount(categoryCounts, item)})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </label>
+          <button
+            type="button"
+            className={filtersOpen || hasSecondaryFilter ? 'news-filter-toggle is-active' : 'news-filter-toggle'}
+            onClick={() => setFiltersOpen((value) => !value)}
+            aria-expanded={filtersOpen}
+          >
+            <SlidersHorizontal size={16} />
+            Bộ lọc
+          </button>
+        </div>
 
-              <label className="articles-v3-field">
-                <span>Khu vực</span>
-                <div>
-                  <MapPin size={16} />
-                  <select
-                    value={areaDraft}
-                    onChange={(event) => setAreaDraft(event.target.value)}
-                  >
-                    <option value="">Tất cả khu vực</option>
-                    {areaOptions.map((item) => (
-                      <option
-                        key={item._id || valueOf(item)}
-                        value={valueOf(item)}
-                      >
-                        {item.name} ({facetCount(areaCounts, item)})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              </label>
+        {filtersOpen || hasSecondaryFilter ? (
+          <section className="news-filter-panel" aria-label="Bộ lọc tin tức">
+            <label>
+              <span><MapPin size={14} /> Khu vực</span>
+              <select value={area} onChange={(event) => updateUrl({ area: event.target.value })}>
+                <option value="">Tất cả khu vực</option>
+                {areas.map((item) => (
+                  <option key={item._id || valueOf(item)} value={valueOf(item)}>
+                    {item.name}
+                  </option>
+                ))}
+              </select>
+            </label>
 
-              <label className="articles-v3-field articles-v3-date-field">
-                <span>Ngày đăng</span>
-                <div>
-                  <CalendarDays size={16} />
-                  <input
-                    type="date"
-                    value={dateDraft}
-                    onChange={(event) => setDateDraft(event.target.value)}
-                  />
-                </div>
-              </label>
+            <label>
+              <span><CalendarDays size={14} /> Ngày đăng</span>
+              <input type="date" value={date} onChange={(event) => updateUrl({ date: event.target.value })} />
+            </label>
 
-              <label className="articles-v3-field">
-                <span>Sắp xếp</span>
-                <div>
-                  {sortDraft === 'popular' ? (
-                    <TrendingUp size={16} />
-                  ) : (
-                    <Clock3 size={16} />
-                  )}
-                  <select
-                    value={sortDraft}
-                    onChange={(event) => setSortDraft(event.target.value)}
-                  >
-                    <option value="">Mới nhất</option>
-                    <option value="popular">Đọc nhiều</option>
-                  </select>
-                </div>
-              </label>
-
-              <div className="articles-v3-filterbar__actions">
-                <button
-                  type="button"
-                  className="is-primary"
-                  onClick={applyFilters}
-                >
-                  <SlidersHorizontal size={16} />
-                  Lọc tin
-                </button>
-                {hasSecondaryFilter ? (
-                  <button
-                    type="button"
-                    className="is-reset"
-                    onClick={clearFilters}
-                  >
-                    <RotateCcw size={15} />
-                    Xóa lọc
-                  </button>
-                ) : null}
-              </div>
-            </section>
+            <label>
+              <span>{sort === 'popular' ? <TrendingUp size={14} /> : <Clock3 size={14} />} Sắp xếp</span>
+              <select value={sort} onChange={(event) => updateUrl({ sort: event.target.value })}>
+                <option value="">Mới nhất</option>
+                <option value="popular">Đọc nhiều</option>
+              </select>
+            </label>
 
             {hasSecondaryFilter ? (
-              <div className="articles-v3-active-filter">
-                <span>Đang xem:</span>
-                {areaName ? <b>{areaName}</b> : null}
-                {date ? <b>{date.split('-').reverse().join('/')}</b> : null}
-                {sort === 'popular' ? <b>Đọc nhiều</b> : null}
-                {query ? <b>“{query}”</b> : null}
-                <button
-                  type="button"
-                  onClick={() => {
-                    setSearchDraft('');
-                    setAreaDraft('');
-                    setDateDraft('');
-                    setSortDraft('');
-                    updateUrl({ q: '', area: '', date: '', sort: '' });
-                  }}
-                >
-                  Xóa tất cả bộ lọc phụ
-                </button>
+              <button type="button" className="news-filter-reset" onClick={clearSecondaryFilters}>
+                <RotateCcw size={15} />
+                Xóa lọc
+              </button>
+            ) : null}
+          </section>
+        ) : null}
+
+        {result.loading ? (
+          <div className="news-hub__loading"><LoadingBlock /></div>
+        ) : result.error ? (
+          <div className="news-hub__error">
+            <ErrorState error={result.error} />
+            <button type="button" onClick={result.reload}>Tải lại</button>
+          </div>
+        ) : result.items.length ? (
+          <>
+            {editorialMode && leadStory ? (
+              <section className="news-lead-grid" aria-label="Tin nổi bật">
+                <StoryCard item={leadStory} variant="lead" eager />
+                <div className="news-lead-grid__side">
+                  {sideStories.map((item) => (
+                    <StoryCard key={item._id} item={item} variant="side" />
+                  ))}
+                </div>
+              </section>
+            ) : null}
+
+            <section ref={resultsRef} className="news-stream">
+              <header className="news-stream__heading">
+                <div>
+                  <span><Filter size={14} /> {pageCopy.resultsEyebrow || 'Dòng tin cập nhật'}</span>
+                  <h2>{resultTitle}</h2>
+                </div>
+                <p>{total.toLocaleString('vi-VN')} bài viết</p>
+              </header>
+
+              {streamStories.length ? (
+                <div className="news-stream__list">
+                  {streamStories.map((item) => (
+                    <StoryCard key={item._id} item={item} variant="feed" />
+                  ))}
+                </div>
+              ) : editorialMode ? (
+                <div className="news-stream__continue">
+                  <span>Bạn đã xem các tin nổi bật mới nhất.</span>
+                  {totalPages > 1 ? (
+                    <button type="button" onClick={() => onPageChange(2)}>
+                      Xem thêm tin <ChevronRight size={16} />
+                    </button>
+                  ) : null}
+                </div>
+              ) : null}
+            </section>
+
+            {totalPages > 1 ? (
+              <div className="news-pagination">
+                <Pagination
+                  meta={{ ...result.meta, page: currentPage, totalPages, total }}
+                  onPageChange={onPageChange}
+                />
               </div>
             ) : null}
           </>
-        ) : null}
-
-        <section
-          ref={resultsRef}
-          className="articles-results articles-v3-results"
-        >
-          <header className="articles-results__header articles-v3-results__header">
-            <div>
-              <span className="articles-results__eyebrow">
-                <Newspaper size={14} />
-                {pageCopy.resultsEyebrow}
-              </span>
-              <h2>
-                {resultTitle}
-                {!result.loading && !result.error ? (
-                  <small>{total.toLocaleString('vi-VN')} bài viết</small>
-                ) : null}
-              </h2>
-            </div>
-
-            <div className="articles-view-switch">
-              <button
-                type="button"
-                className={viewMode === 'grid' ? 'is-active' : ''}
-                aria-label="Xem dạng lưới"
-                onClick={() => setViewMode('grid')}
-              >
-                <Grid3X3 size={17} />
-              </button>
-              <button
-                type="button"
-                className={viewMode === 'list' ? 'is-active' : ''}
-                aria-label="Xem dạng danh sách"
-                onClick={() => setViewMode('list')}
-              >
-                <List size={18} />
-              </button>
-            </div>
-          </header>
-
-          <div className="articles-results__body articles-v3-results__body">
-            {result.loading ? (
-              <LoadingBlock />
-            ) : result.error ? (
-              <ErrorState error={result.error} onRetry={result.reload} />
-            ) : result.items.length ? (
-              <div className={`articles-content-grid is-${viewMode}`}>
-                {result.items.map((item) => (
-                  <article className="articles-content-item" key={item._id}>
-                    <ArticleCard item={item} />
-                  </article>
-                ))}
-              </div>
-            ) : (
-              <div className="articles-empty-state">
-                <span>
-                  <Newspaper size={34} />
-                </span>
-                <h3>Chưa có bài viết phù hợp</h3>
-                <p>Thử đổi ngày đăng, khu vực hoặc chuyển sang chuyên mục khác.</p>
-                <button type="button" onClick={clearAll}>
-                  <RotateCcw size={16} />
-                  Làm mới bộ lọc
-                </button>
-              </div>
-            )}
+        ) : (
+          <div className="news-hub__empty">
+            <EmptyState
+              title="Chưa có tin phù hợp"
+              description="Hãy thử một chuyên mục khác hoặc xóa bớt điều kiện lọc."
+            />
+            {hasSecondaryFilter ? (
+              <button type="button" onClick={clearSecondaryFilters}>Xóa bộ lọc</button>
+            ) : null}
           </div>
-        </section>
-
-        {!result.loading && !result.error && result.items.length ? (
-          <div className="articles-pagination">
-            <div className="articles-pagination__summary">
-              Hiển thị <strong>{pageStart}-{pageEnd}</strong> trong{' '}
-              <strong>{total.toLocaleString('vi-VN')}</strong> bài viết
-              {totalPages > 1 ? (
-                <>
-                  {' '}· Trang <strong>{currentPage}/{totalPages}</strong>
-                </>
-              ) : null}
-            </div>
-            <Pagination meta={result.meta} onPageChange={onPageChange} />
-          </div>
-        ) : null}
+        )}
       </div>
     </section>
   );
