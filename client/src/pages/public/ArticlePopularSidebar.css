@@ -1,2 +1,201 @@
 @import './ArticleNewsroomTheme.css';
 @import './ArticleNewsroomTypographyFix.css';
+
+/* Article detail V5: bỏ utility rail nổi; hành động vẫn nằm ở thanh tương tác cuối bài. */
+.article-view-page .article-view-header-actions {
+  display: none !important;
+}
+
+/* Right rail đi theo chiều cao nội dung bài thay vì tự tạo một vùng cuộn riêng. */
+.article-view-page .article-popular-sidebar-shell .article-view-sidebar__sticky {
+  position: static;
+  top: auto;
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  overflow: visible;
+}
+
+.article-view-page .article-popular-sidebar__accent {
+  background: var(--article-green, #1fa34b);
+}
+
+.article-view-page .article-popular-sidebar__item::before {
+  color: var(--article-green-dark, #116a32);
+}
+
+.article-view-page .article-popular-sidebar__item:hover .article-popular-sidebar__copy h3 {
+  color: var(--article-green-dark, #116a32);
+}
+
+.article-view-page .article-popular-sidebar__item:focus-visible {
+  outline: 2px solid var(--article-green, #1fa34b);
+  outline-offset: 3px;
+}
+
+/* Modern reaction system: icon vector từ Lucide, không dùng emoji. */
+.article-view-reactions .reaction-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px 24px;
+  width: 100%;
+}
+
+.article-view-reactions .reaction-picker {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  min-width: 0;
+  gap: 10px 12px;
+}
+
+.article-view-reactions .reaction-picker__summary {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  gap: 5px;
+  color: #66736b;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.article-view-reactions .reaction-picker__summary > svg {
+  color: var(--article-green-dark, #116a32);
+}
+
+.article-view-reactions .reaction-picker__summary strong {
+  color: #183b28;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.article-view-reactions .reaction-picker__choices {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.article-view-reactions .reaction-picker__choices button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 34px;
+  padding: 0 10px;
+  gap: 6px;
+  border: 1px solid #dfe7e2;
+  border-radius: 999px;
+  color: #526258;
+  background: #fff;
+  font-family: Arial, Helvetica, sans-serif;
+  cursor: pointer;
+  transition:
+    border-color 150ms ease,
+    color 150ms ease,
+    background 150ms ease,
+    transform 150ms ease;
+}
+
+.article-view-reactions .reaction-picker__choices button svg {
+  color: #74847a;
+}
+
+.article-view-reactions .reaction-picker__choices button small {
+  color: inherit;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.article-view-reactions .reaction-picker__choices button:hover {
+  transform: translateY(-1px);
+  border-color: #a8d5b7;
+  color: var(--article-green-dark, #116a32);
+  background: #f3faf5;
+}
+
+.article-view-reactions .reaction-picker__choices button:hover svg,
+.article-view-reactions .reaction-picker__choices button.is-active svg {
+  color: var(--article-green-dark, #116a32);
+}
+
+.article-view-reactions .reaction-picker__choices button.is-active {
+  border-color: #8cc9a1;
+  color: var(--article-green-dark, #116a32);
+  background: #eaf7ee;
+}
+
+.article-view-reactions .reaction-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-left: auto;
+}
+
+.article-view-reactions .reaction-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 0 9px;
+  gap: 5px;
+  border: 0;
+  border-radius: 7px;
+  color: #526258;
+  background: transparent;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 11px;
+  font-weight: 650;
+  cursor: pointer;
+}
+
+.article-view-reactions .reaction-actions button svg {
+  color: #6c7b72;
+}
+
+.article-view-reactions .reaction-actions button:hover,
+.article-view-reactions .reaction-actions button.is-active {
+  color: var(--article-green-dark, #116a32);
+  background: #eef8f1;
+}
+
+.article-view-reactions .reaction-actions button:hover svg,
+.article-view-reactions .reaction-actions button.is-active svg {
+  color: var(--article-green-dark, #116a32);
+}
+
+@media (max-width: 980px) {
+  .article-view-reactions .reaction-actions {
+    margin-left: 0;
+  }
+}
+
+@media (max-width: 680px) {
+  .article-view-reactions .reaction-bar,
+  .article-view-reactions .reaction-picker {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .article-view-reactions .reaction-picker__choices {
+    width: 100%;
+  }
+
+  .article-view-reactions .reaction-picker__choices button {
+    flex: 1 1 auto;
+  }
+
+  .article-view-reactions .reaction-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .article-view-reactions .reaction-picker__choices button {
+    transition: none;
+  }
+}
