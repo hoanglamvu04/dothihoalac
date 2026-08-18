@@ -101,10 +101,10 @@ export default function CommunityStudioPage() {
   const navigate = useNavigate();
   const toast = useToast();
   const autoSaveRef = useRef(null);
-  const serverSnapshotRef = useRef('');
 
   const [source, setSource] = useState(null);
   const [form, setForm] = useState(null);
+  const [savedSnapshot, setSavedSnapshot] = useState('');
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -121,9 +121,10 @@ export default function CommunityStudioPage() {
     try {
       const result = await communityApi.editDetail(editorId);
       const nextForm = formFromSource(result);
+      const nextSnapshot = JSON.stringify(nextForm);
       setSource(result);
       setForm(nextForm);
-      serverSnapshotRef.current = JSON.stringify(nextForm);
+      setSavedSnapshot(nextSnapshot);
 
       try {
         setHasRecovery(Boolean(window.localStorage.getItem(recoveryKey)));
@@ -142,7 +143,7 @@ export default function CommunityStudioPage() {
   }, [load]);
 
   const snapshot = useMemo(() => JSON.stringify(form || {}), [form]);
-  const dirty = Boolean(form) && snapshot !== serverSnapshotRef.current;
+  const dirty = Boolean(form) && snapshot !== savedSnapshot;
 
   const change = useCallback((key, value) => {
     setForm((current) => ({ ...current, [key]: value }));
@@ -178,7 +179,7 @@ export default function CommunityStudioPage() {
 
     try {
       const result = await communityApi.update(editorId, serverPayload(form));
-      serverSnapshotRef.current = JSON.stringify(form);
+      setSavedSnapshot(JSON.stringify(form));
       setSource((current) => ({ ...(current || {}), ...(result || {}) }));
       setSaveState('saved');
       clearRecovery();
