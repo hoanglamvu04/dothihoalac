@@ -18,7 +18,7 @@ const navigationLinks = [
   { to: '/', label: 'Trang chủ' },
   { to: '/tin-tuc', label: 'Tin tức' },
   { to: '/cong-dong', label: 'Cộng đồng' },
-  { to: '/nha-dat', label: 'Bất động sản' },
+  { to: '/bat-dong-san', label: 'Bất động sản' },
   { to: '/viec-lam', label: 'Việc làm' },
   { to: '/gui-tin', label: 'Gửi thông tin' },
 ];
