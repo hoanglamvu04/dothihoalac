@@ -6,6 +6,8 @@ import {
   Outlet,
   Route,
   RouterProvider,
+  useLocation,
+  useParams,
 } from 'react-router-dom';
 
 import { AuthProvider } from '../context/AuthContext';
@@ -20,6 +22,7 @@ import GuestRoute from '../components/auth/GuestRoute';
 import AdminRoute from '../components/auth/AdminRoute';
 import EditorRouteId from '../components/routing/EditorRouteId';
 import { PageLoading } from '../components/common/Loading';
+import { isPersistedContentId } from '../utils/content';
 
 const HomePage = lazy(() => import('../pages/public/HomePage'));
 const ArticlesPage = lazy(() => import('../pages/public/ArticlesPage'));
@@ -43,27 +46,30 @@ const ForgotPasswordPage = lazy(() => import('../pages/auth/ForgotPasswordPage')
 const ResetPasswordPage = lazy(() => import('../pages/auth/ResetPasswordPage'));
 const VerifyEmailPage = lazy(() => import('../pages/auth/VerifyEmailPage'));
 const VerifyPhonePage = lazy(() => import('../pages/auth/VerifyPhonePage'));
+
 const CreateHubPage = lazy(() => import('../pages/create/CreateHubPage'));
-const CommunityEditorPage = lazy(() => import('../pages/create/CommunityEditorPage'));
-const PropertyEditorPage = lazy(() => import('../pages/create/PropertyEditorPage'));
-const JobEditorPage = lazy(() => import('../pages/create/JobEditorPage'));
+const ContentStudioEntryPage = lazy(() => import('../pages/create/ContentStudioEntryPage'));
+const CommunityStudioPage = lazy(() => import('../pages/create/CommunityStudioPage'));
+const PropertyStudioAdapter = lazy(() => import('../pages/create/PropertyStudioAdapter'));
+const JobStudioPage = lazy(() => import('../pages/create/JobStudioPage'));
 const NewsTipPage = lazy(() => import('../pages/create/NewsTipPage'));
+
 const AccountOverviewPage = lazy(() => import('../pages/account/AccountOverviewPage'));
 const ProfileSettingsPage = lazy(() => import('../pages/account/ProfileSettingsPage'));
 const SecurityPage = lazy(() => import('../pages/account/SecurityPage'));
 const SessionsPage = lazy(() => import('../pages/account/SessionsPage'));
 const NotificationsPage = lazy(() => import('../pages/account/NotificationsPage'));
-const MyPostsPage = lazy(() => import('../pages/account/MyPostsPage'));
-const MyListingsPage = lazy(() => import('../pages/account/MyListingsPage'));
+const MyContentPage = lazy(() => import('../pages/account/MyContentPage'));
 const BookmarksPage = lazy(() => import('../pages/account/BookmarksPage'));
 const ReportsPage = lazy(() => import('../pages/account/ReportsPage'));
+
 const AdminDashboardPage = lazy(() => import('../pages/admin/AdminDashboardPage'));
 const ModerationQueuePage = lazy(() => import('../pages/admin/ModerationQueuePage'));
 const AdminArticlesPage = lazy(() => import('../pages/admin/AdminArticlesPage'));
 const AdminManagedContentPage = lazy(() => import('../pages/admin/AdminManagedContentPage'));
 const AdminCommentsPage = lazy(() => import('../pages/admin/AdminCommentsPage'));
 const AdminSourceWatchPage = lazy(() => import('../pages/admin/AdminSourceWatchPage'));
-const ArticleMetadataPage = lazy(() => import('../pages/admin/ArticleMetadataPage'));
+const ArticleWorkspacePage = lazy(() => import('../pages/admin/ArticleWorkspacePage'));
 const GoogleDocsArticleLauncher = lazy(() => import('../pages/admin/GoogleDocsArticleLauncher'));
 const GoogleWorkspacePage = lazy(() => import('../pages/admin/GoogleWorkspacePage'));
 const AdminUsersPage = lazy(() => import('../pages/admin/AdminUsersPage'));
@@ -90,6 +96,26 @@ function ProtectedEditor({ basePath, sessionPrefix, children }) {
       </EditorRouteId>
     </Protected>
   );
+}
+
+function LegacyStudioRedirect({ type }) {
+  const { editorId } = useParams();
+  const location = useLocation();
+  const queryId = new URLSearchParams(location.search).get('edit');
+  const id = isPersistedContentId(queryId)
+    ? queryId
+    : isPersistedContentId(editorId)
+      ? editorId
+      : '';
+
+  const base =
+    type === 'community'
+      ? '/studio/cong-dong'
+      : type === 'property'
+        ? '/studio/bat-dong-san'
+        : '/studio/viec-lam';
+
+  return <Navigate to={id ? `${base}/${encodeURIComponent(id)}` : base} replace />;
 }
 
 function RouterEffects() {
@@ -123,7 +149,8 @@ const router = createBrowserRouter(
 
         <Route path="bai-viet/moi" element={<GoogleDocsArticleLauncher />} />
         <Route path="bai-viet/docs/moi" element={<GoogleDocsArticleLauncher />} />
-        <Route path="bai-viet/:id/sua" element={<ArticleMetadataPage />} />
+        <Route path="bai-viet/:id" element={<ArticleWorkspacePage />} />
+        <Route path="bai-viet/:id/sua" element={<ArticleWorkspacePage />} />
         <Route path="bai-viet/:id/docs" element={<GoogleDocsArticleLauncher />} />
 
         <Route path="nguoi-dung" element={<AdminUsersPage />} />
@@ -185,55 +212,36 @@ const router = createBrowserRouter(
         <Route path="dang-bai" element={<Protected><CreateHubPage /></Protected>} />
 
         <Route
-          path="dang-bai/cong-dong"
-          element={
-            <ProtectedEditor basePath="/dang-bai/cong-dong" sessionPrefix="community">
-              <CommunityEditorPage />
-            </ProtectedEditor>
-          }
+          path="studio/cong-dong"
+          element={<Protected><ContentStudioEntryPage contentType="community" /></Protected>}
         />
         <Route
-          path="dang-bai/cong-dong/:editorId"
-          element={
-            <ProtectedEditor basePath="/dang-bai/cong-dong" sessionPrefix="community">
-              <CommunityEditorPage />
-            </ProtectedEditor>
-          }
+          path="studio/cong-dong/:editorId"
+          element={<Protected><CommunityStudioPage /></Protected>}
+        />
+        <Route
+          path="studio/bat-dong-san"
+          element={<Protected><ContentStudioEntryPage contentType="property" /></Protected>}
+        />
+        <Route
+          path="studio/bat-dong-san/:editorId"
+          element={<Protected><PropertyStudioAdapter /></Protected>}
+        />
+        <Route
+          path="studio/viec-lam"
+          element={<Protected><ContentStudioEntryPage contentType="job" /></Protected>}
+        />
+        <Route
+          path="studio/viec-lam/:editorId"
+          element={<Protected><JobStudioPage /></Protected>}
         />
 
-        <Route
-          path="dang-bai/nha-dat"
-          element={
-            <ProtectedEditor basePath="/dang-bai/nha-dat" sessionPrefix="property">
-              <PropertyEditorPage />
-            </ProtectedEditor>
-          }
-        />
-        <Route
-          path="dang-bai/nha-dat/:editorId"
-          element={
-            <ProtectedEditor basePath="/dang-bai/nha-dat" sessionPrefix="property">
-              <PropertyEditorPage />
-            </ProtectedEditor>
-          }
-        />
-
-        <Route
-          path="dang-bai/viec-lam"
-          element={
-            <ProtectedEditor basePath="/dang-bai/viec-lam" sessionPrefix="job">
-              <JobEditorPage />
-            </ProtectedEditor>
-          }
-        />
-        <Route
-          path="dang-bai/viec-lam/:editorId"
-          element={
-            <ProtectedEditor basePath="/dang-bai/viec-lam" sessionPrefix="job">
-              <JobEditorPage />
-            </ProtectedEditor>
-          }
-        />
+        <Route path="dang-bai/cong-dong" element={<Protected><LegacyStudioRedirect type="community" /></Protected>} />
+        <Route path="dang-bai/cong-dong/:editorId" element={<Protected><LegacyStudioRedirect type="community" /></Protected>} />
+        <Route path="dang-bai/nha-dat" element={<Protected><LegacyStudioRedirect type="property" /></Protected>} />
+        <Route path="dang-bai/nha-dat/:editorId" element={<Protected><LegacyStudioRedirect type="property" /></Protected>} />
+        <Route path="dang-bai/viec-lam" element={<Protected><LegacyStudioRedirect type="job" /></Protected>} />
+        <Route path="dang-bai/viec-lam/:editorId" element={<Protected><LegacyStudioRedirect type="job" /></Protected>} />
 
         <Route
           path="gui-tin"
@@ -258,8 +266,9 @@ const router = createBrowserRouter(
           <Route path="bao-mat" element={<SecurityPage />} />
           <Route path="phien-dang-nhap" element={<SessionsPage />} />
           <Route path="thong-bao" element={<NotificationsPage />} />
-          <Route path="bai-viet" element={<MyPostsPage />} />
-          <Route path="tin-nha-dat" element={<MyListingsPage />} />
+          <Route path="noi-dung" element={<MyContentPage />} />
+          <Route path="bai-viet" element={<Navigate to="/tai-khoan/noi-dung" replace />} />
+          <Route path="tin-nha-dat" element={<Navigate to="/tai-khoan/noi-dung?type=property" replace />} />
           <Route path="da-luu" element={<BookmarksPage />} />
           <Route path="bao-cao" element={<ReportsPage />} />
         </Route>
