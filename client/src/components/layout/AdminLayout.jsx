@@ -9,7 +9,6 @@ import {
   Cloud,
   FileText,
   Flag,
-  FolderKanban,
   FolderTree,
   LayoutDashboard,
   LogOut,
@@ -20,6 +19,7 @@ import {
   MessageSquareWarning,
   Rss,
   Settings,
+  Sparkles,
   Users,
   X,
 } from 'lucide-react';
@@ -41,7 +41,7 @@ const navGroups = [
     label: 'Nội dung & dữ liệu',
     items: [
       ['/quan-tri/bai-viet', 'Bài viết / Tin tức', FileText],
-      ['/quan-tri/du-an', 'Project Tracker', FolderKanban],
+      ['/quan-tri/bien-tap-noi-bat', 'Biên tập nổi bật', Sparkles],
       ['/quan-tri/theo-doi-nguon', 'Theo dõi nguồn', Rss],
       ['/quan-tri/binh-luan', 'Bình luận', MessageCircle],
     ],
