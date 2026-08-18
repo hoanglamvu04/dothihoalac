@@ -280,7 +280,7 @@ export async function listMyReports(userId, query) {
   const { page, limit, skip } = parsePagination(query);
   const [items, total] = await Promise.all([
     Report.find({ reporterId: userId }).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
-    Report.countDocuments({ userId }),
+    Report.countDocuments({ reporterId: userId }),
   ]);
   return { items, meta: buildPaginationMeta({ page, limit, total }) };
 }
