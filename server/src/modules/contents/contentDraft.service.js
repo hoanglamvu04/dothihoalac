@@ -85,7 +85,7 @@ export async function createDraft(userId, { contentType }) {
     );
   }
 
-  return createContentWithBody({
+  const content = await createContentWithBody({
     authorId: userId,
     contentType,
     title: PLACEHOLDER_TITLES[contentType],
@@ -95,6 +95,18 @@ export async function createDraft(userId, { contentType }) {
     visibility: 'public',
     allowComments: true,
   });
+
+  // CommunityPost chỉ bắt buộc postType, vì vậy có thể bootstrap extension
+  // ngay cùng core draft. Property/Job có nhiều trường required và sẽ được
+  // tạo sau khi editor autosave đủ dữ liệu cấu trúc.
+  if (contentType === 'community') {
+    await CommunityPost.create({
+      contentId: content._id,
+      postType: 'discussion',
+    });
+  }
+
+  return content;
 }
 
 export async function draftDetail(id, userId) {
