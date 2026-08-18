@@ -29,14 +29,17 @@ jobs:
           npx eslint
           src/api/content.api.js
           src/api/interaction.api.js
+          src/api/user.api.js
           src/app/App.jsx
           src/components/account/AccountContentNav.jsx
           src/components/content/ArticleBody.jsx
           src/components/content/ContentImage.jsx
           src/components/layout/AccountLayout.jsx
           src/components/studio/ContentEditorShell.jsx
+          src/pages/account/ActivityPage.jsx
           src/pages/account/MyContentPage.jsx
           src/pages/account/NotificationsPage.jsx
+          src/pages/account/SessionsPage.jsx
           src/pages/admin/ArticleWorkspacePage.jsx
           src/pages/admin/GoogleDocsArticleLauncher.jsx
           src/pages/create/CommunityStudioPage.jsx
@@ -44,6 +47,7 @@ jobs:
           src/pages/create/CreateHubPage.jsx
           src/pages/create/JobStudioPage.jsx
           src/pages/create/PropertyStudioAdapter.jsx
+          src/pages/public/ArticlesPage.jsx
           src/pages/public/SearchPage.jsx
           src/utils/content.js
       - run: npm run build
@@ -73,10 +77,14 @@ jobs:
           npx eslint
           src/constants/notificationTypes.js
           src/services/notification.service.js
+          src/services/userActivity.service.js
+          src/modules/auth/auth.controller.js
           src/modules/notifications/notification.service.js
           src/modules/comments/comment.service.js
           src/modules/reactions/reaction.service.js
           src/modules/follows/follow.service.js
+          src/modules/search/search.controller.js
+          src/modules/search/search.routes.js
           src/modules/search/search.service.js
           src/jobs/expirePropertyListings.job.js
           src/jobs/expireJobPosts.job.js
@@ -95,6 +103,9 @@ jobs:
           src/modules/articles/article.routes.js
           src/modules/articles/article.validation.js
           src/modules/articles/article.metadata.service.js
+          src/modules/users/user.controller.js
+          src/modules/users/user.routes.js
           src/modules/users/user.service.js
+          src/modules/users/userActivity.model.js
           src/routes/index.js
       - run: npm test

@@ -2,18 +2,24 @@ import User from './user.model.js';
 import UserProfile from './userProfile.model.js';
 import UserSession from './userSession.model.js';
 import UsernameHistory from './usernameHistory.model.js';
+import UserActivity, {
+  USER_ACTIVITY_TYPES,
+} from './userActivity.model.js';
 import Content from '../contents/content.model.js';
 import ContentBody from '../contents/contentBody.model.js';
 import PropertyListing from '../properties/propertyListing.model.js';
 import Media from '../media/media.model.js';
 import Bookmark from '../bookmarks/bookmark.model.js';
 import Report from '../reports/report.model.js';
+import Comment from '../comments/comment.model.js';
+import Reaction from '../reactions/reaction.model.js';
 import { extractInlineMediaFigures } from '../media/inlineMedia.service.js';
 import { env } from '../../config/env.js';
 import { parsePagination, buildPaginationMeta } from '../../utils/pagination.js';
 import ApiError from '../../utils/ApiError.js';
 
 const MEMBER_CONTENT_TYPES = new Set(['community', 'property', 'job', 'article']);
+const ACTIVITY_TYPES = new Set(['all', 'search', 'comment', 'like']);
 
 export async function getPublicProfile(username) {
   const user = await User.findOne({
@@ -189,6 +195,14 @@ function buildPublicUrl(item) {
   return '';
 }
 
+function withPublicUrl(item) {
+  if (!item) return null;
+  return {
+    ...item,
+    publicUrl: buildPublicUrl(item),
+  };
+}
+
 async function listContents(userId, query, contentType) {
   const { page, limit, skip } = parsePagination(query);
   const requestedType = contentType || String(query.type || '').trim();
@@ -283,4 +297,215 @@ export async function listMyReports(userId, query) {
     Report.countDocuments({ reporterId: userId }),
   ]);
   return { items, meta: buildPaginationMeta({ page, limit, total }) };
+}
+
+async function listSearchActivity(userId, query) {
+  const { page, limit, skip } = parsePagination(query, { limit: 20 });
+  const filter = {
+    userId,
+    activityType: USER_ACTIVITY_TYPES.SEARCH,
+  };
+
+  const [rows, total] = await Promise.all([
+    UserActivity.find(filter)
+      .sort({ occurredAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean(),
+    UserActivity.countDocuments(filter),
+  ]);
+
+  return {
+    items: rows.map((row) => ({
+      _id: row._id,
+      activityType: 'search',
+      occurredAt: row.occurredAt || row.createdAt,
+      query: row.query,
+      searchType: row.payload?.type || 'all',
+    })),
+    meta: buildPaginationMeta({ page, limit, total }),
+  };
+}
+
+async function listCommentActivity(userId, query) {
+  const { page, limit, skip } = parsePagination(query, { limit: 20 });
+  const filter = {
+    userId,
+    deletedAt: null,
+    status: { $ne: 'deleted' },
+  };
+
+  const [rows, total] = await Promise.all([
+    Comment.find(filter)
+      .populate({
+        path: 'contentId',
+        select:
+          'title slug contentType thumbnailMediaId primaryCategoryId authorId status deletedAt',
+        populate: [
+          {
+            path: 'thumbnailMediaId',
+            select: 'url secureUrl altText width height',
+          },
+          {
+            path: 'primaryCategoryId',
+            select: 'name slug',
+          },
+          {
+            path: 'authorId',
+            select: 'username displayName',
+          },
+        ],
+      })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean(),
+    Comment.countDocuments(filter),
+  ]);
+
+  return {
+    items: rows.map((row) => ({
+      _id: row._id,
+      activityType: 'comment',
+      occurredAt: row.createdAt,
+      body: row.body,
+      editedAt: row.editedAt,
+      parentId: row.parentId,
+      content: withPublicUrl(row.contentId),
+    })),
+    meta: buildPaginationMeta({ page, limit, total }),
+  };
+}
+
+async function listLikeActivity(userId, query) {
+  const { page, limit, skip } = parsePagination(query, { limit: 20 });
+  const filter = {
+    userId,
+    targetType: 'content',
+    reactionType: 'like',
+  };
+
+  const [rows, total] = await Promise.all([
+    Reaction.find(filter)
+      .sort({ updatedAt: -1, createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .lean(),
+    Reaction.countDocuments(filter),
+  ]);
+
+  const contentIds = rows.map((row) => row.targetId);
+  const contents = contentIds.length
+    ? await Content.find({
+        _id: { $in: contentIds },
+        deletedAt: null,
+      })
+        .select(
+          'title slug contentType summary thumbnailMediaId primaryCategoryId authorId status',
+        )
+        .populate('thumbnailMediaId', 'url secureUrl altText width height')
+        .populate('primaryCategoryId', 'name slug')
+        .populate('authorId', 'username displayName')
+        .lean()
+    : [];
+
+  const contentMap = new Map(
+    contents.map((item) => [String(item._id), item]),
+  );
+
+  return {
+    items: rows.map((row) => ({
+      _id: row._id,
+      activityType: 'like',
+      occurredAt: row.updatedAt || row.createdAt,
+      reactionType: row.reactionType,
+      content: withPublicUrl(contentMap.get(String(row.targetId)) || null),
+    })),
+    meta: buildPaginationMeta({ page, limit, total }),
+  };
+}
+
+async function activityCounts(userId) {
+  const [searches, comments, likes] = await Promise.all([
+    UserActivity.countDocuments({
+      userId,
+      activityType: USER_ACTIVITY_TYPES.SEARCH,
+    }),
+    Comment.countDocuments({
+      userId,
+      deletedAt: null,
+      status: { $ne: 'deleted' },
+    }),
+    Reaction.countDocuments({
+      userId,
+      targetType: 'content',
+      reactionType: 'like',
+    }),
+  ]);
+
+  return {
+    searches,
+    comments,
+    likes,
+    total: searches + comments + likes,
+  };
+}
+
+export async function listMyActivity(userId, query = {}) {
+  const requestedType = String(query.type || 'all').trim().toLowerCase();
+  const type = ACTIVITY_TYPES.has(requestedType) ? requestedType : 'all';
+  const summary = await activityCounts(userId);
+
+  if (type === 'search') {
+    const result = await listSearchActivity(userId, query);
+    return { ...result, summary };
+  }
+
+  if (type === 'comment') {
+    const result = await listCommentActivity(userId, query);
+    return { ...result, summary };
+  }
+
+  if (type === 'like') {
+    const result = await listLikeActivity(userId, query);
+    return { ...result, summary };
+  }
+
+  const previewQuery = { page: 1, limit: 6 };
+  const [searches, comments, likes] = await Promise.all([
+    listSearchActivity(userId, previewQuery),
+    listCommentActivity(userId, previewQuery),
+    listLikeActivity(userId, previewQuery),
+  ]);
+
+  const items = [
+    ...searches.items,
+    ...comments.items,
+    ...likes.items,
+  ]
+    .sort(
+      (a, b) =>
+        new Date(b.occurredAt || 0).getTime() -
+        new Date(a.occurredAt || 0).getTime(),
+    )
+    .slice(0, 12);
+
+  return {
+    items,
+    meta: buildPaginationMeta({
+      page: 1,
+      limit: 12,
+      total: summary.total,
+    }),
+    summary,
+  };
+}
+
+export async function clearMySearchActivity(userId) {
+  const result = await UserActivity.deleteMany({
+    userId,
+    activityType: USER_ACTIVITY_TYPES.SEARCH,
+  });
+
+  return { deleted: result.deletedCount || 0 };
 }

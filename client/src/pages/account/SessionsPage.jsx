@@ -22,11 +22,39 @@ import './AccountPages.css';
 
 const PAGE_SIZE = 8;
 
+function clientLabel(session) {
+  const saved = String(session?.deviceName || '').trim();
+  const noisySaved = /[";]|Not-A\?Brand|Chromium.*v=/i.test(saved);
+
+  if (saved && !noisySaved && saved !== 'Trình duyệt web') {
+    return saved;
+  }
+
+  const agent = String(session?.userAgent || '');
+
+  let browser = 'Trình duyệt web';
+  if (/Edg\//i.test(agent)) browser = 'Microsoft Edge';
+  else if (/OPR\//i.test(agent)) browser = 'Opera';
+  else if (/Firefox\//i.test(agent)) browser = 'Firefox';
+  else if (/Chrome\//i.test(agent) || /CriOS\//i.test(agent)) browser = 'Google Chrome';
+  else if (/Safari\//i.test(agent)) browser = 'Safari';
+
+  let platform = '';
+  if (/Windows NT/i.test(agent)) platform = 'Windows';
+  else if (/iPhone/i.test(agent)) platform = 'iPhone';
+  else if (/iPad/i.test(agent)) platform = 'iPad';
+  else if (/Android/i.test(agent)) platform = 'Android';
+  else if (/Macintosh|Mac OS X/i.test(agent)) platform = 'macOS';
+  else if (/Linux/i.test(agent)) platform = 'Linux';
+
+  return platform ? `${browser} · ${platform}` : browser;
+}
+
 function SessionIcon({ session }) {
   const agent = String(session?.userAgent || '').toLowerCase();
-  if (/mobile|android|iphone|ipad/.test(agent)) return <Smartphone size={22} />;
-  if (/windows|macintosh|linux/.test(agent)) return <Laptop size={22} />;
-  return <Monitor size={22} />;
+  if (/mobile|android|iphone|ipad/.test(agent)) return <Smartphone size={20} />;
+  if (/windows|macintosh|linux/.test(agent)) return <Laptop size={20} />;
+  return <Monitor size={20} />;
 }
 
 export default function SessionsPage() {
@@ -67,7 +95,7 @@ export default function SessionsPage() {
 
   const revoke = async (session) => {
     const confirmed = window.confirm(
-      `Thu hồi phiên đăng nhập “${session.deviceName || 'Trình duyệt web'}”?`,
+      `Thu hồi phiên đăng nhập “${clientLabel(session)}”?`,
     );
     if (!confirmed) return;
 
@@ -98,7 +126,7 @@ export default function SessionsPage() {
         </div>
 
         <button type="button" className="account-page-button account-page-button--soft" onClick={load} disabled={loading}>
-          <RefreshCw size={17} />
+          <RefreshCw size={16} />
           Làm mới
         </button>
       </div>
@@ -125,7 +153,7 @@ export default function SessionsPage() {
                 </span>
 
                 <div>
-                  <strong>{session.deviceName || 'Trình duyệt web'}</strong>
+                  <strong>{clientLabel(session)}</strong>
                   <span>{session.ipAddress || 'Không rõ địa chỉ IP'}</span>
                   <small>
                     Hoạt động gần nhất: {formatDateTime(session.lastActiveAt || session.updatedAt)}
@@ -146,7 +174,7 @@ export default function SessionsPage() {
                     onClick={() => revoke(session)}
                     disabled={revokingId === session._id}
                   >
-                    <Trash2 size={16} />
+                    <Trash2 size={15} />
                     {revokingId === session._id ? 'Đang thu hồi' : 'Thu hồi'}
                   </button>
                 )}

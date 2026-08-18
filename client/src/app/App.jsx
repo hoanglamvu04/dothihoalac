@@ -62,6 +62,7 @@ const NotificationsPage = lazy(() => import('../pages/account/NotificationsPage'
 const MyContentPage = lazy(() => import('../pages/account/MyContentPage'));
 const BookmarksPage = lazy(() => import('../pages/account/BookmarksPage'));
 const ReportsPage = lazy(() => import('../pages/account/ReportsPage'));
+const ActivityPage = lazy(() => import('../pages/account/ActivityPage'));
 
 const AdminDashboardPage = lazy(() => import('../pages/admin/AdminDashboardPage'));
 const ModerationQueuePage = lazy(() => import('../pages/admin/ModerationQueuePage'));
@@ -266,6 +267,10 @@ const router = createBrowserRouter(
           <Route path="bao-mat" element={<SecurityPage />} />
           <Route path="phien-dang-nhap" element={<SessionsPage />} />
           <Route path="thong-bao" element={<NotificationsPage />} />
+          <Route path="hoat-dong" element={<ActivityPage mode="all" />} />
+          <Route path="hoat-dong/tim-kiem" element={<ActivityPage mode="search" />} />
+          <Route path="hoat-dong/binh-luan" element={<ActivityPage mode="comment" />} />
+          <Route path="hoat-dong/da-thich" element={<ActivityPage mode="like" />} />
           <Route path="noi-dung" element={<MyContentPage />} />
           <Route path="bai-viet" element={<Navigate to="/tai-khoan/noi-dung" replace />} />
           <Route path="tin-nha-dat" element={<Navigate to="/tai-khoan/noi-dung?type=property" replace />} />
