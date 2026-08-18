@@ -97,6 +97,22 @@ function summaryTextFromRow(row) {
     : '';
 }
 
+function isLegacyGeneratedImageCaption(row, title) {
+  const text = safeText(row?.text, 500)
+    .replace(/\s+/g, ' ')
+    .toLocaleLowerCase('vi');
+  const normalizedTitle = safeText(title, 250)
+    .replace(/\s+/g, ' ')
+    .toLocaleLowerCase('vi');
+
+  if (!text || !normalizedTitle) return false;
+
+  return (
+    text === `hình minh họa cho ${normalizedTitle}` ||
+    text === `ảnh minh họa cho ${normalizedTitle}`
+  );
+}
+
 function imageObjectFromDocument(document, objectId) {
   const inline = document?.inlineObjects?.[objectId]
     ?.inlineObjectProperties
@@ -139,13 +155,10 @@ function imageAltFromEmbedded(embedded, title) {
   );
 }
 
-function imageCaptionFromEmbedded(embedded, title) {
-  return safeText(
-    embedded?.description ||
-      embedded?.title ||
-      `Hình minh họa cho ${title || 'bài viết'}`,
-    500,
-  );
+function imageCaptionFromEmbedded() {
+  // Mô tả ảnh của Google Docs được dùng cho ALT/khả năng truy cập,
+  // không tự biến thành chú thích nhìn thấy dưới ảnh trên website.
+  return '';
 }
 
 async function fetchGoogleImage(contentUri, accessToken) {
@@ -316,7 +329,7 @@ async function fallbackPreviousImage({
     objectId,
     hash: previous?.hash || '',
     alt: alt || previous?.alt,
-    caption: caption || previous?.caption,
+    caption: caption || '',
     reused: true,
   });
 }
@@ -344,10 +357,7 @@ async function storeGoogleDocImage({
     embedded,
     title,
   );
-  const caption = imageCaptionFromEmbedded(
-    embedded,
-    title,
-  );
+  const caption = imageCaptionFromEmbedded();
 
   if (previous?.hash === hash) {
     const media = await activePreviousMedia(
@@ -591,11 +601,14 @@ function blocksToHtml(blocks = []) {
       const mediaId = escapeHtml(
         block.mediaId,
       );
+      const captionHtml = block.caption
+        ? `<figcaption>${escapeHtml(block.caption)}</figcaption>`
+        : '';
 
       html.push(
-        `<figure class="article-inline-image article-inline-image--full" data-media-id="${mediaId}">` +
+        `<figure class="article-inline-image article-inline-image--full" data-media-id="${mediaId}" data-caption-optional="true">` +
           `<img data-media-id="${mediaId}" src="${escapeHtml(block.url)}" alt="${escapeHtml(block.alt)}" loading="lazy" decoding="async" />` +
-          `<figcaption>${escapeHtml(block.caption)}</figcaption>` +
+          captionHtml +
           '</figure>',
       );
 
@@ -724,11 +737,7 @@ export async function syncGoogleDocsArticleContent({
         title,
       );
 
-      const caption =
-        imageCaptionFromEmbedded(
-          object.embedded,
-          title,
-        );
+      const caption = imageCaptionFromEmbedded();
 
       let stored = null;
 
@@ -787,8 +796,7 @@ export async function syncGoogleDocsArticleContent({
         mediaId: stored.mediaId,
         url: stored.url,
         alt: stored.alt || alt,
-        caption:
-          stored.caption || caption,
+        caption: '',
       });
 
       continue;
@@ -801,6 +809,12 @@ export async function syncGoogleDocsArticleContent({
     // Sapo chỉ tồn tại khi biên tập viên chủ động dùng style Subtitle
     // hoặc viết tiền tố "SAPO:"/"Mô tả:". Không tự lấy đoạn thân bài đầu tiên.
     if (row === summaryRow) {
+      continue;
+    }
+
+    // Bỏ các caption tự sinh từ phiên bản cũ. Caption biên tập viên viết
+    // bằng nội dung khác vẫn được coi như một đoạn văn bình thường.
+    if (isLegacyGeneratedImageCaption(row, title)) {
       continue;
     }
 
