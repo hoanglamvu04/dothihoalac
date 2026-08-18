@@ -10,14 +10,15 @@
   },
   "scripts": {
     "dev": "nodemon src/bootstrap.js",
-  "start": "node src/bootstrap.js",
+    "start": "node src/bootstrap.js",
     "seed": "node src/seeds/index.js",
     "test": "node --test --test-reporter=spec",
     "lint": "eslint .",
     "format": "prettier --write .",
     "seed:core": "node src/seeds/index.js --core-only",
     "seed:reset": "node src/seeds/resetDatabase.js",
-    "seed:properties": "node src/seeds/runPropertiesOnly.js"
+    "seed:properties": "node src/seeds/runPropertiesOnly.js",
+    "seed:taxonomy": "node src/seeds/normalizeCategories.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
