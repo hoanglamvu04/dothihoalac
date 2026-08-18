@@ -7,9 +7,13 @@
   --account-muted: #738079;
 
   min-height: 100vh;
-  padding: 22px 0 72px;
+  padding: 12px 0 56px;
   color: var(--account-ink);
   background: #f4f6f4;
+}
+
+.account-center-page.is-overview {
+  padding-top: 18px;
 }
 
 .account-center-page *,
@@ -19,23 +23,27 @@
 }
 
 .account-center-container {
-  width: calc(100% - 32px);
-  max-width: 1180px;
+  width: min(calc(100% - 28px), 1260px);
   margin-inline: auto;
 }
 
 .account-center-warning {
   display: flex;
   align-items: center;
-  min-height: 46px;
-  padding: 9px 12px;
-  margin-top: 12px;
-  gap: 9px;
+  min-height: 42px;
+  padding: 8px 11px;
+  margin-bottom: 10px;
+  gap: 8px;
   border: 1px solid #ead59e;
-  border-radius: 11px;
+  border-radius: 10px;
   color: #77581c;
   background: #fff9e9;
-  font-size: 0.72rem;
+  font-size: 0.7rem;
+}
+
+.account-center-page.is-overview .account-center-warning {
+  margin-top: 10px;
+  margin-bottom: 0;
 }
 
 .account-center-warning > span {
@@ -47,9 +55,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 32px;
-  padding: 0 10px;
-  gap: 6px;
+  min-height: 30px;
+  padding: 0 9px;
+  gap: 5px;
   border: 0;
   border-radius: 8px;
   color: #77581c;
@@ -61,10 +69,14 @@
 
 .account-center-workspace {
   display: grid;
-  grid-template-columns: 218px minmax(0, 1fr);
+  grid-template-columns: 204px minmax(0, 1fr);
   align-items: start;
-  margin-top: 16px;
-  gap: 16px;
+  margin-top: 0;
+  gap: 14px;
+}
+
+.account-center-page.is-overview .account-center-workspace {
+  margin-top: 14px;
 }
 
 .account-center-content {
@@ -74,8 +86,59 @@
   margin: 0;
 }
 
-/* Trong bố cục mới đã có sidebar điều hướng tài khoản bên trái.
-   Ẩn sidebar xem trước cũ của trang hồ sơ để tránh lặp và giữ đúng Figma. */
+/* Sidebar bám sát mép trên khi header đã ẩn. Khi header xuất hiện trở lại,
+   :has() tự đẩy sidebar xuống dưới header để không bị che. */
+.account-center-page .account-shell-sidebar {
+  position: sticky;
+  top: 10px;
+  align-self: start;
+  max-height: calc(100vh - 20px);
+  overflow: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  transition: top 180ms ease, max-height 180ms ease;
+}
+
+body:has(.dthl-header:not(.is-hidden):not(.is-compact))
+  .account-center-page
+  .account-shell-sidebar {
+  top: 166px;
+  max-height: calc(100vh - 176px);
+}
+
+body:has(.dthl-header.is-compact:not(.is-hidden))
+  .account-center-page
+  .account-shell-sidebar {
+  top: 112px;
+  max-height: calc(100vh - 122px);
+}
+
+.account-center-page .account-shell-sidebar__intro {
+  padding: 11px 12px 10px;
+}
+
+.account-center-page .account-shell-nav {
+  padding: 6px;
+}
+
+.account-center-page .account-shell-nav > a,
+.account-center-page .account-shell-nav__more a,
+.account-center-page .account-shell-nav__more summary {
+  min-height: 38px;
+  padding-inline: 9px;
+  font-size: 0.69rem;
+}
+
+.account-center-page .account-shell-nav__more > div {
+  padding-left: 9px;
+}
+
+.account-center-page .account-shell-nav__more a {
+  min-height: 35px;
+  font-size: 0.66rem;
+}
+
+/* Trong layout tài khoản đã có điều hướng bên trái, không lặp sidebar preview. */
 .account-center-content .profile-settings-layout {
   grid-template-columns: minmax(0, 1fr);
 }
@@ -89,8 +152,6 @@
   min-width: 0;
 }
 
-/* Các field ở cùng một hàng luôn bám mép trên.
-   Nếu một field có hint/error dài hơn, field bên cạnh không bị kéo lệch xuống. */
 .account-center-content .account-form-grid,
 .account-center-content .profile-settings-grid {
   align-items: start;
@@ -108,19 +169,22 @@
 
 @media (max-width: 900px) {
   .account-center-page {
-    padding-top: 16px;
+    padding-top: 9px;
   }
 
   .account-center-container {
-    width: calc(100% - 24px);
+    width: calc(100% - 20px);
   }
 
   .account-center-workspace {
     grid-template-columns: 1fr;
+    gap: 10px;
   }
 
-  .account-shell-sidebar {
+  .account-center-page .account-shell-sidebar {
     position: static;
+    max-height: none;
+    overflow: visible;
   }
 
   .account-shell-sidebar__intro {
@@ -128,10 +192,10 @@
   }
 
   .account-shell-nav {
-    display: flex;
+    display: flex !important;
     overflow-x: auto;
-    padding: 7px;
-    gap: 4px;
+    padding: 6px !important;
+    gap: 3px;
     scrollbar-width: none;
   }
 
@@ -139,10 +203,10 @@
     display: none;
   }
 
-  .account-shell-nav > a {
+  .account-center-page .account-shell-nav > a {
     flex: 0 0 auto;
-    min-height: 38px;
-    padding-inline: 11px;
+    min-height: 36px;
+    padding-inline: 10px;
   }
 
   .account-shell-nav__more {
@@ -150,17 +214,17 @@
     flex: 0 0 auto;
   }
 
-  .account-shell-nav__more summary {
-    min-height: 38px;
+  .account-center-page .account-shell-nav__more summary {
+    min-height: 36px;
     white-space: nowrap;
   }
 
   .account-shell-nav__more > div {
     position: absolute;
-    z-index: 20;
+    z-index: 80;
     right: 0;
-    width: 220px;
-    padding: 7px;
+    width: 224px;
+    padding: 6px !important;
     border: 1px solid var(--account-border);
     border-radius: 11px;
     background: #fff;
@@ -170,16 +234,15 @@
 
 @media (max-width: 620px) {
   .account-center-page {
-    padding: 10px 0 46px;
+    padding: 7px 0 42px;
   }
 
   .account-center-container {
-    width: calc(100% - 14px);
+    width: calc(100% - 12px);
   }
 
-  .account-center-workspace {
-    margin-top: 10px;
-    gap: 10px;
+  .account-center-page.is-overview .account-center-workspace {
+    margin-top: 9px;
   }
 
   .account-center-warning {
@@ -195,8 +258,8 @@
     display: none;
   }
 
-  .account-shell-nav > a {
-    min-width: 40px;
+  .account-center-page .account-shell-nav > a {
+    min-width: 38px;
     justify-content: center;
     padding: 0;
   }
