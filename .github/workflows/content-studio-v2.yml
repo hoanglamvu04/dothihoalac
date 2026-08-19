@@ -1,6 +1,9 @@
 name: DTHL application checks
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
     branches:
       - main
@@ -27,6 +30,7 @@ jobs:
       - name: Lint changed application surfaces
         run: >-
           npx eslint
+          src/main.jsx
           src/api/admin.api.js
           src/api/content.api.js
           src/api/interaction.api.js
@@ -34,13 +38,19 @@ jobs:
           src/api/weather.api.js
           src/app/App.jsx
           src/components/account/AccountContentNav.jsx
+          src/components/ads/AdSlot.jsx
+          src/components/community/DeferredCommunityQuickComposer.jsx
           src/components/content/ArticleBody.jsx
           src/components/content/ContentImage.jsx
           src/components/content/NewsContextRail.jsx
           src/components/content/ReactionBar.jsx
           src/components/layout/AccountLayout.jsx
           src/components/layout/AdminLayout.jsx
+          src/components/layout/PublicLayout.jsx
           src/components/studio/ContentEditorShell.jsx
+          src/context/AuthContext.jsx
+          src/context/TaxonomyContext.jsx
+          src/hooks/useListPage.js
           src/pages/account/ActivityPage.jsx
           src/pages/account/MyContentPage.jsx
           src/pages/account/NotificationsPage.jsx
@@ -57,6 +67,7 @@ jobs:
           src/pages/create/PropertyStudioAdapter.jsx
           src/pages/public/ArticleDetailPage.jsx
           src/pages/public/ArticlesPage.jsx
+          src/pages/public/HomePage.jsx
           src/pages/public/SearchPage.jsx
           src/utils/content.js
           src/utils/projects.js
@@ -100,15 +111,24 @@ jobs:
           src/jobs/expireJobPosts.job.js
           src/jobs/publishScheduledContent.job.js
           src/utils/sanitizeHtml.js
+          src/modules/contents/content.model.js
           src/modules/contents/contentDraft.controller.js
           src/modules/contents/contentDraft.routes.js
           src/modules/contents/contentDraft.service.js
           src/modules/contents/contentDraft.validation.js
           src/modules/contents/pendingContentPreview.middleware.js
+          src/modules/community/community.controller.js
+          src/modules/community/community.compactList.service.js
           src/modules/properties/property.controller.js
           src/modules/properties/property.routes.js
           src/modules/properties/property.service.js
+          src/modules/properties/property.publicList.service.js
+          src/modules/properties/propertyListing.model.js
+          src/modules/jobs/job.controller.js
           src/modules/jobs/job.service.js
+          src/modules/jobs/job.publicList.service.js
+          src/modules/jobs/jobPost.model.js
+          src/modules/articles/article.controller.js
           src/modules/articles/article.model.js
           src/modules/articles/article.routes.js
           src/modules/articles/article.validation.js
