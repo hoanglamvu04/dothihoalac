@@ -24,4 +24,13 @@ const schema = new mongoose.Schema(
   { timestamps: true, collection: 'comments' },
 );
 schema.index({ contentId: 1, createdAt: -1 });
+// Feed cộng đồng lấy hai bình luận gốc đã publish mới nhất cho nhiều content
+// cùng lúc. Compound index này tránh quét reply/hidden/deleted trước khi sort.
+schema.index({
+  contentId: 1,
+  parentId: 1,
+  status: 1,
+  deletedAt: 1,
+  createdAt: -1,
+});
 export default getOrCreateModel('Comment', schema, 'comments');
