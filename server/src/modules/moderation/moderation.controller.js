@@ -6,7 +6,7 @@ export async function dashboard(req, res) {
 }
 
 export async function queue(req, res) {
-  const r = await s.queue(req.query);
+  const r = await s.queue(req.query, req.auth);
   return sendSuccess(res, { data: r.items, meta: r.meta });
 }
 
@@ -38,7 +38,13 @@ export async function users(req, res) {
 
 export async function userStatus(req, res) {
   return sendSuccess(res, {
-    data: await s.updateUserStatus(req.user, req.params.id, req.body, req.ip),
+    data: await s.updateUserStatus(
+      req.user,
+      req.auth,
+      req.params.id,
+      req.body,
+      req.ip,
+    ),
     message: 'Đã cập nhật tài khoản.',
   });
 }
