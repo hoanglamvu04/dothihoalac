@@ -36,8 +36,8 @@ export default function PublicLayout() {
       <SiteHeader />
       <HeaderNavigationUpgrade />
 
-      <AdSlot slotKey="site_below_header" layout="strip" />
-      {topSlot ? <AdSlot slotKey={topSlot} layout="strip" /> : null}
+      <AdSlot slotKey="site_below_header" layout="strip" deferMs={450} />
+      {topSlot ? <AdSlot slotKey={topSlot} layout="strip" deferMs={650} /> : null}
 
       <main className={`main-content${showCommunityAds ? ' main-content--community' : ''}`}>
         {showCommunityAds ? (
