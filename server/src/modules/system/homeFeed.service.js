@@ -13,8 +13,7 @@ const ARTICLE_LIMIT = 10;
 const COMMUNITY_LIMIT = 4;
 const PROPERTY_LIMIT = 4;
 const JOB_LIMIT = 3;
-const JOB_CANDIDATE_LIMIT = 20;
-const PROPERTY_CANDIDATE_LIMIT = 20;
+const PROPERTY_CANDIDATE_LIMIT = 24;
 
 let cachedData = null;
 let cachedAt = 0;
@@ -132,10 +131,58 @@ async function loadPropertyCards(now) {
   });
 }
 
+async function loadJobCards(now) {
+  const rows = await JobPost.aggregate([
+    {
+      $match: {
+        deadline: { $gte: now },
+      },
+    },
+    {
+      $lookup: {
+        from: Content.collection.name,
+        let: { contentId: '$contentId' },
+        pipeline: [
+          {
+            $match: {
+              $expr: { $eq: ['$_id', '$$contentId'] },
+              contentType: 'job',
+              ...PUBLIC_CONTENT_FILTER,
+            },
+          },
+          { $project: contentProjection() },
+        ],
+        as: 'content',
+      },
+    },
+    { $unwind: '$content' },
+    {
+      $sort: {
+        'content.publishedAt': -1,
+        'content._id': -1,
+      },
+    },
+    { $limit: JOB_LIMIT },
+    {
+      $project: {
+        content: 1,
+        contentId: 1,
+        companyName: 1,
+        workLocation: 1,
+      },
+    },
+  ]);
+
+  return rows.map((row) => {
+    const { content, ...job } = row;
+    return { ...content, job };
+  });
+}
+
 async function buildHomeFeed() {
   const now = new Date();
 
-  const [articles, community, properties, jobCandidates] = await Promise.all([
+  const [articles, community, properties, jobs] = await Promise.all([
     Content.find({
       ...PUBLIC_CONTENT_FILTER,
       contentType: 'article',
@@ -155,22 +202,13 @@ async function buildHomeFeed() {
       .lean(),
 
     loadPropertyCards(now),
-
-    Content.find({
-      ...PUBLIC_CONTENT_FILTER,
-      contentType: 'job',
-    })
-      .select(CARD_FIELDS)
-      .sort({ publishedAt: -1, _id: -1 })
-      .limit(JOB_CANDIDATE_LIMIT)
-      .lean(),
+    loadJobCards(now),
   ]);
 
   const communityIds = community.map((item) => item._id);
   const authorIds = uniqueIds(community.map((item) => item.authorId));
-  const jobCandidateIds = jobCandidates.map((item) => item._id);
 
-  const [communityDetails, users, profiles, jobDetails] = await Promise.all([
+  const [communityDetails, users, profiles] = await Promise.all([
     communityIds.length
       ? CommunityPost.find({ contentId: { $in: communityIds } })
           .select('contentId postType')
@@ -187,28 +225,11 @@ async function buildHomeFeed() {
           .populate('avatarMediaId', 'url secureUrl altText width height')
           .lean()
       : [],
-    jobCandidateIds.length
-      ? JobPost.find({
-          contentId: { $in: jobCandidateIds },
-          deadline: { $gte: now },
-        })
-          .select('contentId companyName workLocation')
-          .lean()
-      : [],
   ]);
 
   const communityMap = mapById(communityDetails, 'contentId');
   const userMap = mapById(users);
   const profileMap = mapById(profiles, 'userId');
-  const jobMap = mapById(jobDetails, 'contentId');
-
-  const jobs = jobCandidates
-    .filter((item) => jobMap.has(idOf(item._id)))
-    .slice(0, JOB_LIMIT)
-    .map((item) => ({
-      ...item,
-      job: jobMap.get(idOf(item._id)) || null,
-    }));
 
   const allContent = [...articles, ...community, ...properties, ...jobs];
   const categoryIds = uniqueIds(articles.map((item) => item.primaryCategoryId));
