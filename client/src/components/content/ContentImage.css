@@ -38,6 +38,13 @@
   object-position: center;
 }
 
+@media (min-width: 761px) {
+  .properties-page .property-card__image {
+    align-self: stretch;
+    max-height: 360px;
+  }
+}
+
 @media (max-width: 760px) {
   .community-thread-media .content-image {
     max-height: 540px;
