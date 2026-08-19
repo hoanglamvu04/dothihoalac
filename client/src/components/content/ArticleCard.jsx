@@ -11,7 +11,14 @@ export default function ArticleCard({ item, featured = false }) {
   return (
     <article className={`content-card article-card ${featured ? 'article-card--featured' : ''}`}>
       <Link to={href}>
-        <ContentImage media={item.thumbnailMediaId} alt={item.title} ratio={featured ? 'hero' : 'wide'} />
+        <ContentImage
+          media={item.thumbnailMediaId}
+          alt={item.title}
+          ratio={featured ? 'hero' : 'wide'}
+          loading={featured ? 'eager' : 'lazy'}
+          fetchPriority={featured ? 'high' : undefined}
+          sizes={featured ? '(max-width: 900px) 100vw, 760px' : '(max-width: 720px) 100vw, 420px'}
+        />
       </Link>
       <div className="content-card__body">
         <div className="content-card__labels">
