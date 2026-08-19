@@ -1,5 +1,11 @@
 import * as s from './system.service.js';
+import { homeFeed as loadHomeFeed } from './homeFeed.service.js';
 import { sendCreated, sendSuccess } from '../../utils/apiResponse.js';
+
+export async function homeFeed(req, res) {
+  res.set('Cache-Control', 'public, max-age=10, stale-while-revalidate=30');
+  return sendSuccess(res, { data: await loadHomeFeed() });
+}
 
 export async function page(req, res) {
   return sendSuccess(res, { data: await s.page(req.params.slug) });
