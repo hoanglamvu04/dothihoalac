@@ -1,5 +1,8 @@
+import mongoose from 'mongoose';
+
 import Content from '../contents/content.model.js';
 import ContentBody from '../contents/contentBody.model.js';
+import Area from '../taxonomy/area.model.js';
 import JobPost from './jobPost.model.js';
 
 import {
@@ -26,12 +29,6 @@ function idString(value) {
   return String(value?._id || value || '');
 }
 
-function timeValue(value) {
-  const date = value ? new Date(value) : null;
-  const time = date?.getTime();
-  return Number.isFinite(time) ? time : 0;
-}
-
 function hasInitialJobPayload(data = {}) {
   return Boolean(
     data.jobType &&
@@ -56,11 +53,37 @@ function jobIsComplete(content, body, job) {
   );
 }
 
-export async function list(query) {
+async function resolveAreaId(value) {
+  const normalized = String(value || '').trim();
+  if (!normalized) return null;
+
+  if (mongoose.isValidObjectId(normalized)) {
+    return new mongoose.Types.ObjectId(normalized);
+  }
+
+  const area = await Area.findOne({
+    slug: normalized.toLowerCase(),
+    isActive: true,
+  })
+    .select('_id')
+    .lean();
+
+  return area?._id || null;
+}
+
+function emptyList(page, limit) {
+  return {
+    items: [],
+    meta: buildPaginationMeta({ page, limit, total: 0 }),
+  };
+}
+
+export async function list(query = {}) {
   const { page, limit, skip } = parsePagination(query);
+  const now = new Date();
 
   const jobFilter = {
-    deadline: { $gte: new Date() },
+    deadline: { $gte: now },
   };
 
   if (query.type) {
@@ -71,110 +94,132 @@ export async function list(query) {
     jobFilter.experienceLevel = query.experienceLevel;
   }
 
-  const jobDetails = await JobPost.find(jobFilter).lean();
-  const contentIds = jobDetails.map((item) => item.contentId);
-
-  if (!contentIds.length) {
-    return {
-      items: [],
-      meta: buildPaginationMeta({ page, limit, total: 0 }),
-    };
-  }
-
-  const contentFilter = {
-    _id: { $in: contentIds },
-    contentType: 'job',
-    status: 'published',
-    deletedAt: null,
-  };
-
-  if (query.area) {
-    contentFilter.primaryAreaId = query.area;
+  const areaId = query.area ? await resolveAreaId(query.area) : null;
+  if (query.area && !areaId) {
+    return emptyList(page, limit);
   }
 
   const queryText = String(query.q || '').trim();
+  const regex = queryText ? new RegExp(escapeRegex(queryText), 'i') : null;
 
-  if (queryText) {
-    const regex = new RegExp(escapeRegex(queryText), 'i');
+  const publicContentMatch = {
+    'content.contentType': 'job',
+    'content.status': 'published',
+    'content.visibility': 'public',
+    'content.deletedAt': null,
+  };
 
-    const matchedJobIds = jobDetails
-      .filter(
-        (job) =>
-          regex.test(String(job.companyName || '')) ||
-          regex.test(String(job.workLocation || '')),
-      )
-      .map((job) => job.contentId);
-
-    contentFilter.$or = [
-      { title: regex },
-      { summary: regex },
-      ...(matchedJobIds.length
-        ? [{ _id: { $in: matchedJobIds } }]
-        : []),
-    ];
+  if (areaId) {
+    publicContentMatch['content.primaryAreaId'] = areaId;
   }
 
-  const matchingContents = await Content.find(contentFilter)
-    .select('_id publishedAt createdAt')
-    .lean();
+  const pipeline = [
+    { $match: jobFilter },
+    {
+      $lookup: {
+        from: Content.collection.name,
+        localField: 'contentId',
+        foreignField: '_id',
+        as: 'content',
+      },
+    },
+    { $unwind: '$content' },
+    { $match: publicContentMatch },
+  ];
 
-  const jobMap = new Map(
-    jobDetails.map((job) => [idString(job.contentId), job]),
-  );
-
-  const orderedContents = [...matchingContents];
+  if (regex) {
+    pipeline.push({
+      $match: {
+        $or: [
+          { companyName: regex },
+          { workLocation: regex },
+          { 'content.title': regex },
+          { 'content.summary': regex },
+        ],
+      },
+    });
+  }
 
   if (query.sort === 'deadline_asc') {
-    orderedContents.sort(
-      (a, b) =>
-        timeValue(jobMap.get(idString(a._id))?.deadline) -
-        timeValue(jobMap.get(idString(b._id))?.deadline),
-    );
+    pipeline.push({
+      $sort: {
+        deadline: 1,
+        'content.publishedAt': -1,
+        'content._id': -1,
+      },
+    });
   } else if (query.sort === 'deadline_desc') {
-    orderedContents.sort(
-      (a, b) =>
-        timeValue(jobMap.get(idString(b._id))?.deadline) -
-        timeValue(jobMap.get(idString(a._id))?.deadline),
-    );
+    pipeline.push({
+      $sort: {
+        deadline: -1,
+        'content.publishedAt': -1,
+        'content._id': -1,
+      },
+    });
   } else {
-    orderedContents.sort(
-      (a, b) =>
-        timeValue(b.publishedAt || b.createdAt) -
-        timeValue(a.publishedAt || a.createdAt),
-    );
+    pipeline.push({
+      $sort: {
+        'content.publishedAt': -1,
+        'content.createdAt': -1,
+        'content._id': -1,
+      },
+    });
   }
 
-  const orderedIds = orderedContents.map((item) => item._id);
-  const pageIds = orderedIds.slice(skip, skip + limit);
-  const total = orderedIds.length;
+  pipeline.push({
+    $facet: {
+      rows: [
+        { $skip: skip },
+        { $limit: limit },
+      ],
+      total: [{ $count: 'count' }],
+    },
+  });
 
-  let items = [];
+  const [result] = await JobPost.aggregate(pipeline);
+  const rows = result?.rows || [];
+  const total = Number(result?.total?.[0]?.count || 0);
 
-  if (pageIds.length) {
-    const pageItems = await Content.find({
-      _id: { $in: pageIds },
-      contentType: 'job',
-      status: 'published',
-      deletedAt: null,
-    })
-      .populate('primaryAreaId', 'name slug')
-      .populate('thumbnailMediaId', 'url secureUrl altText width height')
-      .lean();
-
-    const pageMap = new Map(
-      pageItems.map((item) => [idString(item._id), item]),
-    );
-
-    items = pageIds
-      .map((id) => pageMap.get(idString(id)))
-      .filter(Boolean);
+  if (!rows.length) {
+    return emptyList(page, limit);
   }
 
-  return {
-    items: items.map((item) => ({
+  const pageIds = rows
+    .map((row) => row?.content?._id)
+    .filter(Boolean);
+
+  const jobMap = new Map(
+    rows.map((row) => {
+      const { content: _content, ...job } = row;
+      return [idString(job.contentId), job];
+    }),
+  );
+
+  const pageItems = await Content.find({
+    _id: { $in: pageIds },
+    contentType: 'job',
+    status: 'published',
+    visibility: 'public',
+    deletedAt: null,
+  })
+    .populate('primaryAreaId', 'name slug')
+    .populate('thumbnailMediaId', 'url secureUrl altText width height')
+    .lean();
+
+  const pageMap = new Map(
+    pageItems.map((item) => [idString(item._id), item]),
+  );
+
+  const items = pageIds
+    .map((id) => pageMap.get(idString(id)))
+    .filter(Boolean)
+    .map((item) => ({
       ...item,
       job: jobMap.get(idString(item._id)) || null,
-    })),
+    }));
+
+  return {
+    items,
     meta: buildPaginationMeta({ page, limit, total }),
   };
 }
@@ -227,6 +272,7 @@ export async function create(userId, data) {
     authorId: userId,
     contentType: 'job',
     ...data,
+    allowComments: false,
     status: 'draft',
   });
 
@@ -246,7 +292,15 @@ export async function update(id, userId, data) {
     throw new ApiError(422, 'Hạn nộp phải ở tương lai.', 'DEADLINE_INVALID');
   }
 
-  await updateContentWithBody(content, data, userId, 'Job edit');
+  await updateContentWithBody(
+    content,
+    {
+      ...data,
+      allowComments: false,
+    },
+    userId,
+    'Job edit',
+  );
 
   const existingJob = await JobPost.findOne({ contentId: id });
 
@@ -289,6 +343,7 @@ export async function submit(id, userId) {
   }
 
   content.status = 'pending_review';
+  content.allowComments = false;
   await content.save();
   return content;
 }
