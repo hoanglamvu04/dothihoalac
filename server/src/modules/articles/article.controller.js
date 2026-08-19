@@ -1,3 +1,5 @@
+import mongoose from 'mongoose';
+
 import * as s from './article.service.js';
 import { listPublicArticles } from './article.publicList.service.js';
 import { adminArticleDetail } from './article.admin.detail.service.js';
@@ -7,6 +9,8 @@ import {
   adminDeleteArticles as deleteArticles,
 } from './article.admin.delete.service.js';
 import Content from '../contents/content.model.js';
+import Category from '../taxonomy/category.model.js';
+import Area from '../taxonomy/area.model.js';
 import { sendCreated, sendSuccess } from '../../utils/apiResponse.js';
 
 const FACET_CACHE_TTL_MS = 60_000;
@@ -15,6 +19,29 @@ let facetRowsExpireAt = 0;
 
 function normalizeId(value) {
   return typeof value === 'string' ? value.trim() : '';
+}
+
+function wantsFacets(value) {
+  return ['1', 'true', 'yes'].includes(String(value || '').trim().toLowerCase());
+}
+
+async function resolveFacetSelection(Model, value, extraFilter = {}) {
+  const normalized = normalizeId(value).split(',')[0]?.trim() || '';
+  if (!normalized) return '';
+
+  if (mongoose.isValidObjectId(normalized)) {
+    return normalized;
+  }
+
+  const found = await Model.findOne({
+    slug: normalized.toLowerCase(),
+    isActive: true,
+    ...extraFilter,
+  })
+    .select('_id')
+    .lean();
+
+  return found ? String(found._id) : '';
 }
 
 function itemHasId(item, primaryKey, listKey, expectedId) {
@@ -70,11 +97,13 @@ async function getPublishedFacetRows() {
 }
 
 async function getPublishedArticleFacets(query = {}) {
-  const rows = await getPublishedFacetRows();
-  const selectedCategoryId = normalizeId(
-    query.categories || query.category,
-  );
-  const selectedAreaId = normalizeId(query.areas || query.area);
+  const [rows, selectedCategoryId, selectedAreaId] = await Promise.all([
+    getPublishedFacetRows(),
+    resolveFacetSelection(Category, query.categories || query.category, {
+      contentScope: { $in: ['article', 'all'] },
+    }),
+    resolveFacetSelection(Area, query.areas || query.area),
+  ]);
 
   const categoryRows = selectedAreaId
     ? rows.filter((item) =>
@@ -104,10 +133,19 @@ async function getPublishedArticleFacets(query = {}) {
 }
 
 export async function list(req, res) {
-  const [r, facets] = await Promise.all([
-    listPublicArticles(req.query),
-    getPublishedArticleFacets(req.query),
-  ]);
+  // Facet trước đây quét toàn bộ bài đã xuất bản cho mọi request, kể cả
+  // homepage và sidebar không sử dụng dữ liệu này. Chỉ tính khi client yêu cầu.
+  const includeFacets = wantsFacets(req.query.includeFacets);
+  const r = await listPublicArticles(req.query);
+
+  if (!includeFacets) {
+    return sendSuccess(res, {
+      data: r.items,
+      meta: r.meta,
+    });
+  }
+
+  const facets = await getPublishedArticleFacets(req.query);
 
   return sendSuccess(res, {
     data: r.items,
