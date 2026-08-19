@@ -48,6 +48,40 @@ function emptyResult(page, limit, total = 0) {
   };
 }
 
+function listingSort(sort) {
+  if (sort === 'price_asc') {
+    return {
+      price: 1,
+      listingPriority: -1,
+      createdAt: -1,
+      _id: -1,
+    };
+  }
+
+  if (sort === 'price_desc') {
+    return {
+      price: -1,
+      listingPriority: -1,
+      createdAt: -1,
+      _id: -1,
+    };
+  }
+
+  if (sort === 'oldest') {
+    return {
+      listingPriority: -1,
+      createdAt: 1,
+      _id: 1,
+    };
+  }
+
+  return {
+    listingPriority: -1,
+    createdAt: -1,
+    _id: -1,
+  };
+}
+
 export async function listPublicProperties(query = {}) {
   const { page, limit, skip } = parsePagination(query);
 
@@ -102,8 +136,11 @@ export async function listPublicProperties(query = {}) {
     publicContentMatch['content.primaryAreaId'] = areaId;
   }
 
+  // Các trường sắp xếp nằm hoàn toàn trên PropertyListing. Đặt $sort trước
+  // $lookup giúp MongoDB tận dụng index thay vì sort tập dữ liệu đã join.
   const pipeline = [
     { $match: propertyFilter },
+    { $sort: listingSort(query.sort) },
     {
       $lookup: {
         from: Content.collection.name,
@@ -126,42 +163,6 @@ export async function listPublicProperties(query = {}) {
           { 'content.title': regex },
           { 'content.summary': regex },
         ],
-      },
-    });
-  }
-
-  if (query.sort === 'price_asc') {
-    pipeline.push({
-      $sort: {
-        price: 1,
-        listingPriority: -1,
-        createdAt: -1,
-        _id: -1,
-      },
-    });
-  } else if (query.sort === 'price_desc') {
-    pipeline.push({
-      $sort: {
-        price: -1,
-        listingPriority: -1,
-        createdAt: -1,
-        _id: -1,
-      },
-    });
-  } else if (query.sort === 'oldest') {
-    pipeline.push({
-      $sort: {
-        listingPriority: -1,
-        createdAt: 1,
-        _id: 1,
-      },
-    });
-  } else {
-    pipeline.push({
-      $sort: {
-        listingPriority: -1,
-        createdAt: -1,
-        _id: -1,
       },
     });
   }
