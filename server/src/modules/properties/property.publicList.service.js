@@ -125,32 +125,44 @@ export async function listPublicProperties(query = {}) {
     return emptyResult(page, limit);
   }
 
-  const publicContentMatch = {
-    'content.contentType': 'property',
-    'content.status': 'published',
-    'content.visibility': 'public',
-    'content.deletedAt': null,
+  const contentLookupMatch = {
+    $expr: { $eq: ['$_id', '$$contentId'] },
+    contentType: 'property',
+    status: 'published',
+    visibility: 'public',
+    deletedAt: null,
   };
 
   if (areaId) {
-    publicContentMatch['content.primaryAreaId'] = areaId;
+    contentLookupMatch.primaryAreaId = areaId;
   }
 
   // Các trường sắp xếp nằm hoàn toàn trên PropertyListing. Đặt $sort trước
-  // $lookup giúp MongoDB tận dụng index thay vì sort tập dữ liệu đã join.
+  // $lookup giúp MongoDB tận dụng index và giảm lượng document cần giữ khi join.
   const pipeline = [
     { $match: propertyFilter },
     { $sort: listingSort(query.sort) },
     {
       $lookup: {
         from: Content.collection.name,
-        localField: 'contentId',
-        foreignField: '_id',
+        let: { contentId: '$contentId' },
+        pipeline: [
+          { $match: contentLookupMatch },
+          {
+            $project: {
+              _id: 1,
+              title: 1,
+              summary: 1,
+              primaryAreaId: 1,
+              publishedAt: 1,
+              createdAt: 1,
+            },
+          },
+        ],
         as: 'content',
       },
     },
     { $unwind: '$content' },
-    { $match: publicContentMatch },
   ];
 
   const queryText = String(query.q || '').trim();
