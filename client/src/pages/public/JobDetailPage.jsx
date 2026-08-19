@@ -26,7 +26,6 @@ import {
   GraduationCap,
   Mail,
   MapPin,
-  MessageCircle,
   Phone,
   Share2,
   ShieldAlert,
@@ -38,8 +37,6 @@ import {
 import Seo from '../../components/common/Seo';
 import Badge from '../../components/common/Badge';
 import ArticleBody from '../../components/content/ArticleBody';
-import ReactionBar from '../../components/content/ReactionBar';
-import CommentsSection from '../../components/content/CommentsSection';
 import ErrorState from '../../components/common/ErrorState';
 import { PageLoading } from '../../components/common/Loading';
 
@@ -75,15 +72,6 @@ function getViewCount(item) {
   return Number(
     item?.stats?.viewCount ??
       item?.viewCount ??
-      0,
-  );
-}
-
-function getCommentCount(item) {
-  return Number(
-    item?.stats?.commentCount ??
-      item?.commentCount ??
-      item?.commentsCount ??
       0,
   );
 }
@@ -248,11 +236,19 @@ async function copyText(value) {
   textarea.remove();
 }
 
+function isCanceledRequest(error) {
+  return (
+    error?.name === 'CanceledError' ||
+    error?.code === 'ERR_CANCELED'
+  );
+}
+
 export default function JobDetailPage() {
   const { slug } = useParams();
   const toast = useToast();
 
   const pageRef = useRef(null);
+  const progressBarRef = useRef(null);
 
   const [item, setItem] =
     useState(null);
@@ -266,19 +262,22 @@ export default function JobDetailPage() {
   const [copiedEmail, setCopiedEmail] =
     useState(false);
 
-  const [
-    readingProgress,
-    setReadingProgress,
-  ] = useState(0);
+  const [showScrollTop, setShowScrollTop] =
+    useState(false);
 
   useEffect(() => {
     let active = true;
+    const controller = new AbortController();
 
     setItem(null);
     setError(null);
     setCopiedLink(false);
     setCopiedEmail(false);
-    setReadingProgress(0);
+    setShowScrollTop(false);
+
+    if (progressBarRef.current) {
+      progressBarRef.current.style.transform = 'scaleX(0)';
+    }
 
     window.scrollTo({
       top: 0,
@@ -287,20 +286,26 @@ export default function JobDetailPage() {
     });
 
     jobApi
-      .detail(slug)
+      .detail(slug, {
+        signal: controller.signal,
+      })
       .then((result) => {
         if (active) {
           setItem(result);
         }
       })
       .catch((requestError) => {
-        if (active) {
+        if (
+          active &&
+          !isCanceledRequest(requestError)
+        ) {
           setError(requestError);
         }
       });
 
     return () => {
       active = false;
+      controller.abort();
     };
   }, [slug]);
 
@@ -351,9 +356,6 @@ export default function JobDetailPage() {
 
   const viewCount =
     getViewCount(item);
-
-  const commentCount =
-    getCommentCount(item);
 
   const wasUpdated = useMemo(() => {
     if (
@@ -438,11 +440,24 @@ export default function JobDetailPage() {
             (window.scrollY - start) /
             distance;
 
-          setReadingProgress(
+          const clampedProgress =
             Math.min(
               Math.max(progress, 0),
               1,
-            ),
+            );
+
+          if (progressBarRef.current) {
+            progressBarRef.current.style.transform =
+              `scaleX(${clampedProgress})`;
+          }
+
+          const shouldShowScrollTop =
+            clampedProgress > 0.35;
+
+          setShowScrollTop((current) =>
+            current === shouldShowScrollTop
+              ? current
+              : shouldShowScrollTop,
           );
         });
     };
@@ -602,11 +617,7 @@ export default function JobDetailPage() {
         className="job-reading-progress"
         aria-hidden="true"
       >
-        <span
-          style={{
-            transform: `scaleX(${readingProgress})`,
-          }}
-        />
+        <span ref={progressBarRef} />
       </div>
 
       <div className="job-detail-container">
@@ -702,17 +713,6 @@ export default function JobDetailPage() {
                   'vi-VN',
                 )}{' '}
                 lượt xem
-              </span>
-
-              <span>
-                <MessageCircle
-                  size={16}
-                />
-
-                {commentCount.toLocaleString(
-                  'vi-VN',
-                )}{' '}
-                bình luận
               </span>
             </div>
           </div>
@@ -965,41 +965,6 @@ export default function JobDetailPage() {
                   giấy tờ cá nhân.
                 </p>
               </div>
-            </section>
-
-            <section className="job-reaction-section">
-              <ReactionBar
-                content={item}
-              />
-            </section>
-
-            <section className="job-comments-section">
-              <div className="job-section-heading">
-                <span>
-                  <MessageCircle
-                    size={20}
-                  />
-                </span>
-
-                <div>
-                  <h2>
-                    Bình luận và trao đổi
-                  </h2>
-
-                  <p>
-                    Trao đổi thêm thông tin
-                    liên quan đến vị trí
-                    tuyển dụng.
-                  </p>
-                </div>
-              </div>
-
-              <CommentsSection
-                contentId={item._id}
-                allowComments={
-                  item.allowComments
-                }
-              />
             </section>
           </main>
 
@@ -1352,7 +1317,7 @@ export default function JobDetailPage() {
         </div>
       </div>
 
-      {readingProgress > 0.35 ? (
+      {showScrollTop ? (
         <button
           type="button"
           className="job-scroll-top"
