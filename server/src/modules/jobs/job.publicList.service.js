@@ -62,15 +62,16 @@ export async function listPublicJobs(query = {}) {
     return emptyResult(page, limit);
   }
 
-  const publicContentMatch = {
-    'content.contentType': 'job',
-    'content.status': 'published',
-    'content.visibility': 'public',
-    'content.deletedAt': null,
+  const contentLookupMatch = {
+    $expr: { $eq: ['$_id', '$$contentId'] },
+    contentType: 'job',
+    status: 'published',
+    visibility: 'public',
+    deletedAt: null,
   };
 
   if (areaId) {
-    publicContentMatch['content.primaryAreaId'] = areaId;
+    contentLookupMatch.primaryAreaId = areaId;
   }
 
   const pipeline = [
@@ -78,13 +79,24 @@ export async function listPublicJobs(query = {}) {
     {
       $lookup: {
         from: Content.collection.name,
-        localField: 'contentId',
-        foreignField: '_id',
+        let: { contentId: '$contentId' },
+        pipeline: [
+          { $match: contentLookupMatch },
+          {
+            $project: {
+              _id: 1,
+              title: 1,
+              summary: 1,
+              primaryAreaId: 1,
+              publishedAt: 1,
+              createdAt: 1,
+            },
+          },
+        ],
         as: 'content',
       },
     },
     { $unwind: '$content' },
-    { $match: publicContentMatch },
   ];
 
   const queryText = String(query.q || '').trim();
