@@ -53,9 +53,6 @@ function normalizeArticleMarkup(html = '') {
     let caption = figure.querySelector('figcaption');
     const next = figure.nextElementSibling;
 
-    // Google Docs commonly represents a manually typed image caption as the
-    // next italic paragraph. Keep it visually attached to the image instead
-    // of rendering it as a full body paragraph with newspaper-sized spacing.
     if (!caption && isManualCaptionParagraph(next)) {
       caption = document.createElement('figcaption');
       caption.innerHTML = next.innerHTML;
@@ -87,6 +84,9 @@ function ArticleBody({ html }) {
         'style',
         'data-media-id',
         'data-caption-optional',
+        'data-job-description',
+        'data-job-requirements',
+        'data-job-benefits',
       ],
     });
 
