@@ -26,6 +26,14 @@ const MODERATION_PERMISSIONS = [
   'moderate_comment',
 ];
 
+const REPORT_PERMISSIONS = [
+  'manage_users',
+  'moderate_community',
+  'moderate_property',
+  'moderate_job',
+  'moderate_comment',
+];
+
 function hasAnyPermission(user, permissions = []) {
   const current = Array.isArray(user?.permissions) ? user.permissions : [];
   return permissions.some((permission) => current.includes(permission));
@@ -39,6 +47,7 @@ export default function AdminDashboardPage() {
   const canManageSystem = hasAnyPermission(user, ['manage_system']);
   const canManageUsers = hasAnyPermission(user, ['manage_users']);
   const canModerate = hasAnyPermission(user, MODERATION_PERMISSIONS);
+  const canHandleReports = hasAnyPermission(user, REPORT_PERMISSIONS);
   const canManageLeads = hasAnyPermission(user, ['manage_leads']);
   const canCreateArticle = hasAnyPermission(user, ['create_article']);
 
@@ -77,7 +86,7 @@ export default function AdminDashboardPage() {
       canModerate
         ? ['Chờ duyệt', data.pendingContent, MessageSquareWarning, '/quan-tri/kiem-duyet', 'Nội dung thuộc phạm vi quyền đang chờ xử lý']
         : null,
-      (canModerate || canManageUsers)
+      canHandleReports
         ? ['Báo cáo', data.pendingReports, Flag, '/quan-tri/bao-cao', 'Báo cáo vi phạm chưa hoàn tất']
         : null,
       canManageLeads
@@ -90,7 +99,7 @@ export default function AdminDashboardPage() {
         ? ['Dự án quá mốc', projectSummary.delayed, AlertTriangle, '/quan-tri/du-an?status=paused', 'Cần rà soát deadline hoặc trạng thái tiến độ']
         : null,
     ].filter(Boolean);
-  }, [canManageLeads, canManageSystem, canManageUsers, canModerate, data]);
+  }, [canHandleReports, canManageLeads, canManageSystem, canManageUsers, canModerate, data]);
 
   if (!data && !error) return <LoadingBlock />;
   if (error) return <ErrorState error={error} />;
@@ -131,7 +140,8 @@ export default function AdminDashboardPage() {
         <section>
           <h3>Phạm vi công việc hiện tại</h3>
           <ol>
-            {canModerate ? <li>Xử lý hàng chờ và báo cáo đúng nhóm nội dung được phân quyền.</li> : null}
+            {canModerate ? <li>Xử lý hàng chờ đúng nhóm nội dung được phân quyền.</li> : null}
+            {canHandleReports ? <li>Tiếp nhận và xử lý báo cáo vi phạm thuộc phạm vi kiểm soát.</li> : null}
             {canCreateArticle ? <li>Soạn và biên tập nội dung trong Content Studio theo quyền tòa soạn.</li> : null}
             {canManageUsers ? <li>Quản lý trạng thái tài khoản; System Admin có thể gán vai trò nhân sự.</li> : null}
             {canManageLeads ? <li>Phản hồi và cập nhật pipeline khách hàng tiềm năng.</li> : null}
