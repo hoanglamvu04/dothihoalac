@@ -34,6 +34,7 @@ jobs:
           src/api/admin.api.js
           src/api/content.api.js
           src/api/interaction.api.js
+          src/api/system.api.js
           src/api/user.api.js
           src/api/weather.api.js
           src/app/App.jsx
@@ -41,6 +42,7 @@ jobs:
           src/components/ads/AdSlot.jsx
           src/components/community/DeferredCommunityQuickComposer.jsx
           src/components/content/ArticleBody.jsx
+          src/components/content/ArticleCard.jsx
           src/components/content/ContentImage.jsx
           src/components/content/NewsContextRail.jsx
           src/components/content/ReactionBar.jsx
@@ -101,6 +103,7 @@ jobs:
           src/services/userActivity.service.js
           src/modules/auth/auth.controller.js
           src/modules/notifications/notification.service.js
+          src/modules/comments/comment.model.js
           src/modules/comments/comment.service.js
           src/modules/reactions/reaction.service.js
           src/modules/follows/follow.service.js
@@ -139,6 +142,9 @@ jobs:
           src/modules/projects/project.controller.js
           src/modules/projects/project.routes.js
           src/modules/projects/project.admin.routes.js
+          src/modules/system/homeFeed.service.js
+          src/modules/system/system.controller.js
+          src/modules/system/system.routes.js
           src/modules/users/user.controller.js
           src/modules/users/user.routes.js
           src/modules/users/user.service.js
