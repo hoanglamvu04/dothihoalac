@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { getOrCreateModel } from '../../utils/modelHelpers.js';
+
 const schema = new mongoose.Schema(
   {
     contentId: {
@@ -35,6 +36,7 @@ const schema = new mongoose.Schema(
       type: String,
       enum: ['none', 'under_1_year', '1_3_years', '3_5_years', 'over_5_years'],
       default: 'none',
+      index: true,
     },
     workLocation: { type: String, required: true, maxlength: 500 },
     applicationMethod: { type: String, default: '', maxlength: 2000 },
@@ -45,4 +47,8 @@ const schema = new mongoose.Schema(
   },
   { timestamps: true, collection: 'jobposts' },
 );
+
+schema.index({ jobType: 1, experienceLevel: 1, deadline: 1 });
+schema.index({ deadline: 1, createdAt: -1 });
+
 export default getOrCreateModel('JobPost', schema, 'jobposts');
