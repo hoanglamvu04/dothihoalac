@@ -16,6 +16,8 @@ export default function Avatar({ src, name, size = 'md', className = '' }) {
         <img
           src={url}
           alt={name || 'Ảnh đại diện'}
+          loading="lazy"
+          decoding="async"
           onError={() => setImageFailed(true)}
         />
       ) : (

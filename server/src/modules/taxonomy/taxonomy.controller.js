@@ -1,5 +1,23 @@
 import * as s from './taxonomy.service.js';
 import { sendCreated, sendSuccess } from '../../utils/apiResponse.js';
+
+export const bootstrap = async (req, res) => {
+  const [categoriesData, areasData, tagsData] = await Promise.all([
+    s.list('categories', {}),
+    s.list('areas', {}),
+    s.list('tags', {}),
+  ]);
+
+  res.set('Cache-Control', 'public, max-age=300, stale-while-revalidate=600');
+  return sendSuccess(res, {
+    data: {
+      categories: categoriesData,
+      areas: areasData,
+      tags: tagsData,
+    },
+  });
+};
+
 export const categories = async (req, res) =>
   sendSuccess(res, { data: await s.list('categories', req.query) });
 export const tags = async (req, res) => sendSuccess(res, { data: await s.list('tags', req.query) });

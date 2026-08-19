@@ -19,6 +19,7 @@ export default function AdSlot({
   slotKey,
   layout = 'inline',
   className = '',
+  deferMs = 0,
 }) {
   const [device, setDevice] = useState(currentDevice);
   const [ad, setAd] = useState(null);
@@ -50,8 +51,6 @@ export default function AdSlot({
         }
       },
       {
-        // Tải trước một đoạn để banner sẵn sàng trước khi người dùng cuộn tới,
-        // nhưng không tạo request cho footer/quảng cáo rất xa viewport lúc mở trang.
         rootMargin: '700px 0px',
         threshold: 0,
       },
@@ -63,26 +62,36 @@ export default function AdSlot({
 
   useEffect(() => {
     let active = true;
+    let timer = null;
 
     if (!slotKey || !shouldLoad) {
       if (!slotKey) setAd(null);
       return undefined;
     }
 
-    systemApi
-      .banners(slotKey, device, 1)
-      .then((items) => {
-        if (!active) return;
-        setAd(Array.isArray(items) && items.length ? items[0] : null);
-      })
-      .catch(() => {
-        if (active) setAd(null);
-      });
+    const load = () => {
+      systemApi
+        .banners(slotKey, device, 1)
+        .then((items) => {
+          if (!active) return;
+          setAd(Array.isArray(items) && items.length ? items[0] : null);
+        })
+        .catch(() => {
+          if (active) setAd(null);
+        });
+    };
+
+    if (Number(deferMs) > 0) {
+      timer = window.setTimeout(load, Number(deferMs));
+    } else {
+      load();
+    }
 
     return () => {
       active = false;
+      if (timer) window.clearTimeout(timer);
     };
-  }, [device, shouldLoad, slotKey]);
+  }, [deferMs, device, shouldLoad, slotKey]);
 
   useEffect(() => {
     const id = String(ad?._id || '');
@@ -124,6 +133,7 @@ export default function AdSlot({
             alt={ad.imageMediaId?.altText || ad.headline || ad.title || 'Quảng cáo'}
             loading="lazy"
             decoding="async"
+            fetchPriority="low"
           />
         </div>
       ) : null}

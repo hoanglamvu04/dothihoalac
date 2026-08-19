@@ -12,10 +12,13 @@ function wantsCompact(value) {
 
 export async function list(req, res) {
   const compact = wantsCompact(req.query.compact);
+  const query = req.query.limit
+    ? req.query
+    : { ...req.query, limit: 10 };
   const result = compact
-    ? await listCompactCommunity(req.query)
+    ? await listCompactCommunity(query)
     : await s.list(
-        req.query,
+        query,
         req.user?._id || null,
       );
 
@@ -96,6 +99,7 @@ export async function submit(req, res) {
     data: await s.submit(
       req.params.id,
       req.user._id,
+      req.body,
     ),
     message: 'Đã gửi bài đi duyệt.',
   });

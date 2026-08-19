@@ -143,6 +143,10 @@ const schema = new mongoose.Schema(
 schema.index({ transactionType: 1, propertyType: 1, price: 1, landArea: 1 });
 schema.index({ listingPriority: -1, createdAt: -1 });
 schema.index({ expiresAt: 1, soldAt: 1, rentedAt: 1, listingPriority: -1, createdAt: -1 });
+// List mặc định luôn lọc soldAt/rentedAt bằng null rồi sort theo priority/date.
+// Đặt các equality field trước sort giúp Mongo giữ thứ tự index, còn expiresAt
+// là range filter đặt sau để tránh làm mất lợi thế sort của compound index.
+schema.index({ soldAt: 1, rentedAt: 1, listingPriority: -1, createdAt: -1, expiresAt: 1 });
 schema.index({ location: '2dsphere' }, { sparse: true });
 
 export default getOrCreateModel('PropertyListing', schema, 'propertylistings');

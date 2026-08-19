@@ -23,12 +23,7 @@ import PropertyCard from '../../components/content/PropertyCard';
 import AdSlot from '../../components/ads/AdSlot';
 import EmptyState from '../../components/common/EmptyState';
 import { LoadingBlock } from '../../components/common/Loading';
-import {
-  articleApi,
-  communityApi,
-  jobApi,
-  propertyApi,
-} from '../../api/content.api';
+import { systemApi } from '../../api/system.api';
 import { contentPath } from '../../utils/content';
 import { formatRelativeTime } from '../../utils/formatters';
 
@@ -56,11 +51,13 @@ const INITIAL_LOADING = {
   jobs: true,
 };
 
-function normalizeItems(response) {
-  if (Array.isArray(response?.items)) return response.items;
-  if (Array.isArray(response?.data?.items)) return response.data.items;
-  if (Array.isArray(response?.data)) return response.data;
-  return [];
+function normalizeHomeFeed(value) {
+  return {
+    articles: Array.isArray(value?.articles) ? value.articles : [],
+    community: Array.isArray(value?.community) ? value.community : [],
+    properties: Array.isArray(value?.properties) ? value.properties : [],
+    jobs: Array.isArray(value?.jobs) ? value.jobs : [],
+  };
 }
 
 function isCanceled(error) {
@@ -150,53 +147,36 @@ export default function HomePage() {
   useEffect(() => {
     let active = true;
     const controller = new AbortController();
-    const requestConfig = { signal: controller.signal };
 
     setLoading(INITIAL_LOADING);
     setErrors(INITIAL_ERRORS);
 
-    const requests = {
-      articles: articleApi.list({ page: 1, limit: 14 }, requestConfig),
-      community: communityApi.list(
-        { page: 1, limit: 4, sort: 'popular', compact: 1 },
-        requestConfig,
-      ),
-      properties: propertyApi.list({ page: 1, limit: 4 }, requestConfig),
-      jobs: jobApi.list({ page: 1, limit: 4 }, requestConfig),
-    };
-
-    Object.entries(requests).forEach(([key, request]) => {
-      request
-        .then((response) => {
-          if (!active) return;
-          setData((current) => ({
-            ...current,
-            [key]: normalizeItems(response),
-          }));
-          setErrors((current) => ({
-            ...current,
-            [key]: false,
-          }));
-        })
-        .catch((error) => {
-          if (!active || isCanceled(error)) return;
-          setData((current) => ({
-            ...current,
-            [key]: [],
-          }));
-          setErrors((current) => ({
-            ...current,
-            [key]: true,
-          }));
-        })
-        .finally(() => {
-          if (!active) return;
-          setLoading((current) => ({
-            ...current,
-            [key]: false,
-          }));
+    systemApi
+      .homeFeed({ signal: controller.signal })
+      .then((response) => {
+        if (!active) return;
+        setData(normalizeHomeFeed(response));
+        setErrors(INITIAL_ERRORS);
+      })
+      .catch((error) => {
+        if (!active || isCanceled(error)) return;
+        setData(INITIAL_DATA);
+        setErrors({
+          articles: true,
+          community: true,
+          properties: true,
+          jobs: true,
         });
-    });
+      })
+      .finally(() => {
+        if (!active) return;
+        setLoading({
+          articles: false,
+          community: false,
+          properties: false,
+          jobs: false,
+        });
+      });
 
     return () => {
       active = false;

@@ -1,7 +1,13 @@
 import { useState } from 'react';
 import { mediaUrl } from '../../utils/media';
+import './ContentImage.css';
 
-const RESPONSIVE_WIDTHS = [320, 480, 640, 960, 1280, 1600];
+const RESPONSIVE_WIDTHS = [480, 640, 768, 960, 1280, 1600, 1920, 2560];
+const DEFAULT_SOURCE_WIDTH = 1600;
+const DEFAULT_SIZES =
+  '(max-width: 720px) calc(100vw - 32px), (max-width: 1200px) 70vw, 820px';
+const PROPERTY_SIZES =
+  '(max-width: 760px) calc(100vw - 20px), (max-width: 1280px) 38vw, 560px';
 
 function cloudinaryVariant(url, width) {
   const value = String(url || '');
@@ -12,7 +18,7 @@ function cloudinaryVariant(url, width) {
 
   return value.replace(
     '/upload/',
-    `/upload/f_auto,q_auto:eco,c_limit,w_${width}/`,
+    `/upload/f_auto,q_auto:good,c_limit,w_${width}/`,
   );
 }
 
@@ -38,7 +44,7 @@ export default function ContentImage({
   height,
   fetchPriority,
   srcSet,
-  sizes = '(max-width: 720px) 100vw, (max-width: 1200px) 50vw, 640px',
+  sizes,
   ...props
 }) {
   const [failed, setFailed] = useState(false);
@@ -47,11 +53,14 @@ export default function ContentImage({
   if (!originalSrc || failed) return fallback;
 
   const responsiveSet = srcSet || responsiveSourceSet(originalSrc);
+  const responsiveSizes =
+    sizes || (ratio === 'property' ? PROPERTY_SIZES : DEFAULT_SIZES);
   const src = responsiveSet
-    ? cloudinaryVariant(originalSrc, 1280)
+    ? cloudinaryVariant(originalSrc, DEFAULT_SOURCE_WIDTH)
     : originalSrc;
 
   const classes = [
+    'content-image',
     className,
     ratio ? `content-image--${ratio}` : '',
   ]
@@ -69,7 +78,7 @@ export default function ContentImage({
     <img
       src={src}
       srcSet={responsiveSet}
-      sizes={responsiveSet ? sizes : undefined}
+      sizes={responsiveSet ? responsiveSizes : undefined}
       alt={alt || resolvedImage?.altText || ''}
       loading={loading}
       decoding={decoding}

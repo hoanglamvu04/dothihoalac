@@ -52,16 +52,18 @@ export function AuthProvider({ children }) {
     const request = (async () => {
       try {
         const current = await authApi.me();
-        let profile = current?.profile || null;
+        let profile = current?.profile ?? null;
 
-        // /auth/me có thể chỉ chứa ObjectId của media. Lấy hồ sơ đầy đủ một
-        // lần trong cùng chu kỳ refresh, nhưng không tạo request trùng khi tab
-        // vừa focus + pageshow + visibilitychange cùng lúc.
-        try {
-          const hydratedProfile = await userApi.myProfile();
-          if (hydratedProfile) profile = hydratedProfile;
-        } catch {
-          /* Giữ profile từ /auth/me nếu endpoint hồ sơ tạm thời không khả dụng. */
+        // Backend hiện trả profile trực tiếp từ /auth/me. Chỉ gọi endpoint hồ
+        // sơ riêng khi làm việc với backend cũ không có trường profile, tránh
+        // một request tuần tự thừa ở mọi lần mở/reload ứng dụng đã đăng nhập.
+        if (!Object.prototype.hasOwnProperty.call(current || {}, 'profile')) {
+          try {
+            const hydratedProfile = await userApi.myProfile();
+            if (hydratedProfile) profile = hydratedProfile;
+          } catch {
+            /* Backend cũ có thể không có hồ sơ; giữ profile rỗng. */
+          }
         }
 
         const merged = { ...current, profile };

@@ -59,18 +59,12 @@ function writeCache(categories, areas, tags) {
 }
 
 export function TaxonomyProvider({ children }) {
-  const initialCacheRef = useRef(null);
-
-  if (initialCacheRef.current === null) {
-    initialCacheRef.current = readCache() || false;
-  }
-
-  const cached = initialCacheRef.current || null;
-
+  const [cached] = useState(readCache);
   const [categories, setCategories] = useState(() => cached?.categories || []);
   const [areas, setAreas] = useState(() => cached?.areas || []);
   const [tags, setTags] = useState(() => cached?.tags || []);
-  const [loading, setLoading] = useState(() => !cached);
+  const [loading, setLoading] = useState(false);
+  const [initialized, setInitialized] = useState(() => Boolean(cached));
   const requestRef = useRef(null);
 
   const reload = useCallback(async () => {
@@ -81,28 +75,15 @@ export function TaxonomyProvider({ children }) {
     setLoading(true);
 
     const request = (async () => {
-      const [categoryResult, areaResult, tagResult] = await Promise.allSettled([
-        taxonomyApi.categories(),
-        taxonomyApi.areas(),
-        taxonomyApi.tags(),
-      ]);
-
-      const nextCategories =
-        categoryResult.status === 'fulfilled' ? categoryResult.value : [];
-      const nextAreas = areaResult.status === 'fulfilled' ? areaResult.value : [];
-      const nextTags = tagResult.status === 'fulfilled' ? tagResult.value : [];
+      const result = await taxonomyApi.bootstrap();
+      const nextCategories = Array.isArray(result?.categories) ? result.categories : [];
+      const nextAreas = Array.isArray(result?.areas) ? result.areas : [];
+      const nextTags = Array.isArray(result?.tags) ? result.tags : [];
 
       setCategories(nextCategories);
       setAreas(nextAreas);
       setTags(nextTags);
-
-      if (
-        categoryResult.status === 'fulfilled' &&
-        areaResult.status === 'fulfilled' &&
-        tagResult.status === 'fulfilled'
-      ) {
-        writeCache(nextCategories, nextAreas, nextTags);
-      }
+      writeCache(nextCategories, nextAreas, nextTags);
 
       return {
         categories: nextCategories,
@@ -119,17 +100,23 @@ export function TaxonomyProvider({ children }) {
       if (requestRef.current === request) {
         requestRef.current = null;
       }
+      setInitialized(true);
       setLoading(false);
     }
   }, []);
 
-  useEffect(() => {
-    // Taxonomy thay đổi chậm. Nếu phiên hiện tại đã có cache hợp lệ thì dùng
-    // ngay thay vì tạo thêm 3 request ở mỗi lần reload trang.
-    if (!cached) {
-      void reload();
-    }
-  }, [cached, reload]);
+  const categoriesFor = useCallback(
+    (scope) =>
+      categories.filter(
+        (item) => item.contentScope === 'all' || item.contentScope === scope,
+      ),
+    [categories],
+  );
+
+  const areaBySlug = useCallback(
+    (slug) => areas.find((item) => item.slug === slug),
+    [areas],
+  );
 
   const value = useMemo(
     () => ({
@@ -137,12 +124,21 @@ export function TaxonomyProvider({ children }) {
       areas,
       tags,
       loading,
+      initialized,
       reload,
-      categoriesFor: (scope) =>
-        categories.filter((item) => item.contentScope === 'all' || item.contentScope === scope),
-      areaBySlug: (slug) => areas.find((item) => item.slug === slug),
+      categoriesFor,
+      areaBySlug,
     }),
-    [categories, areas, tags, loading, reload],
+    [
+      categories,
+      areas,
+      tags,
+      loading,
+      initialized,
+      reload,
+      categoriesFor,
+      areaBySlug,
+    ],
   );
 
   return <TaxonomyContext.Provider value={value}>{children}</TaxonomyContext.Provider>;
@@ -151,5 +147,14 @@ export function TaxonomyProvider({ children }) {
 export function useTaxonomy() {
   const context = useContext(TaxonomyContext);
   if (!context) throw new Error('useTaxonomy must be used inside TaxonomyProvider');
+
+  useEffect(() => {
+    // Chỉ tải taxonomy khi component thực sự sử dụng nó. Dữ liệu category,
+    // area và tag được gộp trong một bootstrap request và cache theo phiên.
+    if (!context.initialized && !context.loading) {
+      void context.reload();
+    }
+  }, [context.initialized, context.loading, context.reload]);
+
   return context;
 }
