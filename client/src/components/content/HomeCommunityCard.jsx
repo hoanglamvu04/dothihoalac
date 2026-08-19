@@ -17,18 +17,21 @@ function firstMedia(item) {
   return item?.thumbnailMediaId || item?.body?.inlineMediaIds?.[0] || null;
 }
 
-function excerpt(item) {
-  const value = String(
-    item?.body?.bodyText ||
-      item?.summary ||
-      item?.title ||
-      '',
-  )
+function cleanText(value) {
+  return String(value || '')
     .replace(/\s+/g, ' ')
     .trim();
+}
 
-  if (!value) return 'Mở bài viết để xem nội dung chia sẻ từ cộng đồng.';
-  return value;
+function communityCopy(item) {
+  const title = cleanText(item?.title);
+  const body = cleanText(item?.body?.bodyText || item?.summary);
+  const fallback = 'Mở bài viết để xem nội dung chia sẻ từ cộng đồng.';
+
+  return {
+    title: title || body || fallback,
+    excerpt: body && body !== title ? body : '',
+  };
 }
 
 export default function HomeCommunityCard({ item }) {
@@ -38,10 +41,18 @@ export default function HomeCommunityCard({ item }) {
   const imageSrc = mediaUrl(image);
   const href = contentPath(item);
   const typeLabel = COMMUNITY_TYPES[item?.community?.postType] || 'Cộng đồng';
-  const text = excerpt(item);
+  const copy = communityCopy(item);
+  const cardClassName = [
+    'home-community-card',
+    imageSrc ? 'home-community-card--with-media' : 'home-community-card--text-only',
+  ].join(' ');
 
   return (
-    <Link className="home-community-card" to={href} aria-label={`Mở bài viết: ${item?.title || text}`}>
+    <Link
+      className={cardClassName}
+      to={href}
+      aria-label={`Mở bài viết: ${copy.title}`}
+    >
       <div className="home-community-card__body">
         <header className="home-community-card__author">
           <Avatar
@@ -61,7 +72,10 @@ export default function HomeCommunityCard({ item }) {
           <small>{typeLabel}</small>
         </header>
 
-        <p>{text}</p>
+        <div className="home-community-card__copy">
+          <h3>{copy.title}</h3>
+          {copy.excerpt ? <p>{copy.excerpt}</p> : null}
+        </div>
 
         <footer className="home-community-card__footer">
           <span>
