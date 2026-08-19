@@ -327,7 +327,7 @@ export default function ResetPasswordPage() {
                 </strong>
 
                 <small>
-                  Thông tin đúng · Kết nối thật
+                  Trung Tâm Phát Triển Đô Thị Hòa Lạc
                 </small>
               </span>
             </Link>

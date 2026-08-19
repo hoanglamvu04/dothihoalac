@@ -50,7 +50,7 @@ export default function SiteFooter() {
             <img src="/Logo2.png" alt="Đô Thị Hòa Lạc" />
             <span>
               <strong>Đô Thị Hòa Lạc</strong>
-              <small>Thông tin đúng · Kết nối thật</small>
+              <small>Trung Tâm Phát Triển Đô Thị Hòa Lạc</small>
             </span>
           </Link>
 

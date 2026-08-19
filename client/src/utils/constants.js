@@ -24,7 +24,7 @@ export const ARTICLE_CATEGORY_RAIL = [
   { slug: 'quy-hoach', label: 'Quy hoạch' },
   { slug: 'ha-tang-giao-thong', label: 'Hạ tầng' },
   { slug: 'du-an-dtxd', label: 'Dự án ĐTXD' },
-  { slug: 'bat-dong-san-hoa-lac', label: 'BĐS Hòa Lạc' },
+  { slug: 'bds-hoa-lac', label: 'BĐS Hòa Lạc' },
   { slug: 'hanh-chinh', label: 'Hành chính' },
   { slug: 'chinh-sach', label: 'Chính sách' },
   { slug: 'giao-duc', label: 'Giáo dục' },

@@ -1074,8 +1074,7 @@ export default function SiteHeader() {
       <div className="dthl-header-top">
         <div className="dthl-container dthl-header-top__inner">
           <span>
-            Nền tảng thông tin và cộng đồng
-            Hòa Lạc
+            Trung Tâm Phát Triển Đô Thị Hòa Lạc
           </span>
 
           <div className="dthl-header-top__links">
@@ -1111,7 +1110,7 @@ export default function SiteHeader() {
               </strong>
 
               <small>
-                Thông tin đúng · Kết nối thật
+                Trung Tâm Phát Triển Đô Thị Hòa Lạc
               </small>
             </span>
           </Link>
