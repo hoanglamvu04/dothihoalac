@@ -13,21 +13,36 @@ import {
 import asyncHandler from '../../utils/asyncHandler.js';
 
 const r = Router();
+const editorialReadPermissions = [
+  PERMISSIONS.CREATE_ARTICLE,
+  PERMISSIONS.EDIT_ARTICLE,
+  PERMISSIONS.APPROVE_ARTICLE,
+  PERMISSIONS.PUBLISH_ARTICLE,
+  PERMISSIONS.MANAGE_SYSTEM,
+];
 
-r.use(
-  requireAuth,
-  requirePermission(
-    PERMISSIONS.CREATE_ARTICLE,
-    PERMISSIONS.EDIT_ARTICLE,
-    PERMISSIONS.MANAGE_SYSTEM,
-  ),
+r.use(requireAuth);
+
+r.get('/', requirePermission(...editorialReadPermissions), asyncHandler(c.adminList));
+r.get('/:id', requirePermission(...editorialReadPermissions), asyncHandler(c.adminDetail));
+r.post(
+  '/',
+  requirePermission(PERMISSIONS.CREATE_ARTICLE, PERMISSIONS.MANAGE_SYSTEM),
+  validate(articleBodySchema),
+  asyncHandler(c.adminCreate),
 );
-
-r.get('/', asyncHandler(c.adminList));
-r.post('/bulk-delete', validate(articleBulkDeleteSchema), asyncHandler(c.adminBulkDelete));
-r.get('/:id', asyncHandler(c.adminDetail));
-r.post('/', validate(articleBodySchema), asyncHandler(c.adminCreate));
-r.delete('/:id', validate(articleDeleteSchema), asyncHandler(c.adminDelete));
+r.post(
+  '/bulk-delete',
+  requirePermission(PERMISSIONS.PUBLISH_ARTICLE, PERMISSIONS.MANAGE_SYSTEM),
+  validate(articleBulkDeleteSchema),
+  asyncHandler(c.adminBulkDelete),
+);
+r.delete(
+  '/:id',
+  requirePermission(PERMISSIONS.PUBLISH_ARTICLE, PERMISSIONS.MANAGE_SYSTEM),
+  validate(articleDeleteSchema),
+  asyncHandler(c.adminDelete),
+);
 
 /*
  * Google Docs giữ nội dung; endpoint này chỉ cập nhật metadata CMS
@@ -35,10 +50,21 @@ r.delete('/:id', validate(articleDeleteSchema), asyncHandler(c.adminDelete));
  */
 r.patch(
   '/:id/metadata',
+  requirePermission(
+    PERMISSIONS.EDIT_ARTICLE,
+    PERMISSIONS.APPROVE_ARTICLE,
+    PERMISSIONS.PUBLISH_ARTICLE,
+    PERMISSIONS.MANAGE_SYSTEM,
+  ),
   validate(articleMetadataSchema),
   asyncHandler(c.adminUpdateMetadata),
 );
 
-r.patch('/:id', validate(articleBodySchema), asyncHandler(c.adminUpdate));
+r.patch(
+  '/:id',
+  requirePermission(PERMISSIONS.EDIT_ARTICLE, PERMISSIONS.MANAGE_SYSTEM),
+  validate(articleBodySchema),
+  asyncHandler(c.adminUpdate),
+);
 
 export default r;
