@@ -57,29 +57,37 @@ async function mutation(request, action) {
 
 function getList(url, params = {}, config = {}) {
   const { cache = true, ...axiosConfig } = config || {};
+  const key = cache ? cacheKey(url, params) : '';
 
-  if (!cache || axiosConfig.signal) {
+  if (cache) {
+    const cached = publicListCache.get(key);
+    const now = Date.now();
+
+    if (cached && now - cached.createdAt < PUBLIC_LIST_CACHE_TTL) {
+      return Promise.resolve(cached.response);
+    }
+
+    if (cached) {
+      publicListCache.delete(key);
+    }
+  }
+
+  if (!cache) {
     return api.get(url, {
       ...axiosConfig,
       params,
     });
   }
 
-  const key = cacheKey(url, params);
-  const cached = publicListCache.get(key);
-  const now = Date.now();
-
-  if (cached && now - cached.createdAt < PUBLIC_LIST_CACHE_TTL) {
-    return Promise.resolve(cached.response);
-  }
-
-  if (cached) {
-    publicListCache.delete(key);
-  }
-
-  const pending = publicListInFlight.get(key);
-  if (pending) {
-    return pending;
+  // Chỉ chia sẻ request đang chạy khi request không gắn AbortSignal. Nếu dùng
+  // chung một request có signal, một component unmount có thể hủy request của
+  // component khác. Request có signal vẫn được ghi cache sau khi hoàn tất để
+  // điều hướng quay lại trang không phải tải lại ngay.
+  if (!axiosConfig.signal) {
+    const pending = publicListInFlight.get(key);
+    if (pending) {
+      return pending;
+    }
   }
 
   const request = api
@@ -93,13 +101,18 @@ function getList(url, params = {}, config = {}) {
         response,
       });
       return response;
-    })
-    .finally(() => {
-      publicListInFlight.delete(key);
     });
 
-  publicListInFlight.set(key, request);
-  return request;
+  if (axiosConfig.signal) {
+    return request;
+  }
+
+  const sharedRequest = request.finally(() => {
+    publicListInFlight.delete(key);
+  });
+
+  publicListInFlight.set(key, sharedRequest);
+  return sharedRequest;
 }
 
 function optimizedCommunityParams(params = {}) {
