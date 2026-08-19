@@ -48,13 +48,8 @@ export async function search(query) {
 
   if (query.area) filter.primaryAreaId = query.area;
 
-  const contentQuery = searchesContent
-    ? Content.find(
-        filter,
-        useTextIndex
-          ? { score: { $meta: 'textScore' } }
-          : undefined,
-      )
+  const contentPromise = searchesContent
+    ? Content.find(filter)
         .populate('authorId', 'username displayName')
         .populate('primaryAreaId', 'name slug')
         .populate('primaryCategoryId', 'name slug')
@@ -70,9 +65,8 @@ export async function search(query) {
         .skip(skip)
         .limit(limit)
         .lean()
-    : null;
+    : Promise.resolve([]);
 
-  const contentPromise = contentQuery || Promise.resolve([]);
   const totalPromise = searchesContent
     ? Content.countDocuments(filter)
     : Promise.resolve(0);
