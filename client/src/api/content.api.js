@@ -1,6 +1,41 @@
 import { api, unwrap, unwrapList } from './http';
 
+const PUBLIC_LIST_CACHE_TTL = 15000;
+const publicListCache = new Map();
+const publicListInFlight = new Map();
+
+function normalizeCacheValue(value) {
+  if (Array.isArray(value)) {
+    return value.map(normalizeCacheValue);
+  }
+
+  if (value && typeof value === 'object') {
+    return Object.keys(value)
+      .sort()
+      .reduce((result, key) => {
+        const nextValue = value[key];
+        if (nextValue !== undefined) {
+          result[key] = normalizeCacheValue(nextValue);
+        }
+        return result;
+      }, {});
+  }
+
+  return value;
+}
+
+function cacheKey(url, params = {}) {
+  return `${url}?${JSON.stringify(normalizeCacheValue(params))}`;
+}
+
+function clearPublicListCache() {
+  publicListCache.clear();
+  publicListInFlight.clear();
+}
+
 function emitContentChanged(item, action = 'update') {
+  clearPublicListCache();
+
   if (typeof window === 'undefined') return;
 
   window.dispatchEvent(
@@ -21,10 +56,50 @@ async function mutation(request, action) {
 }
 
 function getList(url, params = {}, config = {}) {
-  return api.get(url, {
-    ...config,
-    params,
-  });
+  const { cache = true, ...axiosConfig } = config || {};
+
+  if (!cache || axiosConfig.signal) {
+    return api.get(url, {
+      ...axiosConfig,
+      params,
+    });
+  }
+
+  const key = cacheKey(url, params);
+  const cached = publicListCache.get(key);
+  const now = Date.now();
+
+  if (cached && now - cached.createdAt < PUBLIC_LIST_CACHE_TTL) {
+    return Promise.resolve(cached.response);
+  }
+
+  if (cached) {
+    publicListCache.delete(key);
+  }
+
+  const pending = publicListInFlight.get(key);
+  if (pending) {
+    return pending;
+  }
+
+  const request = api
+    .get(url, {
+      ...axiosConfig,
+      params,
+    })
+    .then((response) => {
+      publicListCache.set(key, {
+        createdAt: Date.now(),
+        response,
+      });
+      return response;
+    })
+    .finally(() => {
+      publicListInFlight.delete(key);
+    });
+
+  publicListInFlight.set(key, request);
+  return request;
 }
 
 function optimizedCommunityParams(params = {}) {
