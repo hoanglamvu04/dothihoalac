@@ -58,6 +58,14 @@ const MODERATION_PERMISSIONS = [
   'moderate_comment',
 ];
 
+const REPORT_PERMISSIONS = [
+  'manage_users',
+  'moderate_community',
+  'moderate_property',
+  'moderate_job',
+  'moderate_comment',
+];
+
 const navGroups = [
   {
     label: 'Tổng quan',
@@ -137,7 +145,7 @@ const navGroups = [
         to: '/quan-tri/bao-cao',
         label: 'Báo cáo vi phạm',
         icon: Flag,
-        permissions: ['manage_users', ...MODERATION_PERMISSIONS],
+        permissions: REPORT_PERMISSIONS,
       },
       {
         to: '/quan-tri/khach-hang',
