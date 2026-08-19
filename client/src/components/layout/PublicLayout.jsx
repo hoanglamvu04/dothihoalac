@@ -1,12 +1,14 @@
+import { lazy, Suspense } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import SiteHeader from './SiteHeader';
 import HeaderNavigationUpgrade from './HeaderNavigationUpgrade';
-import SiteFooter from './SiteFooter';
+import DeferredSiteFooter from './DeferredSiteFooter';
 import DeferredCommunityQuickComposer from '../community/DeferredCommunityQuickComposer';
-import CommunityAdRails from '../community/CommunityAdRails';
 import AdSlot from '../ads/AdSlot';
 
 import './PublicInteractionFixes.css';
+
+const CommunityAdRails = lazy(() => import('../community/CommunityAdRails'));
 
 function pageTopAdSlot(pathname) {
   if (pathname === '/tin-tuc') return 'news_top';
@@ -38,12 +40,16 @@ export default function PublicLayout() {
       {topSlot ? <AdSlot slotKey={topSlot} layout="strip" /> : null}
 
       <main className={`main-content${showCommunityAds ? ' main-content--community' : ''}`}>
-        {showCommunityAds ? <CommunityAdRails /> : null}
+        {showCommunityAds ? (
+          <Suspense fallback={null}>
+            <CommunityAdRails />
+          </Suspense>
+        ) : null}
         <Outlet />
       </main>
 
       <AdSlot slotKey="site_before_footer" layout="strip" />
-      <SiteFooter />
+      <DeferredSiteFooter />
       <DeferredCommunityQuickComposer />
     </div>
   );
