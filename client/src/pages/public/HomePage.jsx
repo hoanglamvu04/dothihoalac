@@ -33,6 +33,7 @@ import { contentPath } from '../../utils/content';
 import { formatRelativeTime } from '../../utils/formatters';
 
 import './HomePage.css';
+import './HomePageCards.css';
 
 const INITIAL_DATA = {
   articles: [],
