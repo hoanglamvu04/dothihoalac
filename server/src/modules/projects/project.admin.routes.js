@@ -2,8 +2,8 @@ import { Router } from 'express';
 
 import * as controller from './project.controller.js';
 import { requireAuth } from '../../middlewares/auth.middleware.js';
-import { requireRole } from '../../middlewares/role.middleware.js';
-import { ADMIN_ROLES } from '../../constants/roles.js';
+import { requirePermission } from '../../middlewares/role.middleware.js';
+import { PERMISSIONS } from '../../constants/permissions.js';
 import { validate } from '../../middlewares/validate.middleware.js';
 import asyncHandler from '../../utils/asyncHandler.js';
 import {
@@ -16,7 +16,7 @@ import {
 } from './project.validation.js';
 
 const router = Router();
-router.use(requireAuth, requireRole(...ADMIN_ROLES));
+router.use(requireAuth, requirePermission(PERMISSIONS.MANAGE_SYSTEM));
 
 router.get('/', validate(adminListSchema), asyncHandler(controller.adminList));
 router.post('/', validate(createProjectSchema), asyncHandler(controller.create));
