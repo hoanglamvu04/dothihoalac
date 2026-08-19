@@ -1,0 +1,90 @@
+/*
+ * Public interaction hardening.
+ * Keep route navigation predictable and prevent desktop taxonomy menus from
+ * staying open only because a clicked link still owns keyboard focus.
+ */
+
+/* Desktop taxonomy menus are hover-driven. Focus must not pin them open after navigation. */
+.dthl-header-nav-upgrade__item:not(:hover) > .dthl-header-submenu {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transform: translateY(-6px) !important;
+}
+
+.dthl-header-nav-upgrade__item:not(:hover) .dthl-header-nav-upgrade__chevron {
+  transform: none !important;
+}
+
+/* Việc làm đi thẳng tới trang danh sách, không dùng taxonomy submenu trên header. */
+.dthl-header-nav-upgrade__item:has(> .dthl-header-nav-upgrade__link[href='/viec-lam'])
+  > .dthl-header-submenu,
+.dthl-header-nav-upgrade__item:has(> .dthl-header-nav-upgrade__link[href='/viec-lam'])
+  .dthl-header-nav-upgrade__chevron {
+  display: none !important;
+}
+
+.dthl-mobile-nav-upgrade__item:has(.dthl-mobile-nav-upgrade__link[href='/viec-lam'])
+  .dthl-mobile-nav-upgrade__toggle,
+.dthl-mobile-nav-upgrade__item:has(.dthl-mobile-nav-upgrade__link[href='/viec-lam'])
+  .dthl-mobile-nav-upgrade__submenu {
+  display: none !important;
+}
+
+.dthl-mobile-nav-upgrade__item:has(.dthl-mobile-nav-upgrade__link[href='/viec-lam'])
+  .dthl-mobile-nav-upgrade__row {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+/*
+ * Job detail: sidebar is normal document flow, never sticky/fixed and never
+ * overlaps the content below it. Keep every card in one clean vertical stack.
+ */
+.job-detail-sidebar,
+.job-detail-sidebar__content {
+  position: static !important;
+  top: auto !important;
+  right: auto !important;
+  bottom: auto !important;
+  left: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+  transform: none !important;
+}
+
+.job-detail-sidebar__content {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  align-items: start !important;
+  gap: 12px !important;
+}
+
+.job-detail-sidebar__content > .job-apply-card,
+.job-detail-sidebar__content > .job-sidebar-card {
+  position: static !important;
+  grid-column: 1 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  margin: 0 !important;
+}
+
+.job-apply-card__contacts,
+.job-apply-card__company,
+.job-sidebar-summary,
+.job-sidebar-summary dl,
+.job-sidebar-summary dl > div {
+  min-width: 0;
+}
+
+.job-apply-card__contacts strong,
+.job-apply-card__company strong,
+.job-sidebar-summary dd,
+.job-sidebar-summary dd a {
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+/* Việc làm không sử dụng bình luận. */
+.job-comments-section,
+.job-detail-header-meta > span:has(svg.lucide-message-circle) {
+  display: none !important;
+}
