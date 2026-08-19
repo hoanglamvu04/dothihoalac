@@ -49,11 +49,22 @@ const INITIAL_ERRORS = {
   jobs: false,
 };
 
+const INITIAL_LOADING = {
+  articles: true,
+  community: true,
+  properties: true,
+  jobs: true,
+};
+
 function normalizeItems(response) {
   if (Array.isArray(response?.items)) return response.items;
   if (Array.isArray(response?.data?.items)) return response.data.items;
   if (Array.isArray(response?.data)) return response.data;
   return [];
+}
+
+function isCanceled(error) {
+  return error?.name === 'CanceledError' || error?.code === 'ERR_CANCELED';
 }
 
 function getItemKey(item, prefix, index) {
@@ -133,55 +144,63 @@ function JobPreview({ item }) {
 export default function HomePage() {
   const [data, setData] = useState(INITIAL_DATA);
   const [errors, setErrors] = useState(INITIAL_ERRORS);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(INITIAL_LOADING);
   const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     let active = true;
-    setLoading(true);
+    const controller = new AbortController();
+    const requestConfig = { signal: controller.signal };
+
+    setLoading(INITIAL_LOADING);
     setErrors(INITIAL_ERRORS);
 
-    Promise.allSettled([
-      articleApi.list({ page: 1, limit: 14 }),
-      communityApi.list({ page: 1, limit: 4, sort: 'popular' }),
-      propertyApi.list({ page: 1, limit: 4 }),
-      jobApi.list({ page: 1, limit: 4 }),
-    ])
-      .then(([articlesResult, communityResult, propertiesResult, jobsResult]) => {
-        if (!active) return;
+    const requests = {
+      articles: articleApi.list({ page: 1, limit: 14 }, requestConfig),
+      community: communityApi.list(
+        { page: 1, limit: 4, sort: 'popular', compact: 1 },
+        requestConfig,
+      ),
+      properties: propertyApi.list({ page: 1, limit: 4 }, requestConfig),
+      jobs: jobApi.list({ page: 1, limit: 4 }, requestConfig),
+    };
 
-        setData({
-          articles:
-            articlesResult.status === 'fulfilled'
-              ? normalizeItems(articlesResult.value)
-              : [],
-          community:
-            communityResult.status === 'fulfilled'
-              ? normalizeItems(communityResult.value)
-              : [],
-          properties:
-            propertiesResult.status === 'fulfilled'
-              ? normalizeItems(propertiesResult.value)
-              : [],
-          jobs:
-            jobsResult.status === 'fulfilled'
-              ? normalizeItems(jobsResult.value)
-              : [],
+    Object.entries(requests).forEach(([key, request]) => {
+      request
+        .then((response) => {
+          if (!active) return;
+          setData((current) => ({
+            ...current,
+            [key]: normalizeItems(response),
+          }));
+          setErrors((current) => ({
+            ...current,
+            [key]: false,
+          }));
+        })
+        .catch((error) => {
+          if (!active || isCanceled(error)) return;
+          setData((current) => ({
+            ...current,
+            [key]: [],
+          }));
+          setErrors((current) => ({
+            ...current,
+            [key]: true,
+          }));
+        })
+        .finally(() => {
+          if (!active) return;
+          setLoading((current) => ({
+            ...current,
+            [key]: false,
+          }));
         });
-
-        setErrors({
-          articles: articlesResult.status === 'rejected',
-          community: communityResult.status === 'rejected',
-          properties: propertiesResult.status === 'rejected',
-          jobs: jobsResult.status === 'rejected',
-        });
-      })
-      .finally(() => {
-        if (active) setLoading(false);
-      });
+    });
 
     return () => {
       active = false;
+      controller.abort();
     };
   }, [reloadKey]);
 
@@ -197,6 +216,7 @@ export default function HomePage() {
   const propertyItems = data.properties.slice(0, 4);
   const jobItems = data.jobs.slice(0, 3);
   const hasAnyError = Object.values(errors).some(Boolean);
+  const hasAnyLoading = Object.values(loading).some(Boolean);
   const visibleContentCount =
     data.articles.length + data.community.length + data.properties.length + data.jobs.length;
 
@@ -210,7 +230,7 @@ export default function HomePage() {
       <section className="home-ref-top">
         <div className="container">
           <SectionState
-            loading={loading}
+            loading={loading.articles}
             error={errors.articles}
             items={data.articles}
             onRetry={retryLoad}
@@ -240,7 +260,7 @@ export default function HomePage() {
             <section className="home-ref-panel home-ref-latest-panel">
               <SectionHeader title="Tin mới nhất" to="/tin-tuc" />
               <SectionState
-                loading={loading}
+                loading={loading.articles}
                 error={errors.articles}
                 items={latestArticles}
                 onRetry={retryLoad}
@@ -265,7 +285,7 @@ export default function HomePage() {
                 to="/tin-tuc?category=quy-hoach"
               />
               <SectionState
-                loading={loading}
+                loading={loading.articles}
                 error={errors.articles}
                 items={spotlightArticles}
                 onRetry={retryLoad}
@@ -287,7 +307,7 @@ export default function HomePage() {
             <section className="home-ref-panel home-ref-jobs-panel">
               <SectionHeader title="Cơ hội việc làm" to="/viec-lam" />
               <SectionState
-                loading={loading}
+                loading={loading.jobs}
                 error={errors.jobs}
                 items={jobItems}
                 onRetry={retryLoad}
@@ -308,7 +328,7 @@ export default function HomePage() {
         <div className="container home-ref-community-shell">
           <SectionHeader title="Cộng đồng Hòa Lạc" to="/cong-dong" />
           <SectionState
-            loading={loading}
+            loading={loading.community}
             error={errors.community}
             items={communityItems}
             onRetry={retryLoad}
@@ -342,7 +362,7 @@ export default function HomePage() {
           </div>
 
           <SectionState
-            loading={loading}
+            loading={loading.properties}
             error={errors.properties}
             items={propertyItems}
             onRetry={retryLoad}
@@ -395,7 +415,7 @@ export default function HomePage() {
         </section>
       ) : null}
 
-      {!loading && !visibleContentCount && !hasAnyError ? (
+      {!hasAnyLoading && !visibleContentCount && !hasAnyError ? (
         <section className="home-ref-empty-note">
           <div className="container">
             <Clock3 size={18} />
