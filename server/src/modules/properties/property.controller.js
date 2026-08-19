@@ -1,8 +1,9 @@
 import * as s from './property.service.js';
+import { listPublicProperties } from './property.publicList.service.js';
 import { sendCreated, sendSuccess } from '../../utils/apiResponse.js';
 
 export async function list(req, res) {
-  const r = await s.list(req.query);
+  const r = await listPublicProperties(req.query);
   return sendSuccess(res, { data: r.items, meta: r.meta });
 }
 
