@@ -31,6 +31,7 @@ import adminContentRoutes from '../modules/moderation/adminContent.routes.js';
 import googleWorkspaceFastRoutes from '../modules/googleWorkspace/googleWorkspace.fast.routes.js';
 import googleWorkspaceRoutes from '../modules/googleWorkspace/googleWorkspace.routes.js';
 import sourceWatchRoutes from '../modules/sourceWatch/sourceWatch.routes.js';
+import roleAdminRoutes from '../modules/roles/role.admin.routes.js';
 
 const router = Router();
 router.use('/health', healthRoutes);
@@ -61,6 +62,7 @@ router.use('/admin/system', systemAdminRoutes);
 router.use('/admin/google-workspace', googleWorkspaceFastRoutes);
 router.use('/admin/google-workspace', googleWorkspaceRoutes);
 router.use('/admin/source-watch', sourceWatchRoutes);
+router.use('/admin/access', roleAdminRoutes);
 router.use('/admin', adminContentRoutes);
 router.use('/admin', moderationRoutes);
 
