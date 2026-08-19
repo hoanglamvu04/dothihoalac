@@ -3,6 +3,7 @@ import { api, unwrap, unwrapList } from './http';
 const PUBLIC_LIST_CACHE_TTL = 15000;
 const publicListCache = new Map();
 const publicListInFlight = new Map();
+let publicListCacheEpoch = 0;
 
 function normalizeCacheValue(value) {
   if (Array.isArray(value)) {
@@ -29,6 +30,7 @@ function cacheKey(url, params = {}) {
 }
 
 function clearPublicListCache() {
+  publicListCacheEpoch += 1;
   publicListCache.clear();
   publicListInFlight.clear();
 }
@@ -90,16 +92,21 @@ function getList(url, params = {}, config = {}) {
     }
   }
 
+  const requestEpoch = publicListCacheEpoch;
   const request = api
     .get(url, {
       ...axiosConfig,
       params,
     })
     .then((response) => {
-      publicListCache.set(key, {
-        createdAt: Date.now(),
-        response,
-      });
+      // Mutation có thể xảy ra trong lúc request list đang bay. Không cho
+      // response thuộc thế hệ cache cũ ghi dữ liệu stale trở lại sau clear().
+      if (requestEpoch === publicListCacheEpoch) {
+        publicListCache.set(key, {
+          createdAt: Date.now(),
+          response,
+        });
+      }
       return response;
     });
 
@@ -108,7 +115,9 @@ function getList(url, params = {}, config = {}) {
   }
 
   const sharedRequest = request.finally(() => {
-    publicListInFlight.delete(key);
+    if (publicListInFlight.get(key) === sharedRequest) {
+      publicListInFlight.delete(key);
+    }
   });
 
   publicListInFlight.set(key, sharedRequest);
