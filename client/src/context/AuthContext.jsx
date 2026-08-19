@@ -1,53 +1,108 @@
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { authApi } from '../api/auth.api';
 import { userApi } from '../api/user.api';
 
 const AuthContext = createContext(null);
 const USER_SYNC_STORAGE_KEY = 'dthl:user-updated';
+const PASSIVE_REFRESH_TTL_MS = 30_000;
 
 export function AuthProvider({ children }) {
-  const [user, setUser] = useState(null);
+  const [user, setUserState] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const refreshUser = useCallback(async () => {
-    try {
-      const current = await authApi.me();
-      let profile = current?.profile || null;
+  const userRef = useRef(null);
+  const refreshPromiseRef = useRef(null);
+  const lastRefreshAtRef = useRef(0);
 
-      // /auth/me có thể chỉ chứa ObjectId của media. Luôn thử lấy profile
-      // riêng để avatar/cover/area được populate đầy đủ cho header toàn site.
+  const setUser = useCallback((nextValue) => {
+    setUserState((current) => {
+      const resolved =
+        typeof nextValue === 'function'
+          ? nextValue(current)
+          : nextValue;
+
+      userRef.current = resolved;
+      return resolved;
+    });
+  }, []);
+
+  const refreshUser = useCallback(async ({ force = false } = {}) => {
+    const now = Date.now();
+
+    if (
+      !force &&
+      lastRefreshAtRef.current > 0 &&
+      now - lastRefreshAtRef.current < PASSIVE_REFRESH_TTL_MS
+    ) {
+      return userRef.current;
+    }
+
+    if (refreshPromiseRef.current) {
+      return refreshPromiseRef.current;
+    }
+
+    const request = (async () => {
       try {
-        const hydratedProfile = await userApi.myProfile();
-        if (hydratedProfile) profile = hydratedProfile;
-      } catch {
-        /* Giữ profile từ /auth/me nếu endpoint hồ sơ tạm thời không khả dụng. */
-      }
+        const current = await authApi.me();
+        let profile = current?.profile || null;
 
-      const merged = { ...current, profile };
-      setUser(merged);
-      return merged;
-    } catch {
-      setUser(null);
-      return null;
+        // /auth/me có thể chỉ chứa ObjectId của media. Lấy hồ sơ đầy đủ một
+        // lần trong cùng chu kỳ refresh, nhưng không tạo request trùng khi tab
+        // vừa focus + pageshow + visibilitychange cùng lúc.
+        try {
+          const hydratedProfile = await userApi.myProfile();
+          if (hydratedProfile) profile = hydratedProfile;
+        } catch {
+          /* Giữ profile từ /auth/me nếu endpoint hồ sơ tạm thời không khả dụng. */
+        }
+
+        const merged = { ...current, profile };
+        userRef.current = merged;
+        setUserState(merged);
+        return merged;
+      } catch {
+        userRef.current = null;
+        setUserState(null);
+        return null;
+      } finally {
+        lastRefreshAtRef.current = Date.now();
+        setLoading(false);
+      }
+    })();
+
+    refreshPromiseRef.current = request;
+
+    try {
+      return await request;
     } finally {
-      setLoading(false);
+      if (refreshPromiseRef.current === request) {
+        refreshPromiseRef.current = null;
+      }
     }
   }, []);
 
   useEffect(() => {
-    refreshUser();
+    void refreshUser({ force: true });
   }, [refreshUser]);
 
   useEffect(() => {
     const refreshWhenVisible = () => {
       if (document.visibilityState === 'visible') {
-        refreshUser();
+        void refreshUser();
       }
     };
 
     const refreshOnStorage = (event) => {
       if (event.key === USER_SYNC_STORAGE_KEY) {
-        refreshUser();
+        void refreshUser({ force: true });
       }
     };
 
@@ -67,18 +122,36 @@ export function AuthProvider({ children }) {
   const login = useCallback(async (payload) => {
     const result = await authApi.login(payload);
     let profile = null;
-    try { profile = await userApi.myProfile(); } catch { /* Hồ sơ có thể chưa được tạo. */ }
+
+    try {
+      profile = await userApi.myProfile();
+    } catch {
+      /* Hồ sơ có thể chưa được tạo. */
+    }
+
     const merged = { ...result.user, profile };
-    setUser(merged);
+    userRef.current = merged;
+    lastRefreshAtRef.current = Date.now();
+    setUserState(merged);
+    setLoading(false);
     return merged;
   }, []);
 
   const register = useCallback(async (payload) => {
     const result = await authApi.register(payload);
     let profile = null;
-    try { profile = await userApi.myProfile(); } catch { /* Hồ sơ có thể chưa được tạo. */ }
+
+    try {
+      profile = await userApi.myProfile();
+    } catch {
+      /* Hồ sơ có thể chưa được tạo. */
+    }
+
     const merged = { ...result.user, profile };
-    setUser(merged);
+    userRef.current = merged;
+    lastRefreshAtRef.current = Date.now();
+    setUserState(merged);
+    setLoading(false);
     return merged;
   }, []);
 
@@ -86,13 +159,25 @@ export function AuthProvider({ children }) {
     try {
       await authApi.logout();
     } finally {
-      setUser(null);
+      userRef.current = null;
+      lastRefreshAtRef.current = Date.now();
+      setUserState(null);
+      setLoading(false);
     }
   }, []);
 
   const value = useMemo(
-    () => ({ user, setUser, loading, isAuthenticated: Boolean(user), login, register, logout, refreshUser }),
-    [user, loading, login, register, logout, refreshUser],
+    () => ({
+      user,
+      setUser,
+      loading,
+      isAuthenticated: Boolean(user),
+      login,
+      register,
+      logout,
+      refreshUser,
+    }),
+    [user, setUser, loading, login, register, logout, refreshUser],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
