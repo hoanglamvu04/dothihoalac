@@ -140,20 +140,53 @@ async function probeServer(serverUrl) {
   }
 }
 
+async function firstReachableServer(candidates) {
+  if (!candidates.length) return '';
+
+  try {
+    return await Promise.any(
+      candidates.map(async (serverUrl) => {
+        if (await probeServer(serverUrl)) {
+          return serverUrl;
+        }
+
+        throw new Error('DTHL_API_PROBE_MISS');
+      }),
+    );
+  } catch {
+    return '';
+  }
+}
+
 async function discoverLocalBackend() {
   const host = getDiscoveryHost();
+  const preferred = `http://${host}:${START_PORT}`;
+
+  // Phần lớn môi trường dev dùng đúng cổng cấu hình. Kiểm tra cổng này trước
+  // để không khởi tạo đồng thời hàng chục request health không cần thiết.
+  if (await probeServer(preferred)) {
+    resolvedServerUrl = preferred;
+    resolvedApiUrl = `${preferred}${API_PATH}`;
+    forceRuntimeDiscovery = false;
+
+    if (import.meta.env.VITE_DEBUG_API === 'true') {
+      console.info(`[DTHL API] Backend: ${resolvedApiUrl}`);
+    }
+
+    return { serverUrl: resolvedServerUrl, apiUrl: resolvedApiUrl };
+  }
+
   const candidates = [];
 
-  for (let offset = 0; offset < PORT_SCAN_LIMIT; offset += 1) {
+  for (let offset = 1; offset < PORT_SCAN_LIMIT; offset += 1) {
     const port = START_PORT + offset;
     if (port > 65535) break;
     candidates.push(`http://${host}:${port}`);
   }
 
-  const matches = await Promise.all(
-    candidates.map(async (serverUrl) => ((await probeServer(serverUrl)) ? serverUrl : null)),
-  );
-  const winner = matches.find(Boolean);
+  // Trả về ngay khi cổng hợp lệ đầu tiên phản hồi, thay vì chờ toàn bộ dải
+  // cổng timeout xong như Promise.all trước đây.
+  const winner = await firstReachableServer(candidates);
 
   if (!winner) {
     const endPort = Math.min(65535, START_PORT + PORT_SCAN_LIMIT - 1);
