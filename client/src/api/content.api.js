@@ -55,10 +55,26 @@ async function mutation(request, action) {
   return item;
 }
 
+function storePublicListResponse(key, response) {
+  publicListCache.set(key, {
+    createdAt: Date.now(),
+    response,
+  });
+
+  // Giữ cache nhỏ và có giới hạn để tránh tăng bộ nhớ khi người dùng thử
+  // nhiều tổ hợp bộ lọc trong cùng một phiên.
+  if (publicListCache.size > 80) {
+    const oldestKey = publicListCache.keys().next().value;
+    if (oldestKey !== undefined) publicListCache.delete(oldestKey);
+  }
+
+  return response;
+}
+
 function getList(url, params = {}, config = {}) {
   const { cache = true, ...axiosConfig } = config || {};
 
-  if (!cache || axiosConfig.signal) {
+  if (!cache) {
     return api.get(url, {
       ...axiosConfig,
       params,
@@ -77,6 +93,22 @@ function getList(url, params = {}, config = {}) {
     publicListCache.delete(key);
   }
 
+  /*
+   * Request có AbortSignal không được dùng chung promise đang bay: nếu một
+   * màn hình unmount và hủy signal thì không được kéo theo request của màn
+   * hình khác. Tuy nhiên response hoàn tất vẫn được ghi vào cache để lần mở
+   * tiếp theo có thể dùng ngay. Trước đây mọi request từ useListPage đều có
+   * signal nên vô tình bỏ qua toàn bộ lớp cache này.
+   */
+  if (axiosConfig.signal) {
+    return api
+      .get(url, {
+        ...axiosConfig,
+        params,
+      })
+      .then((response) => storePublicListResponse(key, response));
+  }
+
   const pending = publicListInFlight.get(key);
   if (pending) {
     return pending;
@@ -87,13 +119,7 @@ function getList(url, params = {}, config = {}) {
       ...axiosConfig,
       params,
     })
-    .then((response) => {
-      publicListCache.set(key, {
-        createdAt: Date.now(),
-        response,
-      });
-      return response;
-    })
+    .then((response) => storePublicListResponse(key, response))
     .finally(() => {
       publicListInFlight.delete(key);
     });
