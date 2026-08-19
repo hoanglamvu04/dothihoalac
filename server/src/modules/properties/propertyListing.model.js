@@ -27,7 +27,6 @@ const schema = new mongoose.Schema(
     propertyType: {
       type: String,
       enum: [
-        // Canonical marketplace types used by the current property posting flow.
         'house',
         'villa_townhouse',
         'street_house',
@@ -38,7 +37,6 @@ const schema = new mongoose.Schema(
         'condotel',
         'warehouse',
         'other_property',
-        // Legacy values kept for backwards compatibility with existing listings.
         'residential_land',
         'land_plot',
         'service_land',
@@ -144,6 +142,7 @@ const schema = new mongoose.Schema(
 
 schema.index({ transactionType: 1, propertyType: 1, price: 1, landArea: 1 });
 schema.index({ listingPriority: -1, createdAt: -1 });
+schema.index({ expiresAt: 1, soldAt: 1, rentedAt: 1, listingPriority: -1, createdAt: -1 });
 schema.index({ location: '2dsphere' }, { sparse: true });
 
 export default getOrCreateModel('PropertyListing', schema, 'propertylistings');
