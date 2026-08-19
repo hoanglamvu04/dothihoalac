@@ -313,32 +313,45 @@ export default function NewsContextRail({ category = '', excludeIds = [] }) {
   useEffect(() => {
     let active = true;
     const controller = new AbortController();
+    const requestConfig = { signal: controller.signal };
     const excluded = new Set(excludeKey ? excludeKey.split('|') : []);
 
     const load = async () => {
       setState((current) => ({ ...current, loading: true }));
 
       const contextRequest = contextConfig.source === 'projects'
-        ? projectApi.list({
-            limit: 5,
-            ...(contextConfig.type ? { type: contextConfig.type } : {}),
-          })
-        : articleApi.list({
-            category: contextConfig.category,
-            limit: 5,
-          });
+        ? projectApi.list(
+            {
+              limit: 5,
+              ...(contextConfig.type ? { type: contextConfig.type } : {}),
+            },
+            requestConfig,
+          )
+        : articleApi.list(
+            {
+              category: contextConfig.category,
+              limit: 5,
+            },
+            requestConfig,
+          );
 
       const [relatedResult, contextResult, discussionResult] = await Promise.allSettled([
-        articleApi.list({
-          sort: 'popular',
-          limit: 7,
-          ...(category ? { category } : {}),
-        }),
+        articleApi.list(
+          {
+            sort: 'popular',
+            limit: 7,
+            ...(category ? { category } : {}),
+          },
+          requestConfig,
+        ),
         contextRequest,
-        communityApi.list({
-          sort: 'popular',
-          limit: 5,
-        }),
+        communityApi.list(
+          {
+            sort: 'popular',
+            limit: 5,
+          },
+          requestConfig,
+        ),
       ]);
 
       if (!active) return;
