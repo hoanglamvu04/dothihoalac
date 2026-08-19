@@ -10,6 +10,10 @@ export default function ContentImage({
   ratio = '',
   fallback = null,
   loading = 'lazy',
+  decoding = 'async',
+  width,
+  height,
+  fetchPriority,
   ...props
 }) {
   const [failed, setFailed] = useState(false);
@@ -24,11 +28,22 @@ export default function ContentImage({
     .filter(Boolean)
     .join(' ');
 
+  const intrinsicWidth =
+    width ||
+    (Number(resolvedImage?.width) > 0 ? Number(resolvedImage.width) : undefined);
+  const intrinsicHeight =
+    height ||
+    (Number(resolvedImage?.height) > 0 ? Number(resolvedImage.height) : undefined);
+
   return (
     <img
       src={src}
       alt={alt || resolvedImage?.altText || ''}
       loading={loading}
+      decoding={decoding}
+      width={intrinsicWidth}
+      height={intrinsicHeight}
+      fetchPriority={fetchPriority || (loading === 'eager' ? 'high' : undefined)}
       className={classes}
       onError={() => setFailed(true)}
       {...props}
