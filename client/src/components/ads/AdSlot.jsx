@@ -11,6 +11,10 @@ function currentDevice() {
   return window.matchMedia('(max-width: 767px)').matches ? 'mobile' : 'desktop';
 }
 
+function supportsIntersectionObserver() {
+  return typeof window !== 'undefined' && 'IntersectionObserver' in window;
+}
+
 export default function AdSlot({
   slotKey,
   layout = 'inline',
@@ -18,7 +22,9 @@ export default function AdSlot({
 }) {
   const [device, setDevice] = useState(currentDevice);
   const [ad, setAd] = useState(null);
+  const [shouldLoad, setShouldLoad] = useState(() => !supportsIntersectionObserver());
   const impressionRef = useRef('');
+  const anchorRef = useRef(null);
 
   useEffect(() => {
     const media = window.matchMedia('(max-width: 767px)');
@@ -29,10 +35,37 @@ export default function AdSlot({
   }, []);
 
   useEffect(() => {
+    if (shouldLoad || !slotKey || !supportsIntersectionObserver()) {
+      return undefined;
+    }
+
+    const node = anchorRef.current;
+    if (!node) return undefined;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((entry) => entry.isIntersecting)) {
+          setShouldLoad(true);
+          observer.disconnect();
+        }
+      },
+      {
+        // Tải trước một đoạn để banner sẵn sàng trước khi người dùng cuộn tới,
+        // nhưng không tạo request cho footer/quảng cáo rất xa viewport lúc mở trang.
+        rootMargin: '700px 0px',
+        threshold: 0,
+      },
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, [shouldLoad, slotKey]);
+
+  useEffect(() => {
     let active = true;
 
-    if (!slotKey) {
-      setAd(null);
+    if (!slotKey || !shouldLoad) {
+      if (!slotKey) setAd(null);
       return undefined;
     }
 
@@ -49,7 +82,7 @@ export default function AdSlot({
     return () => {
       active = false;
     };
-  }, [device, slotKey]);
+  }, [device, shouldLoad, slotKey]);
 
   useEffect(() => {
     const id = String(ad?._id || '');
@@ -58,6 +91,17 @@ export default function AdSlot({
     impressionRef.current = id;
     systemApi.bannerImpression(id).catch(() => {});
   }, [ad]);
+
+  if (!shouldLoad) {
+    return (
+      <span
+        ref={anchorRef}
+        aria-hidden="true"
+        data-ad-slot-anchor={slotKey}
+        style={{ display: 'block', width: '100%', height: 1, pointerEvents: 'none' }}
+      />
+    );
+  }
 
   if (!ad) return null;
 
