@@ -209,26 +209,39 @@ function clampSidebarCount(value, max) {
   return Math.min(max, Math.max(Math.min(4, max), value));
 }
 
+function isCanceledRequest(error) {
+  return (
+    error?.name === 'CanceledError' ||
+    error?.code === 'ERR_CANCELED'
+  );
+}
+
 export default function ArticleDetailPage() {
   const { slug } = useParams();
   const storyRef = useRef(null);
+  const progressBarRef = useRef(null);
 
   const [item, setItem] = useState(null);
   const [error, setError] = useState(null);
-  const [readingProgress, setReadingProgress] = useState(0);
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const [sidebarArticles, setSidebarArticles] = useState([]);
   const [sidebarLoading, setSidebarLoading] = useState(true);
   const [sidebarVisibleCount, setSidebarVisibleCount] = useState(4);
 
   useEffect(() => {
     let active = true;
+    const controller = new AbortController();
 
     setItem(null);
     setError(null);
-    setReadingProgress(0);
+    setShowScrollTop(false);
     setSidebarArticles([]);
     setSidebarLoading(true);
     setSidebarVisibleCount(4);
+
+    if (progressBarRef.current) {
+      progressBarRef.current.style.transform = 'scaleX(0)';
+    }
 
     window.scrollTo({
       top: 0,
@@ -237,16 +250,21 @@ export default function ArticleDetailPage() {
     });
 
     articleApi
-      .detail(slug)
+      .detail(slug, {
+        signal: controller.signal,
+      })
       .then((result) => {
         if (active) setItem(result);
       })
       .catch((requestError) => {
-        if (active) setError(requestError);
+        if (active && !isCanceledRequest(requestError)) {
+          setError(requestError);
+        }
       });
 
     return () => {
       active = false;
+      controller.abort();
     };
   }, [slug]);
 
@@ -254,23 +272,31 @@ export default function ArticleDetailPage() {
     if (!item?._id) return undefined;
 
     let active = true;
+    const controller = new AbortController();
 
     const loadSidebarArticles = async () => {
       setSidebarLoading(true);
 
       try {
-        const result = await articleApi.list({
-          sort: 'popular',
-          limit: 30,
-        });
+        const result = await articleApi.list(
+          {
+            sort: 'popular',
+            limit: 30,
+          },
+          {
+            signal: controller.signal,
+          },
+        );
 
         if (active) {
           setSidebarArticles(
             selectSidebarArticles(item, result?.items || []),
           );
         }
-      } catch {
-        if (active) setSidebarArticles([]);
+      } catch (requestError) {
+        if (active && !isCanceledRequest(requestError)) {
+          setSidebarArticles([]);
+        }
       } finally {
         if (active) setSidebarLoading(false);
       }
@@ -280,6 +306,7 @@ export default function ArticleDetailPage() {
 
     return () => {
       active = false;
+      controller.abort();
     };
   }, [item?._id]);
 
@@ -418,8 +445,16 @@ export default function ArticleDetailPage() {
         const end = articleTop + articleHeight - window.innerHeight * 0.72;
         const distance = Math.max(end - start, 1);
         const progress = (window.scrollY - start) / distance;
+        const clampedProgress = Math.min(Math.max(progress, 0), 1);
 
-        setReadingProgress(Math.min(Math.max(progress, 0), 1));
+        if (progressBarRef.current) {
+          progressBarRef.current.style.transform = `scaleX(${clampedProgress})`;
+        }
+
+        const shouldShowScrollTop = clampedProgress > 0.35;
+        setShowScrollTop((current) =>
+          current === shouldShowScrollTop ? current : shouldShowScrollTop,
+        );
       });
     };
 
@@ -454,7 +489,7 @@ export default function ArticleDetailPage() {
       <Seo title={displayTitle} description={seoDescription} />
 
       <div className="article-reading-progress" aria-hidden="true">
-        <span style={{ transform: `scaleX(${readingProgress})` }} />
+        <span ref={progressBarRef} />
       </div>
 
       <div className="article-view-container">
@@ -554,6 +589,8 @@ export default function ArticleDetailPage() {
                     media={item.thumbnailMediaId}
                     alt={displayTitle}
                     ratio="hero"
+                    loading="eager"
+                    sizes="(max-width: 980px) 100vw, 1120px"
                   />
                 </div>
               ) : null}
@@ -645,10 +682,11 @@ export default function ArticleDetailPage() {
                           >
                             <div className="article-popular-sidebar__thumb">
                               {sidebarCoverUrl ? (
-                                <img
-                                  src={sidebarCoverUrl}
+                                <ContentImage
+                                  media={article.thumbnailMediaId}
                                   alt=""
                                   loading="lazy"
+                                  sizes="(max-width: 980px) 112px, 150px"
                                 />
                               ) : (
                                 <span>
@@ -711,10 +749,11 @@ export default function ArticleDetailPage() {
                     >
                       <div className="article-view-more__thumb">
                         {relatedCoverUrl ? (
-                          <img
-                            src={relatedCoverUrl}
+                          <ContentImage
+                            media={article.thumbnailMediaId}
                             alt=""
                             loading="lazy"
+                            sizes="(max-width: 720px) 100vw, 320px"
                           />
                         ) : (
                           <span>
@@ -751,7 +790,7 @@ export default function ArticleDetailPage() {
         ) : null}
       </div>
 
-      {readingProgress > 0.35 ? (
+      {showScrollTop ? (
         <button
           type="button"
           className="article-scroll-top"
