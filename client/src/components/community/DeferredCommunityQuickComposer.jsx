@@ -21,14 +21,27 @@ export default function DeferredCommunityQuickComposer() {
 
     let timer = null;
     let idleId = null;
+    let enabled = false;
 
-    const enable = () => setReady(true);
+    const enable = () => {
+      if (enabled) return;
+      enabled = true;
+      setReady(true);
+    };
 
     if (typeof window.requestIdleCallback === 'function') {
-      idleId = window.requestIdleCallback(enable, { timeout: 1500 });
+      idleId = window.requestIdleCallback(enable, { timeout: 4000 });
     } else {
-      timer = window.setTimeout(enable, 700);
+      timer = window.setTimeout(enable, 2500);
     }
+
+    const enableOnIntent = () => enable();
+
+    window.addEventListener('pointerdown', enableOnIntent, {
+      once: true,
+      passive: true,
+    });
+    window.addEventListener('keydown', enableOnIntent, { once: true });
 
     return () => {
       if (idleId !== null && typeof window.cancelIdleCallback === 'function') {
@@ -37,6 +50,8 @@ export default function DeferredCommunityQuickComposer() {
       if (timer !== null) {
         window.clearTimeout(timer);
       }
+      window.removeEventListener('pointerdown', enableOnIntent);
+      window.removeEventListener('keydown', enableOnIntent);
     };
   }, [isAuthenticated, loading]);
 
