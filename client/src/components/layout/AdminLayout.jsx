@@ -98,6 +98,10 @@ export default function AdminLayout() {
   );
 
   useEffect(() => {
+    void import('../../styles/admin.css');
+  }, []);
+
+  useEffect(() => {
     setMobileOpen(false);
   }, [location.pathname]);
 
