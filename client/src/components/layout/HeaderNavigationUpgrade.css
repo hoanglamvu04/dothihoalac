@@ -42,9 +42,14 @@
 }
 
 .dthl-header-nav-upgrade__link:hover,
-.dthl-header-nav-upgrade__item:focus-within > .dthl-header-nav-upgrade__link {
+.dthl-header-nav-upgrade__link:focus-visible {
   background: #f0f8f3;
   color: #08743d;
+}
+
+.dthl-header-nav-upgrade__link:focus-visible {
+  outline: 2px solid rgba(24, 165, 88, 0.36);
+  outline-offset: 2px;
 }
 
 .dthl-header-nav-upgrade__link.is-active {
@@ -61,8 +66,7 @@
     transform 180ms ease;
 }
 
-.dthl-header-nav-upgrade__item:hover .dthl-header-nav-upgrade__chevron,
-.dthl-header-nav-upgrade__item:focus-within .dthl-header-nav-upgrade__chevron {
+.dthl-header-nav-upgrade__item:hover .dthl-header-nav-upgrade__chevron {
   color: #08743d;
   transform: rotate(180deg);
 }
@@ -107,8 +111,11 @@
   content: '';
 }
 
-.dthl-header-nav-upgrade__item:hover > .dthl-header-submenu,
-.dthl-header-nav-upgrade__item:focus-within > .dthl-header-submenu {
+/*
+ * Desktop submenu chỉ mở theo hover. Trước đây :focus-within làm menu tiếp
+ * tục mở sau khi bấm một link và chỉ đóng khi người dùng click ra ngoài.
+ */
+.dthl-header-nav-upgrade__item:hover > .dthl-header-submenu {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0);
