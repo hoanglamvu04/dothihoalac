@@ -28,13 +28,19 @@ export async function search(query) {
   const requestedType = String(query.type || 'all');
   const searchesContent =
     requestedType === 'all' || CONTENT_TYPES.has(requestedType);
+  const useTextIndex = q.length >= 2;
 
   const filter = {
     status: 'published',
     visibility: 'public',
     deletedAt: null,
-    $or: [{ title: regex }, { summary: regex }, { bodyText: regex }],
   };
+
+  if (useTextIndex) {
+    filter.$text = { $search: q };
+  } else {
+    filter.$or = [{ title: regex }, { summary: regex }];
+  }
 
   if (CONTENT_TYPES.has(requestedType)) {
     filter.contentType = requestedType;
@@ -42,8 +48,13 @@ export async function search(query) {
 
   if (query.area) filter.primaryAreaId = query.area;
 
-  const contentPromise = searchesContent
-    ? Content.find(filter)
+  const contentQuery = searchesContent
+    ? Content.find(
+        filter,
+        useTextIndex
+          ? { score: { $meta: 'textScore' } }
+          : undefined,
+      )
         .populate('authorId', 'username displayName')
         .populate('primaryAreaId', 'name slug')
         .populate('primaryCategoryId', 'name slug')
@@ -51,12 +62,17 @@ export async function search(query) {
           'thumbnailMediaId',
           'url secureUrl altText width height resourceType',
         )
-        .sort({ publishedAt: -1, createdAt: -1 })
+        .sort(
+          useTextIndex
+            ? { score: { $meta: 'textScore' }, publishedAt: -1, _id: -1 }
+            : { publishedAt: -1, createdAt: -1, _id: -1 },
+        )
         .skip(skip)
         .limit(limit)
         .lean()
-    : Promise.resolve([]);
+    : null;
 
+  const contentPromise = contentQuery || Promise.resolve([]);
   const totalPromise = searchesContent
     ? Content.countDocuments(filter)
     : Promise.resolve(0);
@@ -76,6 +92,7 @@ export async function search(query) {
       : [],
     requestedType === 'all' || requestedType === 'area'
       ? Area.find({ isActive: true, name: regex })
+          .select('name slug areaType parentId')
           .limit(20)
           .lean()
       : [],
