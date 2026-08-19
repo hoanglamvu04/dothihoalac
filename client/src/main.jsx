@@ -25,8 +25,19 @@ import './styles/community-interaction-v4.css';
 import './styles/job-detail-readable-v2.css';
 import './features/propertySubmitReviewGuard';
 
-createRoot(document.getElementById('root')).render(
-  <StrictMode>
+const root = createRoot(document.getElementById('root'));
+const enableStrictMode = import.meta.env.VITE_REACT_STRICT_MODE === 'true';
+
+// React StrictMode cố ý mount/effect hai lần ở development. Với ứng dụng có
+// nhiều feed/API toàn cục điều này làm localhost tạo request đôi và cảm giác
+// lag rõ rệt. Mặc định chạy một lifecycle thật; vẫn có thể bật lại khi audit
+// side-effect bằng VITE_REACT_STRICT_MODE=true.
+root.render(
+  enableStrictMode ? (
+    <StrictMode>
+      <App />
+    </StrictMode>
+  ) : (
     <App />
-  </StrictMode>,
+  ),
 );
