@@ -1,18 +1,31 @@
 import * as s from './community.service.js';
+import { listCompactCommunity } from './community.compactList.service.js';
 import Reaction from '../reactions/reaction.model.js';
 import {
   sendCreated,
   sendSuccess,
 } from '../../utils/apiResponse.js';
 
+function wantsCompact(value) {
+  return ['1', 'true', 'yes'].includes(String(value || '').trim().toLowerCase());
+}
+
 export async function list(req, res) {
-  const result = await s.list(
-    req.query,
-    req.user?._id || null,
+  const compact = wantsCompact(req.query.compact);
+  const result = compact
+    ? await listCompactCommunity(req.query)
+    : await s.list(
+        req.query,
+        req.user?._id || null,
+      );
+
+  // Defense in depth cho dữ liệu cũ từng được publish với visibility khác public.
+  const items = (result.items || []).filter(
+    (item) => item?.visibility === 'public',
   );
 
   return sendSuccess(res, {
-    data: result.items,
+    data: items,
     meta: result.meta,
   });
 }
