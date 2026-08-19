@@ -59,14 +59,7 @@ function writeCache(categories, areas, tags) {
 }
 
 export function TaxonomyProvider({ children }) {
-  const initialCacheRef = useRef(null);
-
-  if (initialCacheRef.current === null) {
-    initialCacheRef.current = readCache() || false;
-  }
-
-  const cached = initialCacheRef.current || null;
-
+  const [cached] = useState(readCache);
   const [categories, setCategories] = useState(() => cached?.categories || []);
   const [areas, setAreas] = useState(() => cached?.areas || []);
   const [tags, setTags] = useState(() => cached?.tags || []);
