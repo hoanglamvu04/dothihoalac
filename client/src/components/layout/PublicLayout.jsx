@@ -2,7 +2,7 @@ import { Outlet, useLocation } from 'react-router-dom';
 import SiteHeader from './SiteHeader';
 import HeaderNavigationUpgrade from './HeaderNavigationUpgrade';
 import SiteFooter from './SiteFooter';
-import CommunityQuickComposer from '../community/CommunityQuickComposer';
+import DeferredCommunityQuickComposer from '../community/DeferredCommunityQuickComposer';
 import CommunityAdRails from '../community/CommunityAdRails';
 import AdSlot from '../ads/AdSlot';
 
@@ -44,7 +44,7 @@ export default function PublicLayout() {
 
       <AdSlot slotKey="site_before_footer" layout="strip" />
       <SiteFooter />
-      <CommunityQuickComposer />
+      <DeferredCommunityQuickComposer />
     </div>
   );
 }
