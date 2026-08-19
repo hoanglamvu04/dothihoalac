@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import SiteHeader from './SiteHeader';
 import HeaderNavigationUpgrade from './HeaderNavigationUpgrade';
@@ -25,11 +25,41 @@ function pageTopAdSlot(pathname) {
   return '';
 }
 
+function loadRouteStyles(pathname) {
+  if (pathname.startsWith('/tin-tuc')) {
+    return Promise.all([
+      import('../../styles/newsroom-mobile-v2.css'),
+      import('../../styles/articles-modern-v2.css'),
+      import('../../styles/articles-newsroom-v3.css'),
+      import('../../styles/articles-newsroom-v4.css'),
+      import('../../styles/news-project-tracker-rail.css'),
+    ]);
+  }
+
+  if (pathname.startsWith('/cong-dong')) {
+    return Promise.all([
+      import('../../styles/community-social-v2.css'),
+      import('../../styles/community-social-v3.css'),
+      import('../../styles/community-interaction-v4.css'),
+    ]);
+  }
+
+  if (pathname.startsWith('/viec-lam/')) {
+    return import('../../styles/job-detail-readable-v2.css');
+  }
+
+  return Promise.resolve();
+}
+
 export default function PublicLayout() {
   const location = useLocation();
   const normalizedPath = location.pathname.replace(/\/+$/, '') || '/';
   const showCommunityAds = normalizedPath === '/cong-dong';
   const topSlot = pageTopAdSlot(normalizedPath);
+
+  useEffect(() => {
+    void loadRouteStyles(normalizedPath).catch(() => {});
+  }, [normalizedPath]);
 
   return (
     <div className="app-shell">
