@@ -3,6 +3,7 @@ import { api, unwrap, unwrapList } from './http';
 const PUBLIC_LIST_CACHE_TTL = 15000;
 const publicListCache = new Map();
 const publicListInFlight = new Map();
+let publicListCacheVersion = 0;
 
 function normalizeCacheValue(value) {
   if (Array.isArray(value)) {
@@ -29,6 +30,7 @@ function cacheKey(url, params = {}) {
 }
 
 function clearPublicListCache() {
+  publicListCacheVersion += 1;
   publicListCache.clear();
   publicListInFlight.clear();
 }
@@ -55,7 +57,13 @@ async function mutation(request, action) {
   return item;
 }
 
-function storePublicListResponse(key, response) {
+function storePublicListResponse(key, response, requestVersion) {
+  // Nếu dữ liệu đã bị mutation trong lúc request cũ còn bay, không cho
+  // response cũ ghi ngược trở lại cache sau khi cache vừa được invalidated.
+  if (requestVersion !== publicListCacheVersion) {
+    return response;
+  }
+
   publicListCache.set(key, {
     createdAt: Date.now(),
     response,
@@ -93,6 +101,8 @@ function getList(url, params = {}, config = {}) {
     publicListCache.delete(key);
   }
 
+  const requestVersion = publicListCacheVersion;
+
   /*
    * Request có AbortSignal không được dùng chung promise đang bay: nếu một
    * màn hình unmount và hủy signal thì không được kéo theo request của màn
@@ -106,7 +116,9 @@ function getList(url, params = {}, config = {}) {
         ...axiosConfig,
         params,
       })
-      .then((response) => storePublicListResponse(key, response));
+      .then((response) =>
+        storePublicListResponse(key, response, requestVersion),
+      );
   }
 
   const pending = publicListInFlight.get(key);
@@ -119,9 +131,13 @@ function getList(url, params = {}, config = {}) {
       ...axiosConfig,
       params,
     })
-    .then((response) => storePublicListResponse(key, response))
+    .then((response) =>
+      storePublicListResponse(key, response, requestVersion),
+    )
     .finally(() => {
-      publicListInFlight.delete(key);
+      if (publicListInFlight.get(key) === request) {
+        publicListInFlight.delete(key);
+      }
     });
 
   publicListInFlight.set(key, request);
