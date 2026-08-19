@@ -1,8 +1,37 @@
 import * as s from './moderation.service.js';
+import { PERMISSIONS } from '../../constants/permissions.js';
 import { sendSuccess } from '../../utils/apiResponse.js';
 
+const CONTENT_QUEUE_PERMISSIONS = [
+  PERMISSIONS.APPROVE_ARTICLE,
+  PERMISSIONS.PUBLISH_ARTICLE,
+  PERMISSIONS.MODERATE_COMMUNITY,
+  PERMISSIONS.MODERATE_PROPERTY,
+  PERMISSIONS.MODERATE_JOB,
+];
+
+const REPORT_PERMISSIONS = [
+  PERMISSIONS.MANAGE_USERS,
+  PERMISSIONS.MODERATE_COMMUNITY,
+  PERMISSIONS.MODERATE_PROPERTY,
+  PERMISSIONS.MODERATE_JOB,
+  PERMISSIONS.MODERATE_COMMENT,
+];
+
+function hasAnyPermission(req, permissions) {
+  return permissions.some((permission) => req.auth?.permissions?.includes(permission));
+}
+
 export async function dashboard(req, res) {
-  return sendSuccess(res, { data: await s.dashboard() });
+  const raw = await s.dashboard();
+  const data = {
+    userCount: hasAnyPermission(req, [PERMISSIONS.MANAGE_USERS]) ? raw.userCount : null,
+    pendingContent: hasAnyPermission(req, CONTENT_QUEUE_PERMISSIONS) ? raw.pendingContent : null,
+    pendingReports: hasAnyPermission(req, REPORT_PERMISSIONS) ? raw.pendingReports : null,
+    newLeads: hasAnyPermission(req, [PERMISSIONS.MANAGE_LEADS]) ? raw.newLeads : null,
+    comments: hasAnyPermission(req, [PERMISSIONS.MODERATE_COMMENT]) ? raw.comments : null,
+  };
+  return sendSuccess(res, { data });
 }
 
 export async function queue(req, res) {
