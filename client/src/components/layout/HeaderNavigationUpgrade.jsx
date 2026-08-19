@@ -94,11 +94,6 @@ const navigationItems = [
     to: '/viec-lam',
     label: 'Việc làm',
     match: 'job',
-    alignRight: true,
-    submenu: {
-      scope: 'job',
-      mode: 'scope',
-    },
   },
 ];
 
@@ -112,7 +107,6 @@ const SCOPE_PATHS = {
   article: '/tin-tuc',
   property: '/bat-dong-san',
   community: '/cong-dong',
-  job: '/viec-lam',
 };
 
 function idString(value) {
@@ -533,7 +527,6 @@ function NavigationLinks({ mobile = false }) {
       article: buildScopeTree(categories, 'article'),
       property: buildScopeTree(categories, 'property'),
       community: buildScopeTree(categories, 'community'),
-      job: buildScopeTree(categories, 'job'),
     }),
     [categories],
   );

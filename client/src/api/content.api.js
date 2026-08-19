@@ -3,6 +3,7 @@ import { api, unwrap, unwrapList } from './http';
 const PUBLIC_LIST_CACHE_TTL = 15000;
 const publicListCache = new Map();
 const publicListInFlight = new Map();
+let publicListCacheVersion = 0;
 
 function normalizeCacheValue(value) {
   if (Array.isArray(value)) {
@@ -29,6 +30,7 @@ function cacheKey(url, params = {}) {
 }
 
 function clearPublicListCache() {
+  publicListCacheVersion += 1;
   publicListCache.clear();
   publicListInFlight.clear();
 }
@@ -55,10 +57,32 @@ async function mutation(request, action) {
   return item;
 }
 
+function storePublicListResponse(key, response, requestVersion) {
+  // Nếu dữ liệu đã bị mutation trong lúc request cũ còn bay, không cho
+  // response cũ ghi ngược trở lại cache sau khi cache vừa được invalidated.
+  if (requestVersion !== publicListCacheVersion) {
+    return response;
+  }
+
+  publicListCache.set(key, {
+    createdAt: Date.now(),
+    response,
+  });
+
+  // Giữ cache nhỏ và có giới hạn để tránh tăng bộ nhớ khi người dùng thử
+  // nhiều tổ hợp bộ lọc trong cùng một phiên.
+  if (publicListCache.size > 80) {
+    const oldestKey = publicListCache.keys().next().value;
+    if (oldestKey !== undefined) publicListCache.delete(oldestKey);
+  }
+
+  return response;
+}
+
 function getList(url, params = {}, config = {}) {
   const { cache = true, ...axiosConfig } = config || {};
 
-  if (!cache || axiosConfig.signal) {
+  if (!cache) {
     return api.get(url, {
       ...axiosConfig,
       params,
@@ -77,6 +101,26 @@ function getList(url, params = {}, config = {}) {
     publicListCache.delete(key);
   }
 
+  const requestVersion = publicListCacheVersion;
+
+  /*
+   * Request có AbortSignal không được dùng chung promise đang bay: nếu một
+   * màn hình unmount và hủy signal thì không được kéo theo request của màn
+   * hình khác. Tuy nhiên response hoàn tất vẫn được ghi vào cache để lần mở
+   * tiếp theo có thể dùng ngay. Trước đây mọi request từ useListPage đều có
+   * signal nên vô tình bỏ qua toàn bộ lớp cache này.
+   */
+  if (axiosConfig.signal) {
+    return api
+      .get(url, {
+        ...axiosConfig,
+        params,
+      })
+      .then((response) =>
+        storePublicListResponse(key, response, requestVersion),
+      );
+  }
+
   const pending = publicListInFlight.get(key);
   if (pending) {
     return pending;
@@ -87,15 +131,13 @@ function getList(url, params = {}, config = {}) {
       ...axiosConfig,
       params,
     })
-    .then((response) => {
-      publicListCache.set(key, {
-        createdAt: Date.now(),
-        response,
-      });
-      return response;
-    })
+    .then((response) =>
+      storePublicListResponse(key, response, requestVersion),
+    )
     .finally(() => {
-      publicListInFlight.delete(key);
+      if (publicListInFlight.get(key) === request) {
+        publicListInFlight.delete(key);
+      }
     });
 
   publicListInFlight.set(key, request);

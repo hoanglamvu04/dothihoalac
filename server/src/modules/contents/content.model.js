@@ -71,6 +71,33 @@ schema.index({
   publishedAt: -1,
 });
 
+// Các trang chuyên mục/khu vực/thẻ lọc trên mảng taxonomy. Mỗi compound
+// index chỉ chứa một trường mảng để MongoDB có thể dùng multikey index hợp lệ.
+schema.index({
+  contentType: 1,
+  status: 1,
+  visibility: 1,
+  deletedAt: 1,
+  categoryIds: 1,
+  publishedAt: -1,
+});
+schema.index({
+  contentType: 1,
+  status: 1,
+  visibility: 1,
+  deletedAt: 1,
+  areaIds: 1,
+  publishedAt: -1,
+});
+schema.index({
+  contentType: 1,
+  status: 1,
+  visibility: 1,
+  deletedAt: 1,
+  tagIds: 1,
+  publishedAt: -1,
+});
+
 schema.index(
   { title: 'text', summary: 'text', bodyText: 'text' },
   { weights: { title: 10, summary: 5, bodyText: 1 }, name: 'content_text_search' },

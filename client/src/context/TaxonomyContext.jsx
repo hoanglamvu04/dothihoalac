@@ -59,13 +59,9 @@ function writeCache(categories, areas, tags) {
 }
 
 export function TaxonomyProvider({ children }) {
-  const initialCacheRef = useRef(null);
-
-  if (initialCacheRef.current === null) {
-    initialCacheRef.current = readCache() || false;
-  }
-
-  const cached = initialCacheRef.current || null;
+  // Lazy state initializer chỉ đọc sessionStorage đúng một lần cho lifecycle
+  // của provider và không vi phạm quy tắc React 19 về đọc ref trong render.
+  const [cached] = useState(() => readCache());
 
   const [categories, setCategories] = useState(() => cached?.categories || []);
   const [areas, setAreas] = useState(() => cached?.areas || []);
