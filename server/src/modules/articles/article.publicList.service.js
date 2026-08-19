@@ -10,8 +10,29 @@ import {
   buildPaginationMeta,
 } from '../../utils/pagination.js';
 
-import { escapeRegex } from '../../utils/escapeRegex.js';
 import ApiError from '../../utils/ApiError.js';
+
+const PUBLIC_ARTICLE_LIST_FIELDS = [
+  'authorId',
+  'title',
+  'slug',
+  'summary',
+  'thumbnailMediaId',
+  'primaryCategoryId',
+  'primaryAreaId',
+  'categoryIds',
+  'areaIds',
+  'tagIds',
+  'publishedAt',
+  'createdAt',
+  'updatedAt',
+  'viewCount',
+  'commentCount',
+  'reactionCount',
+  'bookmarkCount',
+  'isSponsored',
+  'isFeatured',
+].join(' ');
 
 function normalize(value) {
   return typeof value === 'string' ? value.trim() : '';
@@ -133,14 +154,11 @@ export async function listPublicArticles(query = {}) {
 
   const keyword = normalize(query.q);
   if (keyword) {
-    const expression = new RegExp(escapeRegex(keyword), 'i');
-    and.push({
-      $or: [
-        { title: expression },
-        { summary: expression },
-        { bodyText: expression },
-      ],
-    });
+    /*
+     * Content đã có text index cho title/summary/bodyText. Dùng $text giúp
+     * MongoDB đi qua index thay vì quét toàn bộ collection bằng regex /i.
+     */
+    filter.$text = { $search: keyword };
   }
 
   const publishedFrom = parseOptionalDate(
@@ -176,24 +194,21 @@ export async function listPublicArticles(query = {}) {
 
   const [items, total] = await Promise.all([
     Content.find(filter)
+      .select(PUBLIC_ARTICLE_LIST_FIELDS)
       .sort(sort)
       .skip(skip)
       .limit(limit)
       .populate({
-        path: 'authorId',
-        select: 'username displayName status',
-      })
-      .populate({
         path: 'primaryCategoryId',
-        select: 'name slug contentScope description',
+        select: 'name slug contentScope',
       })
       .populate({
         path: 'primaryAreaId',
-        select: 'name slug areaType description',
+        select: 'name slug areaType',
       })
       .populate({
         path: 'thumbnailMediaId',
-        select: 'provider publicId assetId url secureUrl resourceType format width height fileSize altText status',
+        select: 'provider publicId assetId url secureUrl resourceType format width height altText status',
       })
       .lean(),
     Content.countDocuments(filter),
