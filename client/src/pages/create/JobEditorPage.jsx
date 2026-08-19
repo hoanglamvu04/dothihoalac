@@ -89,19 +89,19 @@ const JOB_TYPE_DESCRIPTIONS = {
     'Nhóm công việc dịch vụ, bán hàng, chăm sóc khách hàng và vận hành.',
 };
 
-const DESCRIPTION_TEMPLATES = [
+const JOB_CONTENT_TEMPLATES = [
   {
     id: 'standard',
     label: 'Mẫu cơ bản',
     description: 'Phù hợp đa số vị trí văn phòng và vận hành.',
-    html: `
-      <h2>Mô tả công việc</h2>
+    jobDescriptionHtml: `
       <ul>
         <li>Thực hiện các nhiệm vụ chính theo vị trí được phân công.</li>
         <li>Phối hợp với các bộ phận liên quan để hoàn thành công việc đúng tiến độ.</li>
         <li>Báo cáo kết quả và các vấn đề phát sinh cho người phụ trách.</li>
       </ul>
-      <h2>Yêu cầu ứng viên</h2>
+    `,
+    candidateRequirementsHtml: `
       <ul>
         <li>Chủ động, có trách nhiệm và có khả năng phối hợp công việc.</li>
         <li>Ưu tiên ứng viên có kinh nghiệm phù hợp với vị trí.</li>
@@ -113,14 +113,14 @@ const DESCRIPTION_TEMPLATES = [
     id: 'business',
     label: 'Kinh doanh',
     description: 'Dành cho sales, tư vấn, môi giới và phát triển khách hàng.',
-    html: `
-      <h2>Mô tả công việc</h2>
+    jobDescriptionHtml: `
       <ul>
         <li>Tìm kiếm, tư vấn và chăm sóc khách hàng theo tệp được phân công.</li>
         <li>Giới thiệu sản phẩm, dịch vụ và theo dõi quá trình ra quyết định của khách hàng.</li>
         <li>Cập nhật dữ liệu khách hàng và báo cáo kết quả kinh doanh định kỳ.</li>
       </ul>
-      <h2>Yêu cầu ứng viên</h2>
+    `,
+    candidateRequirementsHtml: `
       <ul>
         <li>Giao tiếp rõ ràng, chủ động và có tinh thần phục vụ khách hàng.</li>
         <li>Ưu tiên ứng viên có kinh nghiệm bán hàng hoặc tư vấn.</li>
@@ -132,14 +132,14 @@ const DESCRIPTION_TEMPLATES = [
     id: 'technical',
     label: 'Kỹ thuật - xây dựng',
     description: 'Dành cho kiến trúc, kỹ sư, giám sát và thi công.',
-    html: `
-      <h2>Mô tả công việc</h2>
+    jobDescriptionHtml: `
       <ul>
         <li>Thực hiện công việc chuyên môn theo hồ sơ, kế hoạch hoặc yêu cầu kỹ thuật.</li>
         <li>Phối hợp kiểm tra hiện trường, chất lượng và tiến độ công việc.</li>
         <li>Lập báo cáo, hồ sơ hoặc biên bản theo phạm vi phụ trách.</li>
       </ul>
-      <h2>Yêu cầu ứng viên</h2>
+    `,
+    candidateRequirementsHtml: `
       <ul>
         <li>Có chuyên môn phù hợp với vị trí tuyển dụng.</li>
         <li>Đọc hiểu tài liệu kỹ thuật và tuân thủ quy trình an toàn.</li>
@@ -169,8 +169,12 @@ const APPLICATION_PRESETS = [
   'Nộp hồ sơ trực tiếp tại địa điểm làm việc.',
 ];
 
+const DESCRIPTION_SECTION_RE =
+  /\s*<section\b[^>]*data-job-description=["']true["'][^>]*>([\s\S]*?)<\/section>\s*/i;
+const REQUIREMENTS_SECTION_RE =
+  /\s*<section\b[^>]*data-job-requirements=["']true["'][^>]*>([\s\S]*?)<\/section>\s*/i;
 const BENEFITS_SECTION_RE =
-  /\s*<section[^>]*data-job-benefits=["']true["'][^>]*>[\s\S]*?<\/section>\s*/i;
+  /\s*<section\b[^>]*data-job-benefits=["']true["'][^>]*>([\s\S]*?)<\/section>\s*/i;
 
 function getTomorrowDate() {
   const date = new Date();
@@ -243,65 +247,141 @@ function linesFromText(value) {
     .filter(Boolean);
 }
 
-function extractBenefits(bodyHtml) {
-  const html = String(bodyHtml || '');
-  const match = html.match(BENEFITS_SECTION_RE);
+function stripNamedHeading(html, name) {
+  const escapedName = String(name).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const headingRe = new RegExp(
+    `^\\s*<h[1-6][^>]*>\\s*${escapedName}\\s*<\\/h[1-6]>\\s*`,
+    'i',
+  );
+  return String(html || '').replace(headingRe, '').trim();
+}
 
-  if (!match) {
-    return {
-      bodyHtml: html,
-      benefits: '',
-    };
-  }
-
-  const section = match[0];
+function extractListItems(html) {
   const items = [];
   const itemRe = /<li[^>]*>([\s\S]*?)<\/li>/gi;
-  let itemMatch = itemRe.exec(section);
+  let itemMatch = itemRe.exec(String(html || ''));
 
   while (itemMatch) {
     const text = stripHtml(itemMatch[1]);
     if (text) items.push(text);
-    itemMatch = itemRe.exec(section);
+    itemMatch = itemRe.exec(String(html || ''));
   }
 
+  return items;
+}
+
+function extractJobContent(bodyHtml) {
+  let html = String(bodyHtml || '').trim();
+  let benefits = '';
+
+  const benefitsMatch = html.match(BENEFITS_SECTION_RE);
+  if (benefitsMatch) {
+    benefits = extractListItems(benefitsMatch[1]).join('\n');
+    html = html.replace(BENEFITS_SECTION_RE, '').trim();
+  }
+
+  const descriptionMatch = html.match(DESCRIPTION_SECTION_RE);
+  const requirementsMatch = html.match(REQUIREMENTS_SECTION_RE);
+
+  if (descriptionMatch || requirementsMatch) {
+    const jobDescriptionHtml = descriptionMatch
+      ? stripNamedHeading(descriptionMatch[1], 'Mô tả công việc')
+      : '';
+    const candidateRequirementsHtml = requirementsMatch
+      ? stripNamedHeading(requirementsMatch[1], 'Yêu cầu ứng viên')
+      : '';
+
+    return {
+      jobDescriptionHtml,
+      candidateRequirementsHtml,
+      benefits,
+    };
+  }
+
+  const requirementsHeadingRe =
+    /<h[1-6][^>]*>\s*Yêu cầu ứng viên\s*<\/h[1-6]>/i;
+  const requirementsHeading = requirementsHeadingRe.exec(html);
+
+  let jobDescriptionHtml = html;
+  let candidateRequirementsHtml = '';
+
+  if (requirementsHeading) {
+    const splitIndex = requirementsHeading.index;
+    const headingEnd = splitIndex + requirementsHeading[0].length;
+    jobDescriptionHtml = html.slice(0, splitIndex).trim();
+    candidateRequirementsHtml = html.slice(headingEnd).trim();
+  }
+
+  jobDescriptionHtml = stripNamedHeading(
+    jobDescriptionHtml,
+    'Mô tả công việc',
+  );
+  candidateRequirementsHtml = stripNamedHeading(
+    candidateRequirementsHtml,
+    'Yêu cầu ứng viên',
+  );
+
   return {
-    bodyHtml: html.replace(BENEFITS_SECTION_RE, '').trim(),
-    benefits: items.join('\n'),
+    jobDescriptionHtml,
+    candidateRequirementsHtml,
+    benefits,
   };
 }
 
-function composeBodyHtml(bodyHtml, benefits) {
-  const cleanBody = String(bodyHtml || '')
-    .replace(BENEFITS_SECTION_RE, '')
-    .trim();
+function composeBodyHtml(
+  jobDescriptionHtml,
+  candidateRequirementsHtml,
+  benefits,
+) {
+  const blocks = [];
+  const description = String(jobDescriptionHtml || '').trim();
+  const requirements = String(candidateRequirementsHtml || '').trim();
   const benefitLines = linesFromText(benefits);
 
-  if (!benefitLines.length) return cleanBody;
+  if (description) {
+    blocks.push(`
+      <section data-job-description="true">
+        <h2>Mô tả công việc</h2>
+        ${description}
+      </section>
+    `.trim());
+  }
 
-  const benefitHtml = `
-    <section data-job-benefits="true">
-      <h2>Quyền lợi</h2>
-      <ul>
-        ${benefitLines
-          .map((line) => `<li>${escapeHtml(line)}</li>`)
-          .join('\n')}
-      </ul>
-    </section>
-  `.trim();
+  if (requirements) {
+    blocks.push(`
+      <section data-job-requirements="true">
+        <h2>Yêu cầu ứng viên</h2>
+        ${requirements}
+      </section>
+    `.trim());
+  }
 
-  return [cleanBody, benefitHtml].filter(Boolean).join('\n');
+  if (benefitLines.length) {
+    blocks.push(`
+      <section data-job-benefits="true">
+        <h2>Quyền lợi ứng viên</h2>
+        <ul>
+          ${benefitLines
+            .map((line) => `<li>${escapeHtml(line)}</li>`)
+            .join('\n')}
+        </ul>
+      </section>
+    `.trim());
+  }
+
+  return blocks.join('\n');
 }
 
 function buildInitialForm(source = {}) {
   const job = source.job || {};
-  const persistedBody = extractBenefits(extractBodyHtml(source));
+  const persistedContent = extractJobContent(extractBodyHtml(source));
 
   return {
     title: source.title || '',
     summary: source.summary || '',
-    bodyHtml: persistedBody.bodyHtml,
-    benefits: persistedBody.benefits,
+    jobDescriptionHtml: persistedContent.jobDescriptionHtml,
+    candidateRequirementsHtml: persistedContent.candidateRequirementsHtml,
+    benefits: persistedContent.benefits,
     jobType: job.jobType || source.jobType || 'full_time',
     companyName: job.companyName || source.companyName || '',
     salaryMin: job.salaryMin ?? source.salaryMin ?? '',
@@ -322,6 +402,25 @@ function buildInitialForm(source = {}) {
       normalizeId(source.primaryAreaId || job.primaryAreaId) || '',
     thumbnailMediaId: source.thumbnailMediaId || null,
   };
+}
+
+function normalizeStoredDraft(currentForm, storedForm) {
+  const draft = storedForm || {};
+  const next = { ...currentForm, ...draft };
+
+  if (
+    !Object.prototype.hasOwnProperty.call(draft, 'jobDescriptionHtml') &&
+    draft.bodyHtml
+  ) {
+    const legacyContent = extractJobContent(draft.bodyHtml);
+    next.jobDescriptionHtml = legacyContent.jobDescriptionHtml;
+    next.candidateRequirementsHtml =
+      legacyContent.candidateRequirementsHtml;
+    if (!draft.benefits) next.benefits = legacyContent.benefits;
+  }
+
+  delete next.bodyHtml;
+  return next;
 }
 
 function isValidEmail(value) {
@@ -359,6 +458,44 @@ function hasPreset(currentValue, preset) {
 function getStorageKey(editingId, sessionId) {
   const key = editingId || sessionId || 'new';
   return `job-editor-draft:${key}`;
+}
+
+function EditorContentBlock({
+  number,
+  icon: Icon,
+  title,
+  description,
+  value,
+  onChange,
+  placeholder,
+  error,
+  textLength,
+}) {
+  return (
+    <section className="job-editor-content-block">
+      <header className="job-editor-content-block__heading">
+        <span className="job-editor-content-block__number">{number}</span>
+        <span className="job-editor-content-block__icon">
+          <Icon size={20} />
+        </span>
+        <div>
+          <h3>{title} <em>*</em></h3>
+          <p>{description}</p>
+        </div>
+        <small>{textLength.toLocaleString('vi-VN')} ký tự</small>
+      </header>
+
+      <div className={error ? 'job-rich-editor has-error' : 'job-rich-editor'}>
+        <RichTextEditor
+          value={value}
+          onChange={onChange}
+          placeholder={placeholder}
+        />
+      </div>
+
+      {error ? <p className="job-field-error">{error}</p> : null}
+    </section>
+  );
 }
 
 export default function JobEditorPage() {
@@ -450,12 +587,16 @@ export default function JobEditorPage() {
   }, [sessionKey, storageKey]);
 
   const formSnapshot = useMemo(() => JSON.stringify(form), [form]);
-  const dirty =
-    editorReady && formSnapshot !== savedSnapshotRef.current;
+  const dirty = editorReady && formSnapshot !== savedSnapshotRef.current;
 
-  const bodyTextLength = useMemo(
-    () => stripHtml(form.bodyHtml).length,
-    [form.bodyHtml],
+  const descriptionTextLength = useMemo(
+    () => stripHtml(form.jobDescriptionHtml).length,
+    [form.jobDescriptionHtml],
+  );
+
+  const requirementsTextLength = useMemo(
+    () => stripHtml(form.candidateRequirementsHtml).length,
+    [form.candidateRequirementsHtml],
   );
 
   const benefitsCount = useMemo(
@@ -495,12 +636,15 @@ export default function JobEditorPage() {
       },
       {
         label: 'Mô tả công việc',
-        completed: bodyTextLength > 0,
+        completed: descriptionTextLength > 0,
+      },
+      {
+        label: 'Yêu cầu ứng viên',
+        completed: requirementsTextLength > 0,
       },
       {
         label: 'Quyền lợi',
-        completed:
-          benefitsCount > 0 || /quyền\s*lợi/i.test(stripHtml(form.bodyHtml)),
+        completed: benefitsCount > 0,
       },
       {
         label: 'Địa điểm làm việc',
@@ -526,9 +670,8 @@ export default function JobEditorPage() {
     ],
     [
       benefitsCount,
-      bodyTextLength,
+      descriptionTextLength,
       form.applicationMethod,
-      form.bodyHtml,
       form.companyName,
       form.contactEmail,
       form.contactPhone,
@@ -536,6 +679,7 @@ export default function JobEditorPage() {
       form.thumbnailMediaId,
       form.title,
       form.workLocation,
+      requirementsTextLength,
     ],
   );
 
@@ -596,7 +740,7 @@ export default function JobEditorPage() {
       const parsed = JSON.parse(raw);
       if (!parsed?.form) throw new Error('Invalid local draft');
 
-      setForm((current) => ({ ...current, ...parsed.form }));
+      setForm((current) => normalizeStoredDraft(current, parsed.form));
       setRestoredDraft(true);
       toast.success('Đã khôi phục bản tự lưu trên thiết bị.');
     } catch {
@@ -639,19 +783,32 @@ export default function JobEditorPage() {
     toast.success('Đã đặt lại biểu mẫu.');
   }, [source, storageKey, toast]);
 
-  const applyDescriptionTemplate = useCallback(
+  const applyContentTemplate = useCallback(
     (template) => {
-      if (bodyTextLength > 0) {
+      if (descriptionTextLength > 0 || requirementsTextLength > 0) {
         const confirmed = window.confirm(
-          'Phần mô tả hiện đã có nội dung. Bạn có muốn thay bằng mẫu được chọn không?',
+          'Phần mô tả hoặc yêu cầu ứng viên hiện đã có nội dung. Bạn có muốn thay cả hai bằng mẫu được chọn không?',
         );
         if (!confirmed) return;
       }
 
-      change('bodyHtml', template.html.trim());
-      toast.success(`Đã chèn ${template.label.toLowerCase()}. Hãy chỉnh lại cho đúng vị trí tuyển.`);
+      setForm((current) => ({
+        ...current,
+        jobDescriptionHtml: template.jobDescriptionHtml.trim(),
+        candidateRequirementsHtml: template.candidateRequirementsHtml.trim(),
+      }));
+      setValidationErrors((current) => {
+        const next = { ...current };
+        delete next.jobDescriptionHtml;
+        delete next.candidateRequirementsHtml;
+        return next;
+      });
+
+      toast.success(
+        `Đã chèn ${template.label.toLowerCase()} cho cả mô tả công việc và yêu cầu ứng viên.`,
+      );
     },
-    [bodyTextLength, change, toast],
+    [descriptionTextLength, requirementsTextLength, toast],
   );
 
   const validate = useCallback(
@@ -675,19 +832,17 @@ export default function JobEditorPage() {
         errors.summary = `Mô tả ngắn không được vượt quá ${SUMMARY_MAX_LENGTH} ký tự.`;
       }
 
-      if (submitAfter && bodyTextLength === 0) {
-        errors.bodyHtml = 'Vui lòng nhập mô tả công việc.';
+      if (submitAfter && descriptionTextLength === 0) {
+        errors.jobDescriptionHtml = 'Vui lòng nhập mô tả công việc.';
       }
 
-      if (
-        form.benefits.length > BENEFITS_MAX_LENGTH
-      ) {
+      if (submitAfter && requirementsTextLength === 0) {
+        errors.candidateRequirementsHtml = 'Vui lòng nhập yêu cầu ứng viên.';
+      }
+
+      if (form.benefits.length > BENEFITS_MAX_LENGTH) {
         errors.benefits = `Quyền lợi không được vượt quá ${BENEFITS_MAX_LENGTH} ký tự.`;
-      } else if (
-        submitAfter &&
-        benefitsCount === 0 &&
-        !/quyền\s*lợi/i.test(stripHtml(form.bodyHtml))
-      ) {
+      } else if (submitAfter && benefitsCount === 0) {
         errors.benefits = 'Vui lòng bổ sung ít nhất một quyền lợi cho ứng viên.';
       }
 
@@ -761,7 +916,13 @@ export default function JobEditorPage() {
 
       return true;
     },
-    [benefitsCount, bodyTextLength, form, toast],
+    [
+      benefitsCount,
+      descriptionTextLength,
+      form,
+      requirementsTextLength,
+      toast,
+    ],
   );
 
   const buildPayload = useCallback(() => {
@@ -777,7 +938,11 @@ export default function JobEditorPage() {
     return {
       title: form.title.trim(),
       summary: form.summary.trim() || undefined,
-      bodyHtml: composeBodyHtml(form.bodyHtml, form.benefits),
+      bodyHtml: composeBodyHtml(
+        form.jobDescriptionHtml,
+        form.candidateRequirementsHtml,
+        form.benefits,
+      ),
       jobType: form.jobType,
       companyName: form.companyName.trim(),
       salaryMin,
@@ -932,7 +1097,7 @@ export default function JobEditorPage() {
             </span>
             <h1>{editingId ? 'Chỉnh sửa tin tuyển dụng' : 'Đăng tin tuyển dụng'}</h1>
             <p>
-              Nhập rõ vị trí, mô tả công việc, quyền lợi, mức lương, địa điểm và cách ứng tuyển.
+              Tách rõ mô tả công việc, yêu cầu ứng viên, quyền lợi, mức lương và cách ứng tuyển để tin dễ đọc như các nền tảng tuyển dụng chuyên nghiệp.
             </p>
           </div>
 
@@ -1031,13 +1196,13 @@ export default function JobEditorPage() {
               </div>
             </section>
 
-            <section className="job-editor-card">
+            <section className="job-editor-card job-editor-card--job-content">
               <header className="job-editor-card__heading">
                 <span><FileText size={22} /></span>
                 <div>
                   <small>Bước 2</small>
-                  <h2>Vị trí và mô tả công việc</h2>
-                  <p>Viết rõ công việc phải làm và yêu cầu đối với ứng viên.</p>
+                  <h2>Nội dung vị trí tuyển dụng</h2>
+                  <p>Tiêu đề, phần giới thiệu và hai khối nội dung chính được tách riêng để dễ nhập và dễ đọc.</p>
                 </div>
               </header>
 
@@ -1064,7 +1229,7 @@ export default function JobEditorPage() {
 
               <div className="job-editor-field">
                 <div className="job-editor-field__label">
-                  <label htmlFor="job-summary">Mô tả ngắn</label>
+                  <label htmlFor="job-summary">Tóm tắt vị trí</label>
                   <small>{form.summary.length}/{SUMMARY_MAX_LENGTH}</small>
                 </div>
                 <textarea
@@ -1086,15 +1251,15 @@ export default function JobEditorPage() {
                   <Sparkles size={19} />
                   <div>
                     <strong>Mẫu nội dung nhanh</strong>
-                    <p>Chọn một mẫu để khỏi phải dựng khung mô tả từ đầu.</p>
+                    <p>Một lần chọn sẽ điền đồng thời “Mô tả công việc” và “Yêu cầu ứng viên”.</p>
                   </div>
                 </div>
                 <div className="job-template-options">
-                  {DESCRIPTION_TEMPLATES.map((template) => (
+                  {JOB_CONTENT_TEMPLATES.map((template) => (
                     <button
                       key={template.id}
                       type="button"
-                      onClick={() => applyDescriptionTemplate(template)}
+                      onClick={() => applyContentTemplate(template)}
                     >
                       <strong>{template.label}</strong>
                       <small>{template.description}</small>
@@ -1103,25 +1268,37 @@ export default function JobEditorPage() {
                 </div>
               </div>
 
-              <div className="job-editor-field">
-                <div className="job-editor-field__label">
-                  <label>Mô tả công việc <span>*</span></label>
-                  <small>{bodyTextLength.toLocaleString('vi-VN')} ký tự</small>
-                </div>
-                <div className={validationErrors.bodyHtml ? 'job-rich-editor has-error' : 'job-rich-editor'}>
-                  <RichTextEditor
-                    value={form.bodyHtml}
-                    onChange={(value) => change('bodyHtml', value)}
-                    placeholder="Mô tả nhiệm vụ, yêu cầu ứng viên, thời gian làm việc và các thông tin cần thiết..."
-                  />
-                </div>
-                {validationErrors.bodyHtml ? (
-                  <p className="job-field-error">{validationErrors.bodyHtml}</p>
-                ) : (
-                  <p className="job-field-hint">
-                    Quyền lợi được tách thành mục riêng ở bên dưới để tin dễ đọc và dễ chuẩn hóa.
-                  </p>
-                )}
+              <div className="job-editor-content-stack">
+                <EditorContentBlock
+                  number="01"
+                  icon={BriefcaseBusiness}
+                  title="Mô tả công việc"
+                  description="Chỉ viết nhiệm vụ, phạm vi trách nhiệm, đầu việc và kết quả cần đạt."
+                  value={form.jobDescriptionHtml}
+                  onChange={(value) => change('jobDescriptionHtml', value)}
+                  placeholder="Ví dụ: Lập hồ sơ dự toán; bóc tách khối lượng; phối hợp chủ đầu tư; theo dõi tiến độ..."
+                  error={validationErrors.jobDescriptionHtml}
+                  textLength={descriptionTextLength}
+                />
+
+                <EditorContentBlock
+                  number="02"
+                  icon={UsersRound}
+                  title="Yêu cầu ứng viên"
+                  description="Tách riêng kinh nghiệm, chuyên môn, kỹ năng, học vấn hoặc điều kiện bắt buộc."
+                  value={form.candidateRequirementsHtml}
+                  onChange={(value) => change('candidateRequirementsHtml', value)}
+                  placeholder="Ví dụ: Tốt nghiệp chuyên ngành phù hợp; biết AutoCAD; kinh nghiệm từ 1 năm; chủ động và có trách nhiệm..."
+                  error={validationErrors.candidateRequirementsHtml}
+                  textLength={requirementsTextLength}
+                />
+              </div>
+
+              <div className="job-editor-notice job-editor-notice--compact">
+                <Info size={18} />
+                <p>
+                  Khi xuất bản, hệ thống tự ghép hai phần thành các mục độc lập “Mô tả công việc” và “Yêu cầu ứng viên”, không còn phải tự gõ tiêu đề bên trong trình soạn thảo.
+                </p>
               </div>
             </section>
 
@@ -1130,7 +1307,7 @@ export default function JobEditorPage() {
                 <span><CircleDollarSign size={22} /></span>
                 <div>
                   <small>Bước 3</small>
-                  <h2>Lương và yêu cầu công việc</h2>
+                  <h2>Lương và yêu cầu cơ bản</h2>
                   <p>Cung cấp mức lương, kinh nghiệm, số lượng tuyển và hạn nộp hồ sơ.</p>
                 </div>
               </header>
@@ -1275,7 +1452,7 @@ export default function JobEditorPage() {
                   ))}
                 </select>
                 <p className="job-field-hint">
-                  Khu vực chỉ dùng cho tìm kiếm/lọc việc làm. Đã bỏ “Chuyên mục” và “Thẻ chủ đề” chung vì không đúng ngữ nghĩa tuyển dụng.
+                  Khu vực chỉ dùng cho tìm kiếm/lọc việc làm, không trộn với chuyên mục tin tức.
                 </p>
               </div>
             </section>
@@ -1331,7 +1508,7 @@ export default function JobEditorPage() {
                   <p className="job-field-error">{validationErrors.benefits}</p>
                 ) : (
                   <p className="job-field-hint">
-                    Khi xuất bản, hệ thống tự đưa mục này thành phần “Quyền lợi” trong nội dung tin.
+                    Khi xuất bản, hệ thống tự tạo thành mục “Quyền lợi ứng viên” riêng biệt.
                   </p>
                 )}
               </div>
@@ -1512,6 +1689,28 @@ export default function JobEditorPage() {
 
               <section className="job-editor-sidebar-card">
                 <div className="job-sidebar-heading">
+                  <FileText size={20} />
+                  <div>
+                    <h2>Nội dung chính</h2>
+                    <p>Hai phần quan trọng nhất đã được tách riêng.</p>
+                  </div>
+                </div>
+                <div className="job-content-health">
+                  <div className={descriptionTextLength > 0 ? 'is-ready' : ''}>
+                    <BriefcaseBusiness size={17} />
+                    <span>Mô tả công việc</span>
+                    <strong>{descriptionTextLength > 0 ? 'Đã có' : 'Chưa có'}</strong>
+                  </div>
+                  <div className={requirementsTextLength > 0 ? 'is-ready' : ''}>
+                    <UsersRound size={17} />
+                    <span>Yêu cầu ứng viên</span>
+                    <strong>{requirementsTextLength > 0 ? 'Đã có' : 'Chưa có'}</strong>
+                  </div>
+                </div>
+              </section>
+
+              <section className="job-editor-sidebar-card">
+                <div className="job-sidebar-heading">
                   <Gift size={20} />
                   <div>
                     <h2>Quyền lợi đang có</h2>
@@ -1535,9 +1734,9 @@ export default function JobEditorPage() {
                 </div>
                 <ul className="job-guideline-list">
                   <li>Nhiệm vụ cụ thể và dễ hiểu.</li>
+                  <li>Yêu cầu ứng viên tách riêng, không trộn vào mô tả.</li>
                   <li>Mức lương hoặc ghi rõ thỏa thuận.</li>
                   <li>Địa điểm và thời gian làm việc.</li>
-                  <li>Yêu cầu kinh nghiệm/kỹ năng.</li>
                   <li>Quyền lợi và chính sách rõ ràng.</li>
                   <li>Cách ứng tuyển và đầu mối liên hệ.</li>
                 </ul>
