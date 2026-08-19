@@ -20,6 +20,13 @@ async function mutation(request, action) {
   return item;
 }
 
+function getList(url, params = {}, config = {}) {
+  return api.get(url, {
+    ...config,
+    params,
+  });
+}
+
 export const draftApi = {
   create: async (contentType) =>
     mutation(api.post('/drafts', { contentType }), 'create-draft'),
@@ -28,20 +35,20 @@ export const draftApi = {
 };
 
 export const articleApi = {
-  list: async (params = {}) => unwrapList(await api.get('/articles', { params })),
-  detail: async (slug) => unwrap(await api.get(`/articles/${slug}`)),
+  list: async (params = {}, config = {}) => unwrapList(await getList('/articles', params, config)),
+  detail: async (slug, config = {}) => unwrap(await api.get(`/articles/${slug}`, config)),
   submitTip: async (payload) => unwrap(await api.post('/articles/tips', payload)),
 };
 
 export const projectApi = {
-  list: async (params = {}) => unwrapList(await api.get('/projects', { params })),
-  detail: async (slug) => unwrap(await api.get(`/projects/${slug}`)),
+  list: async (params = {}, config = {}) => unwrapList(await getList('/projects', params, config)),
+  detail: async (slug, config = {}) => unwrap(await api.get(`/projects/${slug}`, config)),
 };
 
 export const communityApi = {
-  list: async (params = {}) => unwrapList(await api.get('/community', { params })),
-  detail: async (slug) => unwrap(await api.get(`/community/${slug}`)),
-  editDetail: async (id) => unwrap(await api.get(`/community/${id}/edit`)),
+  list: async (params = {}, config = {}) => unwrapList(await getList('/community', params, config)),
+  detail: async (slug, config = {}) => unwrap(await api.get(`/community/${slug}`, config)),
+  editDetail: async (id, config = {}) => unwrap(await api.get(`/community/${id}/edit`, config)),
   create: async (payload) => mutation(api.post('/community', payload), 'create'),
   update: async (id, payload) => mutation(api.patch(`/community/${id}`, payload), 'update'),
   remove: async (id) => {
@@ -55,9 +62,9 @@ export const communityApi = {
 };
 
 export const propertyApi = {
-  list: async (params = {}) => unwrapList(await api.get('/properties', { params })),
-  detail: async (slug) => unwrap(await api.get(`/properties/${slug}`)),
-  editDetail: async (id) => unwrap(await api.get(`/properties/${id}/edit`)),
+  list: async (params = {}, config = {}) => unwrapList(await getList('/properties', params, config)),
+  detail: async (slug, config = {}) => unwrap(await api.get(`/properties/${slug}`, config)),
+  editDetail: async (id, config = {}) => unwrap(await api.get(`/properties/${id}/edit`, config)),
   create: async (payload) => mutation(api.post('/properties', payload), 'create'),
   update: async (id, payload) => mutation(api.patch(`/properties/${id}`, payload), 'update'),
   submit: async (id) => mutation(api.post(`/properties/${id}/submit`), 'submit'),
@@ -69,22 +76,23 @@ export const propertyApi = {
 };
 
 export const jobApi = {
-  list: async (params = {}) => unwrapList(await api.get('/jobs', { params })),
-  detail: async (slug) => unwrap(await api.get(`/jobs/${slug}`)),
-  editDetail: async (id) => unwrap(await api.get(`/jobs/${id}/edit`)),
+  list: async (params = {}, config = {}) => unwrapList(await getList('/jobs', params, config)),
+  detail: async (slug, config = {}) => unwrap(await api.get(`/jobs/${slug}`, config)),
+  editDetail: async (id, config = {}) => unwrap(await api.get(`/jobs/${id}/edit`, config)),
   create: async (payload) => mutation(api.post('/jobs', payload), 'create'),
   update: async (id, payload) => mutation(api.patch(`/jobs/${id}`, payload), 'update'),
   submit: async (id) => mutation(api.post(`/jobs/${id}/submit`), 'submit'),
 };
 
 export const searchApi = {
-  run: async (params = {}) => {
-    const response = await api.get('/search', { params });
+  run: async (params = {}, config = {}) => {
+    const response = await getList('/search', params, config);
     return { data: response.data.data, meta: response.data.meta };
   },
 };
 
 export const systemApi = {
-  page: async (slug) => unwrap(await api.get(`/system/pages/${slug}`)),
-  banners: async (position) => unwrap(await api.get('/system/banners', { params: { position } })),
+  page: async (slug, config = {}) => unwrap(await api.get(`/system/pages/${slug}`, config)),
+  banners: async (position, config = {}) =>
+    unwrap(await api.get('/system/banners', { ...config, params: { position } })),
 };
