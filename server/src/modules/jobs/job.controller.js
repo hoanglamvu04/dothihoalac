@@ -1,8 +1,9 @@
 import * as s from './job.service.js';
+import { listPublicJobs } from './job.publicList.service.js';
 import { sendCreated, sendSuccess } from '../../utils/apiResponse.js';
 
 export async function list(req, res) {
-  const r = await s.list(req.query);
+  const r = await listPublicJobs(req.query);
   return sendSuccess(res, { data: r.items, meta: r.meta });
 }
 
