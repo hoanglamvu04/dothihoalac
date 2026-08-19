@@ -27,6 +27,24 @@ function getList(url, params = {}, config = {}) {
   });
 }
 
+function optimizedCommunityParams(params = {}) {
+  if (params.compact !== undefined) return params;
+
+  const limit = Number(params.limit || 0);
+  const isSmallPopularWidget =
+    params.sort === 'popular' &&
+    limit > 0 &&
+    limit <= 5 &&
+    !params.q &&
+    !params.area &&
+    !params.category &&
+    !params.type;
+
+  return isSmallPopularWidget
+    ? { ...params, compact: 1 }
+    : params;
+}
+
 export const draftApi = {
   create: async (contentType) =>
     mutation(api.post('/drafts', { contentType }), 'create-draft'),
@@ -46,7 +64,8 @@ export const projectApi = {
 };
 
 export const communityApi = {
-  list: async (params = {}, config = {}) => unwrapList(await getList('/community', params, config)),
+  list: async (params = {}, config = {}) =>
+    unwrapList(await getList('/community', optimizedCommunityParams(params), config)),
   detail: async (slug, config = {}) => unwrap(await api.get(`/community/${slug}`, config)),
   editDetail: async (id, config = {}) => unwrap(await api.get(`/community/${id}/edit`, config)),
   create: async (payload) => mutation(api.post('/community', payload), 'create'),
