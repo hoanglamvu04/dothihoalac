@@ -1,13 +1,13 @@
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import SiteHeader from './SiteHeader';
-import HeaderNavigationUpgrade from './HeaderNavigationUpgrade';
 import DeferredSiteFooter from './DeferredSiteFooter';
 import DeferredCommunityQuickComposer from '../community/DeferredCommunityQuickComposer';
 import AdSlot from '../ads/AdSlot';
 
 import './PublicInteractionFixes.css';
 
+const HeaderNavigationUpgrade = lazy(() => import('./HeaderNavigationUpgrade'));
 const CommunityAdRails = lazy(() => import('../community/CommunityAdRails'));
 
 function pageTopAdSlot(pathname) {
@@ -51,6 +51,43 @@ function loadRouteStyles(pathname) {
   return Promise.resolve();
 }
 
+function DeferredHeaderNavigation() {
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    let idleId = null;
+    let delayId = window.setTimeout(() => {
+      delayId = null;
+
+      if ('requestIdleCallback' in window) {
+        idleId = window.requestIdleCallback(
+          () => setReady(true),
+          { timeout: 700 },
+        );
+      } else {
+        setReady(true);
+      }
+    }, 350);
+
+    return () => {
+      if (delayId) window.clearTimeout(delayId);
+      if (idleId !== null && 'cancelIdleCallback' in window) {
+        window.cancelIdleCallback(idleId);
+      }
+    };
+  }, []);
+
+  if (!ready) {
+    return <div aria-hidden="true" style={{ minHeight: 42 }} />;
+  }
+
+  return (
+    <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 42 }} />}>
+      <HeaderNavigationUpgrade />
+    </Suspense>
+  );
+}
+
 export default function PublicLayout() {
   const location = useLocation();
   const normalizedPath = location.pathname.replace(/\/+$/, '') || '/';
@@ -64,7 +101,7 @@ export default function PublicLayout() {
   return (
     <div className="app-shell">
       <SiteHeader />
-      <HeaderNavigationUpgrade />
+      <DeferredHeaderNavigation />
 
       <AdSlot slotKey="site_below_header" layout="strip" deferMs={450} />
       {topSlot ? <AdSlot slotKey={topSlot} layout="strip" deferMs={650} /> : null}
