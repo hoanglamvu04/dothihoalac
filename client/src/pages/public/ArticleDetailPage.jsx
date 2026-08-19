@@ -48,6 +48,15 @@ function stripHtml(value) {
     .trim();
 }
 
+function normalizeDisplayText(value) {
+  return String(value ?? '')
+    .normalize('NFC')
+    .replace(/[\u200B-\u200D\u2060\uFEFF]/g, '')
+    .replace(/\u00A0/g, ' ')
+    .replace(/[ \t]+/g, ' ')
+    .trim();
+}
+
 function mediaIdOf(value) {
   return String(
     value?._id ||
@@ -115,7 +124,9 @@ function getTagItems(item) {
     .map((tag) => {
       if (!tag || typeof tag === 'string') return null;
 
-      const name = tag.name || tag.title || tag.label;
+      const name = normalizeDisplayText(
+        tag.name || tag.title || tag.label,
+      );
       if (!name) return null;
 
       return {
@@ -128,6 +139,20 @@ function getTagItems(item) {
 
 function getArticleId(article) {
   return String(article?._id || article?.id || '');
+}
+
+function getCategoryKey(article) {
+  const category = article?.primaryCategoryId;
+
+  if (!category) return '';
+  if (typeof category === 'string') return category;
+
+  return String(
+    category._id ||
+      category.id ||
+      category.slug ||
+      '',
+  );
 }
 
 function selectSidebarArticles(currentItem, articles = []) {
@@ -155,6 +180,28 @@ function selectSidebarArticles(currentItem, articles = []) {
   }
 
   return result;
+}
+
+function selectRelatedArticles(currentItem, articles = [], limit = 4) {
+  const candidates = selectSidebarArticles(currentItem, articles);
+  const currentCategory = getCategoryKey(currentItem);
+
+  if (!currentCategory) {
+    return candidates.slice(0, limit);
+  }
+
+  const sameCategory = [];
+  const fallback = [];
+
+  for (const article of candidates) {
+    if (getCategoryKey(article) === currentCategory) {
+      sameCategory.push(article);
+    } else {
+      fallback.push(article);
+    }
+  }
+
+  return [...sameCategory, ...fallback].slice(0, limit);
 }
 
 function clampSidebarCount(value, max) {
@@ -304,6 +351,11 @@ export default function ArticleDetailPage() {
 
   const showStandaloneCover = Boolean(coverUrl) && !coverIsInline;
 
+  const displayTitle = useMemo(
+    () => normalizeDisplayText(item?.title),
+    [item?.title],
+  );
+
   const seoDescription = useMemo(() => {
     const explicit = String(item?.summary || '').trim();
     if (explicit) return explicit;
@@ -322,7 +374,12 @@ export default function ArticleDetailPage() {
   );
 
   const categoryValue = getTaxonomyValue(item?.primaryCategoryId);
-  const authorName = item?.authorId?.displayName || 'Ban biên tập';
+  const categoryName = normalizeDisplayText(
+    item?.primaryCategoryId?.name || 'Tin tức',
+  );
+  const authorName = normalizeDisplayText(
+    item?.authorId?.displayName || 'Ban biên tập',
+  );
   const authorUsername = item?.authorId?.username || '';
   const authorAvatar =
     item?.authorId?.profile?.avatarMediaId ||
@@ -390,10 +447,11 @@ export default function ArticleDetailPage() {
   }
 
   const visibleSidebarArticles = sidebarArticles.slice(0, sidebarVisibleCount);
+  const relatedArticles = selectRelatedArticles(item, sidebarArticles, 4);
 
   return (
     <section className="article-view-page">
-      <Seo title={item.title} description={seoDescription} />
+      <Seo title={displayTitle} description={seoDescription} />
 
       <div className="article-reading-progress" aria-hidden="true">
         <span style={{ transform: `scaleX(${readingProgress})` }} />
@@ -408,10 +466,10 @@ export default function ArticleDetailPage() {
           <span>/</span>
           {categoryValue ? (
             <Link to={`/tin-tuc?category=${encodeURIComponent(categoryValue)}`}>
-              {item.primaryCategoryId?.name || 'Tin tức'}
+              {categoryName}
             </Link>
           ) : (
-            <span>{item.primaryCategoryId?.name || 'Tin tức'}</span>
+            <span>{categoryName}</span>
           )}
         </nav>
 
@@ -421,17 +479,19 @@ export default function ArticleDetailPage() {
               <header className="article-view-header">
                 <div className="article-view-labels">
                   <Badge tone="primary">
-                    {item.primaryCategoryId?.name || 'Tin tức'}
+                    {categoryName}
                   </Badge>
                   {item.isSponsored ? (
                     <Badge tone="warning">Nội dung tài trợ</Badge>
                   ) : null}
                 </div>
 
-                <h1>{item.title}</h1>
+                <h1>{displayTitle}</h1>
 
                 {item.summary ? (
-                  <p className="article-view-lead">{item.summary}</p>
+                  <p className="article-view-lead">
+                    {normalizeDisplayText(item.summary)}
+                  </p>
                 ) : null}
 
                 <div className="article-view-author-row">
@@ -492,7 +552,7 @@ export default function ArticleDetailPage() {
                 <div className="article-view-cover">
                   <ContentImage
                     media={item.thumbnailMediaId}
-                    alt={item.title}
+                    alt={displayTitle}
                     ratio="hero"
                   />
                 </div>
@@ -508,7 +568,7 @@ export default function ArticleDetailPage() {
                     <Link2 size={18} />
                     <div>
                       <strong>Nguồn và ghi chú</strong>
-                      <p>{item.article.sourceNote}</p>
+                      <p>{normalizeDisplayText(item.article.sourceNote)}</p>
                     </div>
                   </div>
                 ) : null}
@@ -598,8 +658,12 @@ export default function ArticleDetailPage() {
                             </div>
 
                             <div className="article-popular-sidebar__copy">
-                              <span>{article.primaryCategoryId?.name || 'Tin tức'}</span>
-                              <h3>{article.title}</h3>
+                              <span>
+                                {normalizeDisplayText(
+                                  article.primaryCategoryId?.name || 'Tin tức',
+                                )}
+                              </span>
+                              <h3>{normalizeDisplayText(article.title)}</h3>
                               <small>
                                 <Eye size={13} />
                                 {views.toLocaleString('vi-VN')} lượt xem
@@ -619,6 +683,72 @@ export default function ArticleDetailPage() {
             </div>
           </aside>
         </div>
+
+        {!sidebarLoading ? (
+          <section
+            className="article-view-more"
+            aria-labelledby="article-view-more-title"
+          >
+            <header className="article-view-more__header">
+              <div>
+                <span>Đọc tiếp</span>
+                <h2 id="article-view-more-title">Bài viết liên quan</h2>
+              </div>
+              <Link to="/tin-tuc">Xem tất cả tin tức</Link>
+            </header>
+
+            {relatedArticles.length ? (
+              <div className="article-view-more__grid">
+                {relatedArticles.map((article) => {
+                  const relatedCoverUrl = mediaUrl(article.thumbnailMediaId);
+                  const relatedViews = getViewCount(article);
+
+                  return (
+                    <Link
+                      className="article-view-more__card"
+                      to={`/tin-tuc/${article.slug}`}
+                      key={`related-${getArticleId(article)}`}
+                    >
+                      <div className="article-view-more__thumb">
+                        {relatedCoverUrl ? (
+                          <img
+                            src={relatedCoverUrl}
+                            alt=""
+                            loading="lazy"
+                          />
+                        ) : (
+                          <span>
+                            <Newspaper size={26} />
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="article-view-more__copy">
+                        <span>
+                          {normalizeDisplayText(
+                            article.primaryCategoryId?.name || 'Tin tức',
+                          )}
+                        </span>
+                        <h3>{normalizeDisplayText(article.title)}</h3>
+                        <small>
+                          <Eye size={13} />
+                          {relatedViews.toLocaleString('vi-VN')} lượt xem
+                        </small>
+                      </div>
+                    </Link>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="article-view-more__fallback">
+                <p>
+                  Xem thêm các tin mới, quy hoạch, hạ tầng và đời sống tại Hòa Lạc.
+                </p>
+                <Link to="/tin-tuc">Khám phá tin mới</Link>
+              </div>
+            )}
+          </section>
+        ) : null}
       </div>
 
       {readingProgress > 0.35 ? (
