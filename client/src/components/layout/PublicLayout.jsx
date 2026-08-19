@@ -6,6 +6,8 @@ import CommunityQuickComposer from '../community/CommunityQuickComposer';
 import CommunityAdRails from '../community/CommunityAdRails';
 import AdSlot from '../ads/AdSlot';
 
+import './PublicInteractionFixes.css';
+
 function pageTopAdSlot(pathname) {
   if (pathname === '/tin-tuc') return 'news_top';
   if (pathname.startsWith('/tin-tuc/')) return 'article_top';
