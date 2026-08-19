@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { mediaUrl } from '../../utils/media';
 
-const RESPONSIVE_WIDTHS = [320, 480, 640, 960, 1280, 1600];
+const RESPONSIVE_WIDTHS = [480, 640, 768, 960, 1280, 1600, 1920, 2560];
+const DEFAULT_SOURCE_WIDTH = 1600;
 
 function cloudinaryVariant(url, width) {
   const value = String(url || '');
@@ -12,7 +13,7 @@ function cloudinaryVariant(url, width) {
 
   return value.replace(
     '/upload/',
-    `/upload/f_auto,q_auto:eco,c_limit,w_${width}/`,
+    `/upload/f_auto,q_auto:good,c_limit,w_${width}/`,
   );
 }
 
@@ -38,7 +39,7 @@ export default function ContentImage({
   height,
   fetchPriority,
   srcSet,
-  sizes = '(max-width: 720px) 100vw, (max-width: 1200px) 50vw, 640px',
+  sizes = '(max-width: 720px) calc(100vw - 32px), (max-width: 1200px) 60vw, 760px',
   ...props
 }) {
   const [failed, setFailed] = useState(false);
@@ -48,10 +49,11 @@ export default function ContentImage({
 
   const responsiveSet = srcSet || responsiveSourceSet(originalSrc);
   const src = responsiveSet
-    ? cloudinaryVariant(originalSrc, 1280)
+    ? cloudinaryVariant(originalSrc, DEFAULT_SOURCE_WIDTH)
     : originalSrc;
 
   const classes = [
+    'content-image',
     className,
     ratio ? `content-image--${ratio}` : '',
   ]
