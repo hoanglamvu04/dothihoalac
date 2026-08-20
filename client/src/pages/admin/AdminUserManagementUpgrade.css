@@ -1,0 +1,60 @@
+.admin-user-detail-tabs {
+  display: flex;
+  gap: 6px;
+  padding: 6px;
+  border: 1px solid #dce5df;
+  border-radius: 12px;
+  background: #f8faf9;
+}
+
+.admin-user-detail-tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #647268;
+  font-size: .72rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.admin-user-detail-tabs button.is-active {
+  background: #eaf6ee;
+  color: #0c6a35;
+}
+
+.admin-user-management-card {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-user-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4,minmax(0,1fr));
+  gap: 12px;
+}
+
+.admin-user-stat-grid > div {
+  padding: 14px;
+  border: 1px solid #dde5e0;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.admin-user-stat-grid strong {
+  display: block;
+  color: #0c6a35;
+  font-size: 1.2rem;
+}
+
+.admin-user-stat-grid span {
+  color: #6d786f;
+  font-size: .7rem;
+}
+
+@media(max-width:900px){
+  .admin-user-stat-grid{grid-template-columns:repeat(2,1fr)}
+}
