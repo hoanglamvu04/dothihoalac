@@ -1,0 +1,319 @@
+.admin-access-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: 18px;
+  border: 1px solid #dce5df;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.admin-access-tabs button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 0 13px;
+  gap: 7px;
+  border: 0;
+  border-radius: 9px;
+  color: #66736b;
+  background: transparent;
+  font-size: 0.74rem;
+  font-weight: 760;
+  cursor: pointer;
+}
+
+.admin-access-tabs button.is-active {
+  color: #0c6a35;
+  background: #edf7f1;
+}
+
+.admin-access-summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.admin-access-summary > div {
+  display: grid;
+  gap: 3px;
+  min-height: 86px;
+  padding: 15px 17px;
+  border: 1px solid #dde5e0;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.admin-access-summary strong {
+  color: #0c6a35;
+  font-size: 1.45rem;
+  line-height: 1;
+}
+
+.admin-access-summary span {
+  color: #68746c;
+  font-size: 0.72rem;
+  font-weight: 680;
+}
+
+.admin-access-matrix {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.admin-access-role-card {
+  min-width: 0;
+  padding: 17px;
+  border: 1px solid #dde5e0;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 4px 18px rgb(22 52 32 / 0.035);
+}
+
+.admin-access-role-card > header,
+.admin-access-role-card > header > div {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.admin-access-role-card > header {
+  justify-content: space-between;
+  padding-bottom: 13px;
+  border-bottom: 1px solid #edf1ee;
+}
+
+.admin-access-role-card h3 {
+  margin: 0;
+  font-size: 0.92rem;
+}
+
+.admin-access-role-card p {
+  margin: 5px 0 0;
+  color: #748078;
+  font-size: 0.68rem;
+  line-height: 1.5;
+}
+
+.admin-access-role-card > header > strong {
+  flex: 0 0 auto;
+  color: #0c6a35;
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+
+.admin-access-role-icon {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  color: #0c6a35;
+  background: #eef8f2;
+}
+
+.admin-access-permissions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-top: 13px;
+}
+
+.admin-access-permissions > span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 29px;
+  padding: 0 9px;
+  gap: 5px;
+  border: 1px solid #e0e7e2;
+  border-radius: 999px;
+  color: #4d5b52;
+  background: #fafcfb;
+  font-size: 0.62rem;
+  font-weight: 680;
+}
+
+.admin-user-toolbar {
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.admin-user-toolbar__tools {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.admin-role-filter {
+  width: auto;
+  min-width: 154px;
+  min-height: 38px;
+  padding: 0 30px 0 10px;
+  border-radius: 9px;
+  font-size: 0.7rem;
+}
+
+.admin-users-table td {
+  vertical-align: top;
+}
+
+.admin-user-role-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.admin-user-role-badges.is-compact {
+  max-width: 240px;
+  margin-top: 0;
+}
+
+.admin-user-role-badges .badge {
+  font-size: 0.59rem;
+}
+
+.admin-user-staff-note {
+  color: #0c6a35 !important;
+  font-weight: 720;
+}
+
+.admin-access-warning {
+  padding: 11px 13px;
+  border: 1px solid #f0d3a7;
+  border-radius: 10px;
+  color: #785219;
+  background: #fff8ea;
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
+.admin-user-fieldset {
+  display: contents;
+  padding: 0;
+  margin: 0;
+  border: 0;
+}
+
+.admin-user-fieldset:disabled {
+  opacity: 0.65;
+}
+
+.admin-staff-role-section {
+  padding: 14px;
+  border: 1px solid #dce5df;
+  border-radius: 12px;
+  background: #f9fbfa;
+}
+
+.admin-staff-role-section__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 11px;
+  color: #0d7138;
+}
+
+.admin-staff-role-section__head strong {
+  color: #18251c;
+  font-size: 0.8rem;
+}
+
+.admin-staff-role-section__head p {
+  margin: 3px 0 0;
+  color: #758079;
+  font-size: 0.65rem;
+}
+
+.admin-staff-role-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.admin-staff-role-option {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid #e0e6e2;
+  border-radius: 9px;
+  background: #fff;
+  cursor: pointer;
+}
+
+.admin-staff-role-option:has(input:checked) {
+  border-color: #9dcdb0;
+  background: #f1f9f4;
+}
+
+.admin-staff-role-option input {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  accent-color: #138249;
+}
+
+.admin-staff-role-option span {
+  min-width: 0;
+}
+
+.admin-staff-role-option strong,
+.admin-staff-role-option small {
+  display: block;
+}
+
+.admin-staff-role-option strong {
+  color: #1c2920;
+  font-size: 0.71rem;
+}
+
+.admin-staff-role-option small {
+  margin-top: 3px;
+  color: #7b857e;
+  font-size: 0.61rem;
+  line-height: 1.42;
+}
+
+@media (max-width: 980px) {
+  .admin-access-matrix {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-user-toolbar,
+  .admin-user-toolbar__tools {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-user-toolbar__tools {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .admin-role-filter {
+    width: 100%;
+  }
+}
+
+@media (max-width: 680px) {
+  .admin-access-summary,
+  .admin-staff-role-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-access-tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    width: 100%;
+  }
+}

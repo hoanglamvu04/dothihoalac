@@ -26,6 +26,7 @@ import ArticleBody from '../../components/content/ArticleBody';
 
 import { adminApi } from '../../api/admin.api';
 import { apiErrorMessage } from '../../api/http';
+import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { contentTypeLabel } from '../../utils/content';
 import { formatCurrency, formatDateTime, formatNumber } from '../../utils/formatters';
@@ -43,7 +44,7 @@ const ACTIONS = [
   {
     value: 'approve',
     label: 'Duyệt nội dung',
-    description: 'Nội dung đạt yêu cầu và có thể xuất bản.',
+    description: 'Nội dung đạt yêu cầu và có thể chuyển sang bước tiếp theo.',
     icon: CheckCircle2,
     tone: 'approve',
   },
@@ -62,6 +63,18 @@ const ACTIONS = [
     tone: 'reject',
   },
 ];
+
+const TYPE_OPTIONS = [
+  { value: 'community', label: 'Cộng đồng', permissions: ['moderate_community'] },
+  { value: 'property', label: 'Bất động sản', permissions: ['moderate_property'] },
+  { value: 'job', label: 'Việc làm', permissions: ['moderate_job'] },
+  { value: 'article', label: 'Tin tức', permissions: ['approve_article', 'publish_article'] },
+];
+
+function hasAnyPermission(user, permissions = []) {
+  const current = Array.isArray(user?.permissions) ? user.permissions : [];
+  return permissions.some((permission) => current.includes(permission));
+}
 
 function detailBodyHtml(detail) {
   return detail?.body?.bodyHtml || detail?.bodyHtml || '';
@@ -87,6 +100,7 @@ function moneyLabel(property) {
 
 export default function ModerationQueuePage() {
   const toast = useToast();
+  const { user } = useAuth();
   const [items, setItems] = useState([]);
   const [meta, setMeta] = useState({});
   const [page, setPage] = useState(1);
@@ -102,6 +116,12 @@ export default function ModerationQueuePage() {
     reasonCode: '',
     publishNow: true,
   });
+
+  const canPublishArticle = hasAnyPermission(user, ['publish_article', 'manage_system']);
+  const availableTypes = useMemo(
+    () => TYPE_OPTIONS.filter((option) => hasAnyPermission(user, option.permissions)),
+    [user],
+  );
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -124,6 +144,13 @@ export default function ModerationQueuePage() {
     load();
   }, [load]);
 
+  useEffect(() => {
+    if (type && !availableTypes.some((option) => option.value === type)) {
+      setType('');
+      setPage(1);
+    }
+  }, [availableTypes, type]);
+
   const counts = useMemo(() => {
     const total = Number(meta?.total ?? meta?.totalItems ?? items.length ?? 0);
     const property = items.filter((item) => item.contentType === 'property').length;
@@ -143,7 +170,12 @@ export default function ModerationQueuePage() {
     setSelected(item);
     setDetail(null);
     setDetailLoading(true);
-    setForm({ action: 'approve', note: '', reasonCode: '', publishNow: true });
+    setForm({
+      action: 'approve',
+      note: '',
+      reasonCode: '',
+      publishNow: item.contentType === 'article' ? canPublishArticle : true,
+    });
 
     try {
       const result = item.contentType === 'article'
@@ -155,7 +187,7 @@ export default function ModerationQueuePage() {
     } finally {
       setDetailLoading(false);
     }
-  }, [toast]);
+  }, [canPublishArticle, toast]);
 
   const submit = async (event) => {
     event.preventDefault();
@@ -169,17 +201,21 @@ export default function ModerationQueuePage() {
       return;
     }
 
+    const publishNow = form.action === 'approve'
+      ? (selected.contentType === 'article' ? canPublishArticle && form.publishNow : form.publishNow)
+      : false;
+
     setActionLoading(true);
     try {
       const route = form.action === 'request_revision' ? 'request-revision' : form.action;
       await adminApi.moderate(selected._id, route, {
         note: form.note.trim(),
         reasonCode: form.reasonCode.trim(),
-        publishNow: form.action === 'approve' ? form.publishNow : false,
+        publishNow,
       });
 
       const message = form.action === 'approve'
-        ? (form.publishNow ? 'Đã duyệt và xuất bản nội dung.' : 'Đã duyệt nội dung.')
+        ? (publishNow ? 'Đã duyệt và xuất bản nội dung.' : 'Đã duyệt nội dung.')
         : form.action === 'request_revision'
           ? 'Đã gửi yêu cầu chỉnh sửa cho tác giả.'
           : 'Đã từ chối nội dung.';
@@ -200,6 +236,8 @@ export default function ModerationQueuePage() {
   const previewUrl = publicPreviewUrl(reviewItem);
   const selectedAction = ACTIONS.find((item) => item.value === form.action) || ACTIONS[0];
   const SelectedActionIcon = selectedAction.icon;
+  const selectedCanPublishImmediately =
+    reviewItem?.contentType !== 'article' || canPublishArticle;
 
   return (
     <div className="moderation-queue-page">
@@ -213,8 +251,7 @@ export default function ModerationQueuePage() {
           </span>
           <h2>Hàng chờ kiểm duyệt</h2>
           <p>
-            Mở nhanh nội dung, kiểm tra dữ kiện và xử lý duyệt, yêu cầu sửa hoặc
-            từ chối ngay trong một màn hình.
+            Hệ thống chỉ hiển thị nhóm nội dung nằm trong phạm vi quyền của tài khoản đang đăng nhập.
           </p>
         </div>
 
@@ -227,11 +264,10 @@ export default function ModerationQueuePage() {
             }}
             aria-label="Lọc loại nội dung"
           >
-            <option value="">Mọi loại nội dung</option>
-            <option value="community">Cộng đồng</option>
-            <option value="property">Bất động sản</option>
-            <option value="job">Việc làm</option>
-            <option value="article">Tin tức</option>
+            <option value="">Mọi loại được phép</option>
+            {availableTypes.map((option) => (
+              <option key={option.value} value={option.value}>{option.label}</option>
+            ))}
           </select>
           <button type="button" onClick={load} disabled={loading}>
             <RefreshCw size={17} className={loading ? 'is-spinning' : ''} />
@@ -322,7 +358,7 @@ export default function ModerationQueuePage() {
         ) : (
           <EmptyState
             title="Không có nội dung chờ duyệt"
-            description="Hàng chờ hiện đã được xử lý hết."
+            description="Hàng chờ trong phạm vi quyền hiện đã được xử lý hết."
           />
         )}
 
@@ -440,7 +476,7 @@ export default function ModerationQueuePage() {
                 })}
               </div>
 
-              {form.action === 'approve' ? (
+              {form.action === 'approve' && selectedCanPublishImmediately ? (
                 <label className="moderation-publish-toggle">
                   <input
                     type="checkbox"
@@ -452,6 +488,13 @@ export default function ModerationQueuePage() {
                     <small>Tắt lựa chọn này nếu chỉ muốn đánh dấu “Đã duyệt”.</small>
                   </span>
                 </label>
+              ) : null}
+
+              {form.action === 'approve' && reviewItem?.contentType === 'article' && !canPublishArticle ? (
+                <div className="moderation-empty-body">
+                  <ShieldCheck size={17} />
+                  Bạn có quyền duyệt bài. Bài sẽ ở trạng thái Đã duyệt và chờ Trưởng ban biên tập xuất bản.
+                </div>
               ) : null}
 
               <label className="moderation-field">
@@ -485,7 +528,7 @@ export default function ModerationQueuePage() {
                 <div>
                   <strong>{selectedAction.label}</strong>
                   <small>
-                    {form.action === 'approve' && form.publishNow
+                    {form.action === 'approve' && selectedCanPublishImmediately && form.publishNow
                       ? 'Nội dung sẽ chuyển sang Đã xuất bản ngay sau khi xác nhận.'
                       : selectedAction.description}
                   </small>

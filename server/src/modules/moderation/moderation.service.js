@@ -5,12 +5,21 @@ import ModerationAction from './moderationAction.model.js';
 import UserViolation from './userViolation.model.js';
 import LeadRequest from '../leads/leadRequest.model.js';
 import Comment from '../comments/comment.model.js';
+import UserRole from '../roles/userRole.model.js';
+import Role from '../roles/role.model.js';
+import {
+  getUserAuthorization,
+  STAFF_ROLE_SLUGS,
+} from '../roles/role.service.js';
 import { createNotification } from '../../services/notification.service.js';
 import { NOTIFICATION_TYPES } from '../../constants/notificationTypes.js';
+import { PERMISSIONS } from '../../constants/permissions.js';
+import { ROLES } from '../../constants/roles.js';
 import { writeAuditLog } from '../../services/audit.service.js';
 import { parsePagination, buildPaginationMeta } from '../../utils/pagination.js';
 import { isVietnamesePhone, normalizePhone } from '../../utils/normalizePhone.js';
 import ApiError from '../../utils/ApiError.js';
+
 const transitionMap = {
   approve: 'approved',
   request_revision: 'needs_revision',
@@ -18,6 +27,50 @@ const transitionMap = {
   hide: 'hidden',
   restore: 'published',
 };
+
+const moderationPermissionByContentType = {
+  community: PERMISSIONS.MODERATE_COMMUNITY,
+  property: PERMISSIONS.MODERATE_PROPERTY,
+  job: PERMISSIONS.MODERATE_JOB,
+};
+
+function hasPermission(auth, permission) {
+  return Boolean(auth?.permissions?.includes(permission));
+}
+
+function allowedModerationContentTypes(auth) {
+  const allowed = [];
+  if (
+    hasPermission(auth, PERMISSIONS.APPROVE_ARTICLE) ||
+    hasPermission(auth, PERMISSIONS.PUBLISH_ARTICLE)
+  ) {
+    allowed.push('article');
+  }
+  Object.entries(moderationPermissionByContentType).forEach(([type, permission]) => {
+    if (hasPermission(auth, permission)) allowed.push(type);
+  });
+  return allowed;
+}
+
+function assertContentActionPermission(auth, content, actionType) {
+  let requiredPermission = moderationPermissionByContentType[content.contentType];
+
+  if (content.contentType === 'article') {
+    requiredPermission = ['hide', 'restore'].includes(actionType)
+      ? PERMISSIONS.PUBLISH_ARTICLE
+      : PERMISSIONS.APPROVE_ARTICLE;
+  }
+
+  if (!requiredPermission || !hasPermission(auth, requiredPermission)) {
+    throw new ApiError(
+      403,
+      'Bạn không có quyền kiểm duyệt loại nội dung này.',
+      'CONTENT_MODERATION_FORBIDDEN',
+      { contentType: content.contentType, requiredPermission },
+    );
+  }
+}
+
 export async function dashboard() {
   const [userCount, pendingContent, pendingReports, newLeads, comments] = await Promise.all([
     User.countDocuments({ deletedAt: null }),
@@ -28,10 +81,24 @@ export async function dashboard() {
   ]);
   return { userCount, pendingContent, pendingReports, newLeads, comments };
 }
-export async function queue(q) {
+
+export async function queue(q, auth) {
   const { page, limit, skip } = parsePagination(q);
-  const f = { status: 'pending_review', deletedAt: null };
-  if (q.type) f.contentType = q.type;
+  const allowedTypes = allowedModerationContentTypes(auth);
+
+  if (!allowedTypes.length) {
+    return { items: [], meta: buildPaginationMeta({ page, limit, total: 0 }) };
+  }
+
+  if (q.type && !allowedTypes.includes(q.type)) {
+    return { items: [], meta: buildPaginationMeta({ page, limit, total: 0 }) };
+  }
+
+  const f = {
+    status: 'pending_review',
+    deletedAt: null,
+    contentType: q.type || { $in: allowedTypes },
+  };
   const [items, total] = await Promise.all([
     Content.find(f)
       .populate('authorId', 'username displayName emailVerifiedAt phoneVerifiedAt status')
@@ -43,15 +110,29 @@ export async function queue(q) {
   ]);
   return { items, meta: buildPaginationMeta({ page, limit, total }) };
 }
-export async function action(admin, contentId, actionType, data, ip) {
+
+export async function action(admin, auth, contentId, actionType, data, ip) {
   const content = await Content.findById(contentId);
   if (!content) throw new ApiError(404, 'Không tìm thấy nội dung.', 'CONTENT_NOT_FOUND');
+
+  assertContentActionPermission(auth, content, actionType);
+
   const oldStatus = content.status;
   const next = transitionMap[actionType];
   if (!next)
     throw new ApiError(422, 'Hành động kiểm duyệt không hợp lệ.', 'MODERATION_ACTION_INVALID');
   content.status = next;
   if (actionType === 'approve' && data.publishNow) {
+    if (
+      content.contentType === 'article' &&
+      !hasPermission(auth, PERMISSIONS.PUBLISH_ARTICLE)
+    ) {
+      throw new ApiError(
+        403,
+        'Bạn có thể duyệt bài nhưng không có quyền xuất bản ngay.',
+        'ARTICLE_PUBLISH_FORBIDDEN',
+      );
+    }
     content.status = 'published';
     content.publishedAt = new Date();
   }
@@ -93,26 +174,91 @@ export async function action(admin, contentId, actionType, data, ip) {
   });
   return content;
 }
+
 export async function users(q) {
   const { page, limit, skip } = parsePagination(q);
   const f = { deletedAt: null };
   if (q.status) f.status = q.status;
-  if (q.q)
+  if (q.q) {
     f.$or = [
       { email: new RegExp(q.q, 'i') },
       { username: new RegExp(q.q, 'i') },
       { displayName: new RegExp(q.q, 'i') },
       { phone: new RegExp(q.q, 'i') },
     ];
+  }
+
+  if (q.role) {
+    const role = await Role.findOne({ slug: String(q.role).trim() }).select('_id').lean();
+    if (!role) {
+      return { items: [], meta: buildPaginationMeta({ page, limit, total: 0 }) };
+    }
+    const roleLinks = await UserRole.find({
+      roleId: role._id,
+      $or: [{ expiresAt: null }, { expiresAt: { $gt: new Date() } }],
+    })
+      .select('userId')
+      .lean();
+    f._id = { $in: roleLinks.map((link) => link.userId) };
+  }
+
   const [items, total] = await Promise.all([
     User.find(f).sort({ createdAt: -1 }).skip(skip).limit(limit).lean(),
     User.countDocuments(f),
   ]);
-  return { items, meta: buildPaginationMeta({ page, limit, total }) };
+
+  const userIds = items.map((item) => item._id);
+  const activeRoleLinks = userIds.length
+    ? await UserRole.find({
+        userId: { $in: userIds },
+        $or: [{ expiresAt: null }, { expiresAt: { $gt: new Date() } }],
+      })
+        .populate('roleId', 'slug name')
+        .lean()
+    : [];
+  const rolesByUserId = new Map();
+  activeRoleLinks.forEach((link) => {
+    const key = String(link.userId);
+    const list = rolesByUserId.get(key) || [];
+    if (link.roleId?.slug) list.push(link.roleId.slug);
+    rolesByUserId.set(key, list);
+  });
+
+  return {
+    items: items.map((item) => ({
+      ...item,
+      roles: [...new Set(rolesByUserId.get(String(item._id)) || [])],
+    })),
+    meta: buildPaginationMeta({ page, limit, total }),
+  };
 }
-export async function updateUserStatus(admin, userId, d, ip) {
+
+export async function updateUserStatus(admin, auth, userId, d, ip) {
   const user = await User.findById(userId);
   if (!user) throw new ApiError(404, 'Không tìm thấy người dùng.', 'USER_NOT_FOUND');
+
+  const targetAuthorization = await getUserAuthorization(userId);
+  const targetIsStaff = targetAuthorization.roles.some((role) => STAFF_ROLE_SLUGS.includes(role));
+  const actorIsSystemAdmin = auth?.roles?.includes(ROLES.SYSTEM_ADMIN);
+
+  if (targetIsStaff && !actorIsSystemAdmin) {
+    throw new ApiError(
+      403,
+      'Chỉ System Admin mới được thay đổi trạng thái tài khoản nhân sự quản trị.',
+      'STAFF_USER_MANAGEMENT_FORBIDDEN',
+    );
+  }
+
+  if (
+    String(admin._id) === String(userId) &&
+    ['suspended', 'banned'].includes(d.status)
+  ) {
+    throw new ApiError(
+      409,
+      'Bạn không thể tự khóa tài khoản đang đăng nhập.',
+      'SELF_BLOCK_FORBIDDEN',
+    );
+  }
 
   const oldData = {
     status: user.status,
@@ -212,6 +358,7 @@ export async function updateUserStatus(admin, userId, d, ip) {
   });
   return user;
 }
+
 export async function reports(q) {
   const { page, limit, skip } = parsePagination(q);
   const f = {};
@@ -227,6 +374,7 @@ export async function reports(q) {
   ]);
   return { items, meta: buildPaginationMeta({ page, limit, total }) };
 }
+
 export async function resolveReport(admin, id, d) {
   const report = await Report.findById(id);
   if (!report) throw new ApiError(404, 'Không tìm thấy báo cáo.', 'REPORT_NOT_FOUND');

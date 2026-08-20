@@ -31,6 +31,10 @@ import adminContentRoutes from '../modules/moderation/adminContent.routes.js';
 import googleWorkspaceFastRoutes from '../modules/googleWorkspace/googleWorkspace.fast.routes.js';
 import googleWorkspaceRoutes from '../modules/googleWorkspace/googleWorkspace.routes.js';
 import sourceWatchRoutes from '../modules/sourceWatch/sourceWatch.routes.js';
+import roleAdminRoutes from '../modules/roles/role.admin.routes.js';
+import { requireAuth } from '../middlewares/auth.middleware.js';
+import { requirePermission } from '../middlewares/role.middleware.js';
+import { PERMISSIONS } from '../constants/permissions.js';
 
 const router = Router();
 router.use('/health', healthRoutes);
@@ -58,9 +62,26 @@ router.use('/admin/articles', articleAdminRoutes);
 router.use('/admin/projects', projectAdminRoutes);
 router.use('/admin/taxonomy', taxonomyAdminRoutes);
 router.use('/admin/system', systemAdminRoutes);
+
+// Nhân sự tòa soạn có thể sử dụng Google Docs để soạn/sync bài, nhưng chỉ
+// System Admin được thay đổi kết nối Workspace và chỉ Chief Editor/System Admin
+// được phép đưa bài lên trạng thái published.
+for (const path of ['reuse-kthl', 'connect-url', 'setup', 'disconnect']) {
+  router.use(
+    `/admin/google-workspace/${path}`,
+    requireAuth,
+    requirePermission(PERMISSIONS.MANAGE_SYSTEM),
+  );
+}
+router.use(
+  '/admin/google-workspace/posts/:postId/publish',
+  requireAuth,
+  requirePermission(PERMISSIONS.PUBLISH_ARTICLE, PERMISSIONS.MANAGE_SYSTEM),
+);
 router.use('/admin/google-workspace', googleWorkspaceFastRoutes);
 router.use('/admin/google-workspace', googleWorkspaceRoutes);
 router.use('/admin/source-watch', sourceWatchRoutes);
+router.use('/admin/access', roleAdminRoutes);
 router.use('/admin', adminContentRoutes);
 router.use('/admin', moderationRoutes);
 

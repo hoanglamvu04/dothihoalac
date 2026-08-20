@@ -60,10 +60,13 @@ jobs:
           src/pages/account/MyContentPage.jsx
           src/pages/account/NotificationsPage.jsx
           src/pages/account/SessionsPage.jsx
+          src/pages/admin/AdminArticlesPage.jsx
           src/pages/admin/AdminDashboardPage.jsx
           src/pages/admin/AdminProjectsPage.jsx
+          src/pages/admin/AdminUsersPage.jsx
           src/pages/admin/ArticleWorkspacePage.jsx
           src/pages/admin/GoogleDocsArticleLauncher.jsx
+          src/pages/admin/ModerationQueuePage.jsx
           src/pages/admin/ProjectWorkspacePage.jsx
           src/pages/create/CommunityStudioPage.jsx
           src/pages/create/ContentStudioEntryPage.jsx
@@ -124,7 +127,6 @@ jobs:
           src/modules/contents/contentDraft.validation.js
           src/modules/contents/pendingContentPreview.middleware.js
           src/modules/community/community.controller.js
-          src/modules/community/community.compactList.service.js
           src/modules/properties/property.controller.js
           src/modules/properties/property.routes.js
           src/modules/properties/property.service.js
@@ -134,11 +136,19 @@ jobs:
           src/modules/jobs/job.service.js
           src/modules/jobs/job.publicList.service.js
           src/modules/jobs/jobPost.model.js
+          src/modules/articles/article.admin.routes.js
           src/modules/articles/article.controller.js
           src/modules/articles/article.model.js
           src/modules/articles/article.routes.js
           src/modules/articles/article.validation.js
           src/modules/articles/article.metadata.service.js
+          src/modules/moderation/adminContent.routes.js
+          src/modules/moderation/moderation.controller.js
+          src/modules/moderation/moderation.routes.js
+          src/modules/moderation/moderation.service.js
+          src/modules/roles/role.admin.controller.js
+          src/modules/roles/role.admin.routes.js
+          src/modules/roles/role.service.js
           src/modules/projects/project.model.js
           src/modules/projects/project.validation.js
           src/modules/projects/project.service.js

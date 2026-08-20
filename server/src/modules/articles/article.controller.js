@@ -11,7 +11,9 @@ import {
 import Content from '../contents/content.model.js';
 import Category from '../taxonomy/category.model.js';
 import Area from '../taxonomy/area.model.js';
+import { PERMISSIONS } from '../../constants/permissions.js';
 import { sendCreated, sendSuccess } from '../../utils/apiResponse.js';
+import ApiError from '../../utils/ApiError.js';
 
 const FACET_CACHE_TTL_MS = 60_000;
 let facetRowsCache = null;
@@ -23,6 +25,43 @@ function normalizeId(value) {
 
 function wantsFacets(value) {
   return ['1', 'true', 'yes'].includes(String(value || '').trim().toLowerCase());
+}
+
+function hasPermission(req, permission) {
+  return Boolean(req.auth?.permissions?.includes(permission));
+}
+
+function assertArticleStatusPermission(req) {
+  const status = req.body?.status;
+  if (!status) return;
+
+  if (['scheduled', 'published'].includes(status)) {
+    if (
+      !hasPermission(req, PERMISSIONS.PUBLISH_ARTICLE) &&
+      !hasPermission(req, PERMISSIONS.MANAGE_SYSTEM)
+    ) {
+      throw new ApiError(
+        403,
+        'Chỉ Trưởng ban biên tập hoặc System Admin mới được lên lịch/xuất bản bài.',
+        'ARTICLE_PUBLISH_FORBIDDEN',
+      );
+    }
+    return;
+  }
+
+  if (status === 'approved') {
+    if (
+      !hasPermission(req, PERMISSIONS.APPROVE_ARTICLE) &&
+      !hasPermission(req, PERMISSIONS.PUBLISH_ARTICLE) &&
+      !hasPermission(req, PERMISSIONS.MANAGE_SYSTEM)
+    ) {
+      throw new ApiError(
+        403,
+        'Bạn không có quyền duyệt bài viết.',
+        'ARTICLE_APPROVE_FORBIDDEN',
+      );
+    }
+  }
 }
 
 async function resolveFacetSelection(Model, value, extraFilter = {}) {
@@ -178,6 +217,7 @@ export async function adminDetail(req, res) {
 }
 
 export async function adminCreate(req, res) {
+  assertArticleStatusPermission(req);
   const created = await s.adminCreate(req.user._id, req.body);
   return sendCreated(
     res,
@@ -187,6 +227,7 @@ export async function adminCreate(req, res) {
 }
 
 export async function adminUpdateMetadata(req, res) {
+  assertArticleStatusPermission(req);
   const updated = await updateMetadata(
     req.params.id,
     req.user._id,
@@ -218,6 +259,7 @@ export async function adminBulkDelete(req, res) {
 }
 
 export async function adminUpdate(req, res) {
+  assertArticleStatusPermission(req);
   const updated = await s.adminUpdate(req.params.id, req.user._id, req.body);
   return sendSuccess(res, {
     data: await adminArticleDetail(updated._id),
