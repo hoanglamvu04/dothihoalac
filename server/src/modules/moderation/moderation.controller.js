@@ -1,4 +1,5 @@
 import * as s from './moderation.service.js';
+import * as passwordService from './adminUserPassword.service.js';
 import { PERMISSIONS } from '../../constants/permissions.js';
 import { sendSuccess } from '../../utils/apiResponse.js';
 
@@ -42,14 +43,7 @@ export async function queue(req, res) {
 function act(type) {
   return async (req, res) =>
     sendSuccess(res, {
-      data: await s.action(
-        req.user,
-        req.auth,
-        req.params.id,
-        type,
-        req.body,
-        req.ip,
-      ),
+      data: await s.action(req.user, req.auth, req.params.id, type, req.body, req.ip),
       message: 'Đã xử lý nội dung.',
     });
 }
@@ -67,14 +61,21 @@ export async function users(req, res) {
 
 export async function userStatus(req, res) {
   return sendSuccess(res, {
-    data: await s.updateUserStatus(
+    data: await s.updateUserStatus(req.user, req.auth, req.params.id, req.body, req.ip),
+    message: 'Đã cập nhật tài khoản.',
+  });
+}
+
+export async function userPassword(req, res) {
+  return sendSuccess(res, {
+    data: await passwordService.changePassword(
       req.user,
       req.auth,
       req.params.id,
-      req.body,
+      req.body.password,
       req.ip,
     ),
-    message: 'Đã cập nhật tài khoản.',
+    message: 'Đã đổi mật khẩu và thu hồi phiên đăng nhập cũ.',
   });
 }
 
