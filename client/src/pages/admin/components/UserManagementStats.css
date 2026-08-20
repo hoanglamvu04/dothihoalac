@@ -1,0 +1,54 @@
+.user-management-stats {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.user-management-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 84px;
+  padding: 16px;
+  border: 1px solid #dce5df;
+  border-radius: 14px;
+  background: #fff;
+}
+
+.user-management-stat-icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 12px;
+  color: #0c6a35;
+  background: #edf7f1;
+}
+
+.user-management-stat-card strong,
+.user-management-stat-card small {
+  display: block;
+}
+
+.user-management-stat-card strong {
+  font-size: 1.25rem;
+}
+
+.user-management-stat-card small {
+  margin-top: 3px;
+  color: #68746c;
+  font-size: .7rem;
+}
+
+@media (max-width: 900px) {
+  .user-management-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .user-management-stats {
+    grid-template-columns: 1fr;
+  }
+}
