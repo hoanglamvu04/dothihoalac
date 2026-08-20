@@ -1,0 +1,30 @@
+.admin-user-create-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.admin-user-create-panel header,
+.admin-user-create-panel footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.admin-user-create-panel header {
+  padding: 14px;
+  border: 1px solid #dde5e0;
+  border-radius: 12px;
+  background: #f7faf8;
+}
+
+.admin-user-create-panel header strong,
+.admin-user-create-panel header p {
+  display: block;
+}
+
+.admin-user-create-panel header p {
+  margin: 4px 0 0;
+  color: #6c786f;
+  font-size: .72rem;
+}
