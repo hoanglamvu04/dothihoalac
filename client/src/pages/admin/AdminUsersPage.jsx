@@ -20,6 +20,7 @@ import { apiErrorMessage } from '../../api/http';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { formatDateTime } from '../../utils/formatters';
+import AdminUserPasswordModal from './AdminUserPasswordModal';
 
 import './AdminUsersAccess.css';
 
@@ -174,6 +175,8 @@ export default function AdminUsersPage() {
   const [access, setAccess] = useState(null);
   const [accessLoading, setAccessLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [passwordUser, setPasswordUser] = useState(null);
+  const [passwordSaving, setPasswordSaving] = useState(false);
 
   const staffRoleSlugs = access?.staffRoleSlugs || FALLBACK_STAFF_ROLES;
   const staffRoleCatalog = useMemo(
@@ -182,6 +185,12 @@ export default function AdminUsersPage() {
       .sort((a, b) => staffRoleSlugs.indexOf(a.slug) - staffRoleSlugs.indexOf(b.slug)),
     [access, staffRoleSlugs],
   );
+
+  const pageStats = useMemo(() => ({
+    active: items.filter((item) => item.status === 'active').length,
+    staff: items.filter((item) => isStaffUser(item, staffRoleSlugs)).length,
+    attention: items.filter((item) => ['restricted', 'suspended', 'banned'].includes(item.status)).length,
+  }), [items, staffRoleSlugs]);
 
   const load = () => {
     setLoading(true);
@@ -236,6 +245,16 @@ export default function AdminUsersPage() {
       note: '',
       staffRoles: (user.roles || []).filter((item) => staffRoleSlugs.includes(item)),
     });
+  };
+
+  const canResetPassword = (user) => !isStaffUser(user, staffRoleSlugs) || isSystemAdmin;
+
+  const openPassword = (user) => {
+    if (!canResetPassword(user)) {
+      toast.error('Chỉ System Admin mới được đổi mật khẩu tài khoản nhân sự quản trị.');
+      return;
+    }
+    setPasswordUser(user);
   };
 
   const submitSearch = (event) => {
@@ -297,6 +316,27 @@ export default function AdminUsersPage() {
     }
   };
 
+  const submitPassword = async (password) => {
+    if (!passwordUser || passwordSaving) return;
+
+    setPasswordSaving(true);
+    try {
+      await adminApi.changeUserPassword(passwordUser._id, password);
+      try {
+        localStorage.setItem(USER_SYNC_STORAGE_KEY, `${Date.now()}:${passwordUser._id}`);
+      } catch {
+        /* Trình duyệt có thể chặn localStorage. */
+      }
+      toast.success('Đã đổi mật khẩu và thu hồi các phiên đăng nhập cũ.');
+      setPasswordUser(null);
+      load();
+    } catch (error) {
+      toast.error(apiErrorMessage(error, 'Không thể đổi mật khẩu tài khoản.'));
+    } finally {
+      setPasswordSaving(false);
+    }
+  };
+
   const selectedIsStaff = isStaffUser(selected, staffRoleSlugs);
   const selectedLockedForCurrentAdmin = selectedIsStaff && !isSystemAdmin;
 
@@ -307,7 +347,7 @@ export default function AdminUsersPage() {
         <div>
           <p className="admin-kicker">Identity & Access Control</p>
           <h1>Người dùng & phân quyền</h1>
-          <p>Quản lý tài khoản, trạng thái, xác thực và phân cấp nhân sự theo nguyên tắc quyền tối thiểu.</p>
+          <p>Quản lý tài khoản, trạng thái, xác thực, mật khẩu và phân cấp nhân sự theo nguyên tắc quyền tối thiểu.</p>
         </div>
       </header>
 
@@ -350,6 +390,25 @@ export default function AdminUsersPage() {
         </>
       ) : (
         <>
+          <div className="admin-user-overview" aria-label="Tổng quan người dùng">
+            <div>
+              <strong>{Number(meta?.total || items.length || 0).toLocaleString('vi-VN')}</strong>
+              <span>Kết quả phù hợp</span>
+            </div>
+            <div>
+              <strong>{pageStats.active.toLocaleString('vi-VN')}</strong>
+              <span>Hoạt động trong trang</span>
+            </div>
+            <div>
+              <strong>{pageStats.staff.toLocaleString('vi-VN')}</strong>
+              <span>Nhân sự trong trang</span>
+            </div>
+            <div>
+              <strong>{pageStats.attention.toLocaleString('vi-VN')}</strong>
+              <span>Cần chú ý trong trang</span>
+            </div>
+          </div>
+
           <div className="admin-toolbar admin-user-toolbar">
             <div className="filter-tabs">
               {[
@@ -395,7 +454,7 @@ export default function AdminUsersPage() {
           </div>
 
           {loading ? <LoadingBlock /> : items.length ? (
-            <div className="admin-table-wrap">
+            <div className="admin-table-wrap admin-users-table-wrap">
               <table className="admin-table admin-users-table">
                 <thead>
                   <tr>
@@ -406,29 +465,45 @@ export default function AdminUsersPage() {
                     <th>Trạng thái</th>
                     <th>Đăng nhập cuối</th>
                     <th>Ngày tạo</th>
-                    <th />
+                    <th>Thao tác</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {items.map((user) => (
-                    <tr key={user._id}>
-                      <td>
-                        <strong>{user.displayName}</strong>
-                        <small>@{user.username}</small>
-                        {isStaffUser(user, staffRoleSlugs) ? <small className="admin-user-staff-note">Nhân sự hệ thống</small> : null}
-                      </td>
-                      <td><RoleBadges roles={user.roles} compact /></td>
-                      <td>{user.email}<small>{user.phone || 'Chưa có số điện thoại'}</small></td>
-                      <td>
-                        <small>Email: {user.emailVerifiedAt ? 'Đã xác thực' : 'Chưa xác thực'}</small>
-                        <small>SĐT: {user.phone && user.phoneVerifiedAt ? 'Đã xác thực' : 'Chưa xác thực'}</small>
-                      </td>
-                      <td><Badge tone={user.status === 'active' ? 'success' : 'warning'}>{statusLabels[user.status] || user.status}</Badge></td>
-                      <td>{user.lastLoginAt ? formatDateTime(user.lastLoginAt) : <small>Chưa ghi nhận</small>}</td>
-                      <td>{formatDateTime(user.createdAt)}</td>
-                      <td><Button size="sm" variant="outline" onClick={() => openUser(user)}>Quản lý</Button></td>
-                    </tr>
-                  ))}
+                  {items.map((user) => {
+                    const passwordAllowed = canResetPassword(user);
+                    return (
+                      <tr key={user._id}>
+                        <td data-label="Người dùng">
+                          <strong>{user.displayName}</strong>
+                          <small>@{user.username}</small>
+                          {isStaffUser(user, staffRoleSlugs) ? <small className="admin-user-staff-note">Nhân sự hệ thống</small> : null}
+                        </td>
+                        <td data-label="Vai trò"><RoleBadges roles={user.roles} compact /></td>
+                        <td data-label="Liên hệ">{user.email}<small>{user.phone || 'Chưa có số điện thoại'}</small></td>
+                        <td data-label="Xác thực">
+                          <small>Email: {user.emailVerifiedAt ? 'Đã xác thực' : 'Chưa xác thực'}</small>
+                          <small>SĐT: {user.phone && user.phoneVerifiedAt ? 'Đã xác thực' : 'Chưa xác thực'}</small>
+                        </td>
+                        <td data-label="Trạng thái"><Badge tone={user.status === 'active' ? 'success' : 'warning'}>{statusLabels[user.status] || user.status}</Badge></td>
+                        <td data-label="Đăng nhập cuối">{user.lastLoginAt ? formatDateTime(user.lastLoginAt) : <small>Chưa ghi nhận</small>}</td>
+                        <td data-label="Ngày tạo">{formatDateTime(user.createdAt)}</td>
+                        <td data-label="Thao tác">
+                          <div className="admin-user-actions">
+                            <Button size="sm" variant="outline" onClick={() => openUser(user)}>Quản lý</Button>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => openPassword(user)}
+                              disabled={!passwordAllowed}
+                              title={passwordAllowed ? 'Đổi mật khẩu' : 'Chỉ System Admin được đổi mật khẩu nhân sự quản trị'}
+                            >
+                              <KeyRound size={14} /> Mật khẩu
+                            </Button>
+                          </div>
+                        </td>
+                      </tr>
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
@@ -447,9 +522,29 @@ export default function AdminUsersPage() {
             {userIdOf(selected) === userIdOf(currentUser) ? <small>Đây là tài khoản bạn đang đăng nhập.</small> : null}
           </div>
 
+          <div className="admin-user-security-row">
+            <div>
+              <strong>Bảo mật tài khoản</strong>
+              <small>Đổi mật khẩu sẽ thu hồi toàn bộ phiên đăng nhập cũ.</small>
+            </div>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              disabled={!selected || !canResetPassword(selected)}
+              onClick={() => {
+                const target = selected;
+                setSelected(null);
+                openPassword(target);
+              }}
+            >
+              <KeyRound size={14} /> Đổi mật khẩu
+            </Button>
+          </div>
+
           {selectedLockedForCurrentAdmin ? (
             <div className="admin-access-warning">
-              Tài khoản này đang giữ vai trò nhân sự quản trị. Chỉ System Admin mới được thay đổi trạng thái hoặc phân quyền của tài khoản này.
+              Tài khoản này đang giữ vai trò nhân sự quản trị. Chỉ System Admin mới được thay đổi trạng thái, mật khẩu hoặc phân quyền của tài khoản này.
             </div>
           ) : null}
 
@@ -539,6 +634,14 @@ export default function AdminUsersPage() {
           </Button>
         </form>
       </Modal>
+
+      <AdminUserPasswordModal
+        user={passwordUser}
+        open={Boolean(passwordUser)}
+        saving={passwordSaving}
+        onClose={() => setPasswordUser(null)}
+        onSubmit={submitPassword}
+      />
     </div>
   );
 }
