@@ -16,10 +16,11 @@ import {
   Building2,
   CalendarDays,
   Check,
-  ChevronDown,
   Clock3,
   Filter,
   GraduationCap,
+  LayoutGrid,
+  List,
   MapPin,
   Plus,
   RefreshCw,
@@ -28,6 +29,7 @@ import {
   ShieldCheck,
   SlidersHorizontal,
   Sparkles,
+  UsersRound,
   X,
 } from 'lucide-react';
 
@@ -64,14 +66,44 @@ const FILTER_ONLY_KEYS = [
   'sort',
 ];
 
-const JOB_TYPE_ICONS = {
-  full_time: BriefcaseBusiness,
-  part_time: Clock3,
-  internship: GraduationCap,
-  temporary: Clock3,
-  student: GraduationCap,
-  construction: Building2,
-  service: Sparkles,
+const DISCOVERY_TYPES = [
+  'full_time',
+  'part_time',
+  'internship',
+  'construction',
+  'service',
+  'student',
+];
+
+const JOB_TYPE_META = {
+  full_time: {
+    icon: BriefcaseBusiness,
+    tone: 'green',
+  },
+  part_time: {
+    icon: Clock3,
+    tone: 'blue',
+  },
+  internship: {
+    icon: GraduationCap,
+    tone: 'cyan',
+  },
+  temporary: {
+    icon: CalendarDays,
+    tone: 'orange',
+  },
+  student: {
+    icon: GraduationCap,
+    tone: 'violet',
+  },
+  construction: {
+    icon: Building2,
+    tone: 'amber',
+  },
+  service: {
+    icon: Sparkles,
+    tone: 'pink',
+  },
 };
 
 const SORT_OPTIONS = [
@@ -91,10 +123,6 @@ const SORT_OPTIONS = [
     icon: CalendarDays,
   },
 ];
-
-function getJobTypeIcon(value) {
-  return JOB_TYPE_ICONS[value] || BriefcaseBusiness;
-}
 
 function getTotal(meta, itemCount) {
   return Number(
@@ -133,15 +161,45 @@ function findTaxonomyItem(items, value) {
   );
 }
 
+function buildCompanies(items) {
+  const companies = new Map();
+
+  items.forEach((item) => {
+    const name = String(item?.job?.companyName || '').trim();
+    if (!name) return;
+
+    const key = name.toLocaleLowerCase('vi-VN');
+    if (!companies.has(key)) {
+      companies.set(key, {
+        name,
+        count: 0,
+      });
+    }
+
+    companies.get(key).count += 1;
+  });
+
+  return [...companies.values()]
+    .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, 'vi'))
+    .slice(0, 6);
+}
+
+function companyInitials(name) {
+  return String(name || 'NTD')
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part.charAt(0).toUpperCase())
+    .join('');
+}
+
 export default function JobsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { areas = [] } = useTaxonomy();
 
   const resultsRef = useRef(null);
-  const quickToolbarRef = useRef(null);
-
   const [filtersOpen, setFiltersOpen] = useState(false);
-  const [quickFilterOpen, setQuickFilterOpen] = useState('');
+  const [viewMode, setViewMode] = useState('list');
   const [searchInput, setSearchInput] = useState(
     searchParams.get('q') || '',
   );
@@ -230,33 +288,6 @@ export default function JobsPage() {
   }, [currentQuery]);
 
   useEffect(() => {
-    if (!quickFilterOpen) return undefined;
-
-    const closeOutside = (event) => {
-      if (
-        quickToolbarRef.current &&
-        !quickToolbarRef.current.contains(event.target)
-      ) {
-        setQuickFilterOpen('');
-      }
-    };
-
-    const closeWithEscape = (event) => {
-      if (event.key === 'Escape') {
-        setQuickFilterOpen('');
-      }
-    };
-
-    document.addEventListener('mousedown', closeOutside);
-    document.addEventListener('keydown', closeWithEscape);
-
-    return () => {
-      document.removeEventListener('mousedown', closeOutside);
-      document.removeEventListener('keydown', closeWithEscape);
-    };
-  }, [quickFilterOpen]);
-
-  useEffect(() => {
     if (!filtersOpen) return undefined;
 
     const previousOverflow = document.body.style.overflow;
@@ -281,8 +312,6 @@ export default function JobsPage() {
       FILTER_ONLY_KEYS.forEach((key) => next.delete(key));
       next.delete('page');
     });
-
-    setQuickFilterOpen('');
   }, [setUrlParams]);
 
   const clearAllFilters = useCallback(() => {
@@ -291,8 +320,6 @@ export default function JobsPage() {
     setUrlParams((next) => {
       QUERY_KEYS.forEach((key) => next.delete(key));
     });
-
-    setQuickFilterOpen('');
   }, [setUrlParams]);
 
   const setPage = useCallback(
@@ -315,19 +342,6 @@ export default function JobsPage() {
     [setUrlParams],
   );
 
-  const toggleQuickFilter = useCallback((name) => {
-    setQuickFilterOpen((current) => (current === name ? '' : name));
-  }, []);
-
-  const openFilterModal = useCallback(() => {
-    setQuickFilterOpen('');
-    setFiltersOpen(true);
-  }, []);
-
-  const closeFilterModal = useCallback(() => {
-    setFiltersOpen(false);
-  }, []);
-
   const filterCount =
     (currentType ? 1 : 0) +
     (currentArea ? 1 : 0) +
@@ -335,7 +349,6 @@ export default function JobsPage() {
     (currentSort ? 1 : 0);
 
   const hasFilters = filterCount > 0 || Boolean(currentQuery);
-
   const total = getTotal(result.meta, result.items.length);
   const currentPage = getCurrentPage(result.meta, searchParams);
   const pageSize = getPageSize(result.meta, result.items.length);
@@ -350,9 +363,12 @@ export default function JobsPage() {
       ? Math.min(fromItem + result.items.length - 1, total)
       : 0;
 
-  const areaButtonLabel = selectedArea?.name || 'Khu vực';
-  const experienceButtonLabel =
-    EXPERIENCE_LEVELS[currentExperience] || 'Kinh nghiệm';
+  const featuredCompanies = useMemo(
+    () => buildCompanies(result.items),
+    [result.items],
+  );
+
+  const featuredJobs = result.items.slice(0, 4);
 
   return (
     <section className="jobs-page">
@@ -362,316 +378,505 @@ export default function JobsPage() {
       />
 
       <div className="jobs-page__container">
-        <header className="jobs-hero">
-          <div className="jobs-hero__content">
-            <span className="jobs-hero__eyebrow">
+        <section className="jobs-market-hero">
+          <div className="jobs-market-hero__copy">
+            <span className="jobs-market-hero__eyebrow">
               <BriefcaseBusiness size={17} />
-              Việc làm Hòa Lạc
+              Việc làm tại Hòa Lạc
             </span>
 
             <h1>Việc làm tại Hòa Lạc</h1>
 
+            <h2>Cơ hội nghề nghiệp chất lượng — Gần bạn, cho tương lai</h2>
+
             <p>
-              Tìm cơ hội tuyển dụng theo vị trí, khu vực, hình thức làm việc
-              và yêu cầu kinh nghiệm trong khu vực Hòa Lạc.
+              Nơi kết nối nhân tài với doanh nghiệp, tổ chức và dự án đang phát
+              triển mạnh tại Hòa Lạc và khu vực lân cận.
             </p>
 
-            <div className="jobs-hero__actions">
-              <Link
-                className="jobs-primary-button"
-                to="/dang-bai/viec-lam"
-              >
-                <Plus size={18} />
-                Đăng tin tuyển dụng
-              </Link>
-
-              <a
-                className="jobs-secondary-button"
-                href="#jobs-results"
-              >
-                <Search size={18} />
-                Xem việc đang tuyển
-              </a>
+            <div className="jobs-market-hero__chips">
+              <span>
+                <MapPin size={15} />
+                Việc tốt gần bạn
+              </span>
+              <span>
+                <ShieldCheck size={15} />
+                Tin tuyển dụng rõ ràng
+              </span>
+              <span>
+                <GraduationCap size={15} />
+                Cơ hội cho người mới bắt đầu
+              </span>
             </div>
           </div>
 
-          <form
-            className="jobs-hero__search"
-            onSubmit={(event) => {
-              event.preventDefault();
-              commitSearch(searchInput);
-            }}
-          >
-            <label>
-              <Search size={19} />
+          <div className="jobs-market-hero__art" aria-hidden="true">
+            <span className="jobs-market-hero__sun" />
+            <span className="jobs-market-hero__hill jobs-market-hero__hill--back" />
+            <span className="jobs-market-hero__hill jobs-market-hero__hill--front" />
 
-              <input
-                type="search"
-                value={searchInput}
-                onChange={(event) => setSearchInput(event.target.value)}
-                placeholder="Ví dụ: kỹ sư, kế toán, FPT, Thạch Hòa..."
-                aria-label="Tìm kiếm việc làm"
-              />
-
-              {searchInput ? (
-                <button
-                  type="button"
-                  aria-label="Xóa từ khóa"
-                  onClick={() => {
-                    setSearchInput('');
-                    commitSearch('', true);
-                  }}
-                >
-                  <X size={16} />
-                </button>
-              ) : null}
-            </label>
-
-            <button type="submit">
-              <Search size={17} />
-              Tìm kiếm
-            </button>
-          </form>
-        </header>
-
-        <nav
-          className="jobs-type-rail"
-          aria-label="Loại công việc"
-        >
-          <button
-            type="button"
-            className={!currentType ? 'is-active' : ''}
-            onClick={() => update('type', '')}
-          >
-            <BriefcaseBusiness size={16} />
-            Tất cả công việc
-          </button>
-
-          {Object.entries(JOB_TYPES).map(([value, label]) => {
-            const JobTypeIcon = getJobTypeIcon(value);
-            const selected = currentType === value;
-
-            return (
-              <button
-                type="button"
-                key={value}
-                className={selected ? 'is-active' : ''}
-                onClick={() => update('type', selected ? '' : value)}
-              >
-                <JobTypeIcon size={16} />
-                {label}
-              </button>
-            );
-          })}
-        </nav>
-
-        <div
-          className="jobs-filter-toolbar"
-          ref={quickToolbarRef}
-        >
-          <button
-            type="button"
-            className="jobs-filter-toolbar__main"
-            onClick={openFilterModal}
-          >
-            <Filter size={18} />
-            <span>Lọc</span>
-            {filterCount ? <b>{filterCount}</b> : null}
-          </button>
-
-          <div className="jobs-quick-filter">
-            <button
-              type="button"
-              className={currentArea ? 'is-selected' : ''}
-              aria-expanded={quickFilterOpen === 'area'}
-              onClick={() => toggleQuickFilter('area')}
-            >
-              <MapPin size={17} />
-              <span>{areaButtonLabel}</span>
-              <ChevronDown size={16} />
-            </button>
-
-            {quickFilterOpen === 'area' ? (
-              <div className="jobs-filter-popover">
-                <header>
-                  <strong>Khu vực làm việc</strong>
-                  <button
-                    type="button"
-                    aria-label="Đóng"
-                    onClick={() => setQuickFilterOpen('')}
-                  >
-                    <X size={19} />
-                  </button>
-                </header>
-
-                <div className="jobs-filter-option-list">
-                  <button
-                    type="button"
-                    className={!currentArea ? 'is-active' : ''}
-                    onClick={() => {
-                      update('area', '');
-                      setQuickFilterOpen('');
-                    }}
-                  >
-                    <span>Tất cả khu vực</span>
-                    {!currentArea ? <Check size={17} /> : null}
-                  </button>
-
-                  {areas.map((item) => {
-                    const selected =
-                      String(currentArea) === String(item._id) ||
-                      String(currentArea) === String(item.slug);
-
-                    return (
-                      <button
-                        type="button"
-                        key={item._id}
-                        className={selected ? 'is-active' : ''}
-                        onClick={() => {
-                          update('area', item._id);
-                          setQuickFilterOpen('');
-                        }}
-                      >
-                        <span>{item.name}</span>
-                        {selected ? <Check size={17} /> : null}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            ) : null}
+            <div className="jobs-market-campus">
+              <span className="jobs-market-campus__building jobs-market-campus__building--1">
+                <Building2 size={44} />
+              </span>
+              <span className="jobs-market-campus__building jobs-market-campus__building--2">
+                <Building2 size={54} />
+              </span>
+              <span className="jobs-market-campus__building jobs-market-campus__building--3">
+                <Building2 size={62} />
+              </span>
+              <span className="jobs-market-campus__tree jobs-market-campus__tree--1" />
+              <span className="jobs-market-campus__tree jobs-market-campus__tree--2" />
+              <span className="jobs-market-campus__tree jobs-market-campus__tree--3" />
+              <span className="jobs-market-campus__road" />
+              <strong>KHU CÔNG NGHỆ CAO · HÒA LẠC</strong>
+            </div>
           </div>
+        </section>
 
-          <div className="jobs-quick-filter">
-            <button
-              type="button"
-              className={currentExperience ? 'is-selected' : ''}
-              aria-expanded={quickFilterOpen === 'experience'}
-              onClick={() => toggleQuickFilter('experience')}
-            >
-              <GraduationCap size={17} />
-              <span>{experienceButtonLabel}</span>
-              <ChevronDown size={16} />
-            </button>
-
-            {quickFilterOpen === 'experience' ? (
-              <div className="jobs-filter-popover jobs-filter-popover--experience">
-                <header>
-                  <strong>Kinh nghiệm</strong>
-                  <button
-                    type="button"
-                    aria-label="Đóng"
-                    onClick={() => setQuickFilterOpen('')}
-                  >
-                    <X size={19} />
-                  </button>
-                </header>
-
-                <div className="jobs-filter-option-list">
-                  <button
-                    type="button"
-                    className={!currentExperience ? 'is-active' : ''}
-                    onClick={() => {
-                      update('experienceLevel', '');
-                      setQuickFilterOpen('');
-                    }}
-                  >
-                    <span>Tất cả kinh nghiệm</span>
-                    {!currentExperience ? <Check size={17} /> : null}
-                  </button>
-
-                  {Object.entries(EXPERIENCE_LEVELS).map(([value, label]) => (
-                    <button
-                      type="button"
-                      key={value}
-                      className={currentExperience === value ? 'is-active' : ''}
-                      onClick={() => {
-                        update('experienceLevel', value);
-                        setQuickFilterOpen('');
-                      }}
-                    >
-                      <span>{label}</span>
-                      {currentExperience === value ? <Check size={17} /> : null}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ) : null}
-          </div>
-
-          <label className="jobs-filter-toolbar__sort">
-            <SortIcon size={17} />
-            <select
-              value={currentSort}
-              onChange={(event) => update('sort', event.target.value)}
-              aria-label="Sắp xếp việc làm"
-            >
-              {SORT_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </label>
-        </div>
-
-        {hasFilters ? (
-          <div className="jobs-active-filters">
-            <span>Đang lọc:</span>
-
-            {currentType ? (
-              <button type="button" onClick={() => update('type', '')}>
-                {JOB_TYPES[currentType] || currentType}
-                <X size={13} />
-              </button>
-            ) : null}
-
-            {currentArea ? (
-              <button type="button" onClick={() => update('area', '')}>
-                {selectedArea?.name || 'Khu vực'}
-                <X size={13} />
-              </button>
-            ) : null}
-
-            {currentExperience ? (
+        <form
+          className="jobs-market-search"
+          onSubmit={(event) => {
+            event.preventDefault();
+            commitSearch(searchInput);
+          }}
+        >
+          <label className="jobs-market-search__keyword">
+            <Search size={18} />
+            <input
+              type="search"
+              value={searchInput}
+              onChange={(event) => setSearchInput(event.target.value)}
+              placeholder="Ví dụ: kỹ sư, kế toán, FPT, Thạch Hòa..."
+              aria-label="Tìm kiếm việc làm"
+            />
+            {searchInput ? (
               <button
                 type="button"
-                onClick={() => update('experienceLevel', '')}
-              >
-                {EXPERIENCE_LEVELS[currentExperience] || currentExperience}
-                <X size={13} />
-              </button>
-            ) : null}
-
-            {currentSort ? (
-              <button type="button" onClick={() => update('sort', '')}>
-                {currentSortOption.label}
-                <X size={13} />
-              </button>
-            ) : null}
-
-            {currentQuery ? (
-              <button
-                type="button"
+                aria-label="Xóa từ khóa"
                 onClick={() => {
                   setSearchInput('');
                   commitSearch('', true);
                 }}
               >
-                “{currentQuery}”
-                <X size={13} />
+                <X size={15} />
               </button>
             ) : null}
+          </label>
 
-            <button
-              type="button"
-              className="jobs-active-filters__clear"
-              onClick={clearAllFilters}
+          <label className="jobs-market-search__select">
+            <MapPin size={17} />
+            <select
+              value={currentArea}
+              onChange={(event) => update('area', event.target.value)}
+              aria-label="Khu vực làm việc"
             >
-              Xóa tất cả
+              <option value="">Hòa Lạc và khu vực</option>
+              {areas.map((item) => (
+                <option key={item._id} value={item._id}>
+                  {item.name}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <label className="jobs-market-search__select">
+            <BriefcaseBusiness size={17} />
+            <select
+              value={currentType}
+              onChange={(event) => update('type', event.target.value)}
+              aria-label="Loại công việc"
+            >
+              <option value="">Tất cả loại công việc</option>
+              {Object.entries(JOB_TYPES).map(([value, label]) => (
+                <option key={value} value={value}>
+                  {label}
+                </option>
+              ))}
+            </select>
+          </label>
+
+          <button type="submit">
+            <Search size={17} />
+            Tìm kiếm việc làm
+          </button>
+        </form>
+
+        <section className="jobs-discovery">
+          <header className="jobs-section-heading">
+            <div>
+              <span>Khám phá nhanh</span>
+              <h2>Khám phá theo loại công việc</h2>
+            </div>
+            <button type="button" onClick={() => setFiltersOpen(true)}>
+              Xem bộ lọc đầy đủ
+              <SlidersHorizontal size={15} />
             </button>
+          </header>
+
+          <div className="jobs-discovery__grid">
+            {DISCOVERY_TYPES.map((value) => {
+              const meta = JOB_TYPE_META[value] || JOB_TYPE_META.full_time;
+              const TypeIcon = meta.icon;
+              const selected = currentType === value;
+
+              return (
+                <button
+                  type="button"
+                  key={value}
+                  className={selected ? 'is-active' : ''}
+                  onClick={() => update('type', selected ? '' : value)}
+                >
+                  <span className={`jobs-discovery__icon is-${meta.tone}`}>
+                    <TypeIcon size={20} />
+                  </span>
+                  <span>
+                    <strong>{JOB_TYPES[value]}</strong>
+                    <small>{selected ? 'Đang lọc' : 'Xem cơ hội phù hợp'}</small>
+                  </span>
+                </button>
+              );
+            })}
           </div>
+        </section>
+
+        {!result.loading && !result.error && result.items.length ? (
+          <section className="jobs-market-highlights">
+            <article className="jobs-employers-panel">
+              <header className="jobs-panel-heading">
+                <div>
+                  <span>Doanh nghiệp đang tuyển</span>
+                  <h2>Nhà tuyển dụng nổi bật</h2>
+                </div>
+              </header>
+
+              {featuredCompanies.length ? (
+                <div className="jobs-employers-panel__companies">
+                  {featuredCompanies.map((company) => (
+                    <button
+                      type="button"
+                      key={company.name}
+                      onClick={() => {
+                        setSearchInput(company.name);
+                        commitSearch(company.name);
+                      }}
+                    >
+                      <span>{companyInitials(company.name)}</span>
+                      <strong>{company.name}</strong>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <p className="jobs-employers-panel__empty">
+                  Chưa có đủ dữ liệu doanh nghiệp để hiển thị.
+                </p>
+              )}
+
+              <div className="jobs-employer-cta">
+                <div>
+                  <strong>Bạn là nhà tuyển dụng?</strong>
+                  <span>Đăng tin và tiếp cận ứng viên tại khu vực Hòa Lạc.</span>
+                </div>
+                <Link to="/dang-bai/viec-lam">
+                  <Plus size={15} />
+                  Đăng tin ngay
+                </Link>
+              </div>
+            </article>
+
+            <article className="jobs-featured-panel">
+              <header className="jobs-panel-heading jobs-panel-heading--row">
+                <div>
+                  <span>Cập nhật mới</span>
+                  <h2>Việc làm đáng chú ý</h2>
+                </div>
+                <a href="#jobs-results">Xem tất cả</a>
+              </header>
+
+              <div className="jobs-featured-panel__grid">
+                {featuredJobs.map((item) => (
+                  <div className="jobs-featured-card" key={item._id}>
+                    <JobCard item={item} />
+                  </div>
+                ))}
+              </div>
+            </article>
+          </section>
         ) : null}
+
+        <section
+          id="jobs-results"
+          ref={resultsRef}
+          className="jobs-results"
+        >
+          <div className="jobs-results__main">
+            <header className="jobs-results__header">
+              <div>
+                <span className="jobs-results__eyebrow">
+                  <BriefcaseBusiness size={15} />
+                  Danh sách việc làm
+                </span>
+                <h2>
+                  {currentQuery
+                    ? `Kết quả cho “${currentQuery}”`
+                    : hasFilters
+                      ? 'Việc làm phù hợp với bộ lọc'
+                      : 'Việc làm mới nhất tại Hòa Lạc'}
+                </h2>
+                {!result.loading && !result.error ? (
+                  <p>
+                    {total > 0 ? (
+                      <>
+                        Hiển thị <strong>{fromItem}–{toItem}</strong> trong tổng số{' '}
+                        <strong>{total.toLocaleString('vi-VN')}</strong> việc làm.
+                      </>
+                    ) : (
+                      'Chưa có công việc phù hợp.'
+                    )}
+                  </p>
+                ) : null}
+              </div>
+
+              <button
+                type="button"
+                className="jobs-results__reload"
+                disabled={result.loading}
+                onClick={result.reload}
+              >
+                <RefreshCw
+                  size={15}
+                  className={result.loading ? 'is-spinning' : ''}
+                />
+                Làm mới
+              </button>
+            </header>
+
+            <div className="jobs-results-controls">
+              <div className="jobs-results-controls__types">
+                <button
+                  type="button"
+                  className={!currentType ? 'is-active' : ''}
+                  onClick={() => update('type', '')}
+                >
+                  Tất cả
+                </button>
+                {['full_time', 'part_time', 'internship'].map((value) => (
+                  <button
+                    type="button"
+                    key={value}
+                    className={currentType === value ? 'is-active' : ''}
+                    onClick={() =>
+                      update('type', currentType === value ? '' : value)
+                    }
+                  >
+                    {JOB_TYPES[value]}
+                  </button>
+                ))}
+              </div>
+
+              <div className="jobs-results-controls__actions">
+                <label>
+                  <SortIcon size={15} />
+                  <select
+                    value={currentSort}
+                    onChange={(event) => update('sort', event.target.value)}
+                    aria-label="Sắp xếp việc làm"
+                  >
+                    {SORT_OPTIONS.map((option) => (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+
+                <button type="button" onClick={() => setFiltersOpen(true)}>
+                  <Filter size={15} />
+                  Lọc
+                  {filterCount ? <b>{filterCount}</b> : null}
+                </button>
+
+                <div className="jobs-view-switch" aria-label="Kiểu hiển thị">
+                  <button
+                    type="button"
+                    className={viewMode === 'grid' ? 'is-active' : ''}
+                    aria-label="Hiển thị dạng lưới"
+                    onClick={() => setViewMode('grid')}
+                  >
+                    <LayoutGrid size={16} />
+                  </button>
+                  <button
+                    type="button"
+                    className={viewMode === 'list' ? 'is-active' : ''}
+                    aria-label="Hiển thị dạng danh sách"
+                    onClick={() => setViewMode('list')}
+                  >
+                    <List size={16} />
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {hasFilters ? (
+              <div className="jobs-active-filters">
+                {currentType ? (
+                  <button type="button" onClick={() => update('type', '')}>
+                    {JOB_TYPES[currentType] || currentType}
+                    <X size={13} />
+                  </button>
+                ) : null}
+
+                {currentArea ? (
+                  <button type="button" onClick={() => update('area', '')}>
+                    {selectedArea?.name || 'Khu vực'}
+                    <X size={13} />
+                  </button>
+                ) : null}
+
+                {currentExperience ? (
+                  <button
+                    type="button"
+                    onClick={() => update('experienceLevel', '')}
+                  >
+                    {EXPERIENCE_LEVELS[currentExperience] || currentExperience}
+                    <X size={13} />
+                  </button>
+                ) : null}
+
+                {currentSort ? (
+                  <button type="button" onClick={() => update('sort', '')}>
+                    {currentSortOption.label}
+                    <X size={13} />
+                  </button>
+                ) : null}
+
+                {currentQuery ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSearchInput('');
+                      commitSearch('', true);
+                    }}
+                  >
+                    “{currentQuery}”
+                    <X size={13} />
+                  </button>
+                ) : null}
+
+                <button
+                  type="button"
+                  className="jobs-active-filters__clear"
+                  onClick={clearAllFilters}
+                >
+                  <RotateCcw size={13} />
+                  Đặt lại
+                </button>
+              </div>
+            ) : null}
+
+            <div className="jobs-results__body">
+              {result.loading ? (
+                <LoadingBlock />
+              ) : result.error ? (
+                <ErrorState
+                  error={result.error}
+                  onRetry={result.reload}
+                />
+              ) : result.items.length ? (
+                <div
+                  className={`jobs-list${
+                    viewMode === 'grid' ? ' jobs-list--grid' : ''
+                  }`}
+                >
+                  {result.items.map((item) => (
+                    <article
+                      className="jobs-item"
+                      key={item._id}
+                    >
+                      <JobCard item={item} />
+                    </article>
+                  ))}
+                </div>
+              ) : (
+                <div className="jobs-empty-state">
+                  <span>
+                    <BriefcaseBusiness size={38} />
+                  </span>
+                  <h3>Chưa có việc làm phù hợp</h3>
+                  <p>
+                    {hasFilters
+                      ? 'Hãy thử thay đổi loại công việc, khu vực, kinh nghiệm hoặc từ khóa tìm kiếm.'
+                      : 'Hiện chưa có tin tuyển dụng nào được đăng trong hệ thống.'}
+                  </p>
+                  <div>
+                    {hasFilters ? (
+                      <button
+                        type="button"
+                        onClick={clearAllFilters}
+                      >
+                        <RotateCcw size={16} />
+                        Xóa bộ lọc
+                      </button>
+                    ) : null}
+                    <Link to="/dang-bai/viec-lam">
+                      <Plus size={16} />
+                      Đăng tin tuyển dụng
+                    </Link>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {!result.loading && !result.error && result.items.length ? (
+              <div className="jobs-pagination">
+                <Pagination
+                  meta={result.meta}
+                  onPageChange={setPage}
+                />
+                {result.meta?.totalPages ? (
+                  <p>
+                    Trang {currentPage} / {result.meta.totalPages}
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
+          </div>
+
+          <aside className="jobs-safety-card">
+            <div className="jobs-safety-card__art" aria-hidden="true">
+              <span>
+                <ShieldCheck size={34} />
+              </span>
+              <span>
+                <UsersRound size={28} />
+              </span>
+            </div>
+            <span className="jobs-safety-card__eyebrow">Ứng tuyển an toàn</span>
+            <h3>Tìm việc rõ ràng, bảo vệ thông tin của bạn</h3>
+            <p>
+              Kiểm tra doanh nghiệp và mô tả công việc trước khi gửi hồ sơ hoặc
+              cung cấp thông tin cá nhân quan trọng.
+            </p>
+            <ul>
+              <li>
+                <Check size={14} />
+                Không chuyển tiền để được nhận việc hoặc phỏng vấn.
+              </li>
+              <li>
+                <Check size={14} />
+                Ưu tiên tin có thông tin công ty và địa điểm rõ ràng.
+              </li>
+              <li>
+                <Check size={14} />
+                Liên hệ nhà tuyển dụng qua kênh chính thức khi có thể.
+              </li>
+            </ul>
+            <Link to="/dang-bai/viec-lam">
+              <Plus size={15} />
+              Đăng tin tuyển dụng
+            </Link>
+          </aside>
+        </section>
 
         {filtersOpen ? (
           <div className="jobs-filter-modal-layer">
@@ -679,7 +884,7 @@ export default function JobsPage() {
               type="button"
               className="jobs-filter-modal-backdrop"
               aria-label="Đóng bộ lọc"
-              onClick={closeFilterModal}
+              onClick={() => setFiltersOpen(false)}
             />
 
             <section
@@ -693,11 +898,10 @@ export default function JobsPage() {
                   <SlidersHorizontal size={20} />
                   <strong>Bộ lọc việc làm</strong>
                 </div>
-
                 <button
                   type="button"
                   aria-label="Đóng bộ lọc"
-                  onClick={closeFilterModal}
+                  onClick={() => setFiltersOpen(false)}
                 >
                   <X size={22} />
                 </button>
@@ -706,7 +910,6 @@ export default function JobsPage() {
               <div className="jobs-filter-modal__body">
                 <section className="jobs-filter-modal__section">
                   <h3>Loại công việc & khu vực</h3>
-
                   <div className="jobs-modal-select-grid">
                     <label>
                       <span>Loại công việc</span>
@@ -748,7 +951,6 @@ export default function JobsPage() {
 
                 <section className="jobs-filter-modal__section">
                   <h3>Yêu cầu & thứ tự hiển thị</h3>
-
                   <div className="jobs-modal-select-grid">
                     <label>
                       <span>Kinh nghiệm</span>
@@ -793,7 +995,6 @@ export default function JobsPage() {
 
                 <section className="jobs-filter-modal__section jobs-filter-modal__search-section">
                   <h3>Từ khóa</h3>
-
                   <form
                     onSubmit={(event) => {
                       event.preventDefault();
@@ -832,7 +1033,6 @@ export default function JobsPage() {
                   <RotateCcw size={17} />
                   Đặt lại bộ lọc
                 </button>
-
                 <button
                   type="button"
                   className="jobs-filter-modal__apply"
@@ -840,7 +1040,7 @@ export default function JobsPage() {
                     if (searchInput.trim() !== currentQuery) {
                       commitSearch(searchInput);
                     }
-                    closeFilterModal();
+                    setFiltersOpen(false);
                   }}
                 >
                   Xem kết quả
@@ -848,134 +1048,6 @@ export default function JobsPage() {
                 </button>
               </footer>
             </section>
-          </div>
-        ) : null}
-
-        <div className="jobs-safety-strip">
-          <ShieldCheck size={19} />
-          <div>
-            <strong>Tìm việc an toàn</strong>
-            <span>
-              Không chuyển tiền để được nhận việc hoặc phỏng vấn; hãy xác minh
-              doanh nghiệp trước khi cung cấp thông tin cá nhân quan trọng.
-            </span>
-          </div>
-        </div>
-
-        <section
-          id="jobs-results"
-          ref={resultsRef}
-          className="jobs-results"
-        >
-          <header className="jobs-results__header">
-            <div>
-              <span className="jobs-results__eyebrow">
-                <BriefcaseBusiness size={16} />
-                Danh sách việc làm
-              </span>
-
-              <h2>
-                {currentQuery
-                  ? `Kết quả cho “${currentQuery}”`
-                  : hasFilters
-                    ? 'Việc làm phù hợp với bộ lọc'
-                    : 'Việc làm mới nhất'}
-              </h2>
-
-              {!result.loading && !result.error ? (
-                <p>
-                  {total > 0 ? (
-                    <>
-                      Hiển thị <strong>{fromItem}–{toItem}</strong> trong tổng số{' '}
-                      <strong>{total.toLocaleString('vi-VN')}</strong> việc làm.
-                    </>
-                  ) : (
-                    'Chưa có công việc phù hợp.'
-                  )}
-                </p>
-              ) : null}
-            </div>
-
-            <button
-              type="button"
-              className="jobs-results__reload"
-              disabled={result.loading}
-              onClick={result.reload}
-            >
-              <RefreshCw
-                size={16}
-                className={result.loading ? 'is-spinning' : ''}
-              />
-              Làm mới
-            </button>
-          </header>
-
-          <div className="jobs-results__body">
-            {result.loading ? (
-              <LoadingBlock />
-            ) : result.error ? (
-              <ErrorState
-                error={result.error}
-                onRetry={result.reload}
-              />
-            ) : result.items.length ? (
-              <div className="jobs-list">
-                {result.items.map((item) => (
-                  <article
-                    className="jobs-item"
-                    key={item._id}
-                  >
-                    <JobCard item={item} />
-                  </article>
-                ))}
-              </div>
-            ) : (
-              <div className="jobs-empty-state">
-                <span>
-                  <BriefcaseBusiness size={39} />
-                </span>
-
-                <h3>Chưa có việc làm phù hợp</h3>
-
-                <p>
-                  {hasFilters
-                    ? 'Hãy thử thay đổi loại công việc, khu vực, kinh nghiệm hoặc từ khóa tìm kiếm.'
-                    : 'Hiện chưa có tin tuyển dụng nào được đăng trong hệ thống.'}
-                </p>
-
-                <div>
-                  {hasFilters ? (
-                    <button
-                      type="button"
-                      onClick={clearAllFilters}
-                    >
-                      <RotateCcw size={17} />
-                      Xóa tất cả bộ lọc
-                    </button>
-                  ) : null}
-
-                  <Link to="/dang-bai/viec-lam">
-                    <Plus size={17} />
-                    Đăng tin tuyển dụng
-                  </Link>
-                </div>
-              </div>
-            )}
-          </div>
-        </section>
-
-        {!result.loading && !result.error && result.items.length ? (
-          <div className="jobs-pagination">
-            <Pagination
-              meta={result.meta}
-              onPageChange={setPage}
-            />
-
-            {result.meta?.totalPages ? (
-              <p>
-                Trang {currentPage} / {result.meta.totalPages}
-              </p>
-            ) : null}
           </div>
         ) : null}
       </div>
