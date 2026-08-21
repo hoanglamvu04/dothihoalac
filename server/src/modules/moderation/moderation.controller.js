@@ -88,7 +88,7 @@ export async function userPassword(req, res) {
       req.body.password,
       req.ip,
     ),
-    message: 'Đã đổi mật khẩu và thu hồi phiên đăng nhập cũ.',
+    message: 'Đã đổi mật khẩu và thu hồi các phiên đăng nhập cũ.',
   });
 }
 
