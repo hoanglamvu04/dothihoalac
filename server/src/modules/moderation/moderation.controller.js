@@ -43,7 +43,14 @@ export async function queue(req, res) {
 function act(type) {
   return async (req, res) =>
     sendSuccess(res, {
-      data: await s.action(req.user, req.auth, req.params.id, type, req.body, req.ip),
+      data: await s.action(
+        req.user,
+        req.auth,
+        req.params.id,
+        type,
+        req.body,
+        req.ip,
+      ),
       message: 'Đã xử lý nội dung.',
     });
 }
@@ -61,7 +68,13 @@ export async function users(req, res) {
 
 export async function userStatus(req, res) {
   return sendSuccess(res, {
-    data: await s.updateUserStatus(req.user, req.auth, req.params.id, req.body, req.ip),
+    data: await s.updateUserStatus(
+      req.user,
+      req.auth,
+      req.params.id,
+      req.body,
+      req.ip,
+    ),
     message: 'Đã cập nhật tài khoản.',
   });
 }
