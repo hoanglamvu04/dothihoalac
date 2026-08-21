@@ -138,6 +138,35 @@
   font-weight: 680;
 }
 
+.admin-user-overview {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.admin-user-overview > div {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+  padding: 13px 14px;
+  border: 1px solid #dde5e0;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #fff 0%, #fbfdfc 100%);
+}
+
+.admin-user-overview strong {
+  color: #15231a;
+  font-size: 1.08rem;
+}
+
+.admin-user-overview span {
+  color: #748078;
+  font-size: 0.66rem;
+  font-weight: 680;
+  line-height: 1.35;
+}
+
 .admin-user-toolbar {
   align-items: center;
   justify-content: space-between;
@@ -183,6 +212,57 @@
 .admin-user-staff-note {
   color: #0c6a35 !important;
   font-weight: 720;
+}
+
+.admin-user-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  min-width: 176px;
+}
+
+.admin-user-actions button,
+.admin-user-security-row button,
+.admin-password-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+
+.admin-user-actions button:disabled {
+  opacity: 0.48;
+  cursor: not-allowed;
+}
+
+.admin-user-security-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 12px 13px;
+  border: 1px solid #dce5df;
+  border-radius: 11px;
+  background: #f8fbf9;
+}
+
+.admin-user-security-row > div {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.admin-user-security-row strong {
+  color: #1b2820;
+  font-size: 0.75rem;
+}
+
+.admin-user-security-row small {
+  color: #748078;
+  font-size: 0.65rem;
+  line-height: 1.45;
 }
 
 .admin-access-warning {
@@ -284,9 +364,159 @@
   line-height: 1.42;
 }
 
+.admin-password-form {
+  gap: 14px;
+}
+
+.admin-password-user {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 12px 13px;
+  border: 1px solid #dce5df;
+  border-radius: 11px;
+  background: #f8fbf9;
+}
+
+.admin-password-user__icon {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  border-radius: 11px;
+  color: #0c6a35;
+  background: #eaf6ef;
+}
+
+.admin-password-user h3,
+.admin-password-user p {
+  margin: 0;
+}
+
+.admin-password-user h3 {
+  color: #18251c;
+  font-size: 0.82rem;
+}
+
+.admin-password-user p {
+  margin-top: 3px;
+  color: #748078;
+  font-size: 0.66rem;
+  overflow-wrap: anywhere;
+}
+
+.admin-password-notice {
+  padding: 10px 12px;
+  border: 1px solid #d6e7dc;
+  border-radius: 9px;
+  color: #315c42;
+  background: #f2f9f5;
+  font-size: 0.68rem;
+  line-height: 1.5;
+}
+
+.admin-password-input-wrap {
+  position: relative;
+}
+
+.admin-password-input-wrap input {
+  padding-right: 43px;
+}
+
+.admin-password-visibility {
+  position: absolute;
+  top: 50%;
+  right: 6px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  transform: translateY(-50%);
+  border: 0;
+  border-radius: 8px;
+  color: #66736b;
+  background: transparent;
+  cursor: pointer;
+}
+
+.admin-password-visibility:hover,
+.admin-password-visibility:focus-visible {
+  color: #0c6a35;
+  background: #edf7f1;
+}
+
+.admin-password-strength {
+  display: grid;
+  gap: 8px;
+  margin-top: -5px;
+}
+
+.admin-password-strength__bar {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 4px;
+}
+
+.admin-password-strength__bar span {
+  height: 4px;
+  border-radius: 999px;
+  background: #e4e9e6;
+}
+
+.admin-password-strength__bar span.is-active {
+  background: #2c9b5b;
+}
+
+.admin-password-rules {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.admin-password-rules span {
+  padding: 4px 7px;
+  border: 1px solid #e0e6e2;
+  border-radius: 999px;
+  color: #7b857e;
+  background: #fafcfb;
+  font-size: 0.59rem;
+  font-weight: 680;
+}
+
+.admin-password-rules span.is-ok {
+  border-color: #b9ddc7;
+  color: #126d38;
+  background: #eff8f2;
+}
+
+.admin-password-strength small {
+  color: #7b857e;
+  font-size: 0.61rem;
+  line-height: 1.45;
+}
+
+.admin-password-error {
+  margin-top: -5px;
+  color: #a43030;
+  font-size: 0.66rem;
+  font-weight: 680;
+}
+
+.admin-password-actions {
+  justify-content: flex-end;
+  gap: 8px;
+  padding-top: 2px;
+}
+
 @media (max-width: 980px) {
   .admin-access-matrix {
     grid-template-columns: 1fr;
+  }
+
+  .admin-user-overview {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .admin-user-toolbar,
@@ -305,9 +535,68 @@
   }
 }
 
+@media (max-width: 760px) {
+  .admin-users-table-wrap {
+    overflow: visible;
+  }
+
+  .admin-users-table,
+  .admin-users-table tbody,
+  .admin-users-table tr,
+  .admin-users-table td {
+    display: block;
+    width: 100%;
+  }
+
+  .admin-users-table thead {
+    display: none;
+  }
+
+  .admin-users-table tbody {
+    display: grid;
+    gap: 10px;
+  }
+
+  .admin-users-table tr {
+    overflow: hidden;
+    border: 1px solid #dde5e0;
+    border-radius: 12px;
+    background: #fff;
+  }
+
+  .admin-users-table td {
+    display: grid;
+    grid-template-columns: minmax(92px, 0.38fr) minmax(0, 1fr);
+    align-items: start;
+    gap: 10px;
+    padding: 10px 12px;
+    border-bottom: 1px solid #edf1ee;
+    text-align: left;
+  }
+
+  .admin-users-table td:last-child {
+    border-bottom: 0;
+  }
+
+  .admin-users-table td::before {
+    content: attr(data-label);
+    color: #7a857e;
+    font-size: 0.61rem;
+    font-weight: 760;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+  }
+
+  .admin-user-actions {
+    justify-content: flex-start;
+    min-width: 0;
+  }
+}
+
 @media (max-width: 680px) {
   .admin-access-summary,
-  .admin-staff-role-grid {
+  .admin-staff-role-grid,
+  .admin-user-overview {
     grid-template-columns: 1fr;
   }
 
@@ -315,5 +604,20 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     width: 100%;
+  }
+
+  .admin-user-security-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .admin-user-security-row button,
+  .admin-password-actions button {
+    width: 100%;
+  }
+
+  .admin-password-actions {
+    display: grid;
+    grid-template-columns: 1fr;
   }
 }
