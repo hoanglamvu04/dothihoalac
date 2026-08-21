@@ -8,6 +8,7 @@ import {
 
 import {
   Link,
+  useNavigate,
   useSearchParams,
 } from 'react-router-dom';
 
@@ -184,6 +185,18 @@ function buildCompanies(items) {
     .slice(0, 6);
 }
 
+function companySlug(value) {
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/Đ/g, 'D')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 function companyInitials(name) {
   return String(name || 'NTD')
     .split(/\s+/)
@@ -195,6 +208,7 @@ function companyInitials(name) {
 
 export default function JobsPage() {
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const { areas = [] } = useTaxonomy();
 
   const resultsRef = useRef(null);
@@ -557,8 +571,8 @@ export default function JobsPage() {
                       type="button"
                       key={company.name}
                       onClick={() => {
-                        setSearchInput(company.name);
-                        commitSearch(company.name);
+                        const slug = companySlug(company.name);
+                        if (slug) navigate(`/viec-lam/cong-ty/${slug}`);
                       }}
                     >
                       <span>{companyInitials(company.name)}</span>
