@@ -5,9 +5,23 @@ import { formatCurrency, formatDate } from '../../utils/formatters';
 import { JOB_TYPES } from '../../utils/constants';
 import { contentPath } from '../../utils/content';
 
+function companySlug(value) {
+  return String(value || '')
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .replace(/đ/g, 'd')
+    .replace(/Đ/g, 'D')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
 export default function JobCard({ item }) {
   const job = item.job || {};
   const href = contentPath(item);
+  const employerName = job.companyName || 'Nhà tuyển dụng';
+  const employerSlug = companySlug(job.companyName);
   const salary =
     job.salaryUnit === 'negotiable' || (!job.salaryMin && !job.salaryMax)
       ? 'Lương thỏa thuận'
@@ -21,7 +35,11 @@ export default function JobCard({ item }) {
       <div className="job-card__body">
         <Badge tone="soft">{JOB_TYPES[job.jobType] || 'Việc làm'}</Badge>
         <h3><Link to={href}>{item.title}</Link></h3>
-        <strong>{job.companyName || 'Nhà tuyển dụng'}</strong>
+        <strong>
+          {employerSlug ? (
+            <Link to={`/viec-lam/cong-ty/${employerSlug}`}>{employerName}</Link>
+          ) : employerName}
+        </strong>
         <p className="job-card__salary">{salary}</p>
         <div>
           <span><MapPin size={15} /> {job.workLocation || 'Hòa Lạc'}</span>
