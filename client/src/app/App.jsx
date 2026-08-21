@@ -32,6 +32,7 @@ const CommunityDetailPage = lazy(() => import('../pages/public/CommunityDetailPa
 const PropertiesPage = lazy(() => import('../pages/public/PropertiesPage'));
 const PropertyDetailPage = lazy(() => import('../pages/public/PropertyDetailPage'));
 const JobsPage = lazy(() => import('../pages/public/JobsPage'));
+const JobCompanyPage = lazy(() => import('../pages/public/JobCompanyPage'));
 const JobDetailPage = lazy(() => import('../pages/public/JobDetailPage'));
 const SearchPage = lazy(() => import('../pages/public/SearchPage'));
 const AreaPage = lazy(() => import('../pages/public/AreaPage'));
@@ -188,6 +189,7 @@ const router = createBrowserRouter(
         <Route path="nha-dat/:slug" element={<PropertyDetailPage />} />
 
         <Route path="viec-lam" element={<JobsPage />} />
+        <Route path="viec-lam/cong-ty/:slug" element={<JobCompanyPage />} />
         <Route path="viec-lam/:id/:slug" element={<JobDetailPage />} />
         <Route path="viec-lam/:slug" element={<JobDetailPage />} />
 
