@@ -12,6 +12,7 @@ import {
   Send,
 } from 'lucide-react';
 
+import logoMark from '../../assets/logo-mark.svg';
 import './SiteFooter.css';
 
 const navigationLinks = [
@@ -46,9 +47,15 @@ export default function SiteFooter() {
     <footer className="site-footer">
       <div className="container site-footer__main">
         <section className="site-footer__brand" aria-label="Đô Thị Hòa Lạc">
-          <Link to="/" className="site-footer__logo" aria-label="Đô Thị Hòa Lạc - Trang chủ">
-            <img src="/Logo2.png" alt="Đô Thị Hòa Lạc" />
-            <span>
+          <Link
+            to="/"
+            className="dthl-brand site-footer__logo"
+            aria-label="Đô Thị Hòa Lạc - Trang chủ"
+          >
+            <span className="dthl-brand__mark site-footer__logo-mark">
+              <img src={logoMark} alt="" aria-hidden="true" />
+            </span>
+            <span className="dthl-brand__content site-footer__logo-copy">
               <strong>Đô Thị Hòa Lạc</strong>
               <small>Trung Tâm Phát Triển Đô Thị Hòa Lạc</small>
             </span>
@@ -73,7 +80,7 @@ export default function SiteFooter() {
 
           <div className="site-footer__operator">
             <small>Đơn vị vận hành</small>
-            <strong>Media Space · Công ty Cổ phần XSpace Việt Nam</strong>
+            <strong>Công ty Cổ phần XSpace Việt Nam</strong>
           </div>
         </section>
 
@@ -132,12 +139,12 @@ export default function SiteFooter() {
 
           <div className="site-footer__actions">
             <Link to="/gui-tin" className="site-footer__action site-footer__action--primary">
-              <Send size={16} />
-              Gửi tin cho Ban biên tập
+              <Send size={16} aria-hidden="true" />
+              <span>Gửi tin cho Ban biên tập</span>
             </Link>
             <Link to="/lien-he" className="site-footer__action site-footer__action--secondary">
-              Liên hệ trực tiếp
-              <ArrowRight size={15} />
+              <span>Liên hệ trực tiếp</span>
+              <ArrowRight size={15} aria-hidden="true" />
             </Link>
           </div>
         </section>
@@ -145,7 +152,7 @@ export default function SiteFooter() {
 
       <div className="site-footer__bottom">
         <div className="container site-footer__bottom-inner">
-          <p>© {currentYear} Đô Thị Hòa Lạc · Media Space / XSpace Việt Nam</p>
+          <p>© {currentYear} Đô Thị Hòa Lạc · Công ty Cổ phần XSpace Việt Nam</p>
 
           <nav className="site-footer__legal" aria-label="Thông tin pháp lý">
             <Link to="/gioi-thieu">Giới thiệu</Link>
