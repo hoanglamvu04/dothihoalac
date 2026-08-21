@@ -31,6 +31,8 @@ export const adminApi = {
   users: async (params = {}) => unwrapList(await api.get('/admin/users', { params })),
   updateUserStatus: async (id, payload) =>
     unwrap(await api.patch(`/admin/users/${id}/status`, payload)),
+  changeUserPassword: async (id, password) =>
+    unwrap(await api.patch(`/admin/users/${id}/password`, { password })),
   accessControl: async () => unwrap(await api.get('/admin/access')),
   updateUserRoles: async (id, roles = []) =>
     unwrap(await api.patch(`/admin/access/users/${id}/roles`, { roles })),
