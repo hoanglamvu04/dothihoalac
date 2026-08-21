@@ -13,6 +13,7 @@
   --jobs-background: #f7faf8;
   --jobs-shadow: 0 10px 32px rgb(14 55 31 / 0.07);
   --jobs-shadow-soft: 0 4px 16px rgb(14 55 31 / 0.045);
+  --jobs-safety-sticky-top: 148px;
 
   min-height: 100vh;
   padding: 18px 0 72px;
@@ -20,6 +21,14 @@
   background:
     radial-gradient(circle at 16% 8%, rgb(216 241 225 / 0.58), transparent 28%),
     linear-gradient(180deg, #fbfdfb 0%, var(--jobs-background) 44%, #f5f8f6 100%);
+}
+
+body:has(.dthl-header.is-compact:not(.is-hidden)) .jobs-page {
+  --jobs-safety-sticky-top: 92px;
+}
+
+body:has(.dthl-header.is-hidden) .jobs-page {
+  --jobs-safety-sticky-top: 16px;
 }
 
 .jobs-page *,
@@ -1099,15 +1108,26 @@
 
 .jobs-safety-card {
   position: sticky;
-  top: 110px;
+  top: var(--jobs-safety-sticky-top);
+  align-self: start;
+  max-height: calc(100dvh - var(--jobs-safety-sticky-top) - 16px);
   padding: 18px;
-  overflow: hidden;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
   border: 1px solid #dfe7e2;
   border-radius: 14px;
   background:
     radial-gradient(circle at 84% 18%, rgb(217 239 211 / 0.8), transparent 35%),
     linear-gradient(180deg, #fbfdf6, #f6f7e9);
   box-shadow: var(--jobs-shadow-soft);
+  transition: top 320ms cubic-bezier(0.22, 1, 0.36, 1), max-height 320ms ease;
+}
+
+.jobs-safety-card:hover {
+  scrollbar-color: #c8d6cd transparent;
 }
 
 .jobs-safety-card__art {
@@ -1596,6 +1616,8 @@
 
   .jobs-safety-card {
     position: static;
+    max-height: none;
+    overflow: hidden;
   }
 }
 
