@@ -12,6 +12,7 @@ import {
   Send,
 } from 'lucide-react';
 
+import logoMark from '../../assets/logo-mark.svg';
 import './SiteFooter.css';
 
 const navigationLinks = [
@@ -46,11 +47,15 @@ export default function SiteFooter() {
     <footer className="site-footer">
       <div className="container site-footer__main">
         <section className="site-footer__brand" aria-label="Đô Thị Hòa Lạc">
-          <Link to="/" className="site-footer__logo" aria-label="Đô Thị Hòa Lạc - Trang chủ">
-            <span className="site-footer__logo-mark" aria-hidden="true">
-              <img src="/Logo2.png" alt="" />
+          <Link
+            to="/"
+            className="dthl-brand site-footer__logo"
+            aria-label="Đô Thị Hòa Lạc - Trang chủ"
+          >
+            <span className="dthl-brand__mark site-footer__logo-mark">
+              <img src={logoMark} alt="" aria-hidden="true" />
             </span>
-            <span className="site-footer__logo-copy">
+            <span className="dthl-brand__content site-footer__logo-copy">
               <strong>Đô Thị Hòa Lạc</strong>
               <small>Trung Tâm Phát Triển Đô Thị Hòa Lạc</small>
             </span>
