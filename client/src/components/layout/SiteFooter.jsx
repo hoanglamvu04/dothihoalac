@@ -12,7 +12,7 @@ import {
   Send,
 } from 'lucide-react';
 
-import logoMark from '../../assets/logo-mark.svg';
+import logoMark from '../../../public/logo2.png';
 import './SiteFooter.css';
 
 const navigationLinks = [
