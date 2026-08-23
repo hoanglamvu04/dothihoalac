@@ -197,7 +197,7 @@ async function buildHomeFeed() {
       contentType: 'community',
     })
       .select(CARD_FIELDS)
-      .sort({ reactionCount: -1, commentCount: -1, publishedAt: -1, _id: -1 })
+      .sort({ publishedAt: -1, _id: -1 })
       .limit(COMMUNITY_LIMIT)
       .lean(),
 
