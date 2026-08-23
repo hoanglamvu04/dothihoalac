@@ -188,14 +188,14 @@ export default function SiteFooter() {
 
               <a
                 className="site-footer__contact-row"
-                href="mailto:contact@dothihoalac.vn"
+                href="mailto:dothihoalac@xspace.vn"
               >
                 <span className="site-footer__contact-icon" aria-hidden="true">
                   <Mail size={21} />
                 </span>
                 <p>
                   <small>Email</small>
-                  <strong>contact@dothihoalac.vn</strong>
+                  <strong>dothihoalac@xspace.vn</strong>
                 </p>
               </a>
             </div>
