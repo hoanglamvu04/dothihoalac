@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 
 import {
-  ArrowRight,
   ArrowUp,
   BriefcaseBusiness,
   Building2,
@@ -21,26 +20,10 @@ import {
 import './SiteFooter.css';
 
 const featureLinks = [
-  {
-    to: '/tin-tuc',
-    label: 'Tin tức',
-    icon: Newspaper,
-  },
-  {
-    to: '/cong-dong',
-    label: 'Cộng đồng',
-    icon: MessageCircle,
-  },
-  {
-    to: '/nha-dat',
-    label: 'Bất động sản',
-    icon: Building2,
-  },
-  {
-    to: '/viec-lam',
-    label: 'Việc làm',
-    icon: BriefcaseBusiness,
-  },
+  { to: '/tin-tuc', label: 'Tin tức', icon: Newspaper },
+  { to: '/cong-dong', label: 'Cộng đồng', icon: MessageCircle },
+  { to: '/nha-dat', label: 'Bất động sản', icon: Building2 },
+  { to: '/viec-lam', label: 'Việc làm', icon: BriefcaseBusiness },
 ];
 
 const navigationLinks = [
@@ -65,10 +48,7 @@ export default function SiteFooter() {
   const currentYear = new Date().getFullYear();
 
   const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
@@ -78,32 +58,30 @@ export default function SiteFooter() {
           <section className="site-footer__cta">
             <div className="site-footer__cta-copy">
               <span className="site-footer__cta-icon" aria-hidden="true">
-                <Send size={30} />
+                <Send size={25} />
               </span>
 
               <div className="site-footer__cta-text">
                 <h2>
                   Cùng xây dựng Đô Thị Hòa Lạc
-                  <span>văn minh, kết nối và phát triển bền vững</span>
+                  <span>văn minh, kết nối, phát triển bền vững</span>
                 </h2>
-
                 <p>
-                  Gửi thông tin, đề xuất hoặc phản ánh của bạn cho Ban biên tập.
-                  <br />
-                  Chúng tôi luôn lắng nghe và đồng hành cùng cộng đồng.
+                  Gửi thông tin, đề xuất hoặc phản ánh tới Ban biên tập. Chúng tôi
+                  luôn lắng nghe và đồng hành cùng cộng đồng.
                 </p>
               </div>
             </div>
 
             <div className="site-footer__cta-action">
               <Link to="/gui-tin" className="site-footer__cta-button">
-                <Send size={20} />
+                <Send size={18} />
                 <span>Gửi thông tin cho Ban biên tập</span>
-                <ChevronRight size={20} />
+                <ChevronRight size={18} />
               </Link>
 
               <div className="site-footer__cta-note">
-                <ShieldCheck size={18} />
+                <ShieldCheck size={16} />
                 <span>Thông tin của bạn được bảo mật và tôn trọng</span>
               </div>
             </div>
@@ -120,7 +98,6 @@ export default function SiteFooter() {
               aria-label="Đô Thị Hòa Lạc - Trang chủ"
             >
               <img src="/Logo2.png" alt="Biểu tượng Đô Thị Hòa Lạc" />
-
               <span>
                 <strong>Đô Thị Hòa Lạc</strong>
                 <small>Trung tâm phát triển đô thị Hòa Lạc</small>
@@ -138,7 +115,7 @@ export default function SiteFooter() {
 
                 return (
                   <Link key={item.to} to={item.to}>
-                    <ItemIcon size={17} />
+                    <ItemIcon size={15} />
                     <span>{item.label}</span>
                   </Link>
                 );
@@ -147,9 +124,8 @@ export default function SiteFooter() {
 
             <div className="site-footer__operator">
               <span className="site-footer__operator-icon" aria-hidden="true">
-                <Building2 size={19} />
+                <Building2 size={17} />
               </span>
-
               <div>
                 <small>Đơn vị vận hành</small>
                 <strong>Công ty Cổ phần XSpace Việt Nam</strong>
@@ -159,11 +135,10 @@ export default function SiteFooter() {
 
           <nav className="site-footer__column" aria-label="Điều hướng footer">
             <h3>Điều hướng</h3>
-
             <div className="site-footer__links">
               {navigationLinks.map((item) => (
                 <Link key={item.to} to={item.to}>
-                  <ChevronRight size={17} />
+                  <ChevronRight size={15} />
                   <span>{item.label}</span>
                 </Link>
               ))}
@@ -172,11 +147,10 @@ export default function SiteFooter() {
 
           <nav className="site-footer__column" aria-label="Chuyên mục footer">
             <h3>Chuyên mục</h3>
-
             <div className="site-footer__links">
               {categoryLinks.map((item) => (
                 <Link key={`${item.to}-${item.label}`} to={item.to}>
-                  <ChevronRight size={17} />
+                  <ChevronRight size={15} />
                   <span>{item.label}</span>
                 </Link>
               ))}
@@ -185,13 +159,11 @@ export default function SiteFooter() {
 
           <section className="site-footer__column site-footer__contact-column">
             <h3>Liên hệ</h3>
-
             <div className="site-footer__contact">
               <div className="site-footer__contact-row">
                 <span className="site-footer__contact-icon" aria-hidden="true">
-                  <MapPin size={21} />
+                  <MapPin size={18} />
                 </span>
-
                 <p>
                   <small>Khu vực hoạt động</small>
                   <strong>Hòa Lạc, Hà Nội</strong>
@@ -200,9 +172,8 @@ export default function SiteFooter() {
 
               <a className="site-footer__contact-row" href="tel:0966709790">
                 <span className="site-footer__contact-icon" aria-hidden="true">
-                  <Phone size={21} />
+                  <Phone size={18} />
                 </span>
-
                 <p>
                   <small>Hotline</small>
                   <strong>0966 709 790</strong>
@@ -211,9 +182,8 @@ export default function SiteFooter() {
 
               <a className="site-footer__contact-row" href="mailto:admin@xspace.vn">
                 <span className="site-footer__contact-icon" aria-hidden="true">
-                  <Mail size={21} />
+                  <Mail size={18} />
                 </span>
-
                 <p>
                   <small>Email</small>
                   <strong>admin@xspace.vn</strong>
@@ -229,9 +199,8 @@ export default function SiteFooter() {
                 aria-label="Facebook Đô Thị Hòa Lạc"
                 title="Facebook"
               >
-                <Facebook size={20} />
+                <Facebook size={18} />
               </a>
-
               <a
                 href="https://www.youtube.com/"
                 target="_blank"
@@ -239,11 +208,14 @@ export default function SiteFooter() {
                 aria-label="YouTube Đô Thị Hòa Lạc"
                 title="YouTube"
               >
-                <Youtube size={20} />
+                <Youtube size={18} />
               </a>
-
-              <Link to="/cong-dong" aria-label="Cộng đồng Đô Thị Hòa Lạc" title="Cộng đồng">
-                <UsersRound size={20} />
+              <Link
+                to="/cong-dong"
+                aria-label="Cộng đồng Đô Thị Hòa Lạc"
+                title="Cộng đồng"
+              >
+                <UsersRound size={18} />
               </Link>
             </div>
           </section>
@@ -252,9 +224,7 @@ export default function SiteFooter() {
 
       <div className="site-footer__bottom">
         <div className="container site-footer__bottom-inner">
-          <p>
-            © {currentYear} Đô Thị Hòa Lạc - Công ty Cổ phần XSpace Việt Nam
-          </p>
+          <p>© {currentYear} Đô Thị Hòa Lạc · Công ty Cổ phần XSpace Việt Nam</p>
 
           <nav className="site-footer__bottom-links" aria-label="Chính sách footer">
             <Link to="/gioi-thieu">Giới thiệu</Link>
@@ -270,7 +240,7 @@ export default function SiteFooter() {
             aria-label="Lên đầu trang"
             title="Lên đầu trang"
           >
-            <ArrowUp size={19} />
+            <ArrowUp size={17} />
           </button>
         </div>
       </div>
