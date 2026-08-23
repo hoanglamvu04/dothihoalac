@@ -58,11 +58,10 @@ export default function HomeCommunityCard({ item }) {
   const typeLabel =
     COMMUNITY_TYPES[item?.community?.postType] ||
     'Cộng đồng';
-
-  const isLong = text.length > 150;
-  const excerpt = isLong
-    ? `${text.slice(0, 150).trim()}…`
-    : text;
+  const excerpt =
+    text.length > 150
+      ? `${text.slice(0, 150).trim()}…`
+      : text;
 
   const [reaction, setReaction] = useState(
     item?.viewerReaction || null,
@@ -136,15 +135,13 @@ export default function HomeCommunityCard({ item }) {
       </header>
 
       <div className="home-community-card__content">
-        <p>{excerpt}</p>
-        {isLong ? (
-          <Link
-            className="home-community-card__more"
-            to={href}
-          >
-            Xem thêm
-          </Link>
-        ) : null}
+        <Link
+          className="home-community-card__content-link"
+          to={href}
+          aria-label={`Xem bài viết: ${item?.title || excerpt || 'Bài cộng đồng'}`}
+        >
+          <p>{excerpt}</p>
+        </Link>
       </div>
 
       {media ? (
