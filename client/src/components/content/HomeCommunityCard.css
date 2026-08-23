@@ -51,9 +51,9 @@
 }
 
 .home-community-card__content {
-  flex: 0 0 78px;
-  min-height: 78px;
-  padding: 5px 13px 7px;
+  flex: 0 0 88px;
+  min-height: 88px;
+  padding: 5px 13px 10px;
   overflow: hidden;
 }
 
@@ -73,22 +73,37 @@
 .home-community-card__more {
   display: inline-flex;
   align-items: center;
-  min-height: 18px;
-  margin-top: 2px;
-  color: #526058;
-  font-size: 0.71rem;
-  font-weight: 760;
-  line-height: 1.2;
+  justify-content: center;
+  min-height: 24px;
+  margin-top: 5px;
+  padding: 0 9px;
+  border-radius: 999px;
+  color: #0d7138;
+  background: #edf8f1;
+  font-size: 0.7rem;
+  font-weight: 780;
+  line-height: 1;
+  transition:
+    color 140ms ease,
+    background 140ms ease,
+    transform 140ms ease;
 }
 
 .home-community-card__more:hover {
-  color: #0f7d3a;
-  text-decoration: underline;
+  color: #075b2c;
+  background: #dff3e6;
+  text-decoration: none;
+  transform: translateY(-1px);
+}
+
+.home-community-card__more:focus-visible {
+  outline: 2px solid #48aa6e;
+  outline-offset: 2px;
 }
 
 .home-community-card__media {
   display: block;
-  height: 150px;
+  height: 140px;
   flex: 1 1 auto;
   min-height: 0;
   overflow: hidden;
@@ -207,11 +222,11 @@
   }
 
   .home-community-card__content {
-    flex-basis: 74px;
-    min-height: 74px;
+    flex-basis: 84px;
+    min-height: 84px;
   }
 
   .home-community-card__media {
-    height: 140px;
+    height: 130px;
   }
 }
