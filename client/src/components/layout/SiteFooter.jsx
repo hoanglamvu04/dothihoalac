@@ -17,8 +17,6 @@ import {
   Youtube,
 } from 'lucide-react';
 
-import './SiteFooter.css';
-
 const featureLinks = [
   { to: '/tin-tuc', label: 'Tin tức', icon: Newspaper },
   { to: '/cong-dong', label: 'Cộng đồng', icon: MessageCircle },
