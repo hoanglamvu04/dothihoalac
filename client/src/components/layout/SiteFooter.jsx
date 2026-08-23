@@ -58,30 +58,32 @@ export default function SiteFooter() {
           <section className="site-footer__cta">
             <div className="site-footer__cta-copy">
               <span className="site-footer__cta-icon" aria-hidden="true">
-                <Send size={25} />
+                <Send size={30} />
               </span>
 
               <div className="site-footer__cta-text">
                 <h2>
                   Cùng xây dựng Đô Thị Hòa Lạc
-                  <span>văn minh, kết nối, phát triển bền vững</span>
+                  <span>văn minh, kết nối và phát triển bền vững</span>
                 </h2>
+
                 <p>
-                  Gửi thông tin, đề xuất hoặc phản ánh tới Ban biên tập. Chúng tôi
-                  luôn lắng nghe và đồng hành cùng cộng đồng.
+                  Gửi thông tin, đề xuất hoặc phản ánh của bạn cho Ban biên tập.
+                  <br />
+                  Chúng tôi luôn lắng nghe và đồng hành cùng cộng đồng.
                 </p>
               </div>
             </div>
 
             <div className="site-footer__cta-action">
               <Link to="/gui-tin" className="site-footer__cta-button">
-                <Send size={18} />
+                <Send size={20} />
                 <span>Gửi thông tin cho Ban biên tập</span>
-                <ChevronRight size={18} />
+                <ChevronRight size={20} />
               </Link>
 
               <div className="site-footer__cta-note">
-                <ShieldCheck size={16} />
+                <ShieldCheck size={18} />
                 <span>Thông tin của bạn được bảo mật và tôn trọng</span>
               </div>
             </div>
@@ -105,8 +107,11 @@ export default function SiteFooter() {
             </Link>
 
             <p className="site-footer__description">
-              Nền tảng thông tin, cộng đồng và dữ liệu địa phương dành cho người
-              sống, làm việc, kinh doanh và đầu tư tại Hòa Lạc.
+              Nền tảng thông tin, cộng đồng và dữ liệu địa phương
+              <br />
+              dành cho người sống, làm việc, kinh doanh và đầu tư
+              <br />
+              tại Hòa Lạc.
             </p>
 
             <div className="site-footer__feature-links" aria-label="Chuyên mục nổi bật">
@@ -115,7 +120,7 @@ export default function SiteFooter() {
 
                 return (
                   <Link key={item.to} to={item.to}>
-                    <ItemIcon size={15} />
+                    <ItemIcon size={17} />
                     <span>{item.label}</span>
                   </Link>
                 );
@@ -124,7 +129,7 @@ export default function SiteFooter() {
 
             <div className="site-footer__operator">
               <span className="site-footer__operator-icon" aria-hidden="true">
-                <Building2 size={17} />
+                <Building2 size={19} />
               </span>
               <div>
                 <small>Đơn vị vận hành</small>
@@ -138,7 +143,7 @@ export default function SiteFooter() {
             <div className="site-footer__links">
               {navigationLinks.map((item) => (
                 <Link key={item.to} to={item.to}>
-                  <ChevronRight size={15} />
+                  <ChevronRight size={17} />
                   <span>{item.label}</span>
                 </Link>
               ))}
@@ -150,7 +155,7 @@ export default function SiteFooter() {
             <div className="site-footer__links">
               {categoryLinks.map((item) => (
                 <Link key={`${item.to}-${item.label}`} to={item.to}>
-                  <ChevronRight size={15} />
+                  <ChevronRight size={17} />
                   <span>{item.label}</span>
                 </Link>
               ))}
@@ -159,10 +164,11 @@ export default function SiteFooter() {
 
           <section className="site-footer__column site-footer__contact-column">
             <h3>Liên hệ</h3>
+
             <div className="site-footer__contact">
               <div className="site-footer__contact-row">
                 <span className="site-footer__contact-icon" aria-hidden="true">
-                  <MapPin size={18} />
+                  <MapPin size={21} />
                 </span>
                 <p>
                   <small>Khu vực hoạt động</small>
@@ -172,7 +178,7 @@ export default function SiteFooter() {
 
               <a className="site-footer__contact-row" href="tel:0966709790">
                 <span className="site-footer__contact-icon" aria-hidden="true">
-                  <Phone size={18} />
+                  <Phone size={21} />
                 </span>
                 <p>
                   <small>Hotline</small>
@@ -180,13 +186,16 @@ export default function SiteFooter() {
                 </p>
               </a>
 
-              <a className="site-footer__contact-row" href="mailto:admin@xspace.vn">
+              <a
+                className="site-footer__contact-row"
+                href="mailto:contact@dothihoalac.vn"
+              >
                 <span className="site-footer__contact-icon" aria-hidden="true">
-                  <Mail size={18} />
+                  <Mail size={21} />
                 </span>
                 <p>
                   <small>Email</small>
-                  <strong>admin@xspace.vn</strong>
+                  <strong>contact@dothihoalac.vn</strong>
                 </p>
               </a>
             </div>
@@ -199,8 +208,9 @@ export default function SiteFooter() {
                 aria-label="Facebook Đô Thị Hòa Lạc"
                 title="Facebook"
               >
-                <Facebook size={18} />
+                <Facebook size={20} />
               </a>
+
               <a
                 href="https://www.youtube.com/"
                 target="_blank"
@@ -208,14 +218,15 @@ export default function SiteFooter() {
                 aria-label="YouTube Đô Thị Hòa Lạc"
                 title="YouTube"
               >
-                <Youtube size={18} />
+                <Youtube size={20} />
               </a>
+
               <Link
                 to="/cong-dong"
                 aria-label="Cộng đồng Đô Thị Hòa Lạc"
                 title="Cộng đồng"
               >
-                <UsersRound size={18} />
+                <UsersRound size={20} />
               </Link>
             </div>
           </section>
@@ -224,7 +235,9 @@ export default function SiteFooter() {
 
       <div className="site-footer__bottom">
         <div className="container site-footer__bottom-inner">
-          <p>© {currentYear} Đô Thị Hòa Lạc · Công ty Cổ phần XSpace Việt Nam</p>
+          <p>
+            © {currentYear} Đô Thị Hòa Lạc - Công ty Cổ phần XSpace Việt Nam
+          </p>
 
           <nav className="site-footer__bottom-links" aria-label="Chính sách footer">
             <Link to="/gioi-thieu">Giới thiệu</Link>
@@ -240,7 +253,7 @@ export default function SiteFooter() {
             aria-label="Lên đầu trang"
             title="Lên đầu trang"
           >
-            <ArrowUp size={17} />
+            <ArrowUp size={19} />
           </button>
         </div>
       </div>
