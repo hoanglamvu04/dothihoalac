@@ -2,10 +2,11 @@ import { Link } from 'react-router-dom';
 
 import {
   ArrowRight,
+  ArrowUp,
   BriefcaseBusiness,
   Building2,
+  ChevronRight,
   Facebook,
-  FilePenLine,
   Mail,
   MapPin,
   MessageCircle,
@@ -13,11 +14,13 @@ import {
   Phone,
   Send,
   ShieldCheck,
+  UsersRound,
+  Youtube,
 } from 'lucide-react';
 
 import './SiteFooter.css';
 
-const exploreLinks = [
+const featureLinks = [
   {
     to: '/tin-tuc',
     label: 'Tin tức',
@@ -40,72 +43,69 @@ const exploreLinks = [
   },
 ];
 
-const supportLinks = [
-  {
-    to: '/gioi-thieu',
-    label: 'Giới thiệu',
-  },
-  {
-    to: '/lien-he',
-    label: 'Liên hệ',
-  },
-  {
-    to: '/dieu-khoan',
-    label: 'Điều khoản sử dụng',
-  },
-  {
-    to: '/chinh-sach-quyen-rieng',
-    label: 'Chính sách quyền riêng tư',
-  },
-  {
-    to: '/quy-dinh-dang-bai',
-    label: 'Quy định đăng bài',
-  },
+const navigationLinks = [
+  { to: '/', label: 'Trang chủ' },
+  { to: '/tin-tuc', label: 'Tin tức' },
+  { to: '/cong-dong', label: 'Cộng đồng' },
+  { to: '/nha-dat', label: 'Bất động sản' },
+  { to: '/viec-lam', label: 'Việc làm' },
+  { to: '/gui-tin', label: 'Gửi thông tin' },
+];
+
+const categoryLinks = [
+  { to: '/tin-tuc?category=quy-hoach', label: 'Quy hoạch' },
+  { to: '/tin-tuc?category=ha-tang', label: 'Hạ tầng' },
+  { to: '/tin-tuc?category=du-an-dtxd', label: 'Dự án ĐTXD' },
+  { to: '/nha-dat', label: 'BĐS Hòa Lạc' },
+  { to: '/tin-tuc?category=chinh-sach', label: 'Chính sách' },
+  { to: '/tin-tuc?category=doi-song-dan-cu', label: 'Đời sống dân cư' },
 ];
 
 export default function SiteFooter() {
   const currentYear = new Date().getFullYear();
+
+  const scrollToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+  };
 
   return (
     <footer className="site-footer">
       <div className="site-footer__top">
         <div className="container">
           <section className="site-footer__cta">
-            <div className="site-footer__cta-content">
-              <span className="site-footer__cta-icon">
-                <FilePenLine size={25} />
+            <div className="site-footer__cta-copy">
+              <span className="site-footer__cta-icon" aria-hidden="true">
+                <Send size={30} />
               </span>
 
-              <div>
-                <small>Đóng góp cho cộng đồng</small>
-
+              <div className="site-footer__cta-text">
                 <h2>
-                  Chia sẻ thông tin hữu ích về Hòa Lạc
+                  Cùng xây dựng Đô Thị Hòa Lạc
+                  <span>văn minh, kết nối và phát triển bền vững</span>
                 </h2>
 
                 <p>
-                  Đăng bài cộng đồng, tin nhà đất, việc làm
-                  hoặc gửi nguồn tin địa phương tới Ban biên tập.
+                  Gửi thông tin, đề xuất hoặc phản ánh của bạn cho Ban biên tập.
+                  <br />
+                  Chúng tôi luôn lắng nghe và đồng hành cùng cộng đồng.
                 </p>
               </div>
             </div>
 
-            <div className="site-footer__cta-actions">
-              <Link
-                className="site-footer__cta-primary"
-                to="/dang-bai"
-              >
-                <FilePenLine size={17} />
-                Đăng nội dung
+            <div className="site-footer__cta-action">
+              <Link to="/gui-tin" className="site-footer__cta-button">
+                <Send size={20} />
+                <span>Gửi thông tin cho Ban biên tập</span>
+                <ChevronRight size={20} />
               </Link>
 
-              <Link
-                className="site-footer__cta-secondary"
-                to="/gui-tin"
-              >
-                <Send size={17} />
-                Gửi tin
-              </Link>
+              <div className="site-footer__cta-note">
+                <ShieldCheck size={18} />
+                <span>Thông tin của bạn được bảo mật và tôn trọng</span>
+              </div>
             </div>
           </section>
         </div>
@@ -119,102 +119,77 @@ export default function SiteFooter() {
               className="site-footer__logo"
               aria-label="Đô Thị Hòa Lạc - Trang chủ"
             >
-              <img
-                src="/Logo2.png"
-                alt="Biểu tượng Đô Thị Hòa Lạc"
-              />
+              <img src="/Logo2.png" alt="Biểu tượng Đô Thị Hòa Lạc" />
 
               <span>
                 <strong>Đô Thị Hòa Lạc</strong>
-                <small>Trung Tâm Phát Triển Đô Thị Hòa Lạc</small>
+                <small>Trung tâm phát triển đô thị Hòa Lạc</small>
               </span>
             </Link>
 
             <p className="site-footer__description">
-              Nền tảng tin tức, cộng đồng và dữ liệu địa phương
-              dành cho người đang sống, làm việc, kinh doanh và
-              đầu tư tại khu vực Hòa Lạc.
+              Nền tảng thông tin, cộng đồng và dữ liệu địa phương dành cho người
+              sống, làm việc, kinh doanh và đầu tư tại Hòa Lạc.
             </p>
 
-            <div className="site-footer__trust">
-              <ShieldCheck size={18} />
-
-              <span>
-                Nội dung được phân loại và kiểm duyệt trước khi
-                hiển thị công khai.
-              </span>
-            </div>
-
-            <div className="site-footer__social">
-              <a
-                href="https://www.facebook.com/"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="Facebook Đô Thị Hòa Lạc"
-                title="Facebook"
-              >
-                <Facebook size={19} />
-              </a>
-
-              <a
-                href="mailto:contact@dothihoalac.vn"
-                aria-label="Gửi email tới Đô Thị Hòa Lạc"
-                title="Email"
-              >
-                <Mail size={19} />
-              </a>
-            </div>
-          </section>
-
-          <nav
-            className="site-footer__column"
-            aria-label="Khám phá"
-          >
-            <h3>Khám phá</h3>
-
-            <div className="site-footer__links">
-              {exploreLinks.map((item) => {
+            <div className="site-footer__feature-links" aria-label="Chuyên mục nổi bật">
+              {featureLinks.map((item) => {
                 const ItemIcon = item.icon;
 
                 return (
-                  <Link
-                    key={item.to}
-                    to={item.to}
-                  >
-                    <ItemIcon size={16} />
+                  <Link key={item.to} to={item.to}>
+                    <ItemIcon size={17} />
                     <span>{item.label}</span>
                   </Link>
                 );
               })}
             </div>
-          </nav>
 
-          <nav
-            className="site-footer__column"
-            aria-label="Hỗ trợ"
-          >
-            <h3>Thông tin và hỗ trợ</h3>
+            <div className="site-footer__operator">
+              <span className="site-footer__operator-icon" aria-hidden="true">
+                <Building2 size={19} />
+              </span>
+
+              <div>
+                <small>Đơn vị vận hành</small>
+                <strong>Công ty Cổ phần XSpace Việt Nam</strong>
+              </div>
+            </div>
+          </section>
+
+          <nav className="site-footer__column" aria-label="Điều hướng footer">
+            <h3>Điều hướng</h3>
 
             <div className="site-footer__links">
-              {supportLinks.map((item) => (
-                <Link
-                  key={item.to}
-                  to={item.to}
-                >
-                  <ArrowRight size={15} />
+              {navigationLinks.map((item) => (
+                <Link key={item.to} to={item.to}>
+                  <ChevronRight size={17} />
                   <span>{item.label}</span>
                 </Link>
               ))}
             </div>
           </nav>
 
-          <section className="site-footer__column">
+          <nav className="site-footer__column" aria-label="Chuyên mục footer">
+            <h3>Chuyên mục</h3>
+
+            <div className="site-footer__links">
+              {categoryLinks.map((item) => (
+                <Link key={`${item.to}-${item.label}`} to={item.to}>
+                  <ChevronRight size={17} />
+                  <span>{item.label}</span>
+                </Link>
+              ))}
+            </div>
+          </nav>
+
+          <section className="site-footer__column site-footer__contact-column">
             <h3>Liên hệ</h3>
 
             <div className="site-footer__contact">
-              <div>
-                <span>
-                  <MapPin size={18} />
+              <div className="site-footer__contact-row">
+                <span className="site-footer__contact-icon" aria-hidden="true">
+                  <MapPin size={21} />
                 </span>
 
                 <p>
@@ -223,22 +198,9 @@ export default function SiteFooter() {
                 </p>
               </div>
 
-              <a href="mailto:contact@dothihoalac.vn">
-                <span>
-                  <Mail size={18} />
-                </span>
-
-                <p>
-                  <small>Email</small>
-                  <strong>
-                    contact@dothihoalac.vn
-                  </strong>
-                </p>
-              </a>
-
-              <a href="tel:0966709790">
-                <span>
-                  <Phone size={18} />
+              <a className="site-footer__contact-row" href="tel:0966709790">
+                <span className="site-footer__contact-icon" aria-hidden="true">
+                  <Phone size={21} />
                 </span>
 
                 <p>
@@ -246,44 +208,70 @@ export default function SiteFooter() {
                   <strong>0966 709 790</strong>
                 </p>
               </a>
+
+              <a className="site-footer__contact-row" href="mailto:admin@xspace.vn">
+                <span className="site-footer__contact-icon" aria-hidden="true">
+                  <Mail size={21} />
+                </span>
+
+                <p>
+                  <small>Email</small>
+                  <strong>admin@xspace.vn</strong>
+                </p>
+              </a>
             </div>
 
-            <Link
-              to="/lien-he"
-              className="site-footer__contact-button"
-            >
-              Liên hệ với chúng tôi
-              <ArrowRight size={16} />
-            </Link>
+            <div className="site-footer__social" aria-label="Kênh cộng đồng">
+              <a
+                href="https://www.facebook.com/"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="Facebook Đô Thị Hòa Lạc"
+                title="Facebook"
+              >
+                <Facebook size={20} />
+              </a>
+
+              <a
+                href="https://www.youtube.com/"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="YouTube Đô Thị Hòa Lạc"
+                title="YouTube"
+              >
+                <Youtube size={20} />
+              </a>
+
+              <Link to="/cong-dong" aria-label="Cộng đồng Đô Thị Hòa Lạc" title="Cộng đồng">
+                <UsersRound size={20} />
+              </Link>
+            </div>
           </section>
         </div>
       </div>
 
       <div className="site-footer__bottom">
         <div className="container site-footer__bottom-inner">
-          <div>
-            <span>
-              © {currentYear} Đô Thị Hòa Lạc.
-            </span>
+          <p>
+            © {currentYear} Đô Thị Hòa Lạc - Công ty Cổ phần XSpace Việt Nam
+          </p>
 
-            <span>
-              Nội dung thuộc Media Space · XSpace
-            </span>
-          </div>
+          <nav className="site-footer__bottom-links" aria-label="Chính sách footer">
+            <Link to="/gioi-thieu">Giới thiệu</Link>
+            <Link to="/dieu-khoan">Điều khoản</Link>
+            <Link to="/chinh-sach-quyen-rieng">Quyền riêng tư</Link>
+            <Link to="/quy-dinh-dang-bai">Quy định đăng bài</Link>
+          </nav>
 
-          <div className="site-footer__bottom-links">
-            <Link to="/dieu-khoan">
-              Điều khoản
-            </Link>
-
-            <Link to="/chinh-sach-quyen-rieng">
-              Quyền riêng tư
-            </Link>
-
-            <Link to="/quy-dinh-dang-bai">
-              Quy định đăng bài
-            </Link>
-          </div>
+          <button
+            type="button"
+            className="site-footer__back-top"
+            onClick={scrollToTop}
+            aria-label="Lên đầu trang"
+            title="Lên đầu trang"
+          >
+            <ArrowUp size={19} />
+          </button>
         </div>
       </div>
     </footer>
