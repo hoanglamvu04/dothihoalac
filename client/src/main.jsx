@@ -6,28 +6,25 @@ import './styles/reset.css';
 import './styles/global.css';
 import './styles/components.css';
 import './styles/pages.css';
+import './styles/admin.css';
 import './styles/responsive.css';
 import './styles/editorial-polish.css';
 import './styles/focus-area-copy.css';
 import './styles/mobile-ui-polish.css';
+import './styles/newsroom-mobile-v2.css';
+import './styles/articles-modern-v2.css';
+import './styles/articles-newsroom-v3.css';
+import './styles/articles-newsroom-v4.css';
 import './styles/header-stability-v2.css';
 import './styles/brand-logo-v3.css';
 import './styles/header-modern-v3.css';
-import './features/propertySubmitReviewGuard';
+import './styles/community-social-v2.css';
+import './styles/community-social-v3.css';
+import './styles/community-interaction-v4.css';
+import './components/layout/SiteFooter.css';
 
-const root = createRoot(document.getElementById('root'));
-const enableStrictMode = import.meta.env.VITE_REACT_STRICT_MODE === 'true';
-
-// React StrictMode cố ý mount/effect hai lần ở development. Với ứng dụng có
-// nhiều feed/API toàn cục điều này làm localhost tạo request đôi và cảm giác
-// lag rõ rệt. Mặc định chạy một lifecycle thật; vẫn có thể bật lại khi audit
-// side-effect bằng VITE_REACT_STRICT_MODE=true.
-root.render(
-  enableStrictMode ? (
-    <StrictMode>
-      <App />
-    </StrictMode>
-  ) : (
+createRoot(document.getElementById('root')).render(
+  <StrictMode>
     <App />
-  ),
+  </StrictMode>,
 );
