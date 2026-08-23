@@ -107,11 +107,8 @@ export default function SiteFooter() {
             </Link>
 
             <p className="site-footer__description">
-              Nền tảng thông tin, cộng đồng và dữ liệu địa phương
-              <br />
-              dành cho người sống, làm việc, kinh doanh và đầu tư
-              <br />
-              tại Hòa Lạc.
+              Nền tảng thông tin, cộng đồng và dữ liệu địa phương dành cho người
+              sống, làm việc, kinh doanh và đầu tư tại Hòa Lạc.
             </p>
 
             <div className="site-footer__feature-links" aria-label="Chuyên mục nổi bật">
