@@ -42,6 +42,47 @@ const categoryLinks = [
   { to: '/tin-tuc?category=doi-song-dan-cu', label: 'Đời sống dân cư' },
 ];
 
+const footerFineTuneStyles = `
+  @media (min-width: 1321px) {
+    .site-footer__cta h2 { font-size: clamp(25px, 1.92vw, 31px); }
+    .site-footer__cta p { font-size: 14.5px; }
+    .site-footer__cta-button { font-size: 14.5px; }
+    .site-footer__cta-note { font-size: 12px; }
+    .site-footer__cta-icon svg { width: 27px; height: 27px; }
+    .site-footer__cta-button svg { width: 18px; height: 18px; }
+    .site-footer__cta-note svg { width: 16px; height: 16px; }
+
+    .site-footer__logo strong { font-size: 26px; }
+    .site-footer__logo small { font-size: 10px; }
+    .site-footer__description { font-size: 13.5px; }
+
+    .site-footer__feature-links > a { font-size: 12px; }
+    .site-footer__feature-links > a svg { width: 15px; height: 15px; }
+
+    .site-footer__operator small { font-size: 10px; }
+    .site-footer__operator strong { font-size: 13px; }
+    .site-footer__operator-icon svg { width: 17px; height: 17px; }
+
+    .site-footer__column h3 { font-size: 14.5px; }
+    .site-footer .site-footer__links > a { font-size: 13.5px; }
+    .site-footer .site-footer__links > a svg {
+      flex-basis: 15px !important;
+      width: 15px !important;
+      height: 15px !important;
+    }
+
+    .site-footer .site-footer__contact-row small { font-size: 11px; }
+    .site-footer .site-footer__contact-row strong { font-size: 13.5px; }
+    .site-footer__contact-icon svg { width: 18px; height: 18px; }
+
+    .site-footer .site-footer__social > a svg { width: 18px; height: 18px; }
+
+    .site-footer__bottom p,
+    .site-footer__bottom-links a { font-size: 12px; }
+    .site-footer__back-top svg { width: 17px; height: 17px; }
+  }
+`;
+
 export default function SiteFooter() {
   const currentYear = new Date().getFullYear();
 
@@ -51,6 +92,8 @@ export default function SiteFooter() {
 
   return (
     <footer className="site-footer">
+      <style>{footerFineTuneStyles}</style>
+
       <div className="site-footer__top">
         <div className="container">
           <section className="site-footer__cta">
