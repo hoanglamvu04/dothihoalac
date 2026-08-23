@@ -27,7 +27,7 @@ import {
 
 import Seo from '../../components/common/Seo';
 import ArticleCard from '../../components/content/ArticleCard';
-import CommunityCard from '../../components/content/CommunityCard';
+import HomeCommunityCard from '../../components/content/HomeCommunityCard';
 import PropertyCard from '../../components/content/PropertyCard';
 import JobCard from '../../components/content/JobCard';
 import EmptyState from '../../components/common/EmptyState';
@@ -185,7 +185,6 @@ export default function HomePage() {
       communityApi.list({
         page: 1,
         limit: 4,
-        sort: 'popular',
       }),
       propertyApi.list({
         page: 1,
@@ -541,7 +540,7 @@ export default function HomePage() {
                 icon={UsersRound}
                 eyebrow="Cộng đồng"
                 title="Người dân đang quan tâm"
-                description="Câu hỏi, phản ánh và chia sẻ mới từ cộng đồng trong khu vực."
+                description="4 bài mới nhất từ cộng đồng trong khu vực."
                 to="/cong-dong"
                 compact
               />
@@ -567,7 +566,7 @@ export default function HomePage() {
                           index,
                         )}
                       >
-                        <CommunityCard item={item} />
+                        <HomeCommunityCard item={item} />
                       </div>
                     ),
                   )}
