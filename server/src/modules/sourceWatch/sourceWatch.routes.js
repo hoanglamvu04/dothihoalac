@@ -24,5 +24,13 @@ router.patch('/sources/:id', asyncHandler(controller.updateSource));
 router.post('/sources/:id/check', asyncHandler(controller.checkSource));
 router.get('/items', asyncHandler(controller.listItems));
 router.patch('/items/:id/status', asyncHandler(controller.updateItemStatus));
+router.post(
+  '/items/:id/create-draft',
+  requirePermission(
+    PERMISSIONS.CREATE_ARTICLE,
+    PERMISSIONS.MANAGE_SYSTEM,
+  ),
+  asyncHandler(controller.createDraft),
+);
 
 export default router;
