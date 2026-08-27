@@ -6,6 +6,7 @@ import {
   Building2,
   ChevronRight,
   Facebook,
+  FileText,
   Mail,
   MapPin,
   MessageCircle,
@@ -43,6 +44,58 @@ const categoryLinks = [
 ];
 
 const footerFineTuneStyles = `
+  .site-footer__top {
+    padding-bottom: 26px;
+  }
+
+  .site-footer__cta-formats {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 7px;
+    margin-top: -5px;
+  }
+
+  .site-footer__cta-formats-label {
+    margin-right: 2px;
+    color: rgba(229, 239, 233, 0.7);
+    font-size: 10px;
+    font-weight: 650;
+    letter-spacing: 0.02em;
+  }
+
+  .site-footer__cta-format {
+    display: inline-flex;
+    align-items: center;
+    min-height: 25px;
+    padding: 0 9px;
+    gap: 5px;
+    border: 1px solid rgba(96, 230, 139, 0.22);
+    border-radius: 999px;
+    color: rgba(248, 252, 249, 0.9);
+    background: rgba(4, 72, 44, 0.28);
+    font-size: 9.5px;
+    font-weight: 720;
+    line-height: 1;
+  }
+
+  .site-footer__cta-format svg {
+    width: 12px;
+    height: 12px;
+    color: var(--footer-green);
+  }
+
+  @media (max-width: 720px) {
+    .site-footer__top {
+      padding-bottom: 18px;
+    }
+
+    .site-footer__cta-formats {
+      justify-content: flex-start;
+    }
+  }
+
   @media (min-width: 1321px) {
     .site-footer__cta h2 { font-size: clamp(20px, 1.55vw, 25px); }
     .site-footer__cta p { font-size: 11.5px; }
@@ -111,7 +164,7 @@ export default function SiteFooter() {
                 <p>
                   Gửi thông tin, đề xuất hoặc phản ánh của bạn cho Ban biên tập.
                   <br />
-                  Chúng tôi luôn lắng nghe và đồng hành cùng cộng đồng.
+                  Có thể đính kèm hình ảnh, PDF, DOC hoặc DOCX để đối chiếu.
                 </p>
               </div>
             </div>
@@ -122,6 +175,30 @@ export default function SiteFooter() {
                 <span>Gửi thông tin cho Ban biên tập</span>
                 <ChevronRight size={20} />
               </Link>
+
+              <div
+                className="site-footer__cta-formats"
+                aria-label="Định dạng tài liệu được hỗ trợ"
+              >
+                <span className="site-footer__cta-formats-label">
+                  Tài liệu hỗ trợ
+                </span>
+
+                <span className="site-footer__cta-format">
+                  <FileText size={13} />
+                  PDF
+                </span>
+
+                <span className="site-footer__cta-format">
+                  <FileText size={13} />
+                  DOC
+                </span>
+
+                <span className="site-footer__cta-format">
+                  <FileText size={13} />
+                  DOCX
+                </span>
+              </div>
 
               <div className="site-footer__cta-note">
                 <ShieldCheck size={18} />
