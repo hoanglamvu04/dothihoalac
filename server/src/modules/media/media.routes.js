@@ -1,12 +1,16 @@
 import { Router } from 'express';
 
 import { requireAuth } from '../../middlewares/auth.middleware.js';
-import { uploadSingleImage } from '../../middlewares/upload.middleware.js';
+import {
+  uploadSingleDocument,
+  uploadSingleImage,
+} from '../../middlewares/upload.middleware.js';
 import asyncHandler from '../../utils/asyncHandler.js';
 
 import {
   deleteMedia,
   listOwnMedia,
+  uploadDocument,
   uploadMedia,
 } from './media.controller.js';
 
@@ -20,6 +24,12 @@ router.post(
   ['/images', '/upload-image'],
   uploadSingleImage,
   asyncHandler(uploadMedia),
+);
+
+router.post(
+  ['/documents', '/upload-document'],
+  uploadSingleDocument,
+  asyncHandler(uploadDocument),
 );
 
 router.delete('/:id', asyncHandler(deleteMedia));
