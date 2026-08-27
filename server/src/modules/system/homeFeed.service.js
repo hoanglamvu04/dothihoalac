@@ -1,4 +1,5 @@
 import Content from '../contents/content.model.js';
+import ContentBody from '../contents/contentBody.model.js';
 import CommunityPost from '../community/communityPost.model.js';
 import PropertyListing from '../properties/propertyListing.model.js';
 import JobPost from '../jobs/jobPost.model.js';
@@ -208,10 +209,15 @@ async function buildHomeFeed() {
   const communityIds = community.map((item) => item._id);
   const authorIds = uniqueIds(community.map((item) => item.authorId));
 
-  const [communityDetails, users, profiles] = await Promise.all([
+  const [communityDetails, communityBodies, users, profiles] = await Promise.all([
     communityIds.length
       ? CommunityPost.find({ contentId: { $in: communityIds } })
           .select('contentId postType')
+          .lean()
+      : [],
+    communityIds.length
+      ? ContentBody.find({ contentId: { $in: communityIds } })
+          .select('contentId bodyText inlineMediaIds')
           .lean()
       : [],
     authorIds.length
@@ -228,13 +234,20 @@ async function buildHomeFeed() {
   ]);
 
   const communityMap = mapById(communityDetails, 'contentId');
+  const communityBodyMap = mapById(communityBodies, 'contentId');
   const userMap = mapById(users);
   const profileMap = mapById(profiles, 'userId');
 
   const allContent = [...articles, ...community, ...properties, ...jobs];
   const categoryIds = uniqueIds(articles.map((item) => item.primaryCategoryId));
   const areaIds = uniqueIds(allContent.map((item) => item.primaryAreaId));
-  const mediaIds = uniqueIds(allContent.map((item) => item.thumbnailMediaId));
+  const communityInlineMediaIds = uniqueIds(
+    communityBodies.flatMap((body) => body.inlineMediaIds || []),
+  );
+  const mediaIds = uniqueIds([
+    ...allContent.map((item) => item.thumbnailMediaId),
+    ...communityInlineMediaIds,
+  ]);
 
   const [categories, areas, mediaItems] = await Promise.all([
     categoryIds.length
@@ -275,8 +288,16 @@ async function buildHomeFeed() {
     articles: articles.map(hydrateCard),
     community: community.map((item) => {
       const author = userMap.get(idOf(item.authorId)) || null;
+      const body = communityBodyMap.get(idOf(item._id)) || null;
+      const inlineMediaIds = (body?.inlineMediaIds || [])
+        .map((mediaId) => mediaMap.get(idOf(mediaId)))
+        .filter(Boolean);
+      const hydrated = hydrateCard(item);
+
       return {
-        ...hydrateCard(item),
+        ...hydrated,
+        thumbnailMediaId:
+          hydrated.thumbnailMediaId || inlineMediaIds[0] || null,
         authorId: author
           ? {
               ...author,
@@ -284,7 +305,12 @@ async function buildHomeFeed() {
             }
           : null,
         community: communityMap.get(idOf(item._id)) || null,
-        body: null,
+        body: body
+          ? {
+              bodyText: body.bodyText || '',
+              inlineMediaIds,
+            }
+          : null,
       };
     }),
     properties: properties.map(hydrateCard),
