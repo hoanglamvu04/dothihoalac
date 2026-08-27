@@ -74,6 +74,8 @@ export const adminApi = {
     unwrapList(await api.get('/admin/source-watch/items', { params })),
   updateSourceWatchItemStatus: async (id, status) =>
     unwrap(await api.patch(`/admin/source-watch/items/${id}/status`, { status })),
+  createSourceWatchDraft: async (id) =>
+    unwrap(await api.post(`/admin/source-watch/items/${id}/create-draft`)),
 
   googleWorkspaceStatus: async () => unwrap(await api.get('/admin/google-workspace/status')),
   googleWorkspaceReuseKthl: async () => unwrap(await api.post('/admin/google-workspace/reuse-kthl')),

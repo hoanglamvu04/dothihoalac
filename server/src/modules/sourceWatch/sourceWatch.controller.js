@@ -1,4 +1,5 @@
 import { sendSuccess } from '../../utils/apiResponse.js';
+import { createDraftFromSourceItem } from './sourceWatch.draft.service.js';
 import * as sourceWatchService from './sourceWatch.service.js';
 
 export async function overview(_req, res) {
@@ -47,5 +48,13 @@ export async function updateItemStatus(req, res) {
   return sendSuccess(res, {
     data: await sourceWatchService.updateItemStatus(req.params.id, req.body?.status),
     message: 'Đã cập nhật trạng thái tin nguồn.',
+  });
+}
+
+export async function createDraft(req, res) {
+  return sendSuccess(res, {
+    statusCode: 201,
+    data: await createDraftFromSourceItem(req.params.id, req.user?._id || null),
+    message: 'Đã tạo bản nháp biên tập từ tin nguồn.',
   });
 }

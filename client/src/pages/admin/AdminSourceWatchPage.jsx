@@ -2,6 +2,8 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   CheckCircle2,
   ExternalLink,
+  FilePenLine,
+  FilePlus2,
   PauseCircle,
   PlayCircle,
   Plus,
@@ -36,6 +38,14 @@ function formatDate(value) {
     dateStyle: 'short',
     timeStyle: 'short',
   }).format(date);
+}
+
+function openDraftArticle(articleId) {
+  const id = String(articleId || '').trim();
+  if (!id) return;
+  const url = new URL(`/quan-tri/bai-viet/${id}/sua`, window.location.origin).toString();
+  const tab = window.open(url, '_blank', 'noopener,noreferrer');
+  if (tab) tab.opener = null;
 }
 
 export default function AdminSourceWatchPage() {
@@ -158,6 +168,26 @@ export default function AdminSourceWatchPage() {
     }
   };
 
+  const createDraft = async (item) => {
+    const id = String(item?._id || '');
+    if (!id) return;
+
+    setBusy(`draft:${id}`);
+    try {
+      const result = await adminApi.createSourceWatchDraft(id);
+      toast.success(
+        result?.reused
+          ? 'Tin nguồn này đã có bản nháp. Bạn có thể mở để tiếp tục biên tập.'
+          : 'Đã tạo bản nháp theo template, không dùng AI và chưa xuất bản.',
+      );
+      await load({ silent: true });
+    } catch (error) {
+      toast.error(apiErrorMessage(error, 'Không tạo được bản nháp từ tin nguồn.'));
+    } finally {
+      setBusy('');
+    }
+  };
+
   return (
     <section className="source-watch-admin">
       <header className="source-watch-admin__header">
@@ -165,7 +195,7 @@ export default function AdminSourceWatchPage() {
           <span className="source-watch-admin__eyebrow"><SearchCheck size={16} /> SOURCE WATCH</span>
           <h1>Theo dõi nguồn tin</h1>
           <p>
-            Theo dõi RSS, trang web và Facebook Page được cấp quyền. Hệ thống chỉ phát hiện nội dung mới, lưu snapshot để biên tập viên xem lại; không dùng AI và không tự đăng bài.
+            Theo dõi RSS, trang web và Facebook Page được cấp quyền. Tin mới có thể tạo bản nháp biên tập tự động bằng template, giữ rõ URL nguồn; không dùng AI và không tự xuất bản.
           </p>
         </div>
         <button type="button" className="source-watch-btn" onClick={() => load()} disabled={loading}>
@@ -310,7 +340,7 @@ export default function AdminSourceWatchPage() {
         <div className="source-watch-items__head">
           <div className="source-watch-card__title">
             <CheckCircle2 size={18} />
-            <div><strong>Nội dung đã phát hiện</strong><span>Chỉ lưu để theo dõi/biên tập, chưa phải bài DTHL.</span></div>
+            <div><strong>Nội dung đã phát hiện</strong><span>Săn nguồn → tạo nháp → biên tập/kiểm chứng → Google Docs → xuất bản.</span></div>
           </div>
           <select value={itemStatus} onChange={(event) => setItemStatus(event.target.value)}>
             <option value="new">Tin mới</option>
@@ -322,33 +352,48 @@ export default function AdminSourceWatchPage() {
         </div>
 
         <div className="source-watch-item-list">
-          {items.map((item) => (
-            <article key={item._id}>
-              <div className="source-watch-item-copy">
-                <div>
-                  <span className={`source-watch-item-status is-${item.status}`}>{ITEM_STATUS_LABELS[item.status]}</span>
-                  <span>{item.sourceId?.name || 'Nguồn'}</span>
-                  <span>{formatDate(item.publishedAt || item.discoveredAt)}</span>
+          {items.map((item) => {
+            const draftArticleId = item?.sourceMeta?.draftArticleId || '';
+            const drafting = busy === `draft:${item._id}`;
+
+            return (
+              <article key={item._id}>
+                <div className="source-watch-item-copy">
+                  <div>
+                    <span className={`source-watch-item-status is-${item.status}`}>{ITEM_STATUS_LABELS[item.status]}</span>
+                    {draftArticleId ? <span className="source-watch-draft-status">Đã có nháp</span> : null}
+                    <span>{item.sourceId?.name || 'Nguồn'}</span>
+                    <span>{formatDate(item.publishedAt || item.discoveredAt)}</span>
+                  </div>
+                  <a href={item.url} target="_blank" rel="noreferrer">
+                    <strong>{item.title || item.url}</strong> <ExternalLink size={13} />
+                  </a>
+                  {item.excerpt ? <p>{item.excerpt}</p> : null}
                 </div>
-                <a href={item.url} target="_blank" rel="noreferrer">
-                  <strong>{item.title || item.url}</strong> <ExternalLink size={13} />
-                </a>
-                {item.excerpt ? <p>{item.excerpt}</p> : null}
-              </div>
-              <div className="source-watch-item-actions">
-                {item.status !== 'reviewed' ? (
-                  <button type="button" onClick={() => updateItemStatus(item, 'reviewed')} disabled={busy === `item:${item._id}`}>
-                    Đã xem
-                  </button>
-                ) : null}
-                {item.status !== 'ignored' ? (
-                  <button type="button" onClick={() => updateItemStatus(item, 'ignored')} disabled={busy === `item:${item._id}`}>
-                    Bỏ qua
-                  </button>
-                ) : null}
-              </div>
-            </article>
-          ))}
+                <div className="source-watch-item-actions">
+                  {draftArticleId ? (
+                    <button type="button" className="is-draft-ready" onClick={() => openDraftArticle(draftArticleId)}>
+                      <FilePenLine size={14} /> Mở nháp
+                    </button>
+                  ) : (
+                    <button type="button" className="is-draft" onClick={() => createDraft(item)} disabled={drafting}>
+                      <FilePlus2 size={14} /> {drafting ? 'Đang tạo...' : 'Tạo nháp'}
+                    </button>
+                  )}
+                  {item.status !== 'reviewed' ? (
+                    <button type="button" onClick={() => updateItemStatus(item, 'reviewed')} disabled={busy === `item:${item._id}`}>
+                      Đã xem
+                    </button>
+                  ) : null}
+                  {item.status !== 'ignored' ? (
+                    <button type="button" onClick={() => updateItemStatus(item, 'ignored')} disabled={busy === `item:${item._id}`}>
+                      Bỏ qua
+                    </button>
+                  ) : null}
+                </div>
+              </article>
+            );
+          })}
           {!loading && !items.length ? <p className="source-watch-empty">Chưa có nội dung ở trạng thái này.</p> : null}
         </div>
       </div>
