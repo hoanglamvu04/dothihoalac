@@ -24,8 +24,8 @@ const mediaDefinitions = [
   ['banner-homestay', 'Khám phá Hòa Lạc', 'Homestay và villa cuối tuần', 1600, 500, '#8c5cb1'],
 ];
 
-// Ảnh public dùng cho dữ liệu dev/staging. Không đại diện cho tài sản thật tại Hòa Lạc.
-// Dùng URL ảnh trực tiếp để giao diện BĐS có thumbnail/gallery giống môi trường thật.
+// Ảnh public chỉ dùng cho dữ liệu dev/staging và mục đích trình diễn giao diện.
+// Chúng không được mô tả là ảnh chụp thực tế tại Hòa Lạc.
 const remoteMediaDefinitions = [
   {
     key: 'property-photo-land-1',
@@ -71,6 +71,51 @@ const remoteMediaDefinitions = [
     key: 'property-photo-office-1',
     url: 'https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1400&q=82',
     altText: 'Không gian văn phòng hiện đại',
+  },
+  {
+    key: 'community-food',
+    url: 'https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=1400&q=82',
+    altText: 'Bàn ăn và món ăn phục vụ nội dung review ẩm thực cộng đồng',
+  },
+  {
+    key: 'community-campus',
+    url: 'https://images.unsplash.com/photo-1562774053-701939374585?auto=format&fit=crop&w=1400&q=82',
+    altText: 'Không gian trường học phục vụ nội dung đời sống sinh viên',
+  },
+  {
+    key: 'community-road',
+    url: 'https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?auto=format&fit=crop&w=1400&q=82',
+    altText: 'Đường giao thông và đô thị phục vụ nội dung đi lại',
+  },
+  {
+    key: 'community-environment',
+    url: 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=1400&q=82',
+    altText: 'Hình minh họa vấn đề môi trường và vệ sinh cộng đồng',
+  },
+  {
+    key: 'community-weekend',
+    url: 'https://images.unsplash.com/photo-1500534314209-a25ddb2bd429?auto=format&fit=crop&w=1400&q=82',
+    altText: 'Cảnh quan thiên nhiên phục vụ nội dung trải nghiệm cuối tuần',
+  },
+  {
+    key: 'community-home',
+    url: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=1400&q=82',
+    altText: 'Công trình và xây dựng phục vụ nội dung sửa chữa nhà',
+  },
+  {
+    key: 'community-work',
+    url: 'https://images.unsplash.com/photo-1497366811353-6870744d04b2?auto=format&fit=crop&w=1400&q=82',
+    altText: 'Không gian làm việc phục vụ nội dung việc làm cộng đồng',
+  },
+  {
+    key: 'community-market',
+    url: 'https://images.unsplash.com/photo-1472851294608-062f824d29cc?auto=format&fit=crop&w=1400&q=82',
+    altText: 'Không gian mua sắm phục vụ nội dung trao đổi đồ dùng',
+  },
+  {
+    key: 'community-green',
+    url: 'https://images.unsplash.com/photo-1441974231531-c6227db76b6e?auto=format&fit=crop&w=1400&q=82',
+    altText: 'Không gian cây xanh phục vụ nội dung hoạt động cộng đồng',
   },
 ];
 
