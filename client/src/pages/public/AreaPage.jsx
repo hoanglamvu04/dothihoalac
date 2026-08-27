@@ -283,6 +283,10 @@ export default function AreaPage() {
     sectionErrors.community ||
     sectionErrors.properties;
 
+  const areaFilterValue = String(
+    area?.slug || area?._id || '',
+  );
+
   const handleBack = useCallback(() => {
     const historyIndex =
       window.history.state?.idx;
@@ -396,7 +400,7 @@ export default function AreaPage() {
 
               <Link
                 to={`/cong-dong?area=${encodeURIComponent(
-                  area._id,
+                  areaFilterValue,
                 )}`}
                 className="area-secondary-action"
               >
@@ -559,7 +563,7 @@ export default function AreaPage() {
             title="Tin tức mới"
             description={`Các bài viết, thông báo và thông tin đáng chú ý tại ${area.name}.`}
             to={`/tin-tuc?area=${encodeURIComponent(
-              area._id,
+              areaFilterValue,
             )}`}
             count={data.articles.total}
             error={sectionErrors.articles}
@@ -594,7 +598,7 @@ export default function AreaPage() {
             title="Cộng đồng khu vực"
             description={`Các câu hỏi, phản ánh, chia sẻ và thảo luận liên quan đến ${area.name}.`}
             to={`/cong-dong?area=${encodeURIComponent(
-              area._id,
+              areaFilterValue,
             )}`}
             count={data.community.total}
             error={sectionErrors.community}
@@ -629,7 +633,7 @@ export default function AreaPage() {
             title="Bất động sản"
             description={`Tin bán, cho thuê, sang nhượng và nhu cầu nhà đất tại ${area.name}.`}
             to={`/nha-dat?area=${encodeURIComponent(
-              area._id,
+              areaFilterValue,
             )}`}
             count={data.properties.total}
             error={sectionErrors.properties}
