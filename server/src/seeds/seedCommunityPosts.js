@@ -2,16 +2,21 @@ import CommunityPost from '../modules/community/communityPost.model.js';
 import { makeBody, upsertContent, daysFromSeed } from './seedHelpers.js';
 
 const definitions = [
-  ['hoi-tuyen-xe-buyt-tu-trung-tam-den-hoa-lac', 'Hỏi tuyến xe buýt thuận tiện từ trung tâm đến Hòa Lạc', 'question', 'hoi-dap', 'hoa-lac', 'student'],
-  ['phan-anh-doan-duong-ngap-sau-mua', 'Phản ánh đoạn đường ngập sau mưa lớn', 'report', 'phan-anh-kien-nghi', 'thach-hoa', 'resident'],
-  ['review-quan-an-gia-dinh-o-thach-hoa', 'Review quán ăn gia đình tại Thạch Hòa', 'review', 'chia-se-review', 'thach-hoa', 'resident'],
-  ['chia-se-kinh-nghiem-tim-phong-tro', 'Chia sẻ kinh nghiệm tìm phòng trọ gần Đại học Quốc gia', 'sharing', 'chia-se-review', 'dai-hoc-quoc-gia-ha-noi', 'student'],
-  ['tim-nguoi-di-chung-xe-cuoi-tuan', 'Tìm người đi chung xe cuối tuần', 'support', 'tim-kiem-ho-tro', 'hoa-lac', 'member'],
-  ['thao-luan-ve-khong-gian-cong-cong-hoa-lac', 'Thảo luận về không gian công cộng tại Hòa Lạc', 'discussion', 'thao-luan', 'hoa-lac', 'resident'],
-  ['thanh-ly-ban-hoc-sinh-vien', 'Thanh lý bàn học sinh viên còn mới', 'marketplace', 'mua-ban-trao-doi', 'dai-hoc-quoc-gia-ha-noi', 'student'],
-  ['su-kien-doi-rac-lay-cay-xanh', 'Sự kiện đổi rác lấy cây xanh cuối tuần', 'community_event', 'su-kien-cong-dong', 'tan-xa', 'contributor'],
-  ['hoi-chi-phi-cai-tao-nha-cap-bon', 'Hỏi chi phí cải tạo nhà cấp bốn tại Hòa Lạc', 'question', 'hoi-dap', 'binh-yen', 'member'],
-  ['can-ho-tro-tim-cho-that-lac', 'Cần hỗ trợ tìm chó bị thất lạc', 'support', 'tim-kiem-ho-tro', 'yen-binh', 'resident'],
+  ['hoi-kinh-nghiem-thue-tro-hoa-lac', 'Hỏi kinh nghiệm thuê trọ gần Đại học Quốc gia Hòa Lạc', 'question', 'hoi-dap', 'hoa-lac', 'student'],
+  ['review-khu-cong-nghe-cao-hoa-lac', 'Review khu Công nghệ cao Hòa Lạc sau khi chuyển về sinh sống', 'review', 'chia-se-review', 'hoa-lac', 'resident'],
+  ['phan-anh-den-duong-ha-bang', 'Phản ánh hệ thống đèn đường tại Hạ Bằng buổi tối', 'report', 'phan-anh-kien-nghi', 'ha-bang', 'resident'],
+  ['hoi-gia-thue-nha-ha-bang', 'Hỏi giá thuê nhà và phòng trọ tại Hạ Bằng', 'question', 'hoi-dap', 'ha-bang', 'member'],
+  ['review-am-thuc-thach-hoa', 'Gợi ý quán ăn ngon quanh Thạch Hòa', 'review', 'chia-se-review', 'thach-hoa', 'resident'],
+  ['chia-se-cuoc-song-thach-that', 'Chia sẻ cuộc sống tại Thạch Thất', 'sharing', 'thao-luan', 'thach-that', 'resident'],
+  ['hoi-quy-hoach-thach-that', 'Hỏi thông tin quy hoạch khu vực Thạch Thất', 'question', 'hoi-dap', 'thach-that', 'member'],
+  ['phan-anh-duong-xuong-cap-yen-xuan', 'Phản ánh đường dân sinh xuống cấp tại Yên Xuân', 'report', 'phan-anh-kien-nghi', 'yen-xuan', 'resident'],
+  ['review-homestay-yen-xuan', 'Review homestay cuối tuần tại Yên Xuân', 'review', 'chia-se-review', 'yen-xuan', 'resident'],
+  ['tim-lop-hoc-them-hoa-lac', 'Tìm lớp học thêm cho trẻ quanh Hòa Lạc', 'support', 'tim-kiem-ho-tro', 'hoa-lac', 'member'],
+  ['chia-se-anh-dep-hoa-lac', 'Chia sẻ ảnh đẹp Hòa Lạc mùa xanh', 'sharing', 'chia-se-review', 'hoa-lac', 'contributor'],
+  ['thao-luan-giao-thong-hoa-lac', 'Thảo luận giao thông kết nối Hòa Lạc - Hà Nội', 'discussion', 'thao-luan', 'hoa-lac', 'resident'],
+  ['thanh-ly-noi-that-sinh-vien', 'Thanh lý nội thất sinh viên còn tốt', 'marketplace', 'mua-ban-trao-doi', 'dai-hoc-quoc-gia-ha-noi', 'student'],
+  ['tim-dich-vu-sua-chua-nha', 'Tìm dịch vụ sửa chữa nhà uy tín', 'support', 'tim-kiem-ho-tro', 'thach-hoa', 'member'],
+  ['su-kien-cong-dong-trong-cay', 'Sự kiện cộng đồng trồng cây xanh cuối tuần', 'community_event', 'su-kien-cong-dong', 'tan-xa', 'contributor'],
 ];
 
 export async function seedCommunityPosts({ users, categories, areas, tags, media }) {
@@ -23,10 +28,10 @@ export async function seedCommunityPosts({ users, categories, areas, tags, media
       contentType: 'community',
       authorId: users[userKey]._id,
       title,
-      summary: `Bài cộng đồng mẫu: ${title}.`,
+      summary: `${title}. Bài viết cộng đồng khu vực Hòa Lạc để trao đổi thông tin thực tế.`,
       bodyHtml: makeBody(title, [
-        'Mình đăng bài để xin ý kiến và chia sẻ thông tin với cộng đồng Hòa Lạc.',
-        'Mọi người có kinh nghiệm thực tế vui lòng bình luận, bổ sung địa điểm hoặc lưu ý cần thiết.',
+        'Cư dân đăng bài để chia sẻ thông tin, kinh nghiệm và kết nối với cộng đồng địa phương.',
+        'Mọi người có thể bình luận bổ sung kinh nghiệm, địa điểm hoặc giải pháp phù hợp.',
       ]),
       thumbnailMediaId: postType === 'report' ? media['article-warning']._id : media['article-life']._id,
       primaryCategoryId: categories[`community:${categorySlug}`]._id,
@@ -35,8 +40,8 @@ export async function seedCommunityPosts({ users, categories, areas, tags, media
       areaIds: [areas[areaSlug]._id, areas['hoa-lac']._id],
       tagIds: [tags['hoa-lac']._id],
       status: 'published',
-      publishedAt: daysFromSeed(-index, -3),
-      viewCount: 120 + index * 45,
+      publishedAt: daysFromSeed(-index, -2),
+      viewCount: 180 + index * 35,
     });
     await CommunityPost.findOneAndUpdate(
       { contentId: content._id },
@@ -45,8 +50,8 @@ export async function seedCommunityPosts({ users, categories, areas, tags, media
           postType,
           questionStatus: postType === 'question' ? 'open' : 'closed',
           incidentStatus: postType === 'report' ? 'processing' : 'new',
-          incidentTime: postType === 'report' ? daysFromSeed(-2) : null,
-          locationText: postType === 'report' ? 'Tuyến đường nội khu Thạch Hòa' : '',
+          incidentTime: postType === 'report' ? daysFromSeed(-1) : null,
+          locationText: postType === 'report' ? areas[areaSlug].name : '',
           rating: postType === 'review' ? 4 : null,
         },
       },
@@ -54,24 +59,5 @@ export async function seedCommunityPosts({ users, categories, areas, tags, media
     );
     result[slug] = content;
   }
-
-  const pending = await upsertContent({
-    slug: 'bai-cong-dong-cho-duyet',
-    contentType: 'community',
-    authorId: users.member._id,
-    title: 'Bài cộng đồng đang chờ kiểm duyệt',
-    summary: 'Dữ liệu mẫu cho hàng chờ kiểm duyệt.',
-    bodyHtml: makeBody('Bài cộng đồng đang chờ kiểm duyệt'),
-    primaryCategoryId: categories['community:thao-luan']._id,
-    primaryAreaId: areas['hoa-lac']._id,
-    status: 'pending_review',
-  });
-  await CommunityPost.findOneAndUpdate(
-    { contentId: pending._id },
-    { $set: { postType: 'discussion', questionStatus: 'closed' } },
-    { upsert: true, new: true },
-  );
-  result[pending.slug] = pending;
-
   return result;
 }
