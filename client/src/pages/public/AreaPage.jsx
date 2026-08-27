@@ -632,7 +632,7 @@ export default function AreaPage() {
             eyebrow="Thị trường địa phương"
             title="Bất động sản"
             description={`Tin bán, cho thuê, sang nhượng và nhu cầu nhà đất tại ${area.name}.`}
-            to={`/nha-dat?area=${encodeURIComponent(
+            to={`/bat-dong-san?area=${encodeURIComponent(
               areaFilterValue,
             )}`}
             count={data.properties.total}
