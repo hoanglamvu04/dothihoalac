@@ -2,6 +2,7 @@ import { Router } from 'express';
 import * as c from './article.controller.js';
 import { requireAuth } from '../../middlewares/auth.middleware.js';
 import { requirePermission } from '../../middlewares/role.middleware.js';
+import { uploadSingleDocument } from '../../middlewares/upload.middleware.js';
 import { PERMISSIONS } from '../../constants/permissions.js';
 import { validate } from '../../middlewares/validate.middleware.js';
 import {
@@ -11,6 +12,8 @@ import {
   articleMetadataSchema,
 } from './article.validation.js';
 import asyncHandler from '../../utils/asyncHandler.js';
+import { sendCreated } from '../../utils/apiResponse.js';
+import { importAdminArticleDocument } from './article.documentImport.service.js';
 
 const r = Router();
 const editorialReadPermissions = [
@@ -30,6 +33,23 @@ r.post(
   requirePermission(PERMISSIONS.CREATE_ARTICLE, PERMISSIONS.MANAGE_SYSTEM),
   validate(articleBodySchema),
   asyncHandler(c.adminCreate),
+);
+r.post(
+  '/import-document',
+  requirePermission(PERMISSIONS.CREATE_ARTICLE, PERMISSIONS.MANAGE_SYSTEM),
+  uploadSingleDocument,
+  asyncHandler(async (req, res) => {
+    const result = await importAdminArticleDocument(
+      req.user._id,
+      req.file,
+    );
+
+    return sendCreated(
+      res,
+      result,
+      'Đã nhập tài liệu và tạo bản nháp Google Docs.',
+    );
+  }),
 );
 r.post(
   '/bulk-delete',
