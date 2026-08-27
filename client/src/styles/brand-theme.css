@@ -235,3 +235,349 @@
   border-color: #a48858;
   background-color: #a48858;
 }
+
+/* =========================================================
+   LEGACY PUBLIC MODULE COLOR CLEANUP
+   Keep layout/component CSS intact, but normalize old module greens.
+========================================================= */
+
+/* Header taxonomy / mega menu */
+.dthl-header-nav-upgrade__link:hover,
+.dthl-header-nav-upgrade__item:focus-within > .dthl-header-nav-upgrade__link {
+  color: #806b48 !important;
+  background: #f8f4ec !important;
+}
+
+.dthl-header-nav-upgrade__item:hover .dthl-header-nav-upgrade__chevron,
+.dthl-header-nav-upgrade__item:focus-within .dthl-header-nav-upgrade__chevron {
+  color: #806b48 !important;
+}
+
+.dthl-header-submenu {
+  border-color: #e5dcca !important;
+  box-shadow:
+    0 22px 50px rgba(77, 64, 43, 0.13),
+    0 5px 16px rgba(77, 64, 43, 0.06) !important;
+}
+
+.dthl-header-submenu__head {
+  border-bottom-color: #f0eadf !important;
+}
+
+.dthl-header-submenu__head span {
+  color: #9a8e7c !important;
+}
+
+.dthl-header-submenu__head strong {
+  color: #3d3323 !important;
+}
+
+.dthl-header-submenu__root,
+.dthl-header-submenu__child {
+  color: #574c3b !important;
+}
+
+.dthl-header-submenu__root > svg,
+.dthl-header-submenu__child > svg {
+  color: #aa9c86 !important;
+}
+
+.dthl-header-submenu__root:hover,
+.dthl-header-submenu__root.is-active,
+.dthl-header-submenu__child:hover,
+.dthl-header-submenu__child.is-active {
+  color: #806b48 !important;
+  background: #f5efe4 !important;
+}
+
+.dthl-header-submenu__root.is-active,
+.dthl-header-submenu__child.is-active {
+  box-shadow: inset 3px 0 0 #b69a67 !important;
+}
+
+.dthl-mobile-nav-upgrade__item.is-active {
+  border-color: #e3d5b8 !important;
+  background: #fcfaf6 !important;
+}
+
+.dthl-mobile-nav-upgrade__link:hover,
+.dthl-mobile-nav-upgrade__link.is-active,
+.dthl-mobile-nav-upgrade__category:hover,
+.dthl-mobile-nav-upgrade__category.is-active {
+  color: #806b48 !important;
+  background: #f5efe4 !important;
+}
+
+.dthl-mobile-nav-upgrade__toggle:hover,
+.dthl-mobile-nav-upgrade__toggle[aria-expanded='true'] {
+  color: #806b48 !important;
+  background: #f3ecdf !important;
+}
+
+.dthl-mobile-nav-upgrade__submenu {
+  border-top-color: #eee5d5 !important;
+  background: #fdfbf7 !important;
+}
+
+/* News hub / planning / infrastructure category pages */
+.news-hub {
+  --news-green: #b69a67;
+  --news-green-dark: #806b48;
+  --news-green-soft: #f5efe4;
+  --news-ink: #2b251b;
+  --news-text: #574c3b;
+  --news-muted: #817565;
+  --news-border: #e5dcca;
+}
+
+.news-masthead__search:focus-within,
+.news-filter-panel :is(select, input):focus {
+  border-color: #ccb88e !important;
+  box-shadow: 0 0 0 3px rgba(182, 154, 103, 0.11) !important;
+}
+
+.news-story--lead {
+  background: #2b2419 !important;
+}
+
+.news-story--lead::after {
+  background: linear-gradient(
+    180deg,
+    transparent 40%,
+    rgba(43, 36, 25, 0.12) 57%,
+    rgba(31, 25, 17, 0.94) 100%
+  ) !important;
+}
+
+.news-story--lead .news-story__kicker span {
+  color: #ead7b4 !important;
+}
+
+.news-story__image-fallback,
+.news-rail-article__thumb {
+  color: #9d907c !important;
+  background: #f4efe6 !important;
+}
+
+.news-rail-card {
+  box-shadow: 0 8px 28px rgba(77, 64, 43, 0.055) !important;
+}
+
+.news-context-card .news-rail-card__head {
+  border-bottom-color: #b69a67 !important;
+}
+
+.news-discussion-list b {
+  border-color: #d9c7a6 !important;
+  color: #806b48 !important;
+}
+
+.news-rail-loading i {
+  border-bottom-color: #e5dcca !important;
+  background: linear-gradient(90deg, #faf7f1, #f1eadf, #faf7f1) !important;
+}
+
+/* Property marketplace */
+.properties-page {
+  --property-green: #b69a67;
+  --property-green-hover: #a48858;
+  --property-green-dark: #806b48;
+  --property-green-deep: #4d402b;
+  --property-green-soft: #f5efe4;
+  --property-green-border: #dfcfb1;
+  --property-ink: #2b251b;
+  --property-text: #574c3b;
+  --property-muted: #817565;
+  --property-border: #e5dcca;
+  --property-background: #faf8f4;
+}
+
+.properties-hero__search > label:focus-within,
+.properties-popover-range-inputs input:focus {
+  border-color: #ccb88e !important;
+  box-shadow: 0 0 0 3px rgba(182, 154, 103, 0.12) !important;
+}
+
+.properties-filter-toolbar__main:hover,
+.properties-quick-filter > button:hover,
+.properties-quick-filter > button[aria-expanded='true'],
+.properties-quick-filter > button.is-selected {
+  border-color: #d9c7a6 !important;
+  color: #806b48 !important;
+  background: #fdfaf5 !important;
+}
+
+.properties-popover-presets button:hover,
+.properties-popover-presets button.is-active,
+.properties-modal-preset-grid button:hover,
+.properties-modal-preset-grid button.is-active {
+  border-color: #d6c39d !important;
+  color: #806b48 !important;
+  background: #f5efe4 !important;
+}
+
+.properties-filter-option-list > button.is-active {
+  color: #806b48 !important;
+  background: #f5efe4 !important;
+}
+
+.properties-filter-option-list > button svg,
+.properties-filter-toolbar__sort svg {
+  color: #806b48 !important;
+}
+
+/* Article detail / reactions */
+.article-view-page {
+  --article-green: #b69a67;
+  --article-green-dark: #806b48;
+  --article-green-soft: #f5efe4;
+}
+
+.article-view-reactions .reaction-picker__choices button:hover {
+  border-color: #d8c49d !important;
+  color: #806b48 !important;
+  background: #fbf7ef !important;
+}
+
+.article-view-reactions .reaction-picker__choices button.is-active {
+  border-color: #c8ae7c !important;
+  color: #806b48 !important;
+  background: #f3ead9 !important;
+}
+
+.article-view-reactions .reaction-actions button:hover,
+.article-view-reactions .reaction-actions button.is-active {
+  color: #806b48 !important;
+  background: #f5efe4 !important;
+}
+
+/* Community */
+.community-social-page {
+  --community-green: #b69a67;
+  --community-green-hover: #a48858;
+  --community-green-dark: #806b48;
+  --community-green-soft: #f5efe4;
+  --community-ink: #2b251b;
+  --community-text: #574c3b;
+  --community-muted: #817565;
+  --community-border: #e5dcca;
+  --community-border-soft: #f0eadf;
+  --community-bg: #faf8f4;
+  --community-shadow: 0 3px 14px rgba(77, 64, 43, 0.04);
+}
+
+.community-discovery-list button:hover,
+.community-discovery-list button.is-active {
+  color: #806b48 !important;
+  background: #f8f4ec !important;
+}
+
+.community-discovery-list__icon {
+  color: #a48858 !important;
+  background: #f3ead9 !important;
+}
+
+.community-reference-composer__actions > a svg {
+  color: #a48858 !important;
+}
+
+.community-reference-composer__actions > a:hover {
+  border-color: #dbc9aa !important;
+  color: #806b48 !important;
+  background: #fdfaf5 !important;
+}
+
+.community-reference-composer__actions > .community-reference-composer__submit {
+  border-color: #a48858 !important;
+  color: #fff !important;
+  background: #a48858 !important;
+}
+
+.community-reference-composer__actions > .community-reference-composer__submit:hover {
+  border-color: #806b48 !important;
+  color: #fff !important;
+  background: #806b48 !important;
+}
+
+.community-reference-feed-tabs nav button:hover,
+.community-reference-feed-tabs nav button.is-active {
+  border-color: #b69a67 !important;
+  color: #fff !important;
+  background: #b69a67 !important;
+}
+
+.community-reference-filter-trigger:hover {
+  border-color: #d8c49d !important;
+  color: #806b48 !important;
+  background: #f8f4ec !important;
+}
+
+.community-reference-filter-trigger strong {
+  background: #b69a67 !important;
+}
+
+.community-reference-active-filters button {
+  border-color: #e1d5bf !important;
+  color: #6c5b42 !important;
+  background: #faf6ee !important;
+}
+
+/* Jobs */
+.jobs-page {
+  --jobs-green: #b69a67;
+  --jobs-green-hover: #a48858;
+  --jobs-green-dark: #806b48;
+  --jobs-green-soft: #f5efe4;
+  --jobs-green-soft-strong: #e8dcc5;
+  --jobs-ink: #2b251b;
+  --jobs-text: #574c3b;
+  --jobs-muted: #817565;
+  --jobs-border: #e5dcca;
+  --jobs-border-soft: #f0eadf;
+  --jobs-background: #faf8f4;
+  --jobs-shadow: 0 10px 32px rgba(77, 64, 43, 0.08);
+  --jobs-shadow-soft: 0 4px 16px rgba(77, 64, 43, 0.05);
+}
+
+.jobs-market-hero h2,
+.jobs-market-search > label,
+.jobs-section-heading > div > span,
+.jobs-panel-heading > div > span,
+.jobs-safety-card__eyebrow {
+  color: #806b48 !important;
+}
+
+.jobs-market-hero__chips {
+  color: #6d5b3d;
+}
+
+.jobs-market-hero__chips span {
+  border-color: rgba(182, 154, 103, 0.22) !important;
+  color: #6d5b3d !important;
+}
+
+.jobs-market-hero__chips svg {
+  color: #a48858 !important;
+}
+
+.jobs-market-search > button {
+  background: linear-gradient(135deg, #b69a67, #806b48) !important;
+  box-shadow: 0 10px 24px rgba(128, 107, 72, 0.22) !important;
+}
+
+.jobs-market-search > button:hover {
+  background: linear-gradient(135deg, #a48858, #6d5b3d) !important;
+  box-shadow: 0 14px 28px rgba(128, 107, 72, 0.28) !important;
+}
+
+/* Generic focus for public branded interactive elements */
+:is(
+  .dthl-header-submenu,
+  .news-hub,
+  .properties-page,
+  .community-social-page,
+  .jobs-page,
+  .article-view-page
+) :is(a, button, input, select, textarea):focus-visible {
+  outline-color: #b69a67 !important;
+}
