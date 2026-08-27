@@ -176,6 +176,42 @@ export default function ArticlesPage() {
     [areas, area],
   );
 
+  useEffect(() => {
+    const categorySlug = String(categoryItem?.slug || '');
+    const areaSlug = String(areaItem?.slug || '');
+    const replaceCategory =
+      Boolean(category && categorySlug) && category !== categorySlug;
+    const replaceArea =
+      Boolean(area && areaSlug) && area !== areaSlug;
+
+    if (!replaceCategory && !replaceArea) {
+      return;
+    }
+
+    setSearchParams(
+      (current) => {
+        const next = new URLSearchParams(current);
+
+        if (replaceCategory) {
+          next.set('category', categorySlug);
+        }
+
+        if (replaceArea) {
+          next.set('area', areaSlug);
+        }
+
+        return next;
+      },
+      { replace: true },
+    );
+  }, [
+    area,
+    areaItem?.slug,
+    category,
+    categoryItem?.slug,
+    setSearchParams,
+  ]);
+
   const categoryName =
     categoryItem?.name ||
     ARTICLE_CATEGORY_RAIL.find((item) => item.slug === category)?.label ||
