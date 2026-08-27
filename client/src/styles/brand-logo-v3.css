@@ -1,12 +1,13 @@
 /* =========================================================
    DTHL BRAND LOGO V3
-   Single visual source: /public/Logo.png -> /Logo.png
-   Every legacy logo-mark render is visually replaced by the new
-   uploaded logo while old JSX imports are being retired safely.
+   - Keep the compact square mark for legacy/auth/admin surfaces.
+   - Use the approved full horizontal lockups for public header/footer.
 ========================================================= */
 
 :root {
   --dthl-brand-logo-image: url('/Logo.png');
+  --dthl-public-header-logo: url('/Logo%20dothihoalac-09.png');
+  --dthl-public-footer-logo: url('/Logo%20dothihoalac-10.png');
 }
 
 /* Final fallback for any old logo image that is still rendered. */
@@ -15,25 +16,45 @@ img[src*='logo-mark'] {
   object-fit: contain;
 }
 
-/* Public header */
-.dthl-brand__mark {
-  width: 52px !important;
+/* =========================================================
+   PUBLIC HEADER — full horizontal logo image
+========================================================= */
+
+.dthl-brand {
+  gap: 0 !important;
+}
+
+.dthl-brand__mark,
+.dthl-header.is-compact .dthl-brand__mark {
+  display: block !important;
+  flex: 0 0 242px !important;
+  width: 242px !important;
   height: 52px !important;
+  overflow: visible !important;
   border: 0 !important;
-  border-radius: 13px !important;
+  border-radius: 0 !important;
   background-color: transparent !important;
-  background-image: var(--dthl-brand-logo-image) !important;
-  background-position: center !important;
+  background-image: var(--dthl-public-header-logo) !important;
+  background-position: left center !important;
   background-repeat: no-repeat !important;
   background-size: contain !important;
   box-shadow: none !important;
 }
 
-.dthl-brand__mark > img[src*='logo-mark'] {
+.dthl-brand__mark > img {
+  width: 100% !important;
+  height: 100% !important;
   opacity: 0 !important;
 }
 
-/* Authentication screens still containing the legacy SVG import. */
+.dthl-brand__content {
+  display: none !important;
+}
+
+/* =========================================================
+   AUTH / ACCOUNT — keep compact square mark
+========================================================= */
+
 .dthl-login-brand__mark,
 .dthl-register-brand__mark,
 .dthl-forgot-brand__mark,
@@ -54,8 +75,8 @@ img[src*='logo-mark'] {
   opacity: 0 !important;
 }
 
-/* Generic safety net for legacy brand-mark wrappers not listed above. */
-[class*='brand'][class*='mark']:has(> img[src*='logo-mark']) {
+/* Generic safety net for legacy brand-mark wrappers outside the public header. */
+[class*='brand'][class*='mark']:has(> img[src*='logo-mark']):not(.dthl-brand__mark) {
   background-color: transparent !important;
   background-image: var(--dthl-brand-logo-image) !important;
   background-position: center !important;
@@ -64,20 +85,32 @@ img[src*='logo-mark'] {
   box-shadow: none !important;
 }
 
-[class*='brand'][class*='mark'] > img[src*='logo-mark'] {
+[class*='brand'][class*='mark']:not(.dthl-brand__mark) > img[src*='logo-mark'] {
   opacity: 0 !important;
 }
 
-/* Footer now references /Logo.png directly. */
-.site-footer__logo > img {
-  width: 52px;
-  height: 52px;
-  flex: 0 0 52px;
-  object-fit: contain;
-  border-radius: 12px;
+/* =========================================================
+   PUBLIC FOOTER — full horizontal logo image
+========================================================= */
+
+.site-footer__logo {
+  display: block !important;
+  width: min(100%, 340px) !important;
+  height: 72px !important;
+  margin: 0 !important;
+  background-color: transparent !important;
+  background-image: var(--dthl-public-footer-logo) !important;
+  background-position: left center !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
 }
 
-/* Admin sidebar now references /Logo.png directly. */
+.site-footer__logo > img,
+.site-footer__logo > span {
+  display: none !important;
+}
+
+/* Admin sidebar keeps the square mark. */
 .admin-brand-mark {
   display: grid !important;
   place-items: center !important;
@@ -94,23 +127,48 @@ img[src*='logo-mark'] {
   object-fit: contain;
 }
 
+@media (max-width: 1320px) {
+  .site-footer__logo {
+    width: min(100%, 310px) !important;
+    height: 66px !important;
+  }
+}
+
 @media (max-width: 1020px) {
-  .dthl-brand__mark {
-    width: 44px !important;
+  .dthl-brand__mark,
+  .dthl-header.is-compact .dthl-brand__mark {
+    flex-basis: 205px !important;
+    width: 205px !important;
     height: 44px !important;
-    border-radius: 11px !important;
+  }
+}
+
+@media (max-width: 720px) {
+  .site-footer__logo {
+    width: min(100%, 286px) !important;
+    height: 61px !important;
   }
 }
 
 @media (max-width: 560px) {
-  .dthl-brand__mark {
-    width: 40px !important;
-    height: 40px !important;
+  .dthl-brand__mark,
+  .dthl-header.is-compact .dthl-brand__mark {
+    flex-basis: 170px !important;
+    width: 170px !important;
+    height: 37px !important;
   }
 
-  .site-footer__logo > img {
-    width: 46px;
-    height: 46px;
-    flex-basis: 46px;
+  .site-footer__logo {
+    width: min(100%, 250px) !important;
+    height: 54px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .dthl-brand__mark,
+  .dthl-header.is-compact .dthl-brand__mark {
+    flex-basis: 152px !important;
+    width: 152px !important;
+    height: 33px !important;
   }
 }
