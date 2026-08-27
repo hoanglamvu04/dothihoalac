@@ -1,6 +1,5 @@
 import { adminCreate as createArticleDraft } from '../articles/article.service.js';
 import SourceWatchItem from './sourceWatch.item.model.js';
-import SourceWatchSource from './sourceWatch.source.model.js';
 
 function cleanText(value = '', max = 4000) {
   return String(value || '')
@@ -112,7 +111,6 @@ export async function createDraftFromSourceItem(itemId, userId) {
     throw new Error('SOURCE_DRAFT_ARTICLE_ID_MISSING');
   }
 
-  const previousStatus = item.status;
   item.set('sourceMeta', {
     ...(item.sourceMeta && typeof item.sourceMeta === 'object' ? item.sourceMeta : {}),
     draftArticleId: articleId,
@@ -120,16 +118,7 @@ export async function createDraftFromSourceItem(itemId, userId) {
     draftCreatedAt: new Date().toISOString(),
     draftGenerator: 'rules-v1',
   });
-  item.status = 'reviewed';
   await item.save();
-
-  if (previousStatus === 'new' && item.sourceId?._id) {
-    const source = await SourceWatchSource.findById(item.sourceId._id);
-    if (source) {
-      source.stats.newItems = Math.max(0, Number(source.stats?.newItems || 0) - 1);
-      await source.save();
-    }
-  }
 
   return {
     articleId,
