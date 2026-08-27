@@ -16,6 +16,7 @@ import './components/layout/SiteFooter.css';
 import './styles/brand-logo-v3.css';
 import './styles/brand-theme.css';
 import './styles/brand-force.css';
+import './styles/brand-accent.css';
 import './features/propertySubmitReviewGuard';
 
 const root = createRoot(document.getElementById('root'));
