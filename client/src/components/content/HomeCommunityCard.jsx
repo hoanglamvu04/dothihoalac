@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
-  ArrowRight,
   MessageCircle,
   ThumbsUp,
 } from 'lucide-react';
@@ -144,12 +143,17 @@ export default function HomeCommunityCard({ item }) {
         </Link>
       </div>
 
-      {media ? (
-        <Link
-          className="home-community-card__media"
-          to={href}
-          aria-label={`Xem bài của ${authorName}`}
-        >
+      <Link
+        className={[
+          'home-community-card__media',
+          !media ? 'home-community-card__media--fallback' : '',
+        ]
+          .filter(Boolean)
+          .join(' ')}
+        to={href}
+        aria-label={`Xem bài của ${authorName}`}
+      >
+        {media ? (
           <ContentImage
             media={media}
             alt={
@@ -158,16 +162,14 @@ export default function HomeCommunityCard({ item }) {
               'Ảnh bài viết cộng đồng'
             }
           />
-        </Link>
-      ) : (
-        <Link
-          className="home-community-card__media home-community-card__media--empty"
-          to={href}
-        >
-          <span>Đọc bài viết</span>
-          <ArrowRight size={17} />
-        </Link>
-      )}
+        ) : (
+          <img
+            src="/Logo%20dothihoalac-09.png"
+            alt="Đô Thị Hòa Lạc"
+            loading="lazy"
+          />
+        )}
+      </Link>
 
       <footer className="home-community-card__footer">
         <button
