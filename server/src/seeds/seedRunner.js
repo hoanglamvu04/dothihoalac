@@ -9,6 +9,7 @@ import { seedUsers } from './seedUsers.js';
 import { seedMedia } from './seedMedia.js';
 import { seedArticles } from './seedArticles.js';
 import { seedCommunityPosts } from './seedCommunityPosts.js';
+import { seedCommunityFeed } from './seedCommunityFeed.js';
 import { seedProperties } from './seedProperties.js';
 import { seedJobs } from './seedJobs.js';
 import { seedInteractions } from './seedInteractions.js';
@@ -46,6 +47,9 @@ export async function runSeed({ includeDemo = true } = {}) {
   logger.info('Seeding articles, community, properties and jobs');
   const articles = await seedArticles({ users, categories, areas, tags, media });
   const community = await seedCommunityPosts({ users, categories, areas, tags, media });
+  const extraCommunity = await seedCommunityFeed({ users, categories, areas, tags, media });
+  Object.assign(community, extraCommunity);
+
   const properties = await seedProperties({
     users,
     categories,
