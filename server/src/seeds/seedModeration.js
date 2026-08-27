@@ -4,7 +4,7 @@ import UserViolation from '../modules/moderation/userViolation.model.js';
 import ContentDuplicate from '../modules/moderation/contentDuplicate.model.js';
 
 export async function seedModeration({ users, articles, community, properties }) {
-  const reportTarget = community['phan-anh-doan-duong-ngap-sau-mua'];
+  const reportTarget = community['phan-anh-ngap-sau-mua-ha-bang-27-08'];
   await Report.findOneAndUpdate(
     { reporterId: users.member._id, targetType: 'content', targetId: reportTarget._id, status: 'pending' },
     {
