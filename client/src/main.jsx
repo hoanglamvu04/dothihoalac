@@ -11,9 +11,9 @@ import './styles/editorial-polish.css';
 import './styles/focus-area-copy.css';
 import './styles/mobile-ui-polish.css';
 import './styles/header-stability-v2.css';
-import './styles/brand-logo-v3.css';
 import './styles/header-modern-v3.css';
 import './components/layout/SiteFooter.css';
+import './styles/brand-logo-v3.css';
 import './features/propertySubmitReviewGuard';
 
 const root = createRoot(document.getElementById('root'));
