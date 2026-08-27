@@ -204,6 +204,10 @@ function findByIdOrSlug(items, value) {
   );
 }
 
+function taxonomyUrlValue(item) {
+  return String(item?.slug || item?._id || item?.id || '');
+}
+
 export default function PropertiesPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const { areas = [] } = useTaxonomy();
@@ -268,6 +272,23 @@ export default function PropertiesPage() {
     () => findByIdOrSlug(areas, currentArea),
     [areas, currentArea],
   );
+
+  useEffect(() => {
+    const areaSlug = String(selectedArea?.slug || '');
+
+    if (!currentArea || !areaSlug || currentArea === areaSlug) {
+      return;
+    }
+
+    setSearchParams(
+      (current) => {
+        const next = new URLSearchParams(current);
+        next.set('area', areaSlug);
+        return next;
+      },
+      { replace: true },
+    );
+  }, [currentArea, selectedArea?.slug, setSearchParams]);
 
   const currentSortOption =
     SORT_OPTIONS.find((item) => item.value === currentSort) ||
@@ -808,7 +829,7 @@ export default function PropertiesPage() {
                   {areas.map((item) => (
                     <button
                       type="button"
-                      key={item._id}
+                      key={item._id || item.slug}
                       className={
                         String(currentArea) === String(item._id) ||
                         String(currentArea) === String(item.slug)
@@ -816,7 +837,7 @@ export default function PropertiesPage() {
                           : ''
                       }
                       onClick={() => {
-                        update('area', item._id);
+                        update('area', taxonomyUrlValue(item));
                         setQuickFilterOpen('');
                       }}
                     >
@@ -1203,7 +1224,10 @@ export default function PropertiesPage() {
                         >
                           <option value="">Tất cả khu vực</option>
                           {areas.map((item) => (
-                            <option key={item._id} value={item._id}>
+                            <option
+                              key={item._id || item.slug}
+                              value={taxonomyUrlValue(item)}
+                            >
                               {item.name}
                             </option>
                           ))}
