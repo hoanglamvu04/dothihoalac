@@ -1,20 +1,84 @@
+import mongoose from 'mongoose';
+
 import * as s from './community.service.js';
 import { listCompactCommunity } from './community.compactList.service.js';
 import Reaction from '../reactions/reaction.model.js';
+import Category from '../taxonomy/category.model.js';
+import Area from '../taxonomy/area.model.js';
 import {
   sendCreated,
   sendSuccess,
 } from '../../utils/apiResponse.js';
 
+const EMPTY_TAXONOMY_ID = '000000000000000000000000';
+
 function wantsCompact(value) {
   return ['1', 'true', 'yes'].includes(String(value || '').trim().toLowerCase());
 }
 
+async function resolveTaxonomyFilter(
+  Model,
+  value,
+  extraFilter = {},
+) {
+  const normalized = String(value || '').trim();
+
+  if (!normalized) {
+    return '';
+  }
+
+  // Giữ tương thích với URL/API cũ còn truyền Mongo ObjectId.
+  if (mongoose.isValidObjectId(normalized)) {
+    return normalized;
+  }
+
+  const item = await Model.findOne({
+    slug: normalized.toLowerCase(),
+    isActive: true,
+    ...extraFilter,
+  })
+    .select('_id')
+    .lean();
+
+  // Trả về một ObjectId hợp lệ nhưng không tồn tại để query slug sai
+  // cho kết quả rỗng thay vì vô tình bỏ bộ lọc.
+  return item?._id
+    ? String(item._id)
+    : EMPTY_TAXONOMY_ID;
+}
+
+async function normalizeListQuery(query = {}) {
+  const next = { ...query };
+
+  const [area, category] = await Promise.all([
+    query.area
+      ? resolveTaxonomyFilter(Area, query.area)
+      : '',
+    query.category
+      ? resolveTaxonomyFilter(Category, query.category, {
+          contentScope: { $in: ['community', 'all'] },
+        })
+      : '',
+  ]);
+
+  if (query.area) {
+    next.area = area;
+  }
+
+  if (query.category) {
+    next.category = category;
+  }
+
+  return next;
+}
+
 export async function list(req, res) {
   const compact = wantsCompact(req.query.compact);
-  const query = req.query.limit
+  const baseQuery = req.query.limit
     ? req.query
     : { ...req.query, limit: 10 };
+  const query = await normalizeListQuery(baseQuery);
+
   const result = compact
     ? await listCompactCommunity(query)
     : await s.list(
