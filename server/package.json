@@ -5,9 +5,7 @@
   "description": "Backend API for dothihoalac.vn",
   "type": "module",
   "main": "src/server.js",
-  "engines": {
-    "node": ">=20.0.0"
-  },
+  "engines": {"node": ">=20.0.0"},
   "scripts": {
     "dev": "nodemon src/bootstrap.js",
     "start": "node src/bootstrap.js",
@@ -16,9 +14,9 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "seed:core": "node src/seeds/index.js --core-only",
-    "seed:reset": "node src/seeds/resetDatabase.js",
     "seed:properties": "node src/seeds/runPropertiesOnly.js",
     "seed:jobs": "node src/seeds/runJobsOnly.js",
+    "seed:community": "node src/seeds/runCommunityOnly.js",
     "seed:taxonomy": "node src/seeds/normalizeCategories.js"
   },
   "dependencies": {
