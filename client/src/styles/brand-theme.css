@@ -1,0 +1,237 @@
+/* =========================================================
+   DTHL BRAND THEME
+   Primary brand color: Earth #B69A67
+   This file centralizes the final visual palette for surfaces that
+   still contain legacy hard-coded green values.
+========================================================= */
+
+:root {
+  --dthl-green: #b69a67;
+  --dthl-green-hover: #a48858;
+  --dthl-green-dark: #806b48;
+  --dthl-green-deep: #4d402b;
+  --dthl-green-soft: #f5efe4;
+  --dthl-green-soft-strong: #e8dcc5;
+
+  --dthl-ink: #2b251b;
+  --dthl-text: #574c3b;
+  --dthl-muted: #817565;
+  --dthl-border: #e5dcca;
+  --dthl-background: #faf7f1;
+
+  --dthl-shadow-sm: 0 6px 18px rgba(77, 64, 43, 0.08);
+  --dthl-shadow-md: 0 20px 50px rgba(77, 64, 43, 0.16);
+  --dthl-shadow-header: 0 10px 34px rgba(77, 64, 43, 0.1);
+}
+
+::selection {
+  color: #2b251b;
+  background: #e3d5b8;
+}
+
+/* Header */
+.dthl-header-top {
+  background: #4d402b;
+}
+
+.dthl-header-search:hover {
+  border-color: rgba(182, 154, 103, 0.34);
+  background: #fcfaf6;
+}
+
+.dthl-header-search:focus-within {
+  border-color: rgba(182, 154, 103, 0.72);
+  box-shadow:
+    0 0 0 3px rgba(182, 154, 103, 0.12),
+    0 8px 22px rgba(77, 64, 43, 0.07);
+}
+
+.dthl-header-search__leading-icon,
+.dthl-header-search__clear:hover {
+  color: #806b48;
+}
+
+.dthl-header-search__clear:hover,
+.dthl-icon-button:hover,
+.dthl-icon-button.is-active,
+.dthl-mobile-menu-button:hover {
+  background: #f5efe4;
+}
+
+.dthl-icon-button:hover,
+.dthl-icon-button.is-active,
+.dthl-mobile-menu-button:hover {
+  border-color: rgba(182, 154, 103, 0.38);
+}
+
+.dthl-login-link:hover,
+.dthl-header-nav-upgrade__link:hover,
+.dthl-header-nav-upgrade__link.is-active,
+.dthl-header-nav__quick-links a:hover {
+  color: #806b48 !important;
+}
+
+.dthl-login-link:hover,
+.dthl-header-nav-upgrade__link:hover {
+  background: #f8f4ec;
+}
+
+.dthl-header-nav-upgrade__link.is-active {
+  background: #f3ecdf;
+  box-shadow: inset 0 -2px 0 #b69a67;
+}
+
+.dthl-header-search__submit,
+.dthl-register-button,
+.dthl-post-button,
+.dthl-mobile-post-button {
+  border-color: #b69a67;
+  background: #b69a67;
+  box-shadow: 0 7px 18px rgba(128, 107, 72, 0.17);
+}
+
+.dthl-header-search__submit:hover:not(:disabled),
+.dthl-register-button:hover,
+.dthl-post-button:hover {
+  background: #a48858;
+  box-shadow: 0 9px 20px rgba(128, 107, 72, 0.22);
+}
+
+.dthl-header-nav__link.is-active::after {
+  background: #b69a67;
+}
+
+/* Footer */
+.site-footer {
+  --footer-green: #b69a67;
+  --footer-bg: #2b2419;
+  --footer-bg-deep: #17130d;
+  --footer-text: rgba(250, 246, 239, 0.82);
+  --footer-muted: rgba(232, 220, 197, 0.68);
+  --footer-border: rgba(182, 154, 103, 0.24);
+
+  background:
+    radial-gradient(circle at 53% 45%, rgba(182, 154, 103, 0.1), transparent 31%),
+    linear-gradient(180deg, #17130d 0%, #2b2419 58%, #33291b 100%);
+}
+
+.site-footer__cta {
+  border-color: rgba(182, 154, 103, 0.26);
+  background:
+    radial-gradient(circle at 86% 48%, rgba(182, 154, 103, 0.15), transparent 32%),
+    linear-gradient(118deg, rgba(69, 56, 37, 0.99), rgba(34, 28, 19, 0.99));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.025);
+}
+
+.site-footer__cta::before,
+.site-footer__cta::after {
+  filter: sepia(0.95) saturate(0.72) hue-rotate(350deg);
+}
+
+.site-footer__cta-icon {
+  border-color: rgba(205, 182, 139, 0.56);
+  color: #fff8ec;
+  background: rgba(182, 154, 103, 0.12);
+}
+
+.site-footer__cta-button {
+  border-color: rgba(219, 198, 157, 0.74);
+  background: linear-gradient(90deg, #8a754f, #b69a67);
+  box-shadow: 0 13px 31px rgba(52, 42, 27, 0.3);
+}
+
+.site-footer__cta-button:hover {
+  border-color: rgba(234, 217, 184, 0.94);
+  background: linear-gradient(90deg, #9b8358, #c5ad7d);
+}
+
+.site-footer__main {
+  border-top-color: rgba(182, 154, 103, 0.3);
+  background:
+    radial-gradient(circle at 51% 14%, rgba(182, 154, 103, 0.08), transparent 31%),
+    linear-gradient(180deg, rgba(52, 43, 29, 0.78), rgba(38, 31, 21, 0.72));
+}
+
+.site-footer__column {
+  border-left-color: rgba(205, 182, 139, 0.14);
+}
+
+.site-footer__feature-links > a {
+  border-color: rgba(205, 182, 139, 0.28);
+  background: rgba(88, 72, 48, 0.25);
+}
+
+.site-footer__feature-links > a:hover {
+  border-color: rgba(205, 182, 139, 0.5);
+  background: rgba(128, 107, 72, 0.34);
+}
+
+.site-footer__operator,
+.site-footer .site-footer__contact-row {
+  border-color: rgba(205, 182, 139, 0.16);
+}
+
+.site-footer__operator-icon,
+.site-footer__contact-icon,
+.site-footer .site-footer__social > a {
+  border-color: rgba(205, 182, 139, 0.22);
+  background: rgba(128, 107, 72, 0.22);
+}
+
+.site-footer .site-footer__social > a:hover {
+  border-color: rgba(205, 182, 139, 0.42);
+  background: rgba(166, 139, 91, 0.34);
+}
+
+.site-footer__column h3 {
+  color: #cdb68b;
+}
+
+.site-footer__column h3::after {
+  background: #b69a67;
+}
+
+.site-footer__bottom {
+  border-top-color: rgba(182, 154, 103, 0.2);
+  background: rgba(23, 19, 13, 0.48);
+}
+
+.site-footer__bottom::before {
+  filter: sepia(0.95) saturate(0.7) hue-rotate(350deg);
+}
+
+.site-footer__back-top {
+  border-color: rgba(182, 154, 103, 0.82);
+  color: #cdb68b;
+  background: rgba(52, 43, 29, 0.82);
+}
+
+.site-footer__back-top:hover {
+  color: #fff;
+  background: rgba(128, 107, 72, 0.82);
+}
+
+.site-footer :is(a, button):focus-visible {
+  outline-color: #d8c49d;
+}
+
+/* Common branded controls using legacy variables */
+:is(
+  .button-primary,
+  .btn-primary,
+  .primary-button,
+  [class*='button--primary']
+) {
+  border-color: #b69a67;
+  background-color: #b69a67;
+}
+
+:is(
+  .button-primary,
+  .btn-primary,
+  .primary-button,
+  [class*='button--primary']
+):hover {
+  border-color: #a48858;
+  background-color: #a48858;
+}
