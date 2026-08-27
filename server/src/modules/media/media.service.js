@@ -7,6 +7,7 @@ import Media from './media.model.js';
 
 import {
   uploadImage as uploadImageToCloudinary,
+  uploadDocument as uploadDocumentToCloudinary,
   deleteCloudinaryAsset,
 } from '../../services/storage.service.js';
 import ApiError from '../../utils/ApiError.js';
@@ -79,6 +80,70 @@ export async function uploadImage(
       publicId: uploaded.publicId,
       resourceType:
         uploaded.resourceType || 'image',
+    }).catch(() => null);
+
+    throw error;
+  }
+}
+
+export async function uploadDocument(
+  user,
+  file,
+  {
+    folder = 'editorial-documents',
+  } = {},
+) {
+  if (!user?._id) {
+    throw new ApiError(
+      401,
+      'Bạn cần đăng nhập để tải tài liệu.',
+      'AUTH_REQUIRED',
+    );
+  }
+
+  if (!file) {
+    throw new ApiError(
+      422,
+      'Chưa chọn tài liệu.',
+      'DOCUMENT_REQUIRED',
+    );
+  }
+
+  const uploaded = await uploadDocumentToCloudinary(file, {
+    folder: normalizeFolder(folder),
+  });
+
+  try {
+    return await Media.create({
+      ownerId: user._id,
+      provider: 'cloudinary',
+      publicId: uploaded.publicId,
+      assetId: uploaded.assetId,
+      url: uploaded.secureUrl,
+      secureUrl: uploaded.secureUrl,
+      resourceType: uploaded.resourceType || 'raw',
+      originalFilename:
+        uploaded.originalFilename || file.originalname,
+      format:
+        uploaded.format ||
+        String(file.originalname || '')
+          .split('.')
+          .pop()
+          ?.toLowerCase() ||
+        null,
+      fileSize: uploaded.bytes || file.size,
+      altText: normalizeText(
+        uploaded.originalFilename || file.originalname,
+        300,
+      ),
+      status: 'active',
+      deletedAt: null,
+    });
+  } catch (error) {
+    await deleteCloudinaryAsset({
+      publicId: uploaded.publicId,
+      resourceType:
+        uploaded.resourceType || 'raw',
     }).catch(() => null);
 
     throw error;
@@ -166,7 +231,7 @@ export async function remove(userId, id) {
   if (usage.inUse) {
     throw new ApiError(
       409,
-      'Ảnh đang được sử dụng trong nội dung nên chưa thể xóa.',
+      'Tệp đang được sử dụng trong nội dung nên chưa thể xóa.',
       'MEDIA_IN_USE',
       usage,
     );
@@ -195,7 +260,7 @@ export async function remove(userId, id) {
       ) {
         throw new ApiError(
           502,
-          'Không thể xóa ảnh trên Cloudinary.',
+          'Không thể xóa tệp trên Cloudinary.',
           'CLOUDINARY_DELETE_FAILED',
         );
       }
