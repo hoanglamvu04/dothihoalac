@@ -4,8 +4,8 @@ import { NOTIFICATION_TYPES } from '../constants/notificationTypes.js';
 
 export async function seedNotifications({ users, articles, community }) {
   const specs = [
-    [users.resident, users.editor, 'new_comment', community['phan-anh-doan-duong-ngap-sau-mua'], 'Có bình luận mới', 'Một thành viên vừa bình luận vào bài phản ánh của bạn.'],
-    [users.student, users.editor, 'post_approved', community['hoi-tuyen-xe-buyt-tu-trung-tam-den-hoa-lac'], 'Bài viết đã được duyệt', 'Bài hỏi đáp của bạn đã được xuất bản.'],
+    [users.resident, users.editor, 'new_comment', community['phan-anh-ngap-sau-mua-ha-bang-27-08'], 'Có bình luận mới', 'Một thành viên vừa bình luận vào bài phản ánh của bạn.'],
+    [users.student, users.editor, 'post_approved', community['hoi-xe-buyt-hoa-lac-trung-tam-27-08'], 'Bài viết đã được duyệt', 'Bài hỏi đáp của bạn đã được xuất bản.'],
     [users.member, users.moderator, 'system_notice', null, 'Chào mừng đến Đô Thị Hòa Lạc', 'Hãy hoàn thiện hồ sơ và xác thực tài khoản để tăng độ tin cậy.'],
     [users.editor, users.chiefEditor, 'new_reaction', articles['tong-quan-quy-hoach-hoa-lac'], 'Bài viết được quan tâm', 'Bài viết quy hoạch đang nhận nhiều tương tác.'],
   ];
