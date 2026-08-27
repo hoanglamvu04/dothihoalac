@@ -155,6 +155,10 @@ function taxonomyCount(item) {
   return Number.isFinite(Number(value)) ? Number(value) : null;
 }
 
+function taxonomyUrlValue(item) {
+  return String(item?.slug || item?._id || item?.id || '');
+}
+
 function popularMedia(item) {
   return item?.thumbnailMediaId || item?.body?.inlineMediaIds?.[0] || null;
 }
@@ -260,7 +264,9 @@ function DiscoveryRail({
                   type="button"
                   key={item._id || item.slug}
                   className={active ? 'is-active' : ''}
-                  onClick={() => onAreaChange(active ? '' : item._id || item.slug)}
+                  onClick={() =>
+                    onAreaChange(active ? '' : taxonomyUrlValue(item))
+                  }
                 >
                   <span className="community-discovery-list__icon">
                     <MapPin size={15} />
@@ -304,7 +310,9 @@ function DiscoveryRail({
                     key={item._id || item.slug}
                     className={active ? 'is-active' : ''}
                     onClick={() =>
-                      onCategoryChange(active ? '' : item._id || item.slug)
+                      onCategoryChange(
+                        active ? '' : taxonomyUrlValue(item),
+                      )
                     }
                   >
                     <span
@@ -481,6 +489,44 @@ export default function CommunityPage() {
       ),
     [areas, currentArea],
   );
+
+  useEffect(() => {
+    const categorySlug = String(selectedCategory?.slug || '');
+    const areaSlug = String(selectedArea?.slug || '');
+    const replaceCategory =
+      Boolean(currentCategory && categorySlug) &&
+      currentCategory !== categorySlug;
+    const replaceArea =
+      Boolean(currentArea && areaSlug) &&
+      currentArea !== areaSlug;
+
+    if (!replaceCategory && !replaceArea) {
+      return;
+    }
+
+    setSearchParams(
+      (current) => {
+        const next = new URLSearchParams(current);
+
+        if (replaceCategory) {
+          next.set('category', categorySlug);
+        }
+
+        if (replaceArea) {
+          next.set('area', areaSlug);
+        }
+
+        return next;
+      },
+      { replace: true },
+    );
+  }, [
+    currentArea,
+    currentCategory,
+    selectedArea?.slug,
+    selectedCategory?.slug,
+    setSearchParams,
+  ]);
 
   const setUrlParams = useCallback(
     (mutator, options = {}) => {
@@ -892,7 +938,12 @@ export default function CommunityPage() {
                     >
                       <option value="">Mọi chủ đề</option>
                       {communityCategories.map((item) => (
-                        <option key={item._id} value={item._id}>{item.name}</option>
+                        <option
+                          key={item._id || item.slug}
+                          value={taxonomyUrlValue(item)}
+                        >
+                          {item.name}
+                        </option>
                       ))}
                     </select>
                   </div>
@@ -908,7 +959,12 @@ export default function CommunityPage() {
                     >
                       <option value="">Mọi khu vực</option>
                       {areas.map((item) => (
-                        <option key={item._id} value={item._id}>{item.name}</option>
+                        <option
+                          key={item._id || item.slug}
+                          value={taxonomyUrlValue(item)}
+                        >
+                          {item.name}
+                        </option>
                       ))}
                     </select>
                   </div>
