@@ -12,8 +12,8 @@ export async function seedInteractions({ users, articles, community, properties,
   const targetContents = [
     articles['tong-quan-quy-hoach-hoa-lac'],
     articles['bay-buoc-chuan-bi-truoc-khi-xay-nha'],
-    community['hoi-tuyen-xe-buyt-tu-trung-tam-den-hoa-lac'],
-    community['phan-anh-doan-duong-ngap-sau-mua'],
+    community['hoi-xe-buyt-hoa-lac-trung-tam-27-08'],
+    community['phan-anh-ngap-sau-mua-ha-bang-27-08'],
     properties['ban-dat-thach-hoa-120m2-duong-o-to']?.content,
   ].filter(Boolean);
 
@@ -117,7 +117,6 @@ export async function seedInteractions({ users, articles, community, properties,
     const reactionCount = await Reaction.countDocuments({ targetType: 'comment', targetId: comment._id });
     await Comment.updateOne({ _id: comment._id }, { reactionCount });
   }
-
 
   const revisedArticle = articles['tong-quan-quy-hoach-hoa-lac'];
   await ContentRevision.findOneAndUpdate(
