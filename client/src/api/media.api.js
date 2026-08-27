@@ -14,6 +14,17 @@ export const mediaApi = {
     );
   },
 
+  uploadDocument: async (file) => {
+    const formData = new FormData();
+
+    formData.append('file', file);
+    formData.append('folder', 'editorial-documents');
+
+    return unwrap(
+      await api.post('/media/documents', formData),
+    );
+  },
+
   remove: async (id) =>
     unwrap(await api.delete(`/media/${id}`)),
 };
