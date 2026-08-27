@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ExternalLink,
@@ -7,6 +7,7 @@ import {
   RefreshCw,
   Search,
   Trash2,
+  Upload,
 } from 'lucide-react';
 
 import Seo from '../../components/common/Seo';
@@ -15,6 +16,7 @@ import Pagination from '../../components/common/Pagination';
 import EmptyState from '../../components/common/EmptyState';
 import { LoadingBlock } from '../../components/common/Loading';
 import { adminApi } from '../../api/admin.api';
+import { importArticleDocument } from '../../api/articleImport.api';
 import { apiErrorMessage } from '../../api/http';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
@@ -37,6 +39,14 @@ const newTabProps = {
   rel: 'noopener noreferrer',
 };
 
+const allowedImportExtensions = new Set([
+  'pdf',
+  'doc',
+  'docx',
+]);
+
+const MAX_IMPORT_SIZE = 25 * 1024 * 1024;
+
 function coverUrl(item) {
   const media = item?.thumbnailMediaId;
   if (!media || typeof media === 'string') return '';
@@ -54,9 +64,18 @@ function hasPermission(user, permission) {
   return Boolean(user?.permissions?.includes(permission));
 }
 
+function importExtension(filename = '') {
+  return String(filename || '')
+    .trim()
+    .toLowerCase()
+    .split('.')
+    .pop() || '';
+}
+
 export default function AdminArticlesPage() {
   const toast = useToast();
   const { user } = useAuth();
+  const importInputRef = useRef(null);
   const [items, setItems] = useState([]);
   const [meta, setMeta] = useState({});
   const [page, setPage] = useState(1);
@@ -68,6 +87,7 @@ export default function AdminArticlesPage() {
   const [publishingId, setPublishingId] = useState('');
   const [selectedIds, setSelectedIds] = useState([]);
   const [deleting, setDeleting] = useState(false);
+  const [importing, setImporting] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
 
   const canCreate = hasPermission(user, 'create_article') || hasPermission(user, 'manage_system');
@@ -136,7 +156,8 @@ export default function AdminArticlesPage() {
       !selectedIds.length ||
       deleting ||
       syncingId ||
-      publishingId
+      publishingId ||
+      importing
     ) {
       return;
     }
@@ -183,7 +204,8 @@ export default function AdminArticlesPage() {
       !item?.article?.googleDocId ||
       syncingId ||
       publishingId ||
-      deleting
+      deleting ||
+      importing
     ) {
       return;
     }
@@ -210,7 +232,8 @@ export default function AdminArticlesPage() {
       !item?.article?.googleDocId ||
       syncingId ||
       publishingId ||
-      deleting
+      deleting ||
+      importing
     ) {
       return;
     }
@@ -245,6 +268,51 @@ export default function AdminArticlesPage() {
     }
   };
 
+  const importDocument = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+
+    if (!file || !canCreate || importing) return;
+
+    if (!allowedImportExtensions.has(importExtension(file.name))) {
+      toast.error('Chỉ hỗ trợ file PDF, DOC hoặc DOCX.');
+      return;
+    }
+
+    if (file.size > MAX_IMPORT_SIZE) {
+      toast.error('Tài liệu không được vượt quá 25 MB.');
+      return;
+    }
+
+    setImporting(true);
+
+    try {
+      const imported = await importArticleDocument(file);
+      const postId = String(imported?.postId || '');
+
+      if (!postId) {
+        throw new Error('Backend chưa trả về ID bài viết vừa nhập.');
+      }
+
+      toast.success('Đã chuyển tài liệu sang Google Docs và tạo bài nháp. Đang đồng bộ nội dung…');
+
+      try {
+        await adminApi.syncGoogleDoc(postId);
+        toast.success('Đã đồng bộ nội dung tài liệu về CMS.');
+      } catch {
+        toast.success('Google Docs đã được tạo. Nếu nội dung chưa kịp đồng bộ, mở bài và bấm “Đồng bộ”.');
+      }
+
+      window.location.assign(
+        `/quan-tri/bai-viet/${encodeURIComponent(postId)}`,
+      );
+    } catch (error) {
+      toast.error(apiErrorMessage(error));
+    } finally {
+      setImporting(false);
+    }
+  };
+
   return (
     <div>
       <Seo title="Quản lý bài viết" />
@@ -254,20 +322,41 @@ export default function AdminArticlesPage() {
           <p className="admin-kicker">Content Studio</p>
           <h1>Bài viết / Tin tức</h1>
           <p>
-            Google Docs là phòng soạn chính. Quyền tạo, sửa, đồng bộ, xuất bản và xóa được hiển thị theo vai trò tòa soạn của tài khoản hiện tại.
+            Google Docs là phòng soạn chính. Có thể tạo bài trống hoặc nhập trực tiếp Word/PDF thành Google Docs rồi đồng bộ về CMS.
           </p>
         </div>
 
-        <div className="admin-row-actions">
+        <div className="admin-row-actions admin-article-create-actions">
           {canCreate ? (
-            <Link
-              className="admin-primary"
-              to="/quan-tri/bai-viet/moi"
-              {...newTabProps}
-            >
-              <FilePlus2 size={15} />
-              Bài mới trên Google Docs ↗
-            </Link>
+            <>
+              <button
+                type="button"
+                className="admin-secondary admin-article-import-button"
+                disabled={importing}
+                onClick={() => importInputRef.current?.click()}
+              >
+                <Upload size={15} />
+                {importing ? 'Đang nhập…' : 'Nhập Word / PDF'}
+              </button>
+
+              <input
+                ref={importInputRef}
+                type="file"
+                hidden
+                accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                onChange={importDocument}
+                disabled={importing}
+              />
+
+              <Link
+                className="admin-primary"
+                to="/quan-tri/bai-viet/moi"
+                {...newTabProps}
+              >
+                <FilePlus2 size={15} />
+                Bài mới trên Google Docs ↗
+              </Link>
+            </>
           ) : null}
         </div>
       </header>
@@ -323,6 +412,7 @@ export default function AdminArticlesPage() {
             disabled={
               !selectedIds.length ||
               deleting ||
+              importing ||
               Boolean(syncingId) ||
               Boolean(publishingId)
             }
@@ -373,7 +463,7 @@ export default function AdminArticlesPage() {
                 const imageUrl = coverUrl(item);
                 const syncing = syncingId === itemId;
                 const publishing = publishingId === itemId;
-                const busy = Boolean(syncingId || publishingId || deleting);
+                const busy = Boolean(syncingId || publishingId || deleting || importing);
                 const selected = selectedIds.includes(itemId);
 
                 return (
