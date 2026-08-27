@@ -1,78 +1,72 @@
 /* =========================================================
-   DTHL EARTH PALETTE — CASCADE GUARD
-   Public page styles are code-split and may be injected after the
-   global theme. Brand interaction colors below intentionally use
-   !important so late-loaded legacy green CSS cannot win the cascade.
-   Semantic danger/warning colors and colors inside content images
-   are intentionally left untouched.
+   DTHL GREEN PRIMARY — CASCADE GUARD
+   Green is the interaction/brand primary. Earth #B69A67 is only a
+   supporting accent. !important is intentional here because several
+   route-level stylesheets are code-split and injected after main.css.
 ========================================================= */
 
-/* =========================
-   HEADER / TAXONOMY NAV
-========================= */
-
+/* Header / taxonomy */
 .dthl-header-nav-upgrade__link:hover,
 .dthl-header-nav-upgrade__item:focus-within > .dthl-header-nav-upgrade__link {
-  color: #806b48 !important;
-  background: #f8f4ec !important;
+  color: #116a32 !important;
+  background: #f6fbf8 !important;
 }
 
 .dthl-header-nav-upgrade__link.is-active {
-  color: #806b48 !important;
-  background: #f3ecdf !important;
-  box-shadow: inset 0 -2px 0 #b69a67 !important;
+  color: #116a32 !important;
+  background: #edf9f1 !important;
+  box-shadow: inset 0 -2px 0 #1fa34b !important;
 }
 
 .dthl-header-nav-upgrade__item:hover .dthl-header-nav-upgrade__chevron,
 .dthl-header-nav-upgrade__item:focus-within .dthl-header-nav-upgrade__chevron {
-  color: #806b48 !important;
+  color: #116a32 !important;
 }
 
 .dthl-header-submenu__root:hover,
 .dthl-header-submenu__root.is-active,
 .dthl-header-submenu__child:hover,
 .dthl-header-submenu__child.is-active {
-  color: #806b48 !important;
-  background: #f5efe4 !important;
+  color: #116a32 !important;
+  background: #edf9f1 !important;
 }
 
 .dthl-header-submenu__root.is-active,
 .dthl-header-submenu__child.is-active {
-  box-shadow: inset 3px 0 0 #b69a67 !important;
+  box-shadow: inset 3px 0 0 #1fa34b !important;
 }
 
-/* =========================
-   NEWS / CATEGORY PAGES
-========================= */
-
+/* News / category pages */
 .news-hub {
-  --news-green: #b69a67 !important;
-  --news-green-dark: #806b48 !important;
-  --news-green-soft: #f5efe4 !important;
-  --news-ink: #2b251b !important;
-  --news-text: #574c3b !important;
-  --news-muted: #817565 !important;
-  --news-border: #e5dcca !important;
+  --news-green: #1fa34b !important;
+  --news-green-dark: #116a32 !important;
+  --news-green-soft: #edf9f1 !important;
+  --news-ink: #10261a !important;
+  --news-text: #405d4e !important;
+  --news-muted: #7a8d82 !important;
+  --news-border: #dce7e0 !important;
 }
 
 .news-masthead__search button,
 .news-stream__continue button,
 .news-hub__empty > button,
 .news-hub__error > button {
-  background: #b69a67 !important;
+  border-color: #1fa34b !important;
+  background: #1fa34b !important;
 }
 
 .news-masthead__search button:not(:disabled):hover,
 .news-stream__continue button:hover,
 .news-hub__empty > button:hover,
 .news-hub__error > button:hover {
-  background: #a48858 !important;
+  border-color: #188a3e !important;
+  background: #188a3e !important;
 }
 
 .news-category-bar nav button:hover,
 .news-category-bar nav button.is-active {
-  color: #806b48 !important;
-  background: #f5efe4 !important;
+  color: #116a32 !important;
+  background: #edf9f1 !important;
 }
 
 .news-filter-toggle:hover,
@@ -83,429 +77,316 @@
 .news-rail-card__head span,
 .news-rail-card__head > a,
 .news-rail-article:hover .news-rail-article__copy strong,
-.news-discussion-list a:hover > span {
-  color: #806b48 !important;
+.news-discussion-list a:hover > span,
+.news-project-item__top span,
+.news-project-item__top b {
+  color: #116a32 !important;
 }
 
 .news-stream__heading,
 .news-rail-card__head,
 .news-context-card .news-rail-card__head {
-  border-bottom-color: #806b48 !important;
-}
-
-.news-discussion-list b {
-  border-color: #d9c7a6 !important;
-  color: #806b48 !important;
-}
-
-.news-project-item__top span,
-.news-project-item__top b {
-  color: #806b48 !important;
+  border-bottom-color: #1fa34b !important;
 }
 
 .news-project-item__progress i {
-  background: #b69a67 !important;
+  background: #1fa34b !important;
 }
 
-.news-rail-article__thumb,
-.news-story__image-fallback {
-  color: #9d907c !important;
-  background: #f4efe6 !important;
+.news-discussion-list b {
+  border-color: #bde7ca !important;
+  color: #116a32 !important;
 }
 
 .news-masthead__search:focus-within,
 .news-filter-panel :is(select, input):focus {
-  border-color: #ccb88e !important;
-  box-shadow: 0 0 0 3px rgba(182, 154, 103, 0.11) !important;
+  border-color: #35b95f !important;
+  box-shadow: 0 0 0 3px rgba(31, 163, 75, 0.11) !important;
 }
 
-/* =========================
-   PROPERTY MARKETPLACE
-========================= */
-
+/* Property marketplace */
 .properties-page {
-  --property-green: #b69a67 !important;
-  --property-green-hover: #a48858 !important;
-  --property-green-dark: #806b48 !important;
-  --property-green-deep: #4d402b !important;
-  --property-green-soft: #f5efe4 !important;
-  --property-green-border: #dfcfb1 !important;
-  --property-ink: #2b251b !important;
-  --property-text: #574c3b !important;
-  --property-muted: #817565 !important;
-  --property-border: #e5dcca !important;
-  --property-background: #faf8f4 !important;
+  --property-green: #1fa34b !important;
+  --property-green-hover: #188a3e !important;
+  --property-green-dark: #116a32 !important;
+  --property-green-deep: #083d20 !important;
+  --property-green-soft: #edf9f1 !important;
+  --property-green-border: #bde7ca !important;
+  --property-ink: #10261a !important;
+  --property-text: #405d4e !important;
+  --property-muted: #7a8d82 !important;
+  --property-border: #dce7e0 !important;
+  --property-background: #f6f9f7 !important;
 }
 
-.properties-primary-button,
 .properties-hero__search > button,
-.properties-filter-toolbar__main b {
-  border-color: #b69a67 !important;
-  background: #b69a67 !important;
+.properties-post-button,
+.properties-page [class*='primary'] {
+  border-color: #1fa34b !important;
+  background-color: #1fa34b !important;
 }
 
-.properties-primary-button:hover,
-.properties-hero__search > button:hover {
-  border-color: #a48858 !important;
-  background: #a48858 !important;
-}
-
-.properties-transaction-rail button:hover,
-.properties-transaction-rail button.is-active,
-.properties-secondary-button,
-.properties-filter-toolbar__sort svg,
-.properties-filter-option-list > button svg {
-  color: #806b48 !important;
-}
-
-.properties-transaction-rail button.is-active {
-  border-bottom-color: #b69a67 !important;
+.properties-hero__search > button:hover,
+.properties-post-button:hover {
+  border-color: #188a3e !important;
+  background-color: #188a3e !important;
 }
 
 .properties-filter-toolbar__main:hover,
 .properties-quick-filter > button:hover,
 .properties-quick-filter > button[aria-expanded='true'],
 .properties-quick-filter > button.is-selected,
-.properties-filter-option-list > button.is-active,
 .properties-popover-presets button:hover,
 .properties-popover-presets button.is-active,
 .properties-modal-preset-grid button:hover,
-.properties-modal-preset-grid button.is-active {
-  border-color: #d9c7a6 !important;
-  color: #806b48 !important;
-  background: #f5efe4 !important;
+.properties-modal-preset-grid button.is-active,
+.properties-filter-option-list > button.is-active {
+  border-color: #bde7ca !important;
+  color: #116a32 !important;
+  background: #edf9f1 !important;
+}
+
+.properties-filter-option-list > button svg,
+.properties-filter-toolbar__sort svg {
+  color: #116a32 !important;
 }
 
 .properties-hero__search > label:focus-within,
 .properties-popover-range-inputs input:focus {
-  border-color: #ccb88e !important;
-  box-shadow: 0 0 0 3px rgba(182, 154, 103, 0.12) !important;
+  border-color: #35b95f !important;
+  box-shadow: 0 0 0 3px rgba(31, 163, 75, 0.12) !important;
 }
 
-/* =========================
-   COMMUNITY
-========================= */
-
+/* Community */
 .community-social-page {
-  --community-green: #b69a67 !important;
-  --community-green-hover: #a48858 !important;
-  --community-green-dark: #806b48 !important;
-  --community-green-soft: #f5efe4 !important;
-  --community-ink: #2b251b !important;
-  --community-text: #574c3b !important;
-  --community-muted: #817565 !important;
-  --community-border: #e5dcca !important;
-  --community-border-soft: #f0eadf !important;
-  --community-bg: #faf8f4 !important;
-  --community-shadow: 0 3px 14px rgba(77, 64, 43, 0.045) !important;
+  --community-green: #1fa34b !important;
+  --community-green-hover: #188a3e !important;
+  --community-green-dark: #116a32 !important;
+  --community-green-soft: #edf9f1 !important;
+  --community-ink: #14251b !important;
+  --community-text: #506057 !important;
+  --community-muted: #7c8981 !important;
+  --community-border: #e0e7e3 !important;
+  --community-border-soft: #edf1ef !important;
+  --community-bg: #f7f8f7 !important;
 }
 
 .community-reference-card h2,
-.community-discovery-section h3 {
-  color: #3d3323 !important;
+.community-discovery-list button:hover,
+.community-discovery-list button.is-active,
+.community-discovery-more:hover,
+.community-popular-item:hover strong,
+.community-social-filter-drawer__icon,
+.community-reference-filter-trigger:hover {
+  color: #116a32 !important;
 }
 
 .community-discovery-list button:hover,
-.community-discovery-list button.is-active {
-  color: #806b48 !important;
-  background: #f5efe4 !important;
-}
-
-.community-discovery-list__icon {
-  color: #806b48 !important;
-  background: #f3ecdf !important;
-}
-
+.community-discovery-list button.is-active,
 .community-discovery-more:hover,
 .community-reference-filter-trigger:hover,
-.community-popular-item:hover strong {
-  color: #806b48 !important;
-  background-color: #f8f4ec !important;
+.community-social-empty > span {
+  background: #edf9f1 !important;
+}
+
+.community-discovery-list__icon,
+.community-reference-composer__actions > a svg,
+.community-rules-card li svg {
+  color: #1fa34b !important;
 }
 
 .community-reference-composer__top:hover .community-reference-composer__prompt,
-.community-reference-composer__actions > a:hover {
-  border-color: #ddcfb4 !important;
-  background: #fdfaf5 !important;
+.community-reference-composer__actions > a:hover,
+.community-reference-filter-trigger:hover {
+  border-color: #bde7ca !important;
 }
 
-.community-reference-composer__actions > a svg {
-  color: #806b48 !important;
+.community-reference-composer__actions > a:hover {
+  color: #116a32 !important;
+  background: #f6fbf8 !important;
 }
 
 .community-reference-composer__actions > .community-reference-composer__submit,
-.community-join-card__actions a,
+.community-join-card__actions a:first-child,
 .community-social-filter-search button,
-.community-social-filter-drawer__actions button:last-child {
-  border-color: #806b48 !important;
+.community-social-filter-drawer__actions button:last-child,
+.community-social-empty > a,
+.community-social-empty > button {
+  border-color: #116a32 !important;
+  background: #116a32 !important;
   color: #fff !important;
-  background: #806b48 !important;
 }
 
 .community-reference-composer__actions > .community-reference-composer__submit:hover,
-.community-join-card__actions a:hover,
+.community-join-card__actions a:first-child:hover,
 .community-social-filter-search button:hover,
 .community-social-filter-drawer__actions button:last-child:hover {
-  border-color: #4d402b !important;
-  background: #4d402b !important;
-}
-
-.community-join-card__actions a + a {
-  color: #806b48 !important;
-  background: #fff !important;
+  border-color: #083d20 !important;
+  background: #083d20 !important;
 }
 
 .community-reference-feed-tabs nav button:hover,
 .community-reference-feed-tabs nav button.is-active {
-  border-color: #b69a67 !important;
+  border-color: #1fa34b !important;
   color: #fff !important;
-  background: #b69a67 !important;
+  background: #1fa34b !important;
 }
 
-.community-reference-filter-trigger:hover {
-  border-color: #d9c7a6 !important;
+.community-reference-filter-trigger strong,
+.community-feed-card__stats b {
+  background: #1fa34b !important;
+}
+
+.community-join-card__actions a + a {
+  border-color: #1fa34b !important;
+  color: #116a32 !important;
+  background: #fff !important;
+}
+
+.community-rules-card > a,
+.community-feed-action.is-active,
+.community-feed-comment-box button {
+  color: #116a32 !important;
+}
+
+.community-feed-media__item:focus-visible {
+  box-shadow: inset 0 0 0 3px #35b95f !important;
+}
+
+.community-feed-action:hover,
+.community-feed-reaction-picker button:hover,
+.community-feed-reaction-picker button.is-active,
+.community-feed-comment-box button:hover {
+  background: #edf9f1 !important;
+}
+
+/* Earth is secondary: use it on neutral social type/status chips only */
+.community-feed-card__type {
   color: #806b48 !important;
   background: #f8f4ec !important;
 }
 
-.community-reference-filter-trigger strong {
-  background: #b69a67 !important;
+/* Jobs */
+.jobs-page,
+.jobs-marketplace-page {
+  --jobs-green: #1fa34b !important;
+  --jobs-green-hover: #188a3e !important;
+  --jobs-green-dark: #116a32 !important;
+  --jobs-green-deep: #083d20 !important;
+  --jobs-green-soft: #edf9f1 !important;
+  --jobs-green-border: #bde7ca !important;
 }
 
-.community-reference-active-filters button {
-  border-color: #e1d5bf !important;
-  color: #6a593e !important;
-  background: #faf6ef !important;
+.jobs-page :is(button, a).is-active,
+.jobs-marketplace-page :is(button, a).is-active {
+  color: #116a32 !important;
 }
 
-.community-popular-item__media {
-  color: #806b48 !important;
-  background: #f3ecdf !important;
+/* Article detail */
+.article-view-page {
+  --article-green: #1fa34b !important;
+  --article-green-dark: #116a32 !important;
+  --article-green-soft: #edf9f1 !important;
 }
 
-.community-rules-card li svg,
-.community-rules-card > a {
-  color: #806b48 !important;
+.article-view-page :is(a, button):focus-visible {
+  outline-color: #35b95f !important;
 }
 
-.community-social-filter-overlay {
-  background: rgba(43, 36, 25, 0.38) !important;
-}
-
-.community-social-filter-drawer,
-.community-card--social {
-  box-shadow: 0 8px 28px rgba(77, 64, 43, 0.06) !important;
-}
-
-.community-feed-card__type {
-  color: #6a593e !important;
-  background: #f3ecdf !important;
-}
-
-.community-feed-card__stats b {
-  background: #b69a67 !important;
-}
-
-.community-feed-action.is-active,
-.community-feed-comment-box button {
-  color: #806b48 !important;
-}
-
-.community-feed-media__item:focus-visible {
-  box-shadow: inset 0 0 0 3px #b69a67 !important;
-}
-
-.community-feed-reaction-picker button:hover,
-.community-feed-reaction-picker button.is-active,
-.community-feed-comment-box button:hover {
-  background: #f5efe4 !important;
-}
-
-/* =========================
-   JOBS
-========================= */
-
-.jobs-page {
-  --jobs-green: #b69a67 !important;
-  --jobs-green-hover: #a48858 !important;
-  --jobs-green-dark: #806b48 !important;
-  --jobs-green-soft: #f5efe4 !important;
-  --jobs-green-soft-strong: #e8dcc5 !important;
-  --jobs-ink: #2b251b !important;
-  --jobs-text: #574c3b !important;
-  --jobs-muted: #817565 !important;
-  --jobs-border: #e5dcca !important;
-  --jobs-border-soft: #f0eadf !important;
-  --jobs-background: #faf8f4 !important;
-  --jobs-shadow: 0 10px 32px rgba(77, 64, 43, 0.08) !important;
-  --jobs-shadow-soft: 0 4px 16px rgba(77, 64, 43, 0.05) !important;
-}
-
-.jobs-market-search > button {
-  background: linear-gradient(135deg, #b69a67, #806b48) !important;
-  box-shadow: 0 10px 24px rgba(128, 107, 72, 0.2) !important;
-}
-
-.jobs-market-search > button:hover {
-  box-shadow: 0 14px 28px rgba(128, 107, 72, 0.26) !important;
-}
-
-.jobs-discovery__grid > button:hover,
-.jobs-discovery__grid > button.is-active {
-  border-color: #d4c099 !important;
-  box-shadow: 0 9px 24px rgba(77, 64, 43, 0.08) !important;
-}
-
-/* =========================
-   AUTH — LOGIN / REGISTER /
-   FORGOT / RESET PASSWORD
-========================= */
-
+/* Auth: login / register / forgot / reset */
 .dthl-login-page {
-  --dthl-login-green: #b69a67 !important;
-  --dthl-login-green-hover: #a48858 !important;
-  --dthl-login-green-dark: #806b48 !important;
-  --dthl-login-green-deep: #4d402b !important;
-  --dthl-login-green-soft: #f5efe4 !important;
-  --dthl-login-green-border: #dfcfb1 !important;
-  --dthl-login-ink: #2b251b !important;
-  --dthl-login-text: #574c3b !important;
-  --dthl-login-muted: #817565 !important;
-  --dthl-login-border: #e5dcca !important;
-  --dthl-login-background: #faf7f1 !important;
-  background:
-    radial-gradient(circle at 8% 8%, rgba(182, 154, 103, 0.12), transparent 28%),
-    radial-gradient(circle at 93% 92%, rgba(128, 107, 72, 0.09), transparent 30%),
-    #faf7f1 !important;
+  --dthl-login-green: #1fa34b !important;
+  --dthl-login-green-hover: #188a3e !important;
+  --dthl-login-green-dark: #116a32 !important;
+  --dthl-login-green-deep: #083d20 !important;
+  --dthl-login-green-soft: #edf9f1 !important;
+  --dthl-login-green-border: #bde7ca !important;
 }
 
 .dthl-register-page {
-  --dthl-register-green: #b69a67 !important;
-  --dthl-register-green-hover: #a48858 !important;
-  --dthl-register-green-dark: #806b48 !important;
-  --dthl-register-green-deep: #4d402b !important;
-  --dthl-register-green-soft: #f5efe4 !important;
-  --dthl-register-green-border: #dfcfb1 !important;
-  --dthl-register-ink: #2b251b !important;
-  --dthl-register-text: #574c3b !important;
-  --dthl-register-muted: #817565 !important;
-  --dthl-register-border: #e5dcca !important;
-  --dthl-register-background: #faf7f1 !important;
-  background:
-    radial-gradient(circle at 8% 8%, rgba(182, 154, 103, 0.12), transparent 28%),
-    radial-gradient(circle at 93% 92%, rgba(128, 107, 72, 0.09), transparent 30%),
-    #faf7f1 !important;
+  --dthl-register-green: #1fa34b !important;
+  --dthl-register-green-hover: #188a3e !important;
+  --dthl-register-green-dark: #116a32 !important;
+  --dthl-register-green-deep: #083d20 !important;
+  --dthl-register-green-soft: #edf9f1 !important;
+  --dthl-register-green-border: #bde7ca !important;
 }
 
 .dthl-forgot-page {
-  --dthl-forgot-green: #b69a67 !important;
-  --dthl-forgot-green-hover: #a48858 !important;
-  --dthl-forgot-green-dark: #806b48 !important;
-  --dthl-forgot-green-deep: #4d402b !important;
-  --dthl-forgot-green-soft: #f5efe4 !important;
-  --dthl-forgot-green-border: #dfcfb1 !important;
-  --dthl-forgot-ink: #2b251b !important;
-  --dthl-forgot-text: #574c3b !important;
-  --dthl-forgot-muted: #817565 !important;
-  --dthl-forgot-border: #e5dcca !important;
-  --dthl-forgot-background: #faf7f1 !important;
-  background:
-    radial-gradient(circle at 8% 8%, rgba(182, 154, 103, 0.12), transparent 28%),
-    radial-gradient(circle at 93% 92%, rgba(128, 107, 72, 0.09), transparent 30%),
-    #faf7f1 !important;
+  --dthl-forgot-green: #1fa34b !important;
+  --dthl-forgot-green-hover: #188a3e !important;
+  --dthl-forgot-green-dark: #116a32 !important;
+  --dthl-forgot-green-deep: #083d20 !important;
+  --dthl-forgot-green-soft: #edf9f1 !important;
+  --dthl-forgot-green-border: #bde7ca !important;
 }
 
 .dthl-reset-page {
-  --dthl-reset-green: #b69a67 !important;
-  --dthl-reset-green-hover: #a48858 !important;
-  --dthl-reset-green-dark: #806b48 !important;
-  --dthl-reset-green-deep: #4d402b !important;
-  --dthl-reset-green-soft: #f5efe4 !important;
-  --dthl-reset-green-border: #dfcfb1 !important;
-  --dthl-reset-ink: #2b251b !important;
-  --dthl-reset-text: #574c3b !important;
-  --dthl-reset-muted: #817565 !important;
-  --dthl-reset-border: #e5dcca !important;
-  --dthl-reset-background: #faf7f1 !important;
-  background:
-    radial-gradient(circle at 8% 8%, rgba(182, 154, 103, 0.12), transparent 28%),
-    radial-gradient(circle at 93% 92%, rgba(128, 107, 72, 0.09), transparent 30%),
-    #faf7f1 !important;
+  --dthl-reset-green: #1fa34b !important;
+  --dthl-reset-green-hover: #188a3e !important;
+  --dthl-reset-green-dark: #116a32 !important;
+  --dthl-reset-green-deep: #083d20 !important;
+  --dthl-reset-green-soft: #edf9f1 !important;
+  --dthl-reset-green-border: #bde7ca !important;
 }
 
-:is(.dthl-login-shell, .dthl-register-shell, .dthl-forgot-shell, .dthl-reset-shell) {
-  border-color: rgba(128, 107, 72, 0.16) !important;
-  box-shadow:
-    0 30px 80px rgba(77, 64, 43, 0.13),
-    0 5px 18px rgba(77, 64, 43, 0.06) !important;
+.dthl-login-intro,
+.dthl-register-intro,
+.dthl-forgot-intro,
+.dthl-reset-intro {
+  background: linear-gradient(150deg, #062f18 0%, #083d20 48%, #0f6e35 100%) !important;
 }
 
-:is(.dthl-login-intro, .dthl-register-intro, .dthl-forgot-intro, .dthl-reset-intro) {
-  background: linear-gradient(150deg, #2b2419 0%, #4d402b 50%, #806b48 100%) !important;
+.dthl-login-intro__heading h1 em,
+.dthl-register-intro__heading h1 em,
+.dthl-forgot-intro__heading h1 em,
+.dthl-reset-intro__heading h1 em {
+  color: #8ee2a9 !important;
 }
 
-:is(.dthl-login-intro, .dthl-register-intro, .dthl-forgot-intro, .dthl-reset-intro)::after {
-  background: radial-gradient(circle, rgba(205, 182, 139, 0.3), rgba(205, 182, 139, 0)) !important;
+.dthl-login-brand small,
+.dthl-register-brand small,
+.dthl-forgot-brand small,
+.dthl-reset-brand small,
+.dthl-login-eyebrow,
+.dthl-register-eyebrow,
+.dthl-forgot-eyebrow,
+.dthl-reset-eyebrow {
+  color: #a9e8bd !important;
 }
 
-:is(.dthl-login-brand small, .dthl-register-brand small, .dthl-forgot-brand small, .dthl-reset-brand small),
-:is(.dthl-login-eyebrow, .dthl-register-eyebrow, .dthl-forgot-eyebrow, .dthl-reset-eyebrow) {
-  color: #dfcda9 !important;
+.dthl-login-benefits > div > span,
+.dthl-register-benefits > div > span,
+.dthl-forgot-benefits > div > span,
+.dthl-reset-benefits > div > span {
+  background: rgba(73, 211, 116, 0.24) !important;
 }
 
-:is(
-  .dthl-login-intro__heading h1 em,
-  .dthl-register-intro__heading h1 em,
-  .dthl-forgot-intro__heading h1 em,
-  .dthl-reset-intro__heading h1 em
-) {
-  color: #d8bf8f !important;
+.dthl-login-input:focus-within,
+.dthl-register-input:focus-within,
+.dthl-forgot-input:focus-within,
+.dthl-reset-input:focus-within {
+  border-color: #1fa34b !important;
+  box-shadow: 0 0 0 4px rgba(31, 163, 75, 0.11), 0 8px 22px rgba(31, 163, 75, 0.06) !important;
 }
 
-:is(
-  .dthl-login-benefits > div > span,
-  .dthl-register-benefits > div > span,
-  .dthl-forgot-benefits > div > span,
-  .dthl-reset-benefits > div > span
-) {
-  background: rgba(182, 154, 103, 0.3) !important;
+.dthl-login-submit,
+.dthl-register-submit,
+.dthl-forgot-submit,
+.dthl-reset-submit {
+  background: linear-gradient(135deg, #1fa34b, #188a3e) !important;
+  box-shadow: 0 12px 27px rgba(31, 163, 75, 0.24) !important;
 }
 
-:is(.dthl-login-form-side, .dthl-register-form-side, .dthl-forgot-form-side, .dthl-reset-form-side) {
-  background: linear-gradient(180deg, #fff, #fdfaf5) !important;
+.dthl-login-submit:hover:not(:disabled),
+.dthl-register-submit:hover:not(:disabled),
+.dthl-forgot-submit:hover:not(:disabled),
+.dthl-reset-submit:hover:not(:disabled) {
+  background: linear-gradient(135deg, #188a3e, #116a32) !important;
+  box-shadow: 0 15px 32px rgba(31, 163, 75, 0.28) !important;
 }
 
-:is(.dthl-login-input, .dthl-register-input, .dthl-forgot-input, .dthl-reset-input):focus-within {
-  border-color: #b69a67 !important;
-  box-shadow:
-    0 0 0 4px rgba(182, 154, 103, 0.13),
-    0 8px 22px rgba(77, 64, 43, 0.07) !important;
-}
-
-:is(.dthl-login-submit, .dthl-register-submit, .dthl-forgot-submit, .dthl-reset-submit) {
-  background: linear-gradient(135deg, #b69a67, #806b48) !important;
-  box-shadow: 0 12px 27px rgba(128, 107, 72, 0.26) !important;
-}
-
-:is(.dthl-login-submit, .dthl-register-submit, .dthl-forgot-submit, .dthl-reset-submit):hover:not(:disabled) {
-  box-shadow: 0 15px 32px rgba(128, 107, 72, 0.31) !important;
-}
-
-.dthl-login-remember input:focus-visible + .dthl-login-checkbox,
-.dthl-register-remember input:focus-visible + .dthl-register-checkbox {
-  box-shadow: 0 0 0 4px rgba(182, 154, 103, 0.14) !important;
-}
-
-/* Keep keyboard focus on-brand across public/auth controls. */
-:is(
-  .news-hub,
-  .properties-page,
-  .community-social-page,
-  .jobs-page,
-  .dthl-login-page,
-  .dthl-register-page,
-  .dthl-forgot-page,
-  .dthl-reset-page
-) :is(a, button, input, select, textarea):focus-visible {
-  outline-color: #b69a67 !important;
+/* Small earth accent on non-action auth branding only */
+:is(.dthl-login-brand__mark, .dthl-register-brand__mark, .dthl-forgot-brand__mark, .dthl-reset-brand__mark) {
+  border-color: rgba(182, 154, 103, 0.34) !important;
 }
