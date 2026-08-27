@@ -17,6 +17,24 @@ export async function uploadMedia(req, res) {
   });
 }
 
+export async function uploadDocument(req, res) {
+  const media = await mediaService.uploadDocument(
+    req.user,
+    req.file,
+    {
+      folder:
+        req.body?.folder ||
+        'editorial-documents',
+    },
+  );
+
+  return res.status(201).json({
+    success: true,
+    message: 'Tải tài liệu thành công.',
+    data: media,
+  });
+}
+
 export async function listOwnMedia(req, res) {
   const items = await mediaService.listOwn(
     req.user._id,
@@ -36,7 +54,7 @@ export async function deleteMedia(req, res) {
 
   return res.json({
     success: true,
-    message: 'Đã xóa ảnh.',
+    message: 'Đã xóa tệp.',
     data: media,
   });
 }
