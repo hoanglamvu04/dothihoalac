@@ -13,7 +13,6 @@ import { seedAdmin } from './seedAdmin.js';
 import { seedUsers } from './seedUsers.js';
 import { seedMedia } from './seedMedia.js';
 import { seedCommunityPosts } from './seedCommunityPosts.js';
-import { seedCommunityFeed } from './seedCommunityFeed.js';
 
 async function run() {
   const dnsServers = configureDnsServers();
@@ -33,15 +32,7 @@ async function run() {
   const users = await seedUsers({ areas, adminUser });
   const media = await seedMedia({ users });
 
-  const baseCommunity = await seedCommunityPosts({
-    users,
-    categories,
-    areas,
-    tags,
-    media,
-  });
-
-  const extendedCommunity = await seedCommunityFeed({
+  const community = await seedCommunityPosts({
     users,
     categories,
     areas,
@@ -51,8 +42,8 @@ async function run() {
 
   logger.info(
     {
-      baseCount: Object.keys(baseCommunity || {}).length,
-      extendedCount: Object.keys(extendedCommunity || {}).length,
+      count: Object.keys(community || {}).length,
+      slugs: Object.keys(community || {}),
     },
     'Community seed completed',
   );
