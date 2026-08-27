@@ -22,6 +22,14 @@ function removeExtension(filename = '') {
   return path.parse(filename).name || 'media';
 }
 
+function safeExtension(filename = '') {
+  const extension = path.extname(filename).toLowerCase();
+
+  return /^\.[a-z0-9]{1,8}$/.test(extension)
+    ? extension
+    : '';
+}
+
 function createPublicId(originalName = 'media') {
   const filenameWithoutExtension =
     removeExtension(originalName);
@@ -30,6 +38,10 @@ function createPublicId(originalName = 'media') {
     sanitizeFolderPart(filenameWithoutExtension) || 'media';
 
   return `${safeName}-${crypto.randomUUID()}`;
+}
+
+function createRawPublicId(originalName = 'document') {
+  return `${createPublicId(originalName)}${safeExtension(originalName)}`;
 }
 
 function buildTargetFolder(folder = 'general') {
@@ -168,6 +180,47 @@ export async function uploadMultipleImages(
   return Promise.all(
     files.map((file) => uploadImage(file, options)),
   );
+}
+
+export async function uploadDocument(
+  file,
+  {
+    folder = 'documents',
+  } = {},
+) {
+  if (!file?.buffer) {
+    throw new Error(
+      'Không tìm thấy dữ liệu tài liệu để tải lên.',
+    );
+  }
+
+  const result = await uploadBuffer({
+    buffer: file.buffer,
+    folder: buildTargetFolder(folder),
+    publicId: createRawPublicId(file.originalname),
+    resourceType: 'raw',
+  });
+
+  return {
+    provider: 'cloudinary',
+
+    publicId: result.public_id,
+    assetId: result.asset_id,
+
+    url: result.secure_url,
+    secureUrl: result.secure_url,
+
+    resourceType: result.resource_type || 'raw',
+    format:
+      result.format ||
+      safeExtension(file.originalname).replace(/^\./, '') ||
+      null,
+
+    bytes: result.bytes,
+
+    originalFilename: file.originalname,
+    originalMimeType: file.mimetype,
+  };
 }
 
 export async function uploadVideo(
