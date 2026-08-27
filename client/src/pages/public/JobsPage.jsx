@@ -161,6 +161,10 @@ function findTaxonomyItem(items, value) {
   );
 }
 
+function taxonomyUrlValue(item) {
+  return String(item?.slug || item?._id || item?.id || '');
+}
+
 function buildCompanies(items) {
   const companies = new Map();
 
@@ -230,6 +234,23 @@ export default function JobsPage() {
     () => findTaxonomyItem(areas, currentArea),
     [areas, currentArea],
   );
+
+  useEffect(() => {
+    const areaSlug = String(selectedArea?.slug || '');
+
+    if (!currentArea || !areaSlug || currentArea === areaSlug) {
+      return;
+    }
+
+    setSearchParams(
+      (current) => {
+        const next = new URLSearchParams(current);
+        next.set('area', areaSlug);
+        return next;
+      },
+      { replace: true },
+    );
+  }, [currentArea, selectedArea?.slug, setSearchParams]);
 
   const currentSortOption =
     SORT_OPTIONS.find((item) => item.value === currentSort) ||
@@ -473,7 +494,10 @@ export default function JobsPage() {
             >
               <option value="">Hòa Lạc và khu vực</option>
               {areas.map((item) => (
-                <option key={item._id} value={item._id}>
+                <option
+                  key={item._id || item.slug}
+                  value={taxonomyUrlValue(item)}
+                >
                   {item.name}
                 </option>
               ))}
@@ -939,7 +963,10 @@ export default function JobsPage() {
                         >
                           <option value="">Tất cả khu vực</option>
                           {areas.map((item) => (
-                            <option key={item._id} value={item._id}>
+                            <option
+                              key={item._id || item.slug}
+                              value={taxonomyUrlValue(item)}
+                            >
                               {item.name}
                             </option>
                           ))}
