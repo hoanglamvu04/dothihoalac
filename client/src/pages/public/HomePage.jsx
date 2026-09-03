@@ -1,6 +1,7 @@
 import {
   useCallback,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 import { Link } from 'react-router-dom';
@@ -56,6 +57,16 @@ const INITIAL_LOADING = {
   jobs: true,
 };
 
+const RESOLVED_LOADING = {
+  articles: false,
+  community: false,
+  properties: false,
+  jobs: false,
+};
+
+const HOME_FEED_CACHE_KEY = 'dthl:home-feed:v2';
+const HOME_FEED_CACHE_MAX_AGE_MS = 10 * 60 * 1000;
+
 const MOBILE_SHORTCUTS = [
   {
     to: '/tin-tuc',
@@ -96,6 +107,54 @@ function normalizeHomeFeed(value) {
     properties: Array.isArray(value?.properties) ? value.properties : [],
     jobs: Array.isArray(value?.jobs) ? value.jobs : [],
   };
+}
+
+function hasHomeFeedData(value) {
+  return Boolean(
+    value?.articles?.length ||
+    value?.community?.length ||
+    value?.properties?.length ||
+    value?.jobs?.length,
+  );
+}
+
+function readHomeFeedCache() {
+  if (typeof window === 'undefined') return null;
+
+  try {
+    const raw = window.localStorage.getItem(HOME_FEED_CACHE_KEY);
+    if (!raw) return null;
+
+    const parsed = JSON.parse(raw);
+    const savedAt = Number(parsed?.savedAt || 0);
+
+    if (!savedAt || Date.now() - savedAt > HOME_FEED_CACHE_MAX_AGE_MS) {
+      window.localStorage.removeItem(HOME_FEED_CACHE_KEY);
+      return null;
+    }
+
+    const normalized = normalizeHomeFeed(parsed?.data);
+    return hasHomeFeedData(normalized) ? normalized : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeHomeFeedCache(value) {
+  if (typeof window === 'undefined') return;
+
+  try {
+    window.localStorage.setItem(
+      HOME_FEED_CACHE_KEY,
+      JSON.stringify({
+        savedAt: Date.now(),
+        data: value,
+      }),
+    );
+  } catch {
+    // Storage can be unavailable in private/restricted browsing. Rendering
+    // should continue normally even when the cache cannot be persisted.
+  }
 }
 
 function isCanceled(error) {
@@ -170,28 +229,49 @@ function MobileQuickNav() {
 }
 
 export default function HomePage() {
-  const [data, setData] = useState(INITIAL_DATA);
+  const [cachedFeedAtMount] = useState(() => readHomeFeedCache());
+  const [data, setData] = useState(() => cachedFeedAtMount || INITIAL_DATA);
   const [errors, setErrors] = useState(INITIAL_ERRORS);
-  const [loading, setLoading] = useState(INITIAL_LOADING);
+  const [loading, setLoading] = useState(() =>
+    hasHomeFeedData(cachedFeedAtMount) ? RESOLVED_LOADING : INITIAL_LOADING,
+  );
   const [reloadKey, setReloadKey] = useState(0);
+  const dataRef = useRef(data);
+  dataRef.current = data;
 
   useEffect(() => {
     let active = true;
     const controller = new AbortController();
+    const alreadyHasContent = hasHomeFeedData(dataRef.current);
 
-    setLoading(INITIAL_LOADING);
+    // Cached content stays visible while the network refresh happens. The
+    // skeleton is only needed for a genuinely cold first visit.
+    if (!alreadyHasContent) {
+      setLoading(INITIAL_LOADING);
+    }
     setErrors(INITIAL_ERRORS);
 
     systemApi
       .homeFeed({ signal: controller.signal })
       .then((response) => {
         if (!active) return;
-        setData(normalizeHomeFeed(response));
+
+        const nextData = normalizeHomeFeed(response);
+        dataRef.current = nextData;
+        setData(nextData);
+        writeHomeFeedCache(nextData);
         setErrors(INITIAL_ERRORS);
       })
       .catch((error) => {
         if (!active || isCanceled(error)) return;
-        setData(INITIAL_DATA);
+
+        // A transient refresh failure should never replace usable cached data
+        // with an empty screen.
+        if (!hasHomeFeedData(dataRef.current)) {
+          dataRef.current = INITIAL_DATA;
+          setData(INITIAL_DATA);
+        }
+
         setErrors({
           articles: true,
           community: true,
@@ -201,12 +281,7 @@ export default function HomePage() {
       })
       .finally(() => {
         if (!active) return;
-        setLoading({
-          articles: false,
-          community: false,
-          properties: false,
-          jobs: false,
-        });
+        setLoading(RESOLVED_LOADING);
       });
 
     return () => {
