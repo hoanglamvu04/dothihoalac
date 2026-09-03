@@ -20,7 +20,6 @@ import {
   RotateCcw,
   Save,
   Send,
-  SlidersHorizontal,
   Tag,
   UsersRound,
   X,
