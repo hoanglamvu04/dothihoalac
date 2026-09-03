@@ -8,6 +8,7 @@ import { apiErrorMessage } from '../../api/http';
 import { editorBasePath } from '../../utils/content';
 
 const createTasks = new Map();
+const COMMUNITY_CREATE_ROUTE = '/cong-dong/create';
 
 function sharedCreate(contentType) {
   if (!createTasks.has(contentType)) {
@@ -36,12 +37,13 @@ export default function ContentStudioEntryPage({ contentType }) {
 
   useEffect(() => {
     if (contentType === 'community') {
-      navigate('/cong-dong', { replace: true });
-      window.setTimeout(() => {
-        window.dispatchEvent(
-          new CustomEvent('dthl:open-community-composer'),
-        );
-      }, 0);
+      navigate('/cong-dong', {
+        replace: true,
+        state: {
+          communityComposerRoute: COMMUNITY_CREATE_ROUTE,
+          communityComposerEditId: '',
+        },
+      });
       return undefined;
     }
 
