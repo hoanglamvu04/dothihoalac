@@ -5,11 +5,25 @@ import DeferredSiteFooter from './DeferredSiteFooter';
 import MobileBottomNav from './MobileBottomNav';
 import DeferredCommunityQuickComposer from '../community/DeferredCommunityQuickComposer';
 import AdSlot from '../ads/AdSlot';
+import {
+  articleApi,
+  communityApi,
+  jobApi,
+  propertyApi,
+} from '../../api/content.api';
+import { prefetchListPage } from '../../hooks/useListPage';
 
 import './PublicInteractionFixes.css';
 
 const PrimaryNavigation = lazy(() => import('./PrimaryNavigation'));
 const CommunityAdRails = lazy(() => import('../community/CommunityAdRails'));
+
+const CORE_PUBLIC_ROUTE_IMPORTS = [
+  () => import('../../pages/public/ArticlesPage'),
+  () => import('../../pages/public/CommunityPage'),
+  () => import('../../pages/public/PropertiesPage'),
+  () => import('../../pages/public/JobsPage'),
+];
 
 function pageTopAdSlot(pathname) {
   if (pathname === '/tin-tuc') return 'news_top';
@@ -86,6 +100,20 @@ function showMobileBottomNavigation(pathname) {
   );
 }
 
+function shouldSkipBackgroundPrefetch() {
+  if (typeof navigator === 'undefined') return false;
+
+  const connection =
+    navigator.connection ||
+    navigator.mozConnection ||
+    navigator.webkitConnection;
+
+  if (!connection) return false;
+  if (connection.saveData) return true;
+
+  return ['slow-2g', '2g'].includes(connection.effectiveType);
+}
+
 function DeferredHeaderNavigation() {
   const [ready, setReady] = useState(false);
 
@@ -134,6 +162,54 @@ export default function PublicLayout() {
   useEffect(() => {
     void loadRouteStyles(normalizedPath).catch(() => {});
   }, [normalizedPath]);
+
+  useEffect(() => {
+    if (authRoute || shouldSkipBackgroundPrefetch()) return undefined;
+
+    let idleId = null;
+    let delayId = null;
+    let canceled = false;
+
+    const warmCoreTabs = () => {
+      if (canceled) return;
+
+      // Warm route chunks + route-specific CSS so React.lazy/Suspense does not
+      // flash PageLoading when the user taps another primary public tab.
+      CORE_PUBLIC_ROUTE_IMPORTS.forEach((loadModule) => {
+        void loadModule().catch(() => {});
+      });
+      void loadRouteStyles('/tin-tuc').catch(() => {});
+      void loadRouteStyles('/cong-dong').catch(() => {});
+
+      // Warm default list data. useListPage keeps this stale-while-revalidate,
+      // so tab navigation can paint cached cards immediately and update later.
+      void Promise.allSettled([
+        prefetchListPage(articleApi.list, { limit: 12 }),
+        prefetchListPage(communityApi.list, {}),
+        prefetchListPage(communityApi.list, { sort: 'popular', limit: 5 }),
+        prefetchListPage(propertyApi.list, {}),
+        prefetchListPage(jobApi.list, {}),
+      ]);
+    };
+
+    delayId = window.setTimeout(() => {
+      delayId = null;
+
+      if ('requestIdleCallback' in window) {
+        idleId = window.requestIdleCallback(warmCoreTabs, { timeout: 1200 });
+      } else {
+        warmCoreTabs();
+      }
+    }, 250);
+
+    return () => {
+      canceled = true;
+      if (delayId !== null) window.clearTimeout(delayId);
+      if (idleId !== null && 'cancelIdleCallback' in window) {
+        window.cancelIdleCallback(idleId);
+      }
+    };
+  }, [authRoute]);
 
   return (
     <div
