@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import {
+  CalendarDays,
   Eye,
   FilePenLine,
   FilePlus2,
@@ -189,21 +190,34 @@ export default function MyContentPage() {
             const publicUrl = item.publicUrl || contentPath(item);
             const canEdit = EDITABLE.has(item.status) && item.contentType !== 'article';
             const canDelete = EDITABLE.has(item.status) && item.contentType !== 'article';
+            const typeLabel = contentTypeLabel(item.contentType);
 
             return (
               <article className="my-content-card" key={item._id}>
                 <div className="my-content-card__media">
                   {image ? <img src={image} alt="" loading="lazy" /> : <span>Không có ảnh</span>}
-                  <Badge tone={statusTone(item.status)}>
-                    {CONTENT_STATUS[item.status] || item.status}
-                  </Badge>
+                  <span className={`my-content-card__media-type is-${item.contentType || 'content'}`}>
+                    {typeLabel}
+                  </span>
                 </div>
 
                 <div className="my-content-card__body">
-                  <div className="my-content-card__type">{contentTypeLabel(item.contentType)}</div>
+                  <div className="my-content-card__head">
+                    <div className="my-content-card__type">{typeLabel}</div>
+                    <Badge
+                      tone={statusTone(item.status)}
+                      className="my-content-card__status"
+                    >
+                      {CONTENT_STATUS[item.status] || item.status}
+                    </Badge>
+                  </div>
+
                   <h2>{item.title}</h2>
                   <p>{item.summary || 'Chưa có mô tả ngắn.'}</p>
-                  <small>Cập nhật {formatDateTime(item.updatedAt || item.createdAt)}</small>
+                  <small className="my-content-card__date">
+                    <CalendarDays size={14} />
+                    {formatDateTime(item.updatedAt || item.createdAt)}
+                  </small>
                 </div>
 
                 <footer className="my-content-card__actions">
