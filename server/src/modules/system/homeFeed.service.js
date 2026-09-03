@@ -9,7 +9,8 @@ import Category from '../taxonomy/category.model.js';
 import Area from '../taxonomy/area.model.js';
 import Media from '../media/media.model.js';
 
-const HOME_CACHE_TTL_MS = 15_000;
+const HOME_CACHE_FRESH_MS = 60_000;
+const HOME_CACHE_STALE_MS = 10 * 60_000;
 const ARTICLE_LIMIT = 10;
 const COMMUNITY_LIMIT = 4;
 const PROPERTY_LIMIT = 4;
@@ -228,7 +229,6 @@ async function buildHomeFeed() {
     authorIds.length
       ? UserProfile.find({ userId: { $in: authorIds } })
           .select('userId avatarMediaId')
-          .populate('avatarMediaId', 'url secureUrl altText width height')
           .lean()
       : [],
   ]);
@@ -244,9 +244,13 @@ async function buildHomeFeed() {
   const communityInlineMediaIds = uniqueIds(
     communityBodies.flatMap((body) => body.inlineMediaIds || []),
   );
+  const communityAvatarMediaIds = uniqueIds(
+    profiles.map((profile) => profile.avatarMediaId),
+  );
   const mediaIds = uniqueIds([
     ...allContent.map((item) => item.thumbnailMediaId),
     ...communityInlineMediaIds,
+    ...communityAvatarMediaIds,
   ]);
 
   const [categories, areas, mediaItems] = await Promise.all([
@@ -284,6 +288,17 @@ async function buildHomeFeed() {
       mediaMap.get(idOf(item.thumbnailMediaId)) || null,
   });
 
+  const hydrateProfile = (userId) => {
+    const profile = profileMap.get(idOf(userId));
+    if (!profile) return null;
+
+    return {
+      ...profile,
+      avatarMediaId:
+        mediaMap.get(idOf(profile.avatarMediaId)) || null,
+    };
+  };
+
   return {
     articles: articles.map(hydrateCard),
     community: community.map((item) => {
@@ -301,7 +316,7 @@ async function buildHomeFeed() {
         authorId: author
           ? {
               ...author,
-              profile: profileMap.get(idOf(author._id)) || null,
+              profile: hydrateProfile(author._id),
             }
           : null,
         community: communityMap.get(idOf(item._id)) || null,
@@ -318,13 +333,7 @@ async function buildHomeFeed() {
   };
 }
 
-export async function homeFeed() {
-  const now = Date.now();
-
-  if (cachedData && now - cachedAt < HOME_CACHE_TTL_MS) {
-    return cachedData;
-  }
-
+function refreshHomeFeed() {
   if (inFlight) return inFlight;
 
   const request = buildHomeFeed()
@@ -339,4 +348,22 @@ export async function homeFeed() {
 
   inFlight = request;
   return request;
+}
+
+export async function homeFeed() {
+  const now = Date.now();
+  const age = cachedData ? now - cachedAt : Number.POSITIVE_INFINITY;
+
+  if (cachedData && age < HOME_CACHE_FRESH_MS) {
+    return cachedData;
+  }
+
+  if (cachedData && age < HOME_CACHE_STALE_MS) {
+    // Return the last good feed immediately and refresh it in the background.
+    // This keeps the first user after cache expiry from paying the MongoDB cost.
+    void refreshHomeFeed().catch(() => {});
+    return cachedData;
+  }
+
+  return refreshHomeFeed();
 }
