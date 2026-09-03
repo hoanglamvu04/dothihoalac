@@ -3,7 +3,10 @@ import { homeFeed as loadHomeFeed } from './homeFeed.service.js';
 import { sendCreated, sendSuccess } from '../../utils/apiResponse.js';
 
 export async function homeFeed(req, res) {
-  res.set('Cache-Control', 'public, max-age=10, stale-while-revalidate=30');
+  res.set(
+    'Cache-Control',
+    'public, max-age=30, stale-while-revalidate=300, stale-if-error=600',
+  );
   return sendSuccess(res, { data: await loadHomeFeed() });
 }
 
