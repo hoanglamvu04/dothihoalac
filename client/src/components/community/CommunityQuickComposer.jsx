@@ -2,19 +2,29 @@ import {
   useCallback,
   useEffect,
   useMemo,
+  useRef,
   useState,
 } from 'react';
 import { createPortal } from 'react-dom';
 import {
+  ArrowLeft,
+  ChevronDown,
   ChevronRight,
+  Eye,
+  FileText,
   Globe2,
+  ImagePlus,
   LoaderCircle,
   MapPin,
   MessageCircle,
+  MoreHorizontal,
   Save,
   Send,
+  ShieldCheck,
   SlidersHorizontal,
   Tags,
+  UsersRound,
+  X,
 } from 'lucide-react';
 
 import Avatar from '../common/Avatar';
@@ -60,8 +70,7 @@ function deriveTitle(bodyHtml, postType) {
     return `${COMMUNITY_TYPES[postType] || 'Chia sẻ'} tại Đô Thị Hòa Lạc`;
   }
 
-  const firstSentence =
-    text.split(/(?<=[.!?])\s+/)[0] || text;
+  const firstSentence = text.split(/(?<=[.!?])\s+/)[0] || text;
   const compact = firstSentence.trim();
 
   if (compact.length <= 220) {
@@ -96,16 +105,26 @@ function getQuickComposerTarget(anchor) {
   try {
     const url = new URL(rawHref, window.location.origin);
     const pathname = url.pathname.replace(/\/+$/, '') || '/';
+    const bases = [
+      '/dang-bai/cong-dong',
+      '/studio/cong-dong',
+      '/cong-dong/create',
+    ];
 
-    if (pathname === '/dang-bai/cong-dong') {
-      return { editId: '' };
-    }
+    for (const base of bases) {
+      if (pathname === base) {
+        const queryId = url.searchParams.get('edit') || '';
+        return {
+          editId: isPersistedContentId(queryId) ? queryId : '',
+        };
+      }
 
-    const match = pathname.match(/^\/dang-bai\/cong-dong\/([^/]+)$/);
-    const editId = match ? decodeURIComponent(match[1]) : '';
-
-    if (isPersistedContentId(editId)) {
-      return { editId };
+      if (pathname.startsWith(`${base}/`)) {
+        const rawId = decodeURIComponent(pathname.slice(base.length + 1));
+        return {
+          editId: isPersistedContentId(rawId) ? rawId : '',
+        };
+      }
     }
 
     return null;
@@ -118,9 +137,12 @@ export default function CommunityQuickComposer() {
   const { user, isAuthenticated } = useAuth();
   const { categoriesFor, areas = [] } = useTaxonomy();
   const toast = useToast();
+  const editorWrapRef = useRef(null);
 
   const [open, setOpen] = useState(false);
   const [optionsOpen, setOptionsOpen] = useState(false);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [tipVisible, setTipVisible] = useState(true);
   const [postType, setPostType] = useState(DEFAULT_TYPE);
   const [categoryId, setCategoryId] = useState('');
   const [areaId, setAreaId] = useState('');
@@ -143,6 +165,11 @@ export default function CommunityQuickComposer() {
     user?.username ||
     'Thành viên';
 
+  const composerAvatar =
+    user?.profile?.avatarMediaId ||
+    user?.avatarMediaId ||
+    null;
+
   const selectedArea = useMemo(
     () =>
       areas.find(
@@ -159,12 +186,12 @@ export default function CommunityQuickComposer() {
     [categories, categoryId],
   );
 
-  const hasContent = useMemo(() => {
-    const text = stripHtml(bodyHtml);
-    const hasInlineImage = /data-media-id=/i.test(bodyHtml);
+  const plainText = useMemo(() => stripHtml(bodyHtml), [bodyHtml]);
 
-    return Boolean(text || hasInlineImage);
-  }, [bodyHtml]);
+  const hasContent = useMemo(() => {
+    const hasInlineImage = /data-media-id=/i.test(bodyHtml);
+    return Boolean(plainText || hasInlineImage);
+  }, [bodyHtml, plainText]);
 
   const topicSummary = useMemo(() => {
     const parts = [
@@ -192,6 +219,8 @@ export default function CommunityQuickComposer() {
     setEditStatus('');
     setFormError('');
     setOptionsOpen(false);
+    setPreviewOpen(false);
+    setTipVisible(true);
   }, []);
 
   const closeComposer = useCallback(() => {
@@ -294,13 +323,7 @@ export default function CommunityQuickComposer() {
 
       closeComposer();
     },
-    [
-      closeComposer,
-      hasContent,
-      isEditing,
-      loadingEdit,
-      saving,
-    ],
+    [closeComposer, hasContent, isEditing, loadingEdit, saving],
   );
 
   useEffect(() => {
@@ -316,18 +339,11 @@ export default function CommunityQuickComposer() {
         return;
       }
 
-      const target =
-        event.target instanceof Element
-          ? event.target
-          : null;
+      const target = event.target instanceof Element ? event.target : null;
       const anchor = target?.closest('a[href]');
       const composerTarget = getQuickComposerTarget(anchor);
 
-      if (!composerTarget) return;
-
-      if (!isAuthenticated) {
-        return;
-      }
+      if (!composerTarget || !isAuthenticated) return;
 
       event.preventDefault();
       event.stopPropagation();
@@ -337,11 +353,7 @@ export default function CommunityQuickComposer() {
     document.addEventListener('click', handleDocumentClick, true);
 
     return () => {
-      document.removeEventListener(
-        'click',
-        handleDocumentClick,
-        true,
-      );
+      document.removeEventListener('click', handleDocumentClick, true);
     };
   }, [isAuthenticated, openComposer]);
 
@@ -374,15 +386,24 @@ export default function CommunityQuickComposer() {
     const focusTimer = window.setTimeout(() => {
       if (!loadingEdit) {
         document
-          .querySelector(
-            '.community-quick-composer__rte .rte-content',
-          )
+          .querySelector('.community-quick-composer__rte .rte-content')
           ?.focus();
       }
     }, 100);
 
     const handleKeyDown = (event) => {
       if (event.key !== 'Escape') return;
+
+      if (previewOpen) {
+        setPreviewOpen(false);
+        return;
+      }
+
+      if (optionsOpen) {
+        setOptionsOpen(false);
+        return;
+      }
+
       requestClose();
     };
 
@@ -393,34 +414,66 @@ export default function CommunityQuickComposer() {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [loadingEdit, open, requestClose]);
+  }, [loadingEdit, open, optionsOpen, previewOpen, requestClose]);
 
-  const publish = async () => {
-    if (
-      !hasContent ||
-      saving ||
-      loadingEdit ||
-      !canEditCurrent
-    ) {
-      return;
-    }
+  const buildPayload = useCallback(() => ({
+    title: deriveTitle(bodyHtml, postType),
+    summary: deriveSummary(bodyHtml),
+    bodyHtml: bodyHtml.trim(),
+    postType,
+    primaryCategoryId: categoryId || null,
+    primaryAreaId: areaId || null,
+    tagIds: [],
+    thumbnailMediaId: null,
+    allowComments,
+  }), [allowComments, areaId, bodyHtml, categoryId, postType]);
+
+  const saveDraft = async () => {
+    if (!hasContent || saving || loadingEdit || !canEditCurrent) return;
 
     setSaving(true);
     setFormError('');
 
-    const payload = {
-      title: deriveTitle(bodyHtml, postType),
-      summary: deriveSummary(bodyHtml),
-      bodyHtml: bodyHtml.trim(),
-      postType,
-      primaryCategoryId: categoryId || null,
-      primaryAreaId: areaId || null,
-      tagIds: [],
-      thumbnailMediaId: null,
-      allowComments,
-    };
+    try {
+      const payload = buildPayload();
+      let id = draftId;
+
+      if (id) {
+        await communityApi.update(id, payload);
+      } else {
+        const created = await communityApi.create(payload);
+        id = created?._id || created?.id || '';
+
+        if (!id) {
+          throw new Error('Server không trả về ID bài viết.');
+        }
+
+        setDraftId(id);
+        setEditStatus('draft');
+      }
+
+      toast.success(
+        editStatus === 'published'
+          ? 'Đã lưu thay đổi.'
+          : 'Đã lưu bản nháp.',
+      );
+    } catch (error) {
+      setFormError(
+        apiErrorMessage(error, 'Không thể lưu bản nháp. Vui lòng thử lại.'),
+      );
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const publish = async () => {
+    if (!hasContent || saving || loadingEdit || !canEditCurrent) return;
+
+    setSaving(true);
+    setFormError('');
 
     try {
+      const payload = buildPayload();
       let id = draftId;
 
       if (id) {
@@ -440,11 +493,7 @@ export default function CommunityQuickComposer() {
         toast.success('Đã cập nhật bài viết.');
       } else {
         await communityApi.submit(id);
-        toast.success(
-          isEditing
-            ? 'Đã lưu thay đổi và gửi bài đi duyệt lại.'
-            : 'Đã đăng bài vào hàng chờ kiểm duyệt.',
-        );
+        toast.success('Đã gửi bài vào hàng chờ kiểm duyệt.');
       }
 
       closeComposer();
@@ -453,7 +502,7 @@ export default function CommunityQuickComposer() {
         new CustomEvent('dthl:community-post-submitted', {
           detail: {
             id,
-            updated: isEditing,
+            updated: Boolean(draftId),
           },
         }),
       );
@@ -471,6 +520,14 @@ export default function CommunityQuickComposer() {
     }
   };
 
+  const openImagePicker = () => {
+    if (loadingEdit || !canEditCurrent) return;
+
+    editorWrapRef.current
+      ?.querySelector('input[type="file"]')
+      ?.click();
+  };
+
   if (!open || typeof document === 'undefined') {
     return null;
   }
@@ -480,6 +537,9 @@ export default function CommunityQuickComposer() {
       ? 'Lưu thay đổi'
       : 'Lưu & gửi duyệt'
     : 'Đăng';
+
+  const mobilePublishLabel =
+    editStatus === 'published' ? 'Lưu' : 'Đăng';
 
   return createPortal(
     <div
@@ -504,7 +564,11 @@ export default function CommunityQuickComposer() {
             className="community-quick-composer__cancel"
             onClick={() => requestClose()}
           >
-            Hủy
+            <ArrowLeft
+              size={22}
+              className="community-quick-composer__cancel-icon"
+            />
+            <span>Hủy</span>
           </button>
 
           <strong id="community-quick-composer-title">
@@ -522,64 +586,199 @@ export default function CommunityQuickComposer() {
           >
             <SlidersHorizontal size={20} />
           </button>
+
+          <button
+            type="button"
+            className="community-quick-composer__mobile-header-publish"
+            disabled={!hasContent || saving || loadingEdit || !canEditCurrent}
+            onClick={publish}
+          >
+            {saving ? 'Đang lưu…' : mobilePublishLabel}
+          </button>
         </header>
 
-        <div className="community-quick-composer__thread">
-          <Avatar
-            name={displayName}
-            src={user?.profile?.avatarMediaId}
-            size="md"
-            className="community-quick-composer__avatar"
-          />
-
-          <div className="community-quick-composer__main">
-            <div className="community-quick-composer__identity">
+        <div className="community-quick-composer__mobile-scroll">
+          <div className="community-quick-composer__mobile-author">
+            <Avatar
+              name={displayName}
+              src={composerAvatar}
+              size="md"
+              className="community-quick-composer__mobile-avatar"
+            />
+            <div>
               <strong>{displayName}</strong>
-
               <button
                 type="button"
-                className="community-quick-composer__topic-trigger"
-                aria-expanded={optionsOpen}
-                disabled={loadingEdit}
-                onClick={() => setOptionsOpen((value) => !value)}
+                className="community-quick-composer__mobile-public"
+                onClick={() => setOptionsOpen(true)}
               >
-                <span>
-                  {topicSummary || 'Cộng đồng hoặc chủ đề'}
-                </span>
-                <ChevronRight size={15} />
+                <Globe2 size={17} />
+                Công khai
+                <ChevronDown size={16} />
               </button>
             </div>
+          </div>
 
-            <div className="community-quick-composer__privacy">
-              <Globe2 size={13} />
-              Công khai
+          <div className="community-quick-composer__thread">
+            <Avatar
+              name={displayName}
+              src={composerAvatar}
+              size="md"
+              className="community-quick-composer__avatar"
+            />
+
+            <div className="community-quick-composer__main">
+              <div className="community-quick-composer__identity">
+                <strong>{displayName}</strong>
+
+                <button
+                  type="button"
+                  className="community-quick-composer__topic-trigger"
+                  aria-expanded={optionsOpen}
+                  disabled={loadingEdit}
+                  onClick={() => setOptionsOpen((value) => !value)}
+                >
+                  <span>{topicSummary || 'Cộng đồng hoặc chủ đề'}</span>
+                  <ChevronRight size={15} />
+                </button>
+              </div>
+
+              <div className="community-quick-composer__privacy">
+                <Globe2 size={13} />
+                Công khai
+              </div>
+
+              <div
+                ref={editorWrapRef}
+                className="community-quick-composer__writing-card"
+              >
+                {loadingEdit ? (
+                  <div className="community-quick-composer__loading">
+                    <LoaderCircle
+                      size={22}
+                      className="community-quick-composer__spin"
+                    />
+                    Đang tải bài viết...
+                  </div>
+                ) : (
+                  <CommunitySocialEditor
+                    className="community-quick-composer__rte"
+                    value={bodyHtml}
+                    disabled={!canEditCurrent}
+                    onChange={(html) => {
+                      setBodyHtml(html);
+                      setFormError('');
+                    }}
+                    placeholder="Bạn đang nghĩ gì?"
+                    uploadFolder="community/inline"
+                    maxImages={12}
+                    maxImageSizeMb={10}
+                  />
+                )}
+
+                <span
+                  className={`community-quick-composer__character-count${
+                    plainText.length > 3000 ? ' is-over' : ''
+                  }`}
+                >
+                  {plainText.length.toLocaleString('vi-VN')}/3000
+                </span>
+              </div>
+            </div>
+          </div>
+
+          <section
+            className="community-quick-composer__mobile-add-card"
+            aria-label="Thêm vào bài viết"
+          >
+            <h2>Thêm vào bài viết</h2>
+            <div>
+              <button type="button" onClick={openImagePicker}>
+                <span className="is-media"><ImagePlus size={23} /></span>
+                <small>Ảnh/Video</small>
+              </button>
+              <button type="button" onClick={() => setOptionsOpen(true)}>
+                <span className="is-location"><MapPin size={23} /></span>
+                <small>Địa điểm</small>
+              </button>
+              <button type="button" onClick={() => setOptionsOpen(true)}>
+                <span className="is-topic"><Tags size={23} /></span>
+                <small>Chủ đề</small>
+              </button>
+              <button type="button" onClick={() => setOptionsOpen(true)}>
+                <span className="is-type"><FileText size={23} /></span>
+                <small>Dạng bài</small>
+              </button>
+              <button type="button" onClick={() => setOptionsOpen(true)}>
+                <span className="is-more"><MoreHorizontal size={24} /></span>
+                <small>Khác</small>
+              </button>
+            </div>
+          </section>
+
+          <div className="community-quick-composer__mobile-setting-stack">
+            <button type="button" onClick={() => setOptionsOpen(true)}>
+              <span className="community-quick-composer__setting-icon is-location">
+                <MapPin size={22} />
+              </span>
+              <span>
+                <strong>Vị trí</strong>
+                <small>{selectedArea?.name || 'Thêm khu vực vào bài viết'}</small>
+              </span>
+              <ChevronRight size={21} />
+            </button>
+
+            <div className="community-quick-composer__mobile-setting-static">
+              <span className="community-quick-composer__setting-icon is-audience">
+                <UsersRound size={22} />
+              </span>
+              <span>
+                <strong>Đối tượng</strong>
+                <small>Công khai</small>
+              </span>
+              <Globe2 size={20} />
             </div>
 
-            {loadingEdit ? (
-              <div className="community-quick-composer__loading">
-                <LoaderCircle
-                  size={22}
-                  className="community-quick-composer__spin"
-                />
-                Đang tải bài viết...
-              </div>
-            ) : (
-              <CommunitySocialEditor
-                className="community-quick-composer__rte"
-                value={bodyHtml}
-                disabled={!canEditCurrent}
-                onChange={(html) => {
-                  setBodyHtml(html);
-                  setFormError('');
-                }}
-                placeholder="Có gì mới?"
-                uploadFolder="community/inline"
-                maxImages={12}
-                maxImageSizeMb={10}
-              />
-            )}
+            <button type="button" onClick={() => setOptionsOpen(true)}>
+              <span className="community-quick-composer__setting-icon is-topic">
+                <Tags size={22} />
+              </span>
+              <span>
+                <strong>Chủ đề</strong>
+                <small>{selectedCategory?.name || 'Chọn chủ đề phù hợp'}</small>
+              </span>
+              <ChevronRight size={21} />
+            </button>
           </div>
+
+          {tipVisible ? (
+            <aside className="community-quick-composer__mobile-tip">
+              <span><ShieldCheck size={22} /></span>
+              <div>
+                <strong>Gợi ý</strong>
+                <p>
+                  Chia sẻ nội dung hữu ích, tích cực và tuân thủ quy định cộng đồng.
+                </p>
+              </div>
+              <button
+                type="button"
+                aria-label="Ẩn gợi ý"
+                onClick={() => setTipVisible(false)}
+              >
+                <X size={20} />
+              </button>
+            </aside>
+          ) : null}
         </div>
+
+        {optionsOpen ? (
+          <button
+            type="button"
+            className="community-quick-composer__mobile-sheet-backdrop"
+            aria-label="Đóng tùy chọn"
+            onClick={() => setOptionsOpen(false)}
+          />
+        ) : null}
 
         {optionsOpen ? (
           <section className="community-quick-composer__options">
@@ -596,23 +795,21 @@ export default function CommunityQuickComposer() {
             </div>
 
             <div className="community-quick-composer__type-list">
-              {Object.entries(COMMUNITY_TYPES).map(
-                ([value, label]) => (
-                  <button
-                    type="button"
-                    key={value}
-                    disabled={!canEditCurrent}
-                    className={postType === value ? 'is-active' : ''}
-                    onClick={() => {
-                      setPostType(value);
-                      setFormError('');
-                    }}
-                  >
-                    <MessageCircle size={14} />
-                    {label}
-                  </button>
-                ),
-              )}
+              {Object.entries(COMMUNITY_TYPES).map(([value, label]) => (
+                <button
+                  type="button"
+                  key={value}
+                  disabled={!canEditCurrent}
+                  className={postType === value ? 'is-active' : ''}
+                  onClick={() => {
+                    setPostType(value);
+                    setFormError('');
+                  }}
+                >
+                  <MessageCircle size={14} />
+                  {label}
+                </button>
+              ))}
             </div>
 
             <div className="community-quick-composer__select-grid">
@@ -646,9 +843,7 @@ export default function CommunityQuickComposer() {
                 <select
                   value={categoryId}
                   disabled={!canEditCurrent}
-                  onChange={(event) =>
-                    setCategoryId(event.target.value)
-                  }
+                  onChange={(event) => setCategoryId(event.target.value)}
                 >
                   <option value="">Không bắt buộc</option>
                   {categories.map((item) => (
@@ -665,9 +860,7 @@ export default function CommunityQuickComposer() {
                 type="checkbox"
                 checked={allowComments}
                 disabled={!canEditCurrent}
-                onChange={(event) =>
-                  setAllowComments(event.target.checked)
-                }
+                onChange={(event) => setAllowComments(event.target.checked)}
               />
               <span>
                 <strong>Cho phép bình luận</strong>
@@ -680,57 +873,121 @@ export default function CommunityQuickComposer() {
         ) : null}
 
         {formError ? (
-          <div
-            className="community-quick-composer__error"
-            role="alert"
-          >
+          <div className="community-quick-composer__error" role="alert">
             {formError}
           </div>
         ) : null}
 
         <footer className="community-quick-composer__footer">
-          <button
-            type="button"
-            className="community-quick-composer__post-options"
-            disabled={loadingEdit}
-            onClick={() => setOptionsOpen((value) => !value)}
-          >
-            <SlidersHorizontal size={17} />
-            Lựa chọn về bài viết
-          </button>
+          <div className="community-quick-composer__desktop-footer">
+            <button
+              type="button"
+              className="community-quick-composer__post-options"
+              disabled={loadingEdit}
+              onClick={() => setOptionsOpen((value) => !value)}
+            >
+              <SlidersHorizontal size={17} />
+              Lựa chọn về bài viết
+            </button>
 
-          <div className="community-quick-composer__publish-group">
-            <small>
-              {editStatus === 'published'
-                ? 'Thay đổi sẽ cập nhật ngay trên bài đang hiển thị.'
-                : 'Bài sẽ được kiểm duyệt trước khi hiển thị.'}
-            </small>
+            <div className="community-quick-composer__publish-group">
+              <small>
+                {editStatus === 'published'
+                  ? 'Thay đổi sẽ cập nhật ngay trên bài đang hiển thị.'
+                  : 'Bài sẽ được kiểm duyệt trước khi hiển thị.'}
+              </small>
+
+              <button
+                type="button"
+                className="community-quick-composer__publish"
+                disabled={!hasContent || saving || loadingEdit || !canEditCurrent}
+                onClick={publish}
+              >
+                {saving ? (
+                  <LoaderCircle
+                    size={17}
+                    className="community-quick-composer__spin"
+                  />
+                ) : isEditing ? (
+                  <Save size={16} />
+                ) : (
+                  <Send size={16} />
+                )}
+                {saving ? 'Đang lưu...' : saveLabel}
+              </button>
+            </div>
+          </div>
+
+          <div className="community-quick-composer__mobile-footer">
+            <button
+              type="button"
+              className="community-quick-composer__mobile-save"
+              disabled={!hasContent || saving || loadingEdit || !canEditCurrent}
+              onClick={saveDraft}
+            >
+              <Save size={19} />
+              <span>
+                {editStatus === 'published' ? 'Lưu thay đổi' : 'Lưu nháp'}
+              </span>
+            </button>
 
             <button
               type="button"
-              className="community-quick-composer__publish"
-              disabled={
-                !hasContent ||
-                saving ||
-                loadingEdit ||
-                !canEditCurrent
-              }
+              className="community-quick-composer__mobile-preview"
+              disabled={!hasContent}
+              onClick={() => setPreviewOpen(true)}
+            >
+              <Eye size={22} />
+              <small>Xem trước</small>
+            </button>
+
+            <button
+              type="button"
+              className="community-quick-composer__mobile-publish"
+              disabled={!hasContent || saving || loadingEdit || !canEditCurrent}
               onClick={publish}
             >
               {saving ? (
                 <LoaderCircle
-                  size={17}
+                  size={19}
                   className="community-quick-composer__spin"
                 />
-              ) : isEditing ? (
-                <Save size={16} />
               ) : (
-                <Send size={16} />
+                <Send size={20} />
               )}
-              {saving ? 'Đang lưu...' : saveLabel}
+              <span>{saving ? 'Đang lưu…' : 'Đăng bài'}</span>
             </button>
           </div>
         </footer>
+
+        {previewOpen ? (
+          <div className="community-quick-composer__preview-backdrop">
+            <section className="community-quick-composer__preview-card">
+              <header>
+                <strong>Xem trước bài viết</strong>
+                <button
+                  type="button"
+                  aria-label="Đóng xem trước"
+                  onClick={() => setPreviewOpen(false)}
+                >
+                  <X size={21} />
+                </button>
+              </header>
+
+              <div className="community-quick-composer__preview-author">
+                <Avatar name={displayName} src={composerAvatar} size="md" />
+                <span>
+                  <strong>{displayName}</strong>
+                  <small>{topicSummary}</small>
+                </span>
+              </div>
+
+              <p className="community-quick-composer__preview-copy">
+                {plainText || 'Bài viết có nội dung hình ảnh.'}
+              </p>
+            </section>
+          </div>
+        ) : null}
       </section>
     </div>,
     document.body,
