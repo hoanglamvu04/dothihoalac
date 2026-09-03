@@ -263,6 +263,20 @@ html[data-dthl-theme] .home-ref :is(p, small, .content-meta) {
   color: var(--home-text);
 }
 
+/* Dark CTA panels need their own foreground palette in both appearance modes. */
+html[data-dthl-theme] .home-ref .home-reference-cta h2 {
+  color: #fff !important;
+}
+
+html[data-dthl-theme] .home-ref .home-reference-cta p {
+  color: rgb(255 255 255 / 0.76) !important;
+}
+
+html[data-dthl-theme] .home-ref .home-reference-cta small,
+html[data-dthl-theme] .home-ref .home-reference-cta__icon {
+  color: #dec99a !important;
+}
+
 html[data-dthl-theme] .home-ref-section-header,
 html[data-dthl-theme] .home-ref-property-title,
 html[data-dthl-theme] .home-ref-latest-item,
@@ -314,56 +328,77 @@ html[data-dthl-theme='dark'] .home-ref-state {
   background: var(--home-surface-2) !important;
 }
 
-/* Footer follows the same appearance setting. */
+/* Footer stays dark in both modes. It is a brand anchor and avoids the light
+   theme making the footer's white logo/contact text disappear on ivory. */
 html[data-dthl-theme] .site-footer {
   --footer-green: #d3bb88;
-  --footer-text: var(--dthl-mode-text);
-  --footer-muted: var(--dthl-mode-muted);
-  --footer-border: var(--dthl-mode-border);
-  color: var(--dthl-mode-ink);
+  --footer-text: rgba(244, 248, 245, 0.82);
+  --footer-muted: rgba(224, 232, 227, 0.64);
+  --footer-border: rgb(181 153 101 / 0.22);
+  color: #f4f1e9 !important;
 }
 
 html[data-dthl-theme='light'] .site-footer {
-  background: #f7f5ef !important;
+  background:
+    radial-gradient(circle at 53% 45%, rgb(60 95 72 / 0.12), transparent 31%),
+    linear-gradient(180deg, #071b14 0%, #08251b 58%, #092d21 100%) !important;
 }
 
-html[data-dthl-theme='light'] .site-footer__main,
+html[data-dthl-theme='light'] .site-footer__main {
+  border-color: rgb(181 153 101 / 0.18) !important;
+  background:
+    radial-gradient(circle at 51% 14%, rgb(181 153 101 / 0.08), transparent 31%),
+    linear-gradient(180deg, rgb(7 36 26 / 0.72), rgb(4 28 20 / 0.68)) !important;
+}
+
 html[data-dthl-theme='light'] .site-footer__bottom {
-  border-color: var(--dthl-mode-border) !important;
-  background: #f7f5ef !important;
+  border-color: rgb(181 153 101 / 0.18) !important;
+  background: rgb(2 20 14 / 0.78) !important;
 }
 
 html[data-dthl-theme='light'] .site-footer__cta {
-  border-color: #ddd3c0 !important;
+  border-color: rgb(181 153 101 / 0.34) !important;
   color: #fff !important;
   background: linear-gradient(118deg, #284733, #173424) !important;
 }
 
 html[data-dthl-theme='light'] .site-footer :is(
   .site-footer__logo strong,
-  .site-footer__column h3,
   .site-footer__operator strong,
-  .site-footer__contact-copy strong,
-  .site-footer__contact-copy span,
+  .site-footer__contact-row strong,
   .site-footer__description,
   .site-footer__feature-links > a,
-  .site-footer__column a
+  .site-footer__column a,
+  .site-footer__bottom p,
+  .site-footer__bottom-links a
 ) {
-  color: #3f463f !important;
+  color: #f1eee7 !important;
 }
 
-html[data-dthl-theme='light'] .site-footer__logo small,
-html[data-dthl-theme='light'] .site-footer__column h3,
-html[data-dthl-theme='light'] .site-footer__operator-label {
-  color: #8b7048 !important;
+html[data-dthl-theme='light'] .site-footer :is(
+  .site-footer__logo small,
+  .site-footer__column h3,
+  .site-footer__operator-label,
+  .site-footer__contact-row small
+) {
+  color: #d3bb88 !important;
 }
 
 html[data-dthl-theme='light'] .site-footer__feature-links > a,
 html[data-dthl-theme='light'] .site-footer__operator,
 html[data-dthl-theme='light'] .site-footer__contact-row,
 html[data-dthl-theme='light'] .site-footer__column {
-  border-color: var(--dthl-mode-border) !important;
-  background: transparent !important;
+  border-color: rgb(181 153 101 / 0.16) !important;
+}
+
+html[data-dthl-theme='light'] .site-footer :is(
+  .site-footer__operator-icon,
+  .site-footer__contact-icon,
+  .site-footer__social > a
+) {
+  border-color: rgb(181 153 101 / 0.24) !important;
+  color: #d3bb88 !important;
+  background: rgb(181 153 101 / 0.08) !important;
 }
 
 html[data-dthl-theme='dark'] .site-footer {
