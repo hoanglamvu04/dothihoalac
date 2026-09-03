@@ -14,7 +14,6 @@ import {
   Building2,
   Clock3,
   Eye,
-  FilePenLine,
   GraduationCap,
   Heart,
   MapPin,
@@ -24,7 +23,6 @@ import {
   MoreHorizontal,
   Newspaper,
   RefreshCw,
-  Send,
   UsersRound,
 } from 'lucide-react';
 
@@ -685,18 +683,6 @@ export default function HomePage() {
               to="/quy-hoach"
               action="Khám phá ngay"
             />
-          </section>
-
-          <section className="home-reference-tipbar">
-            <span><MessageSquareText size={17} /></span>
-            <div>
-              <small>Đóng góp cho cộng đồng</small>
-              <strong>Chia sẻ thông tin hữu ích về Hòa Lạc</strong>
-            </div>
-            <div>
-              <Link to="/dang-bai"><FilePenLine size={14} /> Đăng nội dung</Link>
-              <Link to="/gui-tin"><Send size={14} /> Gửi tin</Link>
-            </div>
           </section>
         </div>
       </section>
