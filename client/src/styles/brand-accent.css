@@ -1,161 +1,86 @@
 /* =========================================================
-   DTHL EARTH LUXURY — SUPPORT BALANCE
-   Earth #B59965 is the visible brand primary.
-   Deep forest remains a restrained supporting color for trust, success,
-   verification and large dark fields such as the footer/auth intro.
+   DTHL DARK FOREST — EARTH ACCENT BALANCE
+   Loaded after the cascade guard. Keep earth highly visible without
+   turning whole surfaces brown; green remains semantic only.
 ========================================================= */
 
 :root {
   --dthl-earth: #b59965;
-  --dthl-earth-dark: #806642;
-  --dthl-earth-mid: #9b7f52;
-  --dthl-earth-light: #d8c49d;
-  --dthl-earth-soft: #f7f3eb;
-  --dthl-earth-border: #dfd0b3;
-
-  --dthl-forest: #2f6146;
-  --dthl-forest-dark: #23372c;
-  --dthl-forest-soft: #e7f0ea;
+  --dthl-earth-dark: #dfcda8;
+  --dthl-earth-mid: #c5ab78;
+  --dthl-earth-light: #e3d1ad;
+  --dthl-earth-soft: rgb(181 153 101 / .12);
+  --dthl-earth-border: rgb(181 153 101 / .34);
+  --dthl-forest: #55a574;
+  --dthl-forest-dark: #173c2b;
+  --dthl-forest-soft: #173025;
 }
 
-/* =========================
-   HEADER / TAXONOMY
-========================= */
-
-.dthl-header-search__leading-icon {
-  color: var(--dthl-earth-dark) !important;
+/* Selected navigation/context: gold line + restrained translucent field. */
+.dthl-header-nav-upgrade__link.is-active,
+.dthl-primary-nav__link.is-active,
+.dthl-mobile-nav-upgrade__link.is-active,
+.dthl-mobile-nav-upgrade__category.is-active {
+  color: #f0dfbc !important;
+  background: rgb(181 153 101 / .11) !important;
 }
 
 .dthl-header-nav-upgrade__link.is-active,
 .dthl-primary-nav__link.is-active {
-  color: var(--dthl-earth-dark) !important;
-  background: var(--dthl-earth-soft) !important;
-  box-shadow: inset 0 -2px 0 var(--dthl-earth) !important;
+  box-shadow: inset 0 -2px 0 #b59965 !important;
 }
 
-.dthl-header-nav-upgrade__link.is-active .dthl-header-nav-upgrade__chevron {
-  color: var(--dthl-earth-dark) !important;
-}
-
+.dthl-header-search__leading-icon,
 .dthl-header-submenu__head span,
-.dthl-header-submenu__root.is-active,
-.dthl-header-submenu__child.is-active {
-  color: var(--dthl-earth-dark) !important;
-}
-
-.dthl-header-submenu__root.is-active,
-.dthl-header-submenu__child.is-active {
-  background: var(--dthl-earth-soft) !important;
-  box-shadow: inset 3px 0 0 var(--dthl-earth) !important;
-}
-
-.dthl-mobile-nav-upgrade__link.is-active,
-.dthl-mobile-nav-upgrade__category.is-active {
-  color: var(--dthl-earth-dark) !important;
-  background: var(--dthl-earth-soft) !important;
-}
-
-/* =========================
-   NEWS / CATEGORY PAGES
-========================= */
-
 .news-masthead__eyebrow,
 .news-story__kicker span,
 .news-stream__heading span,
 .news-rail-card__head span,
-.news-project-item__top span {
-  color: var(--dthl-earth-dark) !important;
+.news-project-item__top span,
+.properties-quick-filter > button.is-selected svg,
+.properties-filter-option-list > button.is-active svg,
+.community-discovery-list__icon,
+.community-reference-composer__actions > a svg {
+  color: #dfcda8 !important;
 }
 
 .news-category-bar nav button.is-active,
-.news-filter-toggle.is-active {
-  color: var(--dthl-earth-dark) !important;
-  background: var(--dthl-earth-soft) !important;
-}
-
-.news-category-bar nav button.is-active {
-  box-shadow: inset 0 -2px 0 var(--dthl-earth) !important;
-}
-
-.news-discussion-list b {
-  border-color: var(--dthl-earth-border) !important;
-  color: var(--dthl-earth-dark) !important;
-  background: #fffdf9 !important;
-}
-
-/* =========================
-   PROPERTY MARKETPLACE
-========================= */
-
+.news-filter-toggle.is-active,
 .properties-quick-filter > button[aria-expanded='true'],
 .properties-quick-filter > button.is-selected,
 .properties-popover-presets button.is-active,
 .properties-modal-preset-grid button.is-active,
-.properties-filter-option-list > button.is-active {
-  border-color: var(--dthl-earth-border) !important;
-  color: var(--dthl-earth-dark) !important;
-  background: var(--dthl-earth-soft) !important;
-}
-
-.properties-quick-filter > button.is-selected svg,
-.properties-filter-option-list > button.is-active svg {
-  color: var(--dthl-earth-dark) !important;
-}
-
-/* =========================
-   COMMUNITY
-========================= */
-
-.community-discovery-list__icon {
-  color: var(--dthl-earth-dark) !important;
-  background: var(--dthl-earth-soft) !important;
-}
-
-.community-reference-composer__actions > a svg {
-  color: var(--dthl-earth-dark) !important;
-}
-
-.community-feed-card__type {
-  border: 1px solid var(--dthl-earth-border) !important;
-  color: var(--dthl-earth-dark) !important;
-  background: var(--dthl-earth-soft) !important;
+.properties-filter-option-list > button.is-active,
+.community-feed-card__type,
+.community-reference-active-filters button:not(.community-reference-active-filters__clear) {
+  border-color: rgb(181 153 101 / .34) !important;
+  color: #e3d1ad !important;
+  background: rgb(181 153 101 / .12) !important;
 }
 
 .community-join-card__actions a + a {
-  border-color: var(--dthl-earth) !important;
-  color: var(--dthl-earth-dark) !important;
-  background: #fff !important;
+  border-color: #b59965 !important;
+  color: #dfcda8 !important;
+  background: transparent !important;
 }
 
 .community-join-card__actions a + a:hover {
-  border-color: var(--dthl-earth-dark) !important;
-  color: var(--dthl-earth-dark) !important;
-  background: var(--dthl-earth-soft) !important;
+  border-color: #d0b987 !important;
+  background: rgb(181 153 101 / .1) !important;
 }
 
-.community-reference-active-filters button:not(.community-reference-active-filters__clear) {
-  border-color: var(--dthl-earth-border) !important;
-  color: var(--dthl-earth-dark) !important;
-  background: var(--dthl-earth-soft) !important;
-}
-
-/* Trust/safety elements can remain green without competing with brand CTAs. */
+/* Keep semantic trust/status green. */
 .community-rules-card li svg,
-:is(.is-verified, .verified, [class*='verified']) svg {
-  color: var(--dthl-forest) !important;
+:is(.is-verified, .verified, [class*='verified']) svg,
+:is(.status-success, .is-success, [class*='success']) svg {
+  color: #55b97b !important;
 }
 
-/* =========================
-   AUTH
-========================= */
-
+/* Auth premium details. */
 .dthl-login-intro__heading h1 em,
 .dthl-register-intro__heading h1 em,
 .dthl-forgot-intro__heading h1 em,
-.dthl-reset-intro__heading h1 em {
-  color: var(--dthl-earth-light) !important;
-}
-
+.dthl-reset-intro__heading h1 em,
 .dthl-login-brand small,
 .dthl-register-brand small,
 .dthl-forgot-brand small,
@@ -164,7 +89,7 @@
 .dthl-register-eyebrow,
 .dthl-forgot-eyebrow,
 .dthl-reset-eyebrow {
-  color: #decba6 !important;
+  color: #dfcda8 !important;
 }
 
 .dthl-login-benefits > div > span,
@@ -172,49 +97,19 @@
 .dthl-forgot-benefits > div > span,
 .dthl-reset-benefits > div > span {
   color: #fffaf1 !important;
-  background: rgba(181, 153, 101, 0.28) !important;
+  background: rgb(181 153 101 / .2) !important;
 }
 
-:is(
-  .dthl-login-brand__mark,
-  .dthl-register-brand__mark,
-  .dthl-forgot-brand__mark,
-  .dthl-reset-brand__mark
-) {
-  border-color: rgba(216, 196, 157, 0.58) !important;
-}
-
-/* =========================
-   FOOTER
-========================= */
-
+/* Footer headings and micro-labels carry the official brand. */
 .site-footer__column h3,
 .site-footer__operator-label,
 .site-footer__contact-copy span:first-child {
   color: #dfcda8 !important;
 }
 
-.site-footer__column h3::after {
-  background: var(--dthl-earth) !important;
-}
+.site-footer__column h3::after { background: #b59965 !important; }
 
-.site-footer__cta-icon {
-  border-color: rgba(216, 196, 157, 0.68) !important;
-  color: #fffaf1 !important;
-  background: rgba(181, 153, 101, 0.13) !important;
-}
-
-.site-footer__feature-links > a {
-  border-color: rgba(216, 196, 157, 0.3) !important;
-  background: rgba(181, 153, 101, 0.08) !important;
-}
-
-.site-footer__feature-links > a:hover {
-  border-color: rgba(216, 196, 157, 0.58) !important;
-  background: rgba(181, 153, 101, 0.16) !important;
-}
-
-/* Small secondary outlines use champagne without competing with primary CTAs. */
 :is(.secondary-button, .button-secondary, [class*='button--secondary']):not(:disabled) {
-  border-color: var(--dthl-earth-border);
+  border-color: rgb(181 153 101 / .34);
+  color: #dfcda8;
 }
