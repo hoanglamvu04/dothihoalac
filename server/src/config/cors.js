@@ -19,6 +19,41 @@ const allowedOrigins = new Set([
   ...parseOrigins(process.env.CORS_ORIGINS),
 ]);
 
+function normalizeHostname(value = '') {
+  return String(value || '')
+    .trim()
+    .replace(/^\[/, '')
+    .replace(/\]$/, '')
+    .toLowerCase();
+}
+
+function isPrivateIpv4(hostname = '') {
+  const parts = normalizeHostname(hostname)
+    .split('.')
+    .map(Number);
+
+  if (
+    parts.length !== 4 ||
+    parts.some(
+      (part) =>
+        !Number.isInteger(part) ||
+        part < 0 ||
+        part > 255,
+    )
+  ) {
+    return false;
+  }
+
+  const [a, b] = parts;
+
+  return (
+    a === 10 ||
+    a === 127 ||
+    (a === 172 && b >= 16 && b <= 31) ||
+    (a === 192 && b === 168)
+  );
+}
+
 function isLocalDevelopmentOrigin(origin) {
   if (env.NODE_ENV !== 'development') {
     return false;
@@ -26,11 +61,11 @@ function isLocalDevelopmentOrigin(origin) {
 
   try {
     const url = new URL(origin);
-
-    const isLocalHost = [
-      'localhost',
-      '127.0.0.1',
-    ].includes(url.hostname);
+    const hostname = normalizeHostname(url.hostname);
+    const isLocalHost =
+      hostname === 'localhost' ||
+      hostname === '::1' ||
+      isPrivateIpv4(hostname);
 
     return (
       url.protocol === 'http:' &&
