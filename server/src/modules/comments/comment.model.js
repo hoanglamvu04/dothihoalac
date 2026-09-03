@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import { getOrCreateModel } from '../../utils/modelHelpers.js';
+
 const schema = new mongoose.Schema(
   {
     contentId: {
@@ -8,9 +9,29 @@ const schema = new mongoose.Schema(
       required: true,
       index: true,
     },
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
-    parentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Comment', default: null, index: true },
-    body: { type: String, required: true, trim: true, minlength: 1, maxlength: 5000 },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: true,
+      index: true,
+    },
+    parentId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Comment',
+      default: null,
+      index: true,
+    },
+    body: {
+      type: String,
+      trim: true,
+      maxlength: 5000,
+      default: '',
+    },
+    mediaId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Media',
+      default: null,
+    },
     status: {
       type: String,
       enum: ['published', 'hidden', 'deleted', 'pending'],
@@ -23,6 +44,17 @@ const schema = new mongoose.Schema(
   },
   { timestamps: true, collection: 'comments' },
 );
+
+schema.pre('validate', function validateCommentContent(next) {
+  if (this.status === 'deleted') return next();
+
+  if (!String(this.body || '').trim() && !this.mediaId) {
+    return next(new Error('Bình luận cần có nội dung hoặc tệp đính kèm.'));
+  }
+
+  return next();
+});
+
 schema.index({ contentId: 1, createdAt: -1 });
 // Feed cộng đồng lấy hai bình luận gốc đã publish mới nhất cho nhiều content
 // cùng lúc. Compound index này tránh quét reply/hidden/deleted trước khi sort.
@@ -33,4 +65,5 @@ schema.index({
   deletedAt: 1,
   createdAt: -1,
 });
+
 export default getOrCreateModel('Comment', schema, 'comments');
