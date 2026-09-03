@@ -1,12 +1,10 @@
 /*
  * DTHL Community shared Threads-style feed layer.
- * This file intentionally contains presentation only. CommunityCard keeps
- * the same live APIs and interaction logic while desktop/mobile share one
- * compact social rhythm.
+ * Presentation only: CommunityCard keeps live comment/reaction/share APIs.
  */
 
 /* =========================
-   AUTHOR / POST RHYTHM
+   SHARED POST RHYTHM
 ========================= */
 
 .community-card--social {
@@ -14,11 +12,13 @@
 }
 
 .community-feed-card__header {
-  align-items: center;
-  padding-bottom: 3px;
+  align-items: start;
 }
 
-/* Keep author, time and area on the same row like a modern social feed. */
+.community-feed-card__content {
+  min-width: 0;
+}
+
 .community-feed-card__author {
   display: flex;
   align-items: baseline;
@@ -59,19 +59,43 @@
   white-space: nowrap;
 }
 
-.community-feed-card__text {
-  padding-top: 2px;
-  padding-bottom: 8px;
-  line-height: 1.47;
+/* Text lives inside the author column now, so it no longer waits for the
+   avatar row to finish before starting. */
+.community-feed-card__content .community-feed-card__text {
+  padding: 4px 0 0 !important;
+  color: #171a18;
+  line-height: 1.46;
+}
+
+.community-feed-card__text button {
+  margin-top: 3px;
 }
 
 .community-feed-card__stats {
-  min-height: 0;
+  display: none !important;
 }
 
 .community-feed-card__actions {
   border-top: 0;
   border-bottom: 0;
+}
+
+.community-feed-action__count {
+  display: inline-block;
+  margin-left: 4px;
+  color: currentColor;
+  font-size: 0.7rem !important;
+  font-weight: 590;
+  line-height: 1;
+}
+
+.community-feed-like.is-active,
+.community-feed-action.community-feed-like.is-active {
+  color: #ed4956 !important;
+}
+
+.community-feed-like.is-active svg {
+  fill: currentColor;
 }
 
 /* =========================
@@ -117,9 +141,9 @@
   .community-reference-center
   .community-feed-card__header {
   grid-template-columns: auto minmax(0, 1fr) auto !important;
-  align-items: center !important;
+  align-items: start !important;
   gap: 9px !important;
-  padding: 12px 16px 2px !important;
+  padding: 11px 16px 4px !important;
 }
 
 .community-social-page.community-social-page.community-social-page
@@ -128,7 +152,6 @@
   display: flex !important;
   align-items: baseline !important;
   gap: 6px !important;
-  min-width: 0;
 }
 
 .community-social-page.community-social-page.community-social-page
@@ -162,30 +185,22 @@
 
 .community-social-page.community-social-page.community-social-page
   .community-reference-center
+  .community-feed-card__content
   .community-feed-card__text {
-  padding: 2px 16px 8px 62px !important;
+  padding: 4px 0 0 !important;
   color: #171a18 !important;
   font-size: 0.9rem !important;
   line-height: 1.46 !important;
   letter-spacing: -0.004em;
 }
 
-.community-social-page.community-social-page.community-social-page
-  .community-reference-center
-  .community-feed-card__text button {
-  margin-top: 3px;
-  color: #5d625f;
-  font-size: 0.76rem;
-  font-weight: 680;
-}
-
-/* Media follows the text column rather than creating a full-width Facebook card. */
+/* Media follows the same content column as Threads. */
 .community-social-page.community-social-page.community-social-page
   .community-reference-center
   .community-feed-media {
   width: calc(100% - 78px) !important;
   max-width: 610px;
-  margin: 1px 16px 7px 62px !important;
+  margin: 0 16px 6px 62px !important;
   gap: 2px !important;
   overflow: hidden !important;
   border: 1px solid #e1e4e2;
@@ -230,57 +245,16 @@
 
 .community-social-page.community-social-page.community-social-page
   .community-reference-center
-  .community-feed-card__stats {
-  justify-content: flex-start !important;
-  min-height: 0 !important;
-  padding: 0 16px 0 62px !important;
-  gap: 13px;
-  color: #767b78;
-  font-size: 0.66rem !important;
-}
-
-.community-social-page.community-social-page.community-social-page
-  .community-reference-center
-  .community-feed-card__stats > :is(span, a) {
-  min-height: 18px;
-}
-
-.community-social-page.community-social-page.community-social-page
-  .community-reference-center
-  .community-feed-card__stats:has(> span:empty):has(> a:empty) {
-  display: none !important;
-}
-
-.community-social-page.community-social-page.community-social-page
-  .community-reference-center
-  .community-feed-card__stats b {
-  width: auto;
-  height: auto;
-  border-radius: 0;
-  color: inherit;
-  background: transparent;
-  font-size: 0.75rem;
-}
-
-.community-social-page.community-social-page.community-social-page
-  .community-reference-center
   .community-feed-card__actions {
   display: flex !important;
   grid-template-columns: none !important;
   align-items: center;
   justify-content: flex-start;
-  min-height: 36px;
+  min-height: 34px;
   padding: 0 16px 6px 54px !important;
-  gap: 7px;
+  gap: 6px;
   border-top: 0 !important;
   border-bottom: 0 !important;
-}
-
-.community-social-page.community-social-page.community-social-page
-  .community-reference-center
-  .community-feed-reaction {
-  flex: 0 0 auto;
-  width: auto;
 }
 
 .community-social-page.community-social-page.community-social-page
@@ -288,15 +262,14 @@
   .community-feed-action {
   flex: 0 0 auto;
   width: auto !important;
-  min-width: 34px;
-  min-height: 32px !important;
+  min-width: 33px;
+  min-height: 31px !important;
   padding: 0 6px !important;
   gap: 0;
   border-radius: 999px;
-  color: #333936;
+  color: #313633;
   background: transparent !important;
   font-size: 0 !important;
-  font-weight: 600;
 }
 
 .community-social-page.community-social-page.community-social-page
@@ -315,20 +288,15 @@
 
 .community-social-page.community-social-page.community-social-page
   .community-reference-center
-  .community-feed-action.is-active {
-  color: #0e8a42;
+  .community-feed-action__count {
+  margin-left: 4px;
+  font-size: 0.68rem !important;
 }
 
 .community-social-page.community-social-page.community-social-page
   .community-reference-center
-  .community-feed-action__emoji {
-  font-size: 1.05rem !important;
-}
-
-.community-social-page.community-social-page.community-social-page
-  .community-reference-center
-  .community-feed-action__caret {
-  display: none !important;
+  .community-feed-like.is-active {
+  color: #ed4956 !important;
 }
 
 .community-social-page.community-social-page.community-social-page
@@ -337,7 +305,7 @@
   display: none !important;
 }
 
-/* Keep comments available without permanently spending vertical space. */
+/* Keep comment input available only when explicitly focused. */
 .community-social-page.community-social-page.community-social-page
   .community-reference-center
   .community-feed-comment-box {
@@ -356,8 +324,8 @@
 .community-social-page.community-social-page.community-social-page
   .community-reference-center
   .community-feed-comment-box:focus-within {
-  max-height: 56px !important;
-  padding: 2px 16px 8px 62px !important;
+  max-height: 55px !important;
+  padding: 2px 16px 7px 62px !important;
   opacity: 1;
   pointer-events: auto;
 }
@@ -393,7 +361,7 @@
     .community-reference-center
     .community-feed-card__header {
     gap: 8px !important;
-    padding: 10px 14px 1px !important;
+    padding: 9px 14px 4px !important;
   }
 
   .community-feed-card__author,
@@ -407,7 +375,7 @@
   .community-social-page.community-social-page.community-social-page
     .community-reference-center
     .community-feed-card__author > a {
-    font-size: 0.86rem !important;
+    font-size: 0.85rem !important;
   }
 
   .community-feed-card__author > div,
@@ -416,22 +384,24 @@
     .community-feed-card__author > div {
     gap: 3px !important;
     margin-top: 0 !important;
-    font-size: 0.63rem !important;
+    font-size: 0.62rem !important;
   }
 
   .community-social-page.community-social-page.community-social-page
     .community-reference-center
     .community-feed-card__type {
     padding: 3px 6px !important;
-    font-size: 0.56rem !important;
+    font-size: 0.55rem !important;
   }
 
+  .community-feed-card__content .community-feed-card__text,
   .community-social-page.community-social-page.community-social-page
     .community-reference-center
+    .community-feed-card__content
     .community-feed-card__text {
-    padding: 2px 14px 6px 58px !important;
-    font-size: 0.88rem !important;
-    line-height: 1.43 !important;
+    padding: 3px 0 0 !important;
+    font-size: 0.87rem !important;
+    line-height: 1.42 !important;
   }
 
   .community-social-page.community-social-page.community-social-page
@@ -439,7 +409,7 @@
     .community-feed-media {
     width: calc(100% - 72px) !important;
     max-width: none;
-    margin: 1px 14px 6px 58px !important;
+    margin: 0 14px 5px 58px !important;
     border-radius: 10px !important;
   }
 
@@ -474,25 +444,17 @@
 
   .community-social-page.community-social-page.community-social-page
     .community-reference-center
-    .community-feed-card__stats {
-    padding: 0 14px 0 58px !important;
-    gap: 11px;
-    font-size: 0.63rem !important;
-  }
-
-  .community-social-page.community-social-page.community-social-page
-    .community-reference-center
     .community-feed-card__actions {
-    min-height: 34px;
+    min-height: 32px;
     padding: 0 14px 5px 50px !important;
-    gap: 5px;
+    gap: 4px;
   }
 
   .community-social-page.community-social-page.community-social-page
     .community-reference-center
     .community-feed-action {
-    min-width: 32px;
-    min-height: 31px !important;
+    min-width: 31px;
+    min-height: 30px !important;
     padding-inline: 5px !important;
   }
 
@@ -505,6 +467,13 @@
 
   .community-social-page.community-social-page.community-social-page
     .community-reference-center
+    .community-feed-action__count {
+    margin-left: 3px;
+    font-size: 0.64rem !important;
+  }
+
+  .community-social-page.community-social-page.community-social-page
+    .community-reference-center
     .community-feed-comment-box {
     padding: 0 14px 0 58px !important;
   }
@@ -512,18 +481,18 @@
   .community-social-page.community-social-page.community-social-page
     .community-reference-center
     .community-feed-comment-box:focus-within {
-    max-height: 54px !important;
-    padding: 2px 14px 7px 58px !important;
+    max-height: 52px !important;
+    padding: 2px 14px 6px 58px !important;
   }
 
   .community-feed-comment-box > div {
-    min-height: 33px;
+    min-height: 32px;
     padding-left: 10px;
     background: #f3f4f3;
   }
 
   .community-feed-comment-box input {
-    height: 32px;
+    height: 31px;
     font-size: 0.74rem;
   }
 
@@ -537,15 +506,7 @@
   .community-social-page.community-social-page.community-social-page
     .community-reference-center
     .community-feed-card__header {
-    padding-right: 12px !important;
-    padding-left: 12px !important;
-  }
-
-  .community-social-page.community-social-page.community-social-page
-    .community-reference-center
-    .community-feed-card__text {
-    padding-right: 12px !important;
-    padding-left: 54px !important;
+    padding-inline: 12px !important;
   }
 
   .community-social-page.community-social-page.community-social-page
@@ -554,13 +515,6 @@
     width: calc(100% - 66px) !important;
     margin-right: 12px !important;
     margin-left: 54px !important;
-  }
-
-  .community-social-page.community-social-page.community-social-page
-    .community-reference-center
-    .community-feed-card__stats {
-    padding-right: 12px !important;
-    padding-left: 54px !important;
   }
 
   .community-social-page.community-social-page.community-social-page
