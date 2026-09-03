@@ -55,7 +55,7 @@ function loadRouteStyles(pathname) {
 function showMobileBottomNavigation(pathname) {
   const hiddenPrefixes = [
     '/cong-dong/create',
-    '/studio/',
+    '/studio',
     '/dang-bai',
     '/gui-tin',
     '/dang-nhap',
