@@ -3,7 +3,6 @@ import { LoaderCircle, RotateCcw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 import Seo from '../../components/common/Seo';
-import CommunityPage from '../public/CommunityPage';
 import { draftApi } from '../../api/content.api';
 import { apiErrorMessage } from '../../api/http';
 import { editorBasePath } from '../../utils/content';
@@ -26,7 +25,6 @@ function sharedCreate(contentType) {
 }
 
 const LABELS = {
-  community: 'bài cộng đồng',
   property: 'tin bất động sản',
   job: 'tin tuyển dụng',
 };
@@ -37,6 +35,16 @@ export default function ContentStudioEntryPage({ contentType }) {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    if (contentType === 'community') {
+      navigate('/cong-dong', { replace: true });
+      window.setTimeout(() => {
+        window.dispatchEvent(
+          new CustomEvent('dthl:open-community-composer'),
+        );
+      }, 0);
+      return undefined;
+    }
+
     let active = true;
 
     setError('');
@@ -65,55 +73,7 @@ export default function ContentStudioEntryPage({ contentType }) {
   }, [attempt, contentType, navigate]);
 
   if (contentType === 'community') {
-    return (
-      <>
-        <Seo title="Bài viết mới" />
-        <CommunityPage />
-
-        {error ? (
-          <div
-            role="alert"
-            style={{
-              position: 'fixed',
-              zIndex: 1400,
-              left: '50%',
-              bottom: 'max(24px, env(safe-area-inset-bottom))',
-              width: 'min(92vw, 420px)',
-              padding: '12px 14px',
-              border: '1px solid #e3b4b4',
-              borderRadius: 14,
-              color: '#6f2525',
-              background: '#fff7f7',
-              boxShadow: '0 12px 32px rgb(0 0 0 / 0.16)',
-              transform: 'translateX(-50%)',
-            }}
-          >
-            <strong>Chưa thể mở bài viết.</strong>
-            <p style={{ margin: '4px 0 10px', fontSize: '0.82rem' }}>{error}</p>
-            <button
-              type="button"
-              onClick={() => setAttempt((value) => value + 1)}
-              style={{
-                display: 'inline-flex',
-                alignItems: 'center',
-                minHeight: 36,
-                padding: '0 12px',
-                gap: 6,
-                border: 0,
-                borderRadius: 9,
-                color: '#fff',
-                background: '#0b8c42',
-                font: 'inherit',
-                fontWeight: 700,
-                cursor: 'pointer',
-              }}
-            >
-              <RotateCcw size={15} /> Thử lại
-            </button>
-          </div>
-        ) : null}
-      </>
-    );
+    return null;
   }
 
   return (
