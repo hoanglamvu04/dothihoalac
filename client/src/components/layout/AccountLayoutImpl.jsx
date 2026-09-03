@@ -11,12 +11,12 @@ import {
 import {
   ArrowLeft,
   BriefcaseBusiness,
-  Building2,
   Home,
   Newspaper,
   RefreshCw,
   TriangleAlert,
   UserRound,
+  UsersRound,
 } from 'lucide-react';
 
 import Seo from '../common/Seo';
@@ -45,7 +45,7 @@ const MOBILE_TITLES = [
 const MOBILE_DOCK = [
   { to: '/', label: 'Trang chủ', icon: Home, end: true },
   { to: '/viec-lam', label: 'Việc làm', icon: BriefcaseBusiness },
-  { to: '/bat-dong-san', label: 'BĐS', icon: Building2 },
+  { to: '/cong-dong', label: 'Cộng đồng', icon: UsersRound },
   { to: '/tin-tuc', label: 'Tin tức', icon: Newspaper },
   { to: '/tai-khoan', label: 'Tài khoản', icon: UserRound },
 ];
