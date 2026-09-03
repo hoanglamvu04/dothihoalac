@@ -1,72 +1,213 @@
 /* =========================================================
-   DTHL GREEN PRIMARY — CASCADE GUARD
-   Green is the interaction/brand primary. Earth #B69A67 is only a
-   supporting accent. !important is intentional here because several
-   route-level stylesheets are code-split and injected after main.css.
+   DTHL EARTH PRIMARY — CASCADE GUARD
+   Official brand primary: #B59965.
+   This file intentionally uses !important because several route-level
+   stylesheets are code-split and injected after the global theme.
+   Deep green is retained only as a supporting field / semantic color.
 ========================================================= */
 
-/* Header / taxonomy */
+:root {
+  --dthl-brand-force: #b59965;
+  --dthl-brand-force-hover: #9b7f52;
+  --dthl-brand-force-dark: #806642;
+  --dthl-brand-force-deep: #6e5939;
+  --dthl-brand-force-soft: #f3ede2;
+  --dthl-brand-force-border: #dfd0b3;
+  --dthl-warm-ink: #24231f;
+  --dthl-warm-text: #5d584f;
+  --dthl-warm-muted: #8f887c;
+  --dthl-warm-border: #e5dfd5;
+  --dthl-warm-bg: #fbfaf7;
+  --dthl-support-forest: #23372c;
+  --dthl-support-green: #2f6146;
+}
+
+/* =========================
+   PRIMARY NAVIGATION
+========================= */
+
+.dthl-primary-nav__link {
+  color: #4a463f !important;
+}
+
+.dthl-primary-nav__icon {
+  color: var(--dthl-brand-force-dark) !important;
+  background: #f7f3eb !important;
+}
+
+.dthl-primary-nav__link:hover,
+.dthl-primary-nav__link.is-active {
+  color: var(--dthl-brand-force-dark) !important;
+  background: var(--dthl-brand-force-soft) !important;
+}
+
+.dthl-primary-nav__link.is-active {
+  box-shadow: inset 0 -2px 0 var(--dthl-brand-force) !important;
+}
+
+.dthl-primary-nav__link.is-active .dthl-primary-nav__icon {
+  color: #fff !important;
+  background: var(--dthl-brand-force) !important;
+}
+
+.dthl-primary-nav__submenu {
+  border-color: var(--dthl-warm-border) !important;
+  box-shadow: 0 18px 42px rgb(84 68 43 / 0.12) !important;
+}
+
+.dthl-primary-nav__submenu strong {
+  border-bottom-color: #f0ece5 !important;
+  color: #3b382f !important;
+}
+
+.dthl-primary-nav__submenu a {
+  color: #625d54 !important;
+}
+
+.dthl-primary-nav__submenu a:hover {
+  color: var(--dthl-brand-force-dark) !important;
+  background: #f7f3eb !important;
+}
+
+.dthl-primary-mobile__item {
+  border-color: var(--dthl-warm-border) !important;
+  color: #3f3b35 !important;
+  background: #fff !important;
+  box-shadow: 0 2px 8px rgb(84 68 43 / 0.03) !important;
+}
+
+.dthl-primary-mobile__item:hover,
+.dthl-primary-mobile__item.is-active {
+  border-color: var(--dthl-brand-force-border) !important;
+  color: var(--dthl-brand-force-dark) !important;
+  background: var(--dthl-brand-force-soft) !important;
+}
+
+.dthl-primary-mobile__icon {
+  color: var(--dthl-brand-force-dark) !important;
+  background: #f7f3eb !important;
+}
+
+.dthl-primary-mobile__item.is-active .dthl-primary-mobile__icon {
+  color: #fff !important;
+  background: var(--dthl-brand-force) !important;
+  box-shadow: 0 5px 13px rgb(128 102 66 / 0.2) !important;
+}
+
+.mobile-bottom-nav {
+  border-top-color: var(--dthl-warm-border) !important;
+  box-shadow: 0 -8px 24px rgb(84 68 43 / 0.08) !important;
+}
+
+.mobile-bottom-nav__item {
+  color: #4f4a43 !important;
+}
+
+.mobile-bottom-nav__item.is-active {
+  color: var(--dthl-brand-force-dark) !important;
+}
+
+.mobile-bottom-nav__item.is-active::before {
+  background: var(--dthl-brand-force) !important;
+}
+
+.mobile-bottom-nav__item.is-active .mobile-bottom-nav__icon {
+  background: #f7f3eb !important;
+}
+
+/* =========================
+   HEADER / TAXONOMY
+========================= */
+
 .dthl-header-nav-upgrade__link:hover,
 .dthl-header-nav-upgrade__item:focus-within > .dthl-header-nav-upgrade__link {
-  color: #116a32 !important;
-  background: #f6fbf8 !important;
+  color: var(--dthl-brand-force-dark) !important;
+  background: #faf7f1 !important;
 }
 
 .dthl-header-nav-upgrade__link.is-active {
-  color: #116a32 !important;
-  background: #edf9f1 !important;
-  box-shadow: inset 0 -2px 0 #1fa34b !important;
+  color: var(--dthl-brand-force-dark) !important;
+  background: var(--dthl-brand-force-soft) !important;
+  box-shadow: inset 0 -2px 0 var(--dthl-brand-force) !important;
 }
 
 .dthl-header-nav-upgrade__item:hover .dthl-header-nav-upgrade__chevron,
 .dthl-header-nav-upgrade__item:focus-within .dthl-header-nav-upgrade__chevron {
-  color: #116a32 !important;
+  color: var(--dthl-brand-force-dark) !important;
 }
 
 .dthl-header-submenu__root:hover,
 .dthl-header-submenu__root.is-active,
 .dthl-header-submenu__child:hover,
 .dthl-header-submenu__child.is-active {
-  color: #116a32 !important;
-  background: #edf9f1 !important;
+  color: var(--dthl-brand-force-dark) !important;
+  background: var(--dthl-brand-force-soft) !important;
 }
 
 .dthl-header-submenu__root.is-active,
 .dthl-header-submenu__child.is-active {
-  box-shadow: inset 3px 0 0 #1fa34b !important;
+  box-shadow: inset 3px 0 0 var(--dthl-brand-force) !important;
 }
 
-/* News / category pages */
+/* =========================
+   HOME
+========================= */
+
+.dth-home.home-ref {
+  --home-green: #b59965 !important;
+  --home-green-dark: #806642 !important;
+  --home-green-soft: #f3ede2 !important;
+  --home-ink: #24231f !important;
+  --home-text: #5d584f !important;
+  --home-muted: #8f887c !important;
+  --home-border: #e5dfd5 !important;
+  --home-page: #fbfaf7 !important;
+}
+
+.home-ref-section-header a,
+.home-ref-property-title a,
+.home-ref :is(.badge--primary, .content-card__labels .badge) {
+  color: var(--dthl-brand-force-dark) !important;
+}
+
+.home-ref :is(.badge--primary, .content-card__labels .badge) {
+  background: #f3ede2 !important;
+}
+
+/* =========================
+   NEWS / CATEGORY PAGES
+========================= */
+
 .news-hub {
-  --news-green: #1fa34b !important;
-  --news-green-dark: #116a32 !important;
-  --news-green-soft: #edf9f1 !important;
-  --news-ink: #10261a !important;
-  --news-text: #405d4e !important;
-  --news-muted: #7a8d82 !important;
-  --news-border: #dce7e0 !important;
+  --news-green: #b59965 !important;
+  --news-green-dark: #806642 !important;
+  --news-green-soft: #f3ede2 !important;
+  --news-ink: #24231f !important;
+  --news-text: #5d584f !important;
+  --news-muted: #8f887c !important;
+  --news-border: #e5dfd5 !important;
 }
 
 .news-masthead__search button,
 .news-stream__continue button,
 .news-hub__empty > button,
 .news-hub__error > button {
-  border-color: #1fa34b !important;
-  background: #1fa34b !important;
+  border-color: var(--dthl-brand-force) !important;
+  background: var(--dthl-brand-force) !important;
 }
 
 .news-masthead__search button:not(:disabled):hover,
 .news-stream__continue button:hover,
 .news-hub__empty > button:hover,
 .news-hub__error > button:hover {
-  border-color: #188a3e !important;
-  background: #188a3e !important;
+  border-color: var(--dthl-brand-force-hover) !important;
+  background: var(--dthl-brand-force-hover) !important;
 }
 
 .news-category-bar nav button:hover,
 .news-category-bar nav button.is-active {
-  color: #116a32 !important;
-  background: #edf9f1 !important;
+  color: var(--dthl-brand-force-dark) !important;
+  background: var(--dthl-brand-force-soft) !important;
 }
 
 .news-filter-toggle:hover,
@@ -80,56 +221,59 @@
 .news-discussion-list a:hover > span,
 .news-project-item__top span,
 .news-project-item__top b {
-  color: #116a32 !important;
+  color: var(--dthl-brand-force-dark) !important;
 }
 
 .news-stream__heading,
 .news-rail-card__head,
 .news-context-card .news-rail-card__head {
-  border-bottom-color: #1fa34b !important;
+  border-bottom-color: var(--dthl-brand-force) !important;
 }
 
 .news-project-item__progress i {
-  background: #1fa34b !important;
+  background: var(--dthl-brand-force) !important;
 }
 
 .news-discussion-list b {
-  border-color: #bde7ca !important;
-  color: #116a32 !important;
+  border-color: var(--dthl-brand-force-border) !important;
+  color: var(--dthl-brand-force-dark) !important;
 }
 
 .news-masthead__search:focus-within,
 .news-filter-panel :is(select, input):focus {
-  border-color: #35b95f !important;
-  box-shadow: 0 0 0 3px rgba(31, 163, 75, 0.11) !important;
+  border-color: #cdb787 !important;
+  box-shadow: 0 0 0 3px rgba(181, 153, 101, 0.13) !important;
 }
 
-/* Property marketplace */
+/* =========================
+   PROPERTY MARKETPLACE
+========================= */
+
 .properties-page {
-  --property-green: #1fa34b !important;
-  --property-green-hover: #188a3e !important;
-  --property-green-dark: #116a32 !important;
-  --property-green-deep: #083d20 !important;
-  --property-green-soft: #edf9f1 !important;
-  --property-green-border: #bde7ca !important;
-  --property-ink: #10261a !important;
-  --property-text: #405d4e !important;
-  --property-muted: #7a8d82 !important;
-  --property-border: #dce7e0 !important;
-  --property-background: #f6f9f7 !important;
+  --property-green: #b59965 !important;
+  --property-green-hover: #9b7f52 !important;
+  --property-green-dark: #806642 !important;
+  --property-green-deep: #6e5939 !important;
+  --property-green-soft: #f3ede2 !important;
+  --property-green-border: #dfd0b3 !important;
+  --property-ink: #24231f !important;
+  --property-text: #5d584f !important;
+  --property-muted: #8f887c !important;
+  --property-border: #e5dfd5 !important;
+  --property-background: #fbfaf7 !important;
 }
 
 .properties-hero__search > button,
 .properties-post-button,
 .properties-page [class*='primary'] {
-  border-color: #1fa34b !important;
-  background-color: #1fa34b !important;
+  border-color: var(--dthl-brand-force) !important;
+  background-color: var(--dthl-brand-force) !important;
 }
 
 .properties-hero__search > button:hover,
 .properties-post-button:hover {
-  border-color: #188a3e !important;
-  background-color: #188a3e !important;
+  border-color: var(--dthl-brand-force-hover) !important;
+  background-color: var(--dthl-brand-force-hover) !important;
 }
 
 .properties-filter-toolbar__main:hover,
@@ -141,34 +285,37 @@
 .properties-modal-preset-grid button:hover,
 .properties-modal-preset-grid button.is-active,
 .properties-filter-option-list > button.is-active {
-  border-color: #bde7ca !important;
-  color: #116a32 !important;
-  background: #edf9f1 !important;
+  border-color: var(--dthl-brand-force-border) !important;
+  color: var(--dthl-brand-force-dark) !important;
+  background: var(--dthl-brand-force-soft) !important;
 }
 
 .properties-filter-option-list > button svg,
 .properties-filter-toolbar__sort svg {
-  color: #116a32 !important;
+  color: var(--dthl-brand-force-dark) !important;
 }
 
 .properties-hero__search > label:focus-within,
 .properties-popover-range-inputs input:focus {
-  border-color: #35b95f !important;
-  box-shadow: 0 0 0 3px rgba(31, 163, 75, 0.12) !important;
+  border-color: #cdb787 !important;
+  box-shadow: 0 0 0 3px rgba(181, 153, 101, 0.13) !important;
 }
 
-/* Community */
+/* =========================
+   COMMUNITY
+========================= */
+
 .community-social-page {
-  --community-green: #1fa34b !important;
-  --community-green-hover: #188a3e !important;
-  --community-green-dark: #116a32 !important;
-  --community-green-soft: #edf9f1 !important;
-  --community-ink: #14251b !important;
-  --community-text: #506057 !important;
-  --community-muted: #7c8981 !important;
-  --community-border: #e0e7e3 !important;
-  --community-border-soft: #edf1ef !important;
-  --community-bg: #f7f8f7 !important;
+  --community-green: #b59965 !important;
+  --community-green-hover: #9b7f52 !important;
+  --community-green-dark: #806642 !important;
+  --community-green-soft: #f3ede2 !important;
+  --community-ink: #24231f !important;
+  --community-text: #5d584f !important;
+  --community-muted: #8f887c !important;
+  --community-border: #e5dfd5 !important;
+  --community-border-soft: #f0ece5 !important;
+  --community-bg: #fbfaf7 !important;
 }
 
 .community-reference-card h2,
@@ -178,7 +325,7 @@
 .community-popular-item:hover strong,
 .community-social-filter-drawer__icon,
 .community-reference-filter-trigger:hover {
-  color: #116a32 !important;
+  color: var(--dthl-brand-force-dark) !important;
 }
 
 .community-discovery-list button:hover,
@@ -186,24 +333,23 @@
 .community-discovery-more:hover,
 .community-reference-filter-trigger:hover,
 .community-social-empty > span {
-  background: #edf9f1 !important;
+  background: var(--dthl-brand-force-soft) !important;
 }
 
 .community-discovery-list__icon,
-.community-reference-composer__actions > a svg,
-.community-rules-card li svg {
-  color: #1fa34b !important;
+.community-reference-composer__actions > a svg {
+  color: var(--dthl-brand-force-dark) !important;
 }
 
 .community-reference-composer__top:hover .community-reference-composer__prompt,
 .community-reference-composer__actions > a:hover,
 .community-reference-filter-trigger:hover {
-  border-color: #bde7ca !important;
+  border-color: var(--dthl-brand-force-border) !important;
 }
 
 .community-reference-composer__actions > a:hover {
-  color: #116a32 !important;
-  background: #f6fbf8 !important;
+  color: var(--dthl-brand-force-dark) !important;
+  background: #faf7f1 !important;
 }
 
 .community-reference-composer__actions > .community-reference-composer__submit,
@@ -212,8 +358,8 @@
 .community-social-filter-drawer__actions button:last-child,
 .community-social-empty > a,
 .community-social-empty > button {
-  border-color: #116a32 !important;
-  background: #116a32 !important;
+  border-color: var(--dthl-brand-force) !important;
+  background: var(--dthl-brand-force) !important;
   color: #fff !important;
 }
 
@@ -221,129 +367,151 @@
 .community-join-card__actions a:first-child:hover,
 .community-social-filter-search button:hover,
 .community-social-filter-drawer__actions button:last-child:hover {
-  border-color: #083d20 !important;
-  background: #083d20 !important;
+  border-color: var(--dthl-brand-force-hover) !important;
+  background: var(--dthl-brand-force-hover) !important;
 }
 
 .community-reference-feed-tabs nav button:hover,
 .community-reference-feed-tabs nav button.is-active {
-  border-color: #1fa34b !important;
+  border-color: var(--dthl-brand-force) !important;
   color: #fff !important;
-  background: #1fa34b !important;
+  background: var(--dthl-brand-force) !important;
 }
 
 .community-reference-filter-trigger strong,
 .community-feed-card__stats b {
-  background: #1fa34b !important;
+  background: var(--dthl-brand-force) !important;
 }
 
 .community-join-card__actions a + a {
-  border-color: #1fa34b !important;
-  color: #116a32 !important;
+  border-color: var(--dthl-brand-force) !important;
+  color: var(--dthl-brand-force-dark) !important;
   background: #fff !important;
 }
 
 .community-rules-card > a,
 .community-feed-action.is-active,
 .community-feed-comment-box button {
-  color: #116a32 !important;
+  color: var(--dthl-brand-force-dark) !important;
 }
 
 .community-feed-media__item:focus-visible {
-  box-shadow: inset 0 0 0 3px #35b95f !important;
+  box-shadow: inset 0 0 0 3px #cdb787 !important;
 }
 
 .community-feed-action:hover,
-.community-feed-reaction-picker button:hover,
-.community-feed-reaction-picker button.is-active,
 .community-feed-comment-box button:hover {
-  background: #edf9f1 !important;
+  background: var(--dthl-brand-force-soft) !important;
 }
 
-/* Earth is secondary: use it on neutral social type/status chips only */
 .community-feed-card__type {
-  color: #806b48 !important;
-  background: #f8f4ec !important;
+  border-color: var(--dthl-brand-force-border) !important;
+  color: var(--dthl-brand-force-dark) !important;
+  background: var(--dthl-brand-force-soft) !important;
 }
 
-/* Jobs */
+/* Community rules remain green because they communicate trust/safety. */
+.community-rules-card li svg {
+  color: var(--dthl-support-green) !important;
+}
+
+/* =========================
+   JOBS
+========================= */
+
 .jobs-page,
 .jobs-marketplace-page {
-  --jobs-green: #1fa34b !important;
-  --jobs-green-hover: #188a3e !important;
-  --jobs-green-dark: #116a32 !important;
-  --jobs-green-deep: #083d20 !important;
-  --jobs-green-soft: #edf9f1 !important;
-  --jobs-green-border: #bde7ca !important;
+  --jobs-green: #b59965 !important;
+  --jobs-green-hover: #9b7f52 !important;
+  --jobs-green-dark: #806642 !important;
+  --jobs-green-deep: #6e5939 !important;
+  --jobs-green-soft: #f3ede2 !important;
+  --jobs-green-soft-strong: #e9dfcc !important;
+  --jobs-green-border: #dfd0b3 !important;
+  --jobs-ink: #24231f !important;
+  --jobs-text: #5d584f !important;
+  --jobs-muted: #8f887c !important;
+  --jobs-border: #e5dfd5 !important;
+  --jobs-border-soft: #f0ece5 !important;
+  --jobs-background: #fbfaf7 !important;
 }
 
 .jobs-page :is(button, a).is-active,
 .jobs-marketplace-page :is(button, a).is-active {
-  color: #116a32 !important;
+  color: var(--dthl-brand-force-dark) !important;
 }
 
-/* Article detail */
+.jobs-page :is(button[type='submit'], .jobs-post-button, [class*='primary']) {
+  border-color: var(--dthl-brand-force) !important;
+  background-color: var(--dthl-brand-force) !important;
+}
+
+/* =========================
+   ARTICLE DETAIL
+========================= */
+
 .article-view-page {
-  --article-green: #1fa34b !important;
-  --article-green-dark: #116a32 !important;
-  --article-green-soft: #edf9f1 !important;
+  --article-green: #b59965 !important;
+  --article-green-dark: #806642 !important;
+  --article-green-soft: #f3ede2 !important;
 }
 
 .article-view-page :is(a, button):focus-visible {
-  outline-color: #35b95f !important;
+  outline-color: #cdb787 !important;
 }
 
-/* Auth: login / register / forgot / reset */
+/* =========================
+   AUTH
+   Forest stays as the visual field. Earth owns CTA and focus states.
+========================= */
+
 .dthl-login-page {
-  --dthl-login-green: #1fa34b !important;
-  --dthl-login-green-hover: #188a3e !important;
-  --dthl-login-green-dark: #116a32 !important;
-  --dthl-login-green-deep: #083d20 !important;
-  --dthl-login-green-soft: #edf9f1 !important;
-  --dthl-login-green-border: #bde7ca !important;
+  --dthl-login-green: #b59965 !important;
+  --dthl-login-green-hover: #9b7f52 !important;
+  --dthl-login-green-dark: #806642 !important;
+  --dthl-login-green-deep: #23372c !important;
+  --dthl-login-green-soft: #f3ede2 !important;
+  --dthl-login-green-border: #dfd0b3 !important;
 }
 
 .dthl-register-page {
-  --dthl-register-green: #1fa34b !important;
-  --dthl-register-green-hover: #188a3e !important;
-  --dthl-register-green-dark: #116a32 !important;
-  --dthl-register-green-deep: #083d20 !important;
-  --dthl-register-green-soft: #edf9f1 !important;
-  --dthl-register-green-border: #bde7ca !important;
+  --dthl-register-green: #b59965 !important;
+  --dthl-register-green-hover: #9b7f52 !important;
+  --dthl-register-green-dark: #806642 !important;
+  --dthl-register-green-deep: #23372c !important;
+  --dthl-register-green-soft: #f3ede2 !important;
+  --dthl-register-green-border: #dfd0b3 !important;
 }
 
 .dthl-forgot-page {
-  --dthl-forgot-green: #1fa34b !important;
-  --dthl-forgot-green-hover: #188a3e !important;
-  --dthl-forgot-green-dark: #116a32 !important;
-  --dthl-forgot-green-deep: #083d20 !important;
-  --dthl-forgot-green-soft: #edf9f1 !important;
-  --dthl-forgot-green-border: #bde7ca !important;
+  --dthl-forgot-green: #b59965 !important;
+  --dthl-forgot-green-hover: #9b7f52 !important;
+  --dthl-forgot-green-dark: #806642 !important;
+  --dthl-forgot-green-deep: #23372c !important;
+  --dthl-forgot-green-soft: #f3ede2 !important;
+  --dthl-forgot-green-border: #dfd0b3 !important;
 }
 
 .dthl-reset-page {
-  --dthl-reset-green: #1fa34b !important;
-  --dthl-reset-green-hover: #188a3e !important;
-  --dthl-reset-green-dark: #116a32 !important;
-  --dthl-reset-green-deep: #083d20 !important;
-  --dthl-reset-green-soft: #edf9f1 !important;
-  --dthl-reset-green-border: #bde7ca !important;
+  --dthl-reset-green: #b59965 !important;
+  --dthl-reset-green-hover: #9b7f52 !important;
+  --dthl-reset-green-dark: #806642 !important;
+  --dthl-reset-green-deep: #23372c !important;
+  --dthl-reset-green-soft: #f3ede2 !important;
+  --dthl-reset-green-border: #dfd0b3 !important;
 }
 
 .dthl-login-intro,
 .dthl-register-intro,
 .dthl-forgot-intro,
 .dthl-reset-intro {
-  background: linear-gradient(150deg, #062f18 0%, #083d20 48%, #0f6e35 100%) !important;
+  background: linear-gradient(150deg, #17271f 0%, #23372c 52%, #2f6146 100%) !important;
 }
 
 .dthl-login-intro__heading h1 em,
 .dthl-register-intro__heading h1 em,
 .dthl-forgot-intro__heading h1 em,
-.dthl-reset-intro__heading h1 em {
-  color: #8ee2a9 !important;
-}
-
+.dthl-reset-intro__heading h1 em,
 .dthl-login-brand small,
 .dthl-register-brand small,
 .dthl-forgot-brand small,
@@ -352,41 +520,36 @@
 .dthl-register-eyebrow,
 .dthl-forgot-eyebrow,
 .dthl-reset-eyebrow {
-  color: #a9e8bd !important;
+  color: #decba6 !important;
 }
 
 .dthl-login-benefits > div > span,
 .dthl-register-benefits > div > span,
 .dthl-forgot-benefits > div > span,
 .dthl-reset-benefits > div > span {
-  background: rgba(73, 211, 116, 0.24) !important;
+  background: rgba(181, 153, 101, 0.24) !important;
 }
 
 .dthl-login-input:focus-within,
 .dthl-register-input:focus-within,
 .dthl-forgot-input:focus-within,
 .dthl-reset-input:focus-within {
-  border-color: #1fa34b !important;
-  box-shadow: 0 0 0 4px rgba(31, 163, 75, 0.11), 0 8px 22px rgba(31, 163, 75, 0.06) !important;
+  border-color: var(--dthl-brand-force) !important;
+  box-shadow: 0 0 0 4px rgba(181, 153, 101, 0.13), 0 8px 22px rgba(84, 68, 43, 0.07) !important;
 }
 
 .dthl-login-submit,
 .dthl-register-submit,
 .dthl-forgot-submit,
 .dthl-reset-submit {
-  background: linear-gradient(135deg, #1fa34b, #188a3e) !important;
-  box-shadow: 0 12px 27px rgba(31, 163, 75, 0.24) !important;
+  background: linear-gradient(135deg, #b59965, #9b7f52) !important;
+  box-shadow: 0 12px 27px rgba(128, 102, 66, 0.24) !important;
 }
 
 .dthl-login-submit:hover:not(:disabled),
 .dthl-register-submit:hover:not(:disabled),
 .dthl-forgot-submit:hover:not(:disabled),
 .dthl-reset-submit:hover:not(:disabled) {
-  background: linear-gradient(135deg, #188a3e, #116a32) !important;
-  box-shadow: 0 15px 32px rgba(31, 163, 75, 0.28) !important;
-}
-
-/* Small earth accent on non-action auth branding only */
-:is(.dthl-login-brand__mark, .dthl-register-brand__mark, .dthl-forgot-brand__mark, .dthl-reset-brand__mark) {
-  border-color: rgba(182, 154, 103, 0.34) !important;
+  background: linear-gradient(135deg, #9b7f52, #806642) !important;
+  box-shadow: 0 15px 32px rgba(128, 102, 66, 0.28) !important;
 }
