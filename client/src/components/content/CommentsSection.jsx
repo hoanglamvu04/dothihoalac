@@ -11,6 +11,8 @@ import {
   Copy,
   Flag,
   Heart,
+  ImagePlus,
+  LoaderCircle,
   MessageCircle,
   MoreHorizontal,
   Pencil,
@@ -22,6 +24,7 @@ import {
 
 import Avatar from '../common/Avatar';
 import Button from '../common/Button';
+import ContentImage from './ContentImage';
 import EmptyState from '../common/EmptyState';
 import ErrorState from '../common/ErrorState';
 import Pagination from '../common/Pagination';
@@ -32,6 +35,7 @@ import {
   commentApi,
   reactionApi,
 } from '../../api/interaction.api';
+import { mediaApi } from '../../api/media.api';
 import { apiErrorMessage } from '../../api/http';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
@@ -65,6 +69,27 @@ function profilePath(user) {
     : '';
 }
 
+function resizeComposer(element) {
+  if (!element) return;
+
+  const mobile =
+    typeof window !== 'undefined' &&
+    window.matchMedia('(max-width: 720px)').matches;
+  const minHeight = mobile ? 54 : 62;
+  const maxHeight = mobile ? 132 : 164;
+
+  element.style.height = 'auto';
+  const scrollHeight = element.scrollHeight;
+  const nextHeight = Math.max(
+    minHeight,
+    Math.min(scrollHeight, maxHeight),
+  );
+
+  element.style.height = `${nextHeight}px`;
+  element.style.overflowY =
+    scrollHeight > maxHeight ? 'auto' : 'hidden';
+}
+
 const SORT_OPTIONS = [
   { value: 'popular', label: 'Hàng đầu' },
   { value: 'newest', label: 'Mới nhất' },
@@ -84,6 +109,7 @@ export default function CommentsSection({
   const { user, isAuthenticated } = useAuth();
   const toast = useToast();
   const composerRef = useRef(null);
+  const attachmentInputRef = useRef(null);
 
   const [items, setItems] = useState([]);
   const [meta, setMeta] = useState({ page: 1, totalPages: 1 });
@@ -93,6 +119,8 @@ export default function CommentsSection({
   );
   const [sortOpen, setSortOpen] = useState(false);
   const [body, setBody] = useState('');
+  const [attachment, setAttachment] = useState(null);
+  const [uploadingAttachment, setUploadingAttachment] = useState(false);
   const [replyTo, setReplyTo] = useState(null);
   const [replyLabel, setReplyLabel] = useState('');
   const [replyAnchorId, setReplyAnchorId] = useState('');
@@ -155,6 +183,14 @@ export default function CommentsSection({
     };
   }, [menuId, sortOpen]);
 
+  useEffect(() => {
+    const frame = window.requestAnimationFrame(() => {
+      resizeComposer(composerRef.current);
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [body, replyAnchorId]);
+
   const updateComment = useCallback((commentId, updater) => {
     setItems((current) =>
       current.map((root) => {
@@ -187,6 +223,7 @@ export default function CommentsSection({
   const focusComposer = useCallback(() => {
     window.requestAnimationFrame(() => {
       window.requestAnimationFrame(() => {
+        resizeComposer(composerRef.current);
         composerRef.current?.focus();
       });
     });
@@ -211,11 +248,62 @@ export default function CommentsSection({
     [focusComposer, requireLogin],
   );
 
+  const openAttachmentPicker = () => {
+    if (!requireLogin() || uploadingAttachment) return;
+    attachmentInputRef.current?.click();
+  };
+
+  const removePendingAttachment = async () => {
+    const mediaId = idOf(attachment);
+    setAttachment(null);
+
+    if (!mediaId) return;
+
+    try {
+      await mediaApi.remove(mediaId);
+    } catch {
+      // Media cleanup is best effort. The server can clean orphaned media later.
+    }
+  };
+
+  const handleAttachmentChange = async (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file || uploadingAttachment) return;
+
+    setUploadingAttachment(true);
+
+    try {
+      const uploaded = await mediaApi.uploadImage(
+        file,
+        'Ảnh hoặc GIF trong bình luận cộng đồng',
+      );
+
+      if (attachment) {
+        const previousId = idOf(attachment);
+        if (previousId) {
+          mediaApi.remove(previousId).catch(() => {});
+        }
+      }
+
+      setAttachment(uploaded);
+    } catch (err) {
+      toast.error(
+        apiErrorMessage(
+          err,
+          'Không thể tải ảnh/GIF. Vui lòng thử lại.',
+        ),
+      );
+    } finally {
+      setUploadingAttachment(false);
+    }
+  };
+
   const submit = async (event) => {
     event.preventDefault();
 
     if (!requireLogin()) return;
-    if (!body.trim()) return;
+    if (!body.trim() && !attachment) return;
 
     setSubmitting(true);
 
@@ -223,12 +311,16 @@ export default function CommentsSection({
       await commentApi.create(contentId, {
         body: body.trim(),
         parentId: replyTo?._id || null,
+        mediaId: idOf(attachment) || null,
       });
 
       const wasReply = Boolean(replyTo);
       setBody('');
+      setAttachment(null);
       cancelReply();
-      toast.success(wasReply ? 'Đã trả lời bình luận.' : 'Đã đăng bình luận.');
+      toast.success(
+        wasReply ? 'Đã trả lời bình luận.' : 'Đã đăng bình luận.',
+      );
       await load();
     } catch (err) {
       toast.error(apiErrorMessage(err));
@@ -300,7 +392,9 @@ export default function CommentsSection({
         ),
       }));
     } catch (err) {
-      toast.error(apiErrorMessage(err, 'Không thể cập nhật tương tác.'));
+      toast.error(
+        apiErrorMessage(err, 'Không thể cập nhật tương tác.'),
+      );
     }
   };
 
@@ -314,6 +408,71 @@ export default function CommentsSection({
     } catch {
       toast.error('Không thể sao chép liên kết bình luận.');
     }
+  };
+
+  const renderAttachmentInput = () => (
+    <input
+      ref={attachmentInputRef}
+      className="comment-media-input"
+      type="file"
+      accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
+      onChange={handleAttachmentChange}
+    />
+  );
+
+  const renderPendingAttachment = () => {
+    if (!attachment) return null;
+
+    return (
+      <div className="comment-composer-media-preview">
+        <ContentImage
+          media={attachment}
+          alt="Ảnh hoặc GIF chuẩn bị gửi trong bình luận"
+        />
+        <span>
+          {String(attachment?.format || '').toLowerCase() === 'gif'
+            ? 'GIF'
+            : 'Ảnh'}
+        </span>
+        <button
+          type="button"
+          aria-label="Gỡ ảnh hoặc GIF"
+          onClick={removePendingAttachment}
+        >
+          <X size={16} />
+        </button>
+      </div>
+    );
+  };
+
+  const renderComposerTools = () => (
+    <div className="comment-composer-tools">
+      <button
+        type="button"
+        disabled={!isAuthenticated || uploadingAttachment}
+        onClick={openAttachmentPicker}
+      >
+        {uploadingAttachment ? (
+          <LoaderCircle className="comment-media-spin" size={17} />
+        ) : (
+          <ImagePlus size={17} />
+        )}
+        <span>{uploadingAttachment ? 'Đang tải…' : 'Ảnh/GIF'}</span>
+      </button>
+    </div>
+  );
+
+  const renderCommentMedia = (comment) => {
+    if (!comment?.mediaId) return null;
+
+    return (
+      <div className="thread-comment__media">
+        <ContentImage
+          media={comment.mediaId}
+          alt="Ảnh hoặc GIF trong bình luận"
+        />
+      </div>
+    );
   };
 
   const renderInlineReplyComposer = (commentId) => {
@@ -345,20 +504,29 @@ export default function CommentsSection({
 
           <textarea
             ref={composerRef}
-            rows="1"
+            rows="2"
             value={body}
             maxLength={5000}
             disabled={!isAuthenticated}
             placeholder={`Trả lời ${replyLabel || 'bình luận'}...`}
+            onInput={(event) => resizeComposer(event.currentTarget)}
             onChange={(event) => setBody(event.target.value)}
           />
+
+          {renderPendingAttachment()}
+          {renderComposerTools()}
         </div>
 
         <button
           type="submit"
           className="thread-inline-reply-composer__send"
           aria-label="Gửi trả lời"
-          disabled={!isAuthenticated || !body.trim() || submitting}
+          disabled={
+            !isAuthenticated ||
+            (!body.trim() && !attachment) ||
+            submitting ||
+            uploadingAttachment
+          }
         >
           <Send size={17} />
         </button>
@@ -440,7 +608,9 @@ export default function CommentsSection({
                 <div className="thread-comment__menu" role="menu">
                   <button
                     type="button"
-                    onClick={() => startReply(rootComment, author, comment)}
+                    onClick={() =>
+                      startReply(rootComment, author, comment)
+                    }
                   >
                     <Reply size={18} />
                     Trả lời
@@ -456,13 +626,15 @@ export default function CommentsSection({
 
                   {isOwn ? (
                     <>
-                      <button
-                        type="button"
-                        onClick={() => beginEdit(comment)}
-                      >
-                        <Pencil size={18} />
-                        Chỉnh sửa
-                      </button>
+                      {comment.body ? (
+                        <button
+                          type="button"
+                          onClick={() => beginEdit(comment)}
+                        >
+                          <Pencil size={18} />
+                          Chỉnh sửa
+                        </button>
+                      ) : null}
 
                       <button
                         type="button"
@@ -519,9 +691,11 @@ export default function CommentsSection({
                 </button>
               </div>
             </div>
-          ) : (
+          ) : comment.body ? (
             <p className="thread-comment__text">{comment.body}</p>
-          )}
+          ) : null}
+
+          {renderCommentMedia(comment)}
 
           <footer className="thread-comment__actions">
             <button
@@ -535,7 +709,9 @@ export default function CommentsSection({
                 fill={comment.viewerReaction ? 'currentColor' : 'none'}
               />
               {Number(comment.reactionCount || 0) > 0 ? (
-                <span>{Number(comment.reactionCount).toLocaleString('vi-VN')}</span>
+                <span>
+                  {Number(comment.reactionCount).toLocaleString('vi-VN')}
+                </span>
               ) : null}
             </button>
 
@@ -605,7 +781,12 @@ export default function CommentsSection({
     );
 
     return (
-      <section className="comments-section comments-section--thread" id="binh-luan">
+      <section
+        className="comments-section comments-section--thread"
+        id="binh-luan"
+      >
+        {renderAttachmentInput()}
+
         <div className="thread-comments__toolbar">
           <div className="thread-comments__sort-wrap">
             <button
@@ -652,7 +833,7 @@ export default function CommentsSection({
             <div className="thread-comment-composer__field">
               <textarea
                 ref={composerRef}
-                rows="1"
+                rows="2"
                 value={body}
                 maxLength={5000}
                 disabled={!isAuthenticated}
@@ -661,15 +842,23 @@ export default function CommentsSection({
                     ? `Trả lời ${postAuthorName || 'bài viết'}...`
                     : 'Đăng nhập để trả lời'
                 }
+                onInput={(event) => resizeComposer(event.currentTarget)}
                 onChange={(event) => setBody(event.target.value)}
               />
+              {renderPendingAttachment()}
+              {renderComposerTools()}
             </div>
 
             <button
               type="submit"
               className="thread-comment-composer__send"
               aria-label="Đăng phản hồi"
-              disabled={!isAuthenticated || !body.trim() || submitting}
+              disabled={
+                !isAuthenticated ||
+                (!body.trim() && !attachment) ||
+                submitting ||
+                uploadingAttachment
+              }
             >
               <Send size={19} />
             </button>
@@ -714,6 +903,8 @@ export default function CommentsSection({
 
   return (
     <section className="comments-section" id="binh-luan">
+      {renderAttachmentInput()}
+
       <h2>
         <MessageCircle size={22} /> Bình luận
       </h2>
@@ -729,8 +920,10 @@ export default function CommentsSection({
         ) : null}
 
         <textarea
+          ref={composerRef}
           rows="3"
           value={body}
+          onInput={(event) => resizeComposer(event.currentTarget)}
           onChange={(event) => setBody(event.target.value)}
           placeholder={
             isAuthenticated
@@ -741,13 +934,20 @@ export default function CommentsSection({
           maxLength={5000}
         />
 
+        {renderPendingAttachment()}
+        {renderComposerTools()}
+
         <div>
           <small>{body.length}/5000</small>
           <Button
             type="submit"
             size="sm"
             loading={submitting}
-            disabled={!isAuthenticated || !body.trim()}
+            disabled={
+              !isAuthenticated ||
+              (!body.trim() && !attachment) ||
+              uploadingAttachment
+            }
           >
             Đăng bình luận
           </Button>
@@ -788,7 +988,8 @@ export default function CommentsSection({
                     <span>{formatRelativeTime(comment.createdAt)}</span>
                     {isAccepted ? <b>Câu trả lời được chọn</b> : null}
                   </header>
-                  <p>{comment.body}</p>
+                  {comment.body ? <p>{comment.body}</p> : null}
+                  {renderCommentMedia(comment)}
                   <footer>
                     <button
                       type="button"
