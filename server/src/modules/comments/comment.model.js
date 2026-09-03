@@ -45,14 +45,19 @@ const schema = new mongoose.Schema(
   { timestamps: true, collection: 'comments' },
 );
 
-schema.pre('validate', function validateCommentContent(next) {
-  if (this.status === 'deleted') return next();
+// Mongoose hiện tại chạy document pre-validation theo kiểu sync/promise khi
+// middleware không khai báo callback. Dùng invalidate() thay cho callback `next`
+// để hỗ trợ bình luận chỉ có chữ, chỉ có media, hoặc cả hai mà không phụ thuộc
+// vào chữ ký middleware cũ.
+schema.pre('validate', function validateCommentContent() {
+  if (this.status === 'deleted') return;
 
   if (!String(this.body || '').trim() && !this.mediaId) {
-    return next(new Error('Bình luận cần có nội dung hoặc tệp đính kèm.'));
+    this.invalidate(
+      'body',
+      'Bình luận cần có nội dung hoặc tệp đính kèm.',
+    );
   }
-
-  return next();
 });
 
 schema.index({ contentId: 1, createdAt: -1 });
