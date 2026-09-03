@@ -18,6 +18,7 @@ import './pages/public/JobsPage.mobile.css';
 import './pages/public/JobDetailPage.mobile.css';
 import './pages/public/PropertyDetailPage.mobile.css';
 import './pages/auth/AuthMobile.css';
+import './pages/auth/AuthBranding.css';
 import './components/content/CommunityThreadsFeed.css';
 import './styles/brand-logo-v3.css';
 import './styles/brand-theme.css';
