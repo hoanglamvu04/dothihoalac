@@ -1,0 +1,281 @@
+/*
+ * Compact homepage composition based on the approved visual reference.
+ * This file only changes density/layout inside .home-ref; data and shared card
+ * components remain the same as their dedicated pages.
+ */
+
+@media (min-width: 1101px) {
+  html body .dth-home.home-ref .container {
+    width: min(calc(100% - 46px), 1440px);
+  }
+
+  html body .dth-home.home-ref .home-ref-top {
+    padding: 12px 0 10px;
+  }
+
+  html body .dth-home.home-ref .home-ref-hero-grid {
+    grid-template-columns: minmax(0, 1.78fr) minmax(340px, 0.92fr);
+    gap: 12px;
+  }
+
+  html body .dth-home.home-ref .home-ref-lead .article-card {
+    height: 382px;
+    border-radius: 13px;
+  }
+
+  html body .dth-home.home-ref .home-ref-lead .content-card__body {
+    padding: 21px 23px 20px;
+  }
+
+  html body .dth-home.home-ref .home-ref-lead .content-card__body h3 {
+    max-width: 760px;
+    font-size: clamp(1.55rem, 2.25vw, 2.15rem);
+  }
+
+  html body .dth-home.home-ref .home-ref-lead .content-card__body p {
+    max-width: 690px;
+    margin-top: 7px;
+    font-size: 0.78rem;
+  }
+
+  html body .dth-home.home-ref .home-ref-lead .content-meta {
+    margin-top: 9px;
+    font-size: 0.64rem;
+  }
+
+  html body .dth-home.home-ref .home-ref-side-news {
+    gap: 9px;
+  }
+
+  html body .dth-home.home-ref .home-ref-side-story .article-card {
+    grid-template-columns: minmax(138px, 41%) minmax(0, 1fr);
+    min-height: 121px;
+    border-radius: 11px;
+  }
+
+  html body .dth-home.home-ref .home-ref-side-story .article-card > a:first-child img {
+    min-height: 121px;
+  }
+
+  html body .dth-home.home-ref .home-ref-side-story .content-card__body {
+    padding: 10px 12px;
+  }
+
+  html body .dth-home.home-ref .home-ref-side-story .content-card__body h3 {
+    font-size: 0.82rem;
+    line-height: 1.28;
+  }
+
+  html body .dth-home.home-ref .home-ref-side-story .content-meta {
+    margin-top: 6px;
+    font-size: 0.57rem;
+  }
+
+  html body .dth-home.home-ref .home-ref-dashboard {
+    grid-template-columns: minmax(250px, 0.9fr) minmax(430px, 1.45fr) minmax(270px, 1fr);
+    gap: 11px;
+    margin-top: 11px;
+  }
+
+  html body .dth-home.home-ref .home-ref-panel {
+    padding: 11px;
+    border-radius: 12px;
+  }
+
+  html body .dth-home.home-ref .home-ref-section-header {
+    min-height: 30px;
+    margin-bottom: 8px;
+    padding-bottom: 7px;
+  }
+
+  html body .dth-home.home-ref .home-ref-section-header h2,
+  html body .dth-home.home-ref .home-ref-property-title h2 {
+    font-size: 0.82rem;
+  }
+
+  html body .dth-home.home-ref .home-ref-latest-item {
+    min-height: 78px;
+    padding: 8px 0;
+  }
+
+  html body .dth-home.home-ref .home-ref-latest-item .article-card {
+    grid-template-columns: 94px minmax(0, 1fr);
+    min-height: 62px;
+    gap: 9px;
+  }
+
+  html body .dth-home.home-ref .home-ref-latest-item .article-card > a:first-child,
+  html body .dth-home.home-ref .home-ref-latest-item .article-card > a:first-child img {
+    width: 94px;
+    height: 62px;
+  }
+
+  html body .dth-home.home-ref .home-ref-latest-item .content-card__body {
+    min-height: 62px;
+  }
+
+  html body .dth-home.home-ref .home-ref-latest-item .content-card__body h3 {
+    min-height: 0;
+    font-size: 0.7rem;
+    line-height: 1.27;
+    -webkit-line-clamp: 2;
+  }
+
+  html body .dth-home.home-ref .home-ref-latest-item .content-meta {
+    margin-top: 5px;
+    font-size: 0.52rem;
+  }
+
+  html body .dth-home.home-ref .home-ref-spotlight-grid {
+    gap: 8px;
+  }
+
+  html body .dth-home.home-ref .home-ref-spotlight-card .article-card {
+    grid-template-rows: 102px minmax(0, 1fr);
+    border-radius: 10px;
+  }
+
+  html body .dth-home.home-ref .home-ref-spotlight-card .article-card > a:first-child,
+  html body .dth-home.home-ref .home-ref-spotlight-card .article-card > a:first-child img {
+    height: 102px;
+  }
+
+  html body .dth-home.home-ref .home-ref-spotlight-card .content-card__body {
+    min-height: 103px;
+    padding: 8px 8px 7px;
+  }
+
+  html body .dth-home.home-ref .home-ref-spotlight-card .content-card__body h3 {
+    min-height: 3.6em;
+    font-size: 0.69rem;
+    line-height: 1.25;
+  }
+
+  html body .dth-home.home-ref .home-ref-spotlight-card .content-meta {
+    margin-top: 5px;
+    font-size: 0.5rem;
+  }
+
+  html body .dth-home.home-ref .home-ref-shared-jobs .jobs-list {
+    gap: 6px;
+  }
+
+  html body .dth-home.home-ref .home-ref-shared-jobs .jobs-item {
+    min-height: 0;
+  }
+
+  html body .dth-home.home-ref .home-ref-community-section,
+  html body .dth-home.home-ref .home-ref-property-section {
+    padding: 10px 0 12px;
+  }
+
+  html body .dth-home.home-ref .home-ref-community-shell,
+  html body .dth-home.home-ref .home-ref-property-shell {
+    padding: 11px;
+    border-radius: 12px;
+  }
+
+  html body .dth-home.home-ref .home-ref-community-shell > .home-ref-section-header,
+  html body .dth-home.home-ref .home-ref-property-title {
+    min-height: 31px;
+    margin-bottom: 9px;
+    padding-bottom: 7px;
+  }
+
+  html body .dth-home.home-ref .home-ref-community-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 9px;
+  }
+
+  html body .dth-home.home-ref .home-ref-community-item .community-card--social {
+    border-radius: 10px;
+  }
+
+  html body .dth-home.home-ref .home-ref-community-item .community-feed-card__header {
+    padding: 9px 10px 0;
+  }
+
+  html body .dth-home.home-ref .home-ref-community-item .community-feed-card__content {
+    padding-inline: 10px;
+  }
+
+  html body .dth-home.home-ref .home-ref-shared-properties .home-ref-property-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 9px;
+  }
+
+  html body .dth-home.home-ref .home-ref-shared-properties .property-card {
+    border-radius: 10px;
+  }
+
+  html body .dth-home.home-ref .home-ref-contribute {
+    padding: 10px 0 16px;
+    background: var(--home-page);
+  }
+
+  html body .dth-home.home-ref .home-ref-contribute__inner {
+    min-height: 106px;
+    padding: 16px 20px;
+    gap: 16px;
+    border-radius: 12px;
+    background:
+      radial-gradient(circle at 88% 15%, rgb(181 153 101 / 0.16), transparent 32%),
+      linear-gradient(120deg, #274a35, #183726);
+  }
+
+  html body .dth-home.home-ref .home-ref-contribute__icon {
+    width: 52px;
+    height: 52px;
+    color: #e2cfaa;
+    border-color: rgb(226 207 170 / 0.28);
+    background: rgb(181 153 101 / 0.1);
+  }
+
+  html body .dth-home.home-ref .home-ref-contribute__copy small {
+    color: #dbc69d;
+    font-size: 0.59rem;
+  }
+
+  html body .dth-home.home-ref .home-ref-contribute__copy h2 {
+    margin-top: 3px;
+    font-size: 1.25rem;
+  }
+
+  html body .dth-home.home-ref .home-ref-contribute__copy p {
+    margin-top: 4px;
+    font-size: 0.68rem;
+  }
+
+  html body .dth-home.home-ref .home-ref-contribute__actions a {
+    min-height: 36px;
+    padding: 0 11px;
+    border-radius: 8px;
+    font-size: 0.64rem;
+  }
+}
+
+@media (min-width: 821px) and (max-width: 1100px) {
+  html body .dth-home.home-ref .home-ref-community-grid,
+  html body .dth-home.home-ref .home-ref-shared-properties .home-ref-property-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  html[data-dthl-theme] body .dth-home.home-ref {
+    background: var(--home-page) !important;
+  }
+
+  html[data-dthl-theme] body .dth-home.home-ref .home-mobile-hero-dots span.is-active {
+    background: var(--dthl-mode-brand) !important;
+  }
+
+  html[data-dthl-theme] body .dth-home.home-ref .home-mobile-shortcuts a > span {
+    color: var(--dthl-mode-brand-dark) !important;
+    background: var(--dthl-mode-brand-soft) !important;
+  }
+
+  html[data-dthl-theme] body .dth-home.home-ref .home-mobile-shortcuts a {
+    color: var(--home-ink) !important;
+  }
+}
