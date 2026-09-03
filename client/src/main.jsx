@@ -15,6 +15,7 @@ import './styles/header-modern-v3.css';
 import './components/layout/SiteFooter.css';
 import './components/layout/SiteFooter.mobile.css';
 import './pages/public/JobsPage.mobile.css';
+import './pages/create/CommunityStudioPage.mobile.css';
 import './styles/brand-logo-v3.css';
 import './styles/brand-theme.css';
 import './styles/brand-force.css';
