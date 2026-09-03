@@ -49,11 +49,53 @@ function sortFor(type) {
   return { name: 1 };
 }
 
+function filterEffectiveHierarchy(items) {
+  const byId = new Map(items.map((item) => [String(item._id), item]));
+  const memo = new Map();
+
+  const isVisible = (item, stack = new Set()) => {
+    const id = String(item._id);
+    if (memo.has(id)) return memo.get(id);
+    if (!item.parentId) {
+      memo.set(id, true);
+      return true;
+    }
+
+    const parentId = String(item.parentId);
+    if (stack.has(parentId)) {
+      memo.set(id, false);
+      return false;
+    }
+
+    const parent = byId.get(parentId);
+    if (!parent) {
+      memo.set(id, false);
+      return false;
+    }
+
+    const nextStack = new Set(stack);
+    nextStack.add(id);
+    const visible = isVisible(parent, nextStack);
+    memo.set(id, visible);
+    return visible;
+  };
+
+  return items.filter((item) => isVisible(item));
+}
+
 export async function list(type, q = {}) {
   const Model = modelFor(type);
-  return Model.find(publicFilter(type, q))
+  const items = await Model.find(publicFilter(type, q))
     .sort(sortFor(type))
     .lean();
+
+  // Nếu một danh mục/khu vực cha đã tắt thì toàn bộ nhánh con cũng phải biến mất
+  // khỏi public taxonomy, kể cả bản ghi con vẫn còn isActive=true.
+  if (type !== 'tags' && !q.parentId) {
+    return filterEffectiveHierarchy(items);
+  }
+
+  return items;
 }
 
 export async function listAdmin(type, q = {}) {
