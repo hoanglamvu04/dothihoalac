@@ -113,7 +113,7 @@ function LegacyStudioRedirect({ type }) {
 
   const base =
     type === 'community'
-      ? '/studio/cong-dong'
+      ? '/cong-dong/create'
       : type === 'property'
         ? '/studio/bat-dong-san'
         : '/studio/viec-lam';
@@ -176,6 +176,14 @@ const router = createBrowserRouter(
         <Route path="tin-tuc/:slug" element={<ArticleDetailPage />} />
 
         <Route path="cong-dong" element={<CommunityPage />} />
+        <Route
+          path="cong-dong/create"
+          element={<Protected><ContentStudioEntryPage contentType="community" /></Protected>}
+        />
+        <Route
+          path="cong-dong/create/:editorId"
+          element={<Protected><CommunityStudioPage /></Protected>}
+        />
         <Route path="cong-dong/:id/:slug" element={<CommunityDetailPage />} />
         <Route path="cong-dong/:slug" element={<CommunityDetailPage />} />
 
@@ -219,11 +227,11 @@ const router = createBrowserRouter(
 
         <Route
           path="studio/cong-dong"
-          element={<Protected><ContentStudioEntryPage contentType="community" /></Protected>}
+          element={<Protected><LegacyStudioRedirect type="community" /></Protected>}
         />
         <Route
           path="studio/cong-dong/:editorId"
-          element={<Protected><CommunityStudioPage /></Protected>}
+          element={<Protected><LegacyStudioRedirect type="community" /></Protected>}
         />
         <Route
           path="studio/bat-dong-san"
