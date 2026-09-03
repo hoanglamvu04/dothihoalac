@@ -10,24 +10,29 @@ import {
   Building2,
   Clock3,
   FilePenLine,
-  MapPin,
+  GraduationCap,
   MessageSquareText,
+  MoreHorizontal,
+  Newspaper,
   RefreshCw,
   Send,
+  UsersRound,
 } from 'lucide-react';
 
 import Seo from '../../components/common/Seo';
 import ArticleCard from '../../components/content/ArticleCard';
-import HomeCommunityCard from '../../components/content/HomeCommunityCard';
+import CommunityCard from '../../components/content/CommunityCard';
+import JobCard from '../../components/content/JobCard';
 import PropertyCard from '../../components/content/PropertyCard';
 import AdSlot from '../../components/ads/AdSlot';
 import EmptyState from '../../components/common/EmptyState';
 import { LoadingBlock } from '../../components/common/Loading';
 import { systemApi } from '../../api/system.api';
-import { contentPath } from '../../utils/content';
-import { formatRelativeTime } from '../../utils/formatters';
 
 import './HomePage.css';
+import './JobsPage.css';
+import './JobsPage.mobile.css';
+import './PropertiesPage.css';
 import './HomePageCards.css';
 
 const INITIAL_DATA = {
@@ -50,6 +55,39 @@ const INITIAL_LOADING = {
   properties: true,
   jobs: true,
 };
+
+const MOBILE_SHORTCUTS = [
+  {
+    to: '/tin-tuc',
+    label: 'Tin tức',
+    icon: Newspaper,
+  },
+  {
+    to: '/viec-lam',
+    label: 'Việc làm',
+    icon: BriefcaseBusiness,
+  },
+  {
+    to: '/nha-dat',
+    label: 'Bất động sản',
+    icon: Building2,
+  },
+  {
+    to: '/cong-dong',
+    label: 'Cộng đồng',
+    icon: UsersRound,
+  },
+  {
+    to: '/tin-tuc?category=giao-duc',
+    label: 'Giáo dục',
+    icon: GraduationCap,
+  },
+  {
+    to: '/tim-kiem',
+    label: 'Xem thêm',
+    icon: MoreHorizontal,
+  },
+];
 
 function normalizeHomeFeed(value) {
   return {
@@ -115,26 +153,19 @@ function SectionState({ loading, error, items, onRetry, children, emptyTitle }) 
   return children;
 }
 
-function JobPreview({ item }) {
-  const href = contentPath(item);
-  const area = item?.primaryAreaId?.name || item?.job?.workLocation || 'Khu vực Hòa Lạc';
-  const relative = formatRelativeTime(item?.publishedAt || item?.createdAt);
-
+function MobileQuickNav() {
   return (
-    <Link className="home-ref-job" to={href}>
-      <span className="home-ref-job__icon">
-        <BriefcaseBusiness size={20} />
-      </span>
-      <div>
-        <strong>{item?.title || 'Cơ hội việc làm mới'}</strong>
-        <small>
-          <MapPin size={12} />
-          {area}
-        </small>
-        {relative ? <time>{relative}</time> : null}
-      </div>
-      <ArrowRight size={15} />
-    </Link>
+    <nav className="home-mobile-shortcuts" aria-label="Khám phá nhanh">
+      {MOBILE_SHORTCUTS.map((item) => {
+        const Icon = item.icon;
+        return (
+          <Link key={item.to} to={item.to}>
+            <span><Icon size={24} /></span>
+            <strong>{item.label}</strong>
+          </Link>
+        );
+      })}
+    </nav>
   );
 }
 
@@ -234,11 +265,20 @@ export default function HomePage() {
                 ))}
               </div>
             </div>
+
+            <div className="home-mobile-hero-dots" aria-hidden="true">
+              <span className="is-active" />
+              <span />
+              <span />
+              <span />
+            </div>
           </SectionState>
+
+          <MobileQuickNav />
 
           <div className="home-ref-dashboard">
             <section className="home-ref-panel home-ref-latest-panel">
-              <SectionHeader title="Tin mới nhất" to="/tin-tuc" />
+              <SectionHeader title="Tin nổi bật" to="/tin-tuc" />
               <SectionState
                 loading={loading.articles}
                 error={errors.articles}
@@ -293,10 +333,19 @@ export default function HomePage() {
                 onRetry={retryLoad}
                 emptyTitle="Chưa có tin việc làm"
               >
-                <div className="home-ref-job-list">
-                  {jobItems.map((item, index) => (
-                    <JobPreview key={getItemKey(item, 'job', index)} item={item} />
-                  ))}
+                <div className="home-ref-shared-jobs jobs-page">
+                  <div className="jobs-results__main">
+                    <div className="jobs-list">
+                      {jobItems.map((item, index) => (
+                        <article
+                          className="jobs-item"
+                          key={getItemKey(item, 'job', index)}
+                        >
+                          <JobCard item={item} />
+                        </article>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               </SectionState>
             </section>
@@ -316,10 +365,12 @@ export default function HomePage() {
           >
             <div className="home-ref-community-grid">
               {communityItems.map((item, index) => (
-                <HomeCommunityCard
+                <div
+                  className="home-ref-community-item"
                   key={getItemKey(item, 'community', index)}
-                  item={item}
-                />
+                >
+                  <CommunityCard item={item} />
+                </div>
               ))}
             </div>
           </SectionState>
@@ -348,13 +399,17 @@ export default function HomePage() {
             onRetry={retryLoad}
             emptyTitle="Chưa có tin bất động sản"
           >
-            <div className="home-ref-property-grid">
-              {propertyItems.map((item, index) => (
-                <PropertyCard
-                  key={getItemKey(item, 'property', index)}
-                  item={item}
-                />
-              ))}
+            <div className="home-ref-shared-properties properties-page">
+              <div className="home-ref-property-grid properties-grid is-list">
+                {propertyItems.map((item, index) => (
+                  <article
+                    className="properties-item"
+                    key={getItemKey(item, 'property', index)}
+                  >
+                    <PropertyCard item={item} />
+                  </article>
+                ))}
+              </div>
             </div>
           </SectionState>
         </div>
@@ -403,6 +458,11 @@ export default function HomePage() {
           </div>
         </section>
       ) : null}
+
+      <Link className="home-mobile-publish" to="/dang-bai" aria-label="Đăng tin">
+        <FilePenLine size={21} />
+        <span>Đăng tin</span>
+      </Link>
     </main>
   );
 }
