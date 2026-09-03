@@ -174,21 +174,29 @@
 
 .property-gallery-zoom-trigger {
   position: absolute;
-  right: 14px;
-  top: 14px;
-  z-index: 3;
-  display: grid;
-  width: 40px;
-  height: 40px;
-  place-items: center;
-  padding: 0;
+  inset: 0;
+  z-index: 1;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: flex-start;
+  justify-content: flex-end;
+  padding: 14px;
+  border: 0;
+  border-radius: inherit;
+  color: #fff;
+  background: transparent;
+  cursor: zoom-in;
+}
+
+.property-gallery-zoom-trigger svg {
+  box-sizing: content-box;
+  padding: 10px;
   border: 1px solid rgb(255 255 255 / 0.36);
   border-radius: 50%;
-  color: #fff;
   background: rgb(8 28 17 / 0.58);
   box-shadow: 0 7px 20px rgb(0 0 0 / 0.18);
   backdrop-filter: blur(7px);
-  cursor: zoom-in;
 }
 
 .property-gallery-lightbox {
@@ -276,7 +284,7 @@
 }
 
 @media (max-width: 760px) {
-  .property-utility-actions {
+  .property-detail-page .property-utility-actions {
     grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 0;
     padding: 9px 6px;
@@ -286,7 +294,7 @@
     border-radius: 0;
   }
 
-  .property-utility-actions > :is(a, button) {
+  .property-detail-page .property-utility-actions > :is(a, button) {
     min-height: 52px;
     padding: 4px 2px;
     flex-direction: column;
@@ -298,13 +306,13 @@
     font-size: 0.62rem;
   }
 
-  .property-utility-actions > :is(a, button) svg {
+  .property-detail-page .property-utility-actions > :is(a, button) svg {
     width: 19px;
     height: 19px;
   }
 
-  .property-utility-actions > :is(a, button):hover,
-  .property-utility-actions > button.is-active {
+  .property-detail-page .property-utility-actions > :is(a, button):hover,
+  .property-detail-page .property-utility-actions > button.is-active {
     border: 0;
     background: #f0f8f3;
     transform: none;
@@ -323,10 +331,13 @@
   }
 
   .property-gallery-zoom-trigger {
-    top: 10px;
-    right: 10px;
-    width: 36px;
-    height: 36px;
+    padding: 10px;
+  }
+
+  .property-gallery-zoom-trigger svg {
+    width: 18px;
+    height: 18px;
+    padding: 8px;
   }
 
   .property-gallery-lightbox {
