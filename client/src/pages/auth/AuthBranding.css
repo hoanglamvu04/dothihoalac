@@ -1,0 +1,96 @@
+/*
+ * Auth branding uses the official raster lockups from /public instead of
+ * rebuilding the brand with logo-mark + HTML text. This keeps login,
+ * registration and recovery screens visually identical to the current
+ * public-site branding.
+ */
+
+.dthl-login-brand,
+.dthl-register-brand,
+.dthl-forgot-brand,
+.dthl-reset-brand {
+  display: inline-flex;
+  width: min(100%, 310px);
+  align-items: center;
+  gap: 0 !important;
+}
+
+.dthl-login-brand__mark,
+.dthl-register-brand__mark,
+.dthl-forgot-brand__mark,
+.dthl-reset-brand__mark {
+  display: block;
+  width: min(100%, 286px);
+  height: 72px;
+  overflow: visible;
+  border: 0;
+  border-radius: 0;
+  background: url('/Logo dothihoalac-10.png') left center / contain no-repeat;
+  box-shadow: none;
+}
+
+.dthl-login-brand__mark img,
+.dthl-register-brand__mark img,
+.dthl-forgot-brand__mark img,
+.dthl-reset-brand__mark img {
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.dthl-login-brand > span:last-child,
+.dthl-register-brand > span:last-child,
+.dthl-forgot-brand > span:last-child,
+.dthl-reset-brand > span:last-child {
+  display: none !important;
+}
+
+@media (max-width: 760px) {
+  .dthl-login-brand,
+  .dthl-register-brand,
+  .dthl-forgot-brand,
+  .dthl-reset-brand {
+    width: 190px !important;
+    max-width: 66vw;
+  }
+
+  .dthl-login-brand__mark,
+  .dthl-register-brand__mark,
+  .dthl-forgot-brand__mark,
+  .dthl-reset-brand__mark {
+    width: 190px !important;
+    height: 50px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: url('/Logo dothihoalac-09.png') left center / contain no-repeat !important;
+    box-shadow: none !important;
+  }
+
+  /* The official logo already sits at the top of the mobile auth screen.
+   * Do not repeat the legacy logo-mark illustration above the form title. */
+  .dthl-login-card__header::before,
+  .dthl-forgot-card__header::before,
+  .dthl-reset-card__header::before {
+    display: none !important;
+  }
+
+  .dthl-login-card__header,
+  .dthl-forgot-card__header,
+  .dthl-reset-card__header {
+    margin-top: 4px !important;
+  }
+}
+
+@media (max-width: 380px) {
+  .dthl-login-brand,
+  .dthl-register-brand,
+  .dthl-forgot-brand,
+  .dthl-reset-brand,
+  .dthl-login-brand__mark,
+  .dthl-register-brand__mark,
+  .dthl-forgot-brand__mark,
+  .dthl-reset-brand__mark {
+    width: 172px !important;
+  }
+}
