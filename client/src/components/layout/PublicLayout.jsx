@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import SiteHeader from './SiteHeader';
 import DeferredSiteFooter from './DeferredSiteFooter';
+import DeferredCommunityQuickComposer from '../community/DeferredCommunityQuickComposer';
 import AdSlot from '../ads/AdSlot';
 
 import './PublicInteractionFixes.css';
@@ -116,6 +117,7 @@ export default function PublicLayout() {
 
       <AdSlot slotKey="site_before_footer" layout="strip" />
       <DeferredSiteFooter />
+      <DeferredCommunityQuickComposer />
     </div>
   );
 }
