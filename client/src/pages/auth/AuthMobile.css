@@ -1,0 +1,507 @@
+@media (max-width: 760px) {
+  .app-shell--auth-route {
+    min-height: 100svh;
+    background: #ffffff;
+  }
+
+  .app-shell--auth-route .main-content {
+    min-height: 100svh;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: #ffffff;
+  }
+
+  .dthl-login-page,
+  .dthl-register-page,
+  .dthl-forgot-page,
+  .dthl-reset-page,
+  .auth-page {
+    min-height: 100svh !important;
+    padding: 0 !important;
+    background:
+      radial-gradient(circle at 100% 0%, rgba(31, 163, 75, 0.06), transparent 30%),
+      linear-gradient(180deg, #ffffff 0%, #fbfdfb 100%) !important;
+  }
+
+  .dthl-login-shell,
+  .dthl-register-shell,
+  .dthl-forgot-shell,
+  .dthl-reset-shell {
+    display: block !important;
+    width: 100% !important;
+    min-height: 100svh !important;
+    margin: 0 !important;
+    overflow: visible !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .dthl-login-intro,
+  .dthl-register-intro,
+  .dthl-forgot-intro,
+  .dthl-reset-intro {
+    display: block !important;
+    min-height: 0 !important;
+    padding: 22px 20px 8px !important;
+    overflow: visible !important;
+    color: #10261a !important;
+    background: transparent !important;
+  }
+
+  .dthl-login-intro::before,
+  .dthl-login-intro::after,
+  .dthl-register-intro::before,
+  .dthl-register-intro::after,
+  .dthl-forgot-intro::before,
+  .dthl-forgot-intro::after,
+  .dthl-reset-intro::before,
+  .dthl-reset-intro::after {
+    display: none !important;
+  }
+
+  .dthl-login-intro__heading,
+  .dthl-login-benefits,
+  .dthl-login-intro__footer,
+  .dthl-register-intro__heading,
+  .dthl-register-benefits,
+  .dthl-register-intro__footer,
+  .dthl-forgot-intro__heading,
+  .dthl-forgot-benefits,
+  .dthl-forgot-intro__footer,
+  .dthl-reset-intro__heading,
+  .dthl-reset-benefits,
+  .dthl-reset-intro__footer {
+    display: none !important;
+  }
+
+  .dthl-login-brand,
+  .dthl-register-brand,
+  .dthl-forgot-brand,
+  .dthl-reset-brand {
+    gap: 9px !important;
+  }
+
+  .dthl-login-brand__mark,
+  .dthl-register-brand__mark,
+  .dthl-forgot-brand__mark,
+  .dthl-reset-brand__mark {
+    width: 40px !important;
+    height: 40px !important;
+    border: 0 !important;
+    border-radius: 11px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .dthl-login-brand strong,
+  .dthl-register-brand strong,
+  .dthl-forgot-brand strong,
+  .dthl-reset-brand strong {
+    color: #123d28 !important;
+    font-size: 0.95rem !important;
+    font-weight: 780 !important;
+  }
+
+  .dthl-login-brand small,
+  .dthl-register-brand small,
+  .dthl-forgot-brand small,
+  .dthl-reset-brand small {
+    display: block !important;
+    color: #1f8f4d !important;
+    font-size: 0.48rem !important;
+    font-weight: 760 !important;
+    letter-spacing: 0.04em !important;
+  }
+
+  .dthl-login-form-side,
+  .dthl-register-form-side,
+  .dthl-forgot-form-side,
+  .dthl-reset-form-side {
+    display: block !important;
+    min-height: 0 !important;
+    padding: 18px 20px 34px !important;
+    background: transparent !important;
+  }
+
+  .dthl-login-card,
+  .dthl-register-card,
+  .dthl-forgot-card,
+  .dthl-reset-card {
+    position: relative;
+    width: min(100%, 480px) !important;
+    margin: 0 auto !important;
+  }
+
+  .dthl-login-card__header,
+  .dthl-forgot-card__header,
+  .dthl-reset-card__header {
+    margin-bottom: 24px !important;
+    text-align: center;
+  }
+
+  .dthl-login-card__header::before,
+  .dthl-forgot-card__header::before,
+  .dthl-reset-card__header::before {
+    display: block;
+    width: 92px;
+    height: 92px;
+    margin: 2px auto 18px;
+    border-radius: 30px;
+    background:
+      url('../../assets/logo-mark.svg') center / 46px 46px no-repeat,
+      radial-gradient(circle at 50% 42%, #edf8ef 0%, #f6fbf7 68%, #ffffff 69%);
+    box-shadow: inset 0 0 0 1px rgba(31, 163, 75, 0.08);
+    content: '';
+  }
+
+  .dthl-login-card__header > span,
+  .dthl-forgot-card__header > span,
+  .dthl-reset-card__header > span,
+  .dthl-register-card__header > span {
+    display: none !important;
+  }
+
+  .dthl-login-card__header h2,
+  .dthl-register-card__header h2,
+  .dthl-forgot-card__header h2,
+  .dthl-reset-card__header h2 {
+    margin: 0 !important;
+    color: #111b16 !important;
+    font-size: clamp(1.55rem, 7vw, 1.9rem) !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.035em !important;
+    line-height: 1.15 !important;
+  }
+
+  .dthl-login-card__header p,
+  .dthl-register-card__header p,
+  .dthl-forgot-card__header p,
+  .dthl-reset-card__header p {
+    max-width: 360px;
+    margin: 9px auto 0 !important;
+    color: #6f7d75 !important;
+    font-size: 0.82rem !important;
+    line-height: 1.55 !important;
+  }
+
+  .dthl-login-form,
+  .dthl-register-form,
+  .dthl-forgot-form,
+  .dthl-reset-form,
+  .stack-form {
+    gap: 15px !important;
+  }
+
+  .dthl-login-field,
+  .dthl-register-field,
+  .dthl-forgot-field,
+  .dthl-reset-field {
+    gap: 7px !important;
+  }
+
+  .dthl-login-field label,
+  .dthl-register-field label,
+  .dthl-forgot-field label,
+  .dthl-reset-field label,
+  .auth-page label {
+    color: #1c2b22 !important;
+    font-size: 0.76rem !important;
+    font-weight: 760 !important;
+  }
+
+  .dthl-login-input,
+  .dthl-register-input,
+  .dthl-forgot-input,
+  .dthl-reset-input,
+  .auth-page input {
+    min-height: 50px !important;
+    border: 1px solid #dce4df !important;
+    border-radius: 12px !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+  }
+
+  .dthl-login-input,
+  .dthl-register-input,
+  .dthl-forgot-input,
+  .dthl-reset-input {
+    padding-inline: 13px !important;
+    gap: 9px !important;
+  }
+
+  .dthl-login-input:focus-within,
+  .dthl-register-input:focus-within,
+  .dthl-forgot-input:focus-within,
+  .dthl-reset-input:focus-within,
+  .auth-page input:focus {
+    border-color: #1fa34b !important;
+    background: #ffffff !important;
+    box-shadow: 0 0 0 3px rgba(31, 163, 75, 0.1) !important;
+    outline: 0 !important;
+  }
+
+  .dthl-login-input input,
+  .dthl-register-input input,
+  .dthl-forgot-input input,
+  .dthl-reset-input input {
+    height: 48px !important;
+    font-size: 0.86rem !important;
+  }
+
+  .dthl-login-submit,
+  .dthl-register-submit,
+  .dthl-forgot-submit,
+  .dthl-reset-submit {
+    min-height: 52px !important;
+    border-radius: 12px !important;
+    background: linear-gradient(135deg, #1fa34b, #188a3e) !important;
+    box-shadow: 0 12px 24px rgba(31, 163, 75, 0.2) !important;
+    font-size: 0.88rem !important;
+    font-weight: 780 !important;
+  }
+
+  .dthl-login-remember {
+    width: 100% !important;
+    align-items: center !important;
+    padding: 10px 12px !important;
+    border-radius: 11px !important;
+    color: #53655b !important;
+    background: #f7faf8 !important;
+  }
+
+  .dthl-login-field__label-row a,
+  .dthl-forgot-back-link,
+  .dthl-reset-back-link,
+  .dthl-login-switch a,
+  .dthl-register-switch a {
+    color: #08743d !important;
+  }
+
+  .dthl-login-card__security,
+  .dthl-register-card__security {
+    padding: 11px 13px !important;
+    margin-top: 18px !important;
+    border: 0 !important;
+    border-radius: 12px !important;
+    color: #557064 !important;
+    background: #f1f8f3 !important;
+    font-size: 0.68rem !important;
+  }
+
+  .dthl-login-switch,
+  .dthl-register-switch {
+    font-size: 0.76rem !important;
+  }
+
+  .dthl-login-mobile-footer,
+  .dthl-register-mobile-footer,
+  .dthl-forgot-mobile-footer,
+  .dthl-reset-mobile-footer {
+    display: block !important;
+    margin: 20px auto 0 !important;
+    color: #7b8880 !important;
+    font-size: 0.67rem !important;
+  }
+
+  /* Registration: compact three-stage visual language. */
+  .dthl-register-card::before {
+    display: block;
+    padding: 12px 10px;
+    margin: 0 0 24px;
+    border: 1px solid #e1ebe4;
+    border-radius: 14px;
+    color: #6f7e75;
+    background:
+      linear-gradient(90deg, rgba(31, 163, 75, 0.12) 0 33.33%, transparent 33.33%),
+      #ffffff;
+    font-size: 0.69rem;
+    font-weight: 720;
+    letter-spacing: 0.01em;
+    text-align: center;
+    content: '1  Thông tin     2  Xác thực     3  Hoàn tất';
+  }
+
+  .dthl-register-card__header {
+    margin-bottom: 22px !important;
+    text-align: left !important;
+  }
+
+  .dthl-register-card__header p {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
+
+  .dthl-register-grid {
+    grid-template-columns: 1fr !important;
+    gap: 15px !important;
+  }
+
+  .dthl-register-strength,
+  .dthl-register-requirements {
+    border-radius: 12px !important;
+    background: #f7faf8 !important;
+  }
+
+  .dthl-register-requirements {
+    grid-template-columns: 1fr !important;
+    gap: 6px !important;
+  }
+
+  .dthl-register-terms {
+    padding: 12px !important;
+    border-radius: 12px !important;
+    background: #f7faf8 !important;
+  }
+
+  /* Forgot password / reset success states. */
+  .dthl-forgot-success,
+  .dthl-reset-invalid {
+    padding-top: 20px !important;
+    text-align: center !important;
+  }
+
+  .dthl-forgot-success__icon,
+  .dthl-reset-invalid__icon {
+    width: 76px !important;
+    height: 76px !important;
+    margin: 0 auto 18px !important;
+    border-radius: 24px !important;
+    background: #edf8ef !important;
+  }
+
+  .dthl-forgot-success h2,
+  .dthl-reset-invalid h2 {
+    font-size: 1.55rem !important;
+    line-height: 1.2 !important;
+  }
+
+  .dthl-forgot-success__steps {
+    padding: 14px !important;
+    border: 0 !important;
+    border-radius: 14px !important;
+    background: #f5f9f6 !important;
+  }
+
+  .dthl-forgot-resend,
+  .dthl-reset-request-link {
+    min-height: 50px !important;
+    border-radius: 12px !important;
+  }
+
+  /* Existing generic verification pages. */
+  .auth-page {
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: center !important;
+    padding: 24px 20px 36px !important;
+  }
+
+  .auth-card {
+    position: relative;
+    width: min(100%, 480px) !important;
+    padding: 18px 0 0 !important;
+    margin: 0 auto !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .auth-card::before {
+    display: block;
+    width: 82px;
+    height: 82px;
+    margin: 12px auto 22px;
+    border-radius: 26px;
+    background:
+      url('../../assets/logo-mark.svg') center / 42px 42px no-repeat,
+      #eff8f1;
+    box-shadow: inset 0 0 0 1px rgba(31, 163, 75, 0.08);
+    content: '';
+  }
+
+  .auth-card__intro {
+    margin-bottom: 24px !important;
+    text-align: center !important;
+  }
+
+  .auth-card__intro h1,
+  .success-panel h2 {
+    margin: 0 !important;
+    color: #111b16 !important;
+    font-size: 1.65rem !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.03em !important;
+  }
+
+  .auth-card__intro p,
+  .success-panel p {
+    margin: 9px auto 0 !important;
+    color: #707e76 !important;
+    font-size: 0.82rem !important;
+    line-height: 1.55 !important;
+  }
+
+  .auth-page .stack-form {
+    display: grid !important;
+    gap: 14px !important;
+  }
+
+  .auth-page input {
+    width: 100% !important;
+    padding: 0 13px !important;
+    font: inherit !important;
+    font-size: 0.9rem !important;
+  }
+
+  .auth-page .button,
+  .auth-page button[type='submit'] {
+    min-height: 50px !important;
+    border-radius: 12px !important;
+  }
+
+  .auth-page .dev-token {
+    padding: 10px 12px !important;
+    border-radius: 10px !important;
+    background: #fff8e7 !important;
+    font-size: 0.75rem !important;
+  }
+
+  .auth-page .success-panel {
+    padding: 18px !important;
+    border-radius: 16px !important;
+    background: #f2f9f4 !important;
+    text-align: center !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .dthl-login-intro,
+  .dthl-register-intro,
+  .dthl-forgot-intro,
+  .dthl-reset-intro {
+    padding-inline: 16px !important;
+  }
+
+  .dthl-login-form-side,
+  .dthl-register-form-side,
+  .dthl-forgot-form-side,
+  .dthl-reset-form-side,
+  .auth-page {
+    padding-inline: 16px !important;
+  }
+
+  .dthl-login-brand small,
+  .dthl-register-brand small,
+  .dthl-forgot-brand small,
+  .dthl-reset-brand small {
+    display: none !important;
+  }
+
+  .dthl-register-card::before {
+    font-size: 0.63rem;
+    word-spacing: -0.03em;
+  }
+}
