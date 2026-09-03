@@ -7,11 +7,19 @@ import {
 import { Link } from 'react-router-dom';
 import {
   ArrowRight,
+  Bath,
+  BedDouble,
+  Bookmark,
   BriefcaseBusiness,
   Building2,
   Clock3,
+  Eye,
   FilePenLine,
   GraduationCap,
+  Heart,
+  MapPin,
+  Maximize2,
+  MessageCircle,
   MessageSquareText,
   MoreHorizontal,
   Newspaper,
@@ -21,20 +29,22 @@ import {
 } from 'lucide-react';
 
 import Seo from '../../components/common/Seo';
-import ArticleCard from '../../components/content/ArticleCard';
-import CommunityCard from '../../components/content/CommunityCard';
-import JobCard from '../../components/content/JobCard';
-import PropertyCard from '../../components/content/PropertyCard';
-import AdSlot from '../../components/ads/AdSlot';
+import Avatar from '../../components/common/Avatar';
+import ContentImage from '../../components/content/ContentImage';
 import EmptyState from '../../components/common/EmptyState';
 import { LoadingBlock } from '../../components/common/Loading';
 import { systemApi } from '../../api/system.api';
+import {
+  formatCurrency,
+  formatNumber,
+  formatRelativeTime,
+  truncate,
+} from '../../utils/formatters';
+import { contentPath } from '../../utils/content';
+import { COMMUNITY_TYPES, JOB_TYPES } from '../../utils/constants';
+import { getPropertyTypeLabel } from '../../utils/propertyPosting';
 
 import './HomePage.css';
-import './JobsPage.css';
-import './JobsPage.mobile.css';
-import './PropertiesPage.css';
-import './HomePageCards.css';
 
 const INITIAL_DATA = {
   articles: [],
@@ -68,36 +78,27 @@ const HOME_FEED_CACHE_KEY = 'dthl:home-feed:v2';
 const HOME_FEED_CACHE_MAX_AGE_MS = 10 * 60 * 1000;
 
 const MOBILE_SHORTCUTS = [
-  {
-    to: '/tin-tuc',
-    label: 'Tin tức',
-    icon: Newspaper,
-  },
-  {
-    to: '/viec-lam',
-    label: 'Việc làm',
-    icon: BriefcaseBusiness,
-  },
-  {
-    to: '/nha-dat',
-    label: 'Bất động sản',
-    icon: Building2,
-  },
-  {
-    to: '/cong-dong',
-    label: 'Cộng đồng',
-    icon: UsersRound,
-  },
-  {
-    to: '/tin-tuc?category=giao-duc',
-    label: 'Giáo dục',
-    icon: GraduationCap,
-  },
-  {
-    to: '/tim-kiem',
-    label: 'Xem thêm',
-    icon: MoreHorizontal,
-  },
+  { to: '/tin-tuc', label: 'Tin tức', icon: Newspaper },
+  { to: '/viec-lam', label: 'Việc làm', icon: BriefcaseBusiness },
+  { to: '/nha-dat', label: 'Bất động sản', icon: Building2 },
+  { to: '/cong-dong', label: 'Cộng đồng', icon: UsersRound },
+  { to: '/tin-tuc?category=giao-duc', label: 'Giáo dục', icon: GraduationCap },
+  { to: '/tim-kiem', label: 'Xem thêm', icon: MoreHorizontal },
+];
+
+const COMMUNITY_TABS = [
+  { label: 'Mới nhất', to: '/cong-dong' },
+  { label: 'Quan tâm', to: '/cong-dong?sort=popular' },
+  { label: 'Thảo luận', to: '/cong-dong?type=discussion' },
+  { label: 'Sự kiện', to: '/cong-dong?type=community_event' },
+];
+
+const PROPERTY_TABS = [
+  { label: 'Tất cả', to: '/nha-dat' },
+  { label: 'Nhà ở', to: '/nha-dat?propertyType=house' },
+  { label: 'Đất nền', to: '/nha-dat?propertyType=land' },
+  { label: 'Căn hộ', to: '/nha-dat?propertyType=apartment' },
+  { label: 'Shophouse', to: '/nha-dat?propertyType=shophouse' },
 ];
 
 function normalizeHomeFeed(value) {
@@ -146,14 +147,10 @@ function writeHomeFeedCache(value) {
   try {
     window.localStorage.setItem(
       HOME_FEED_CACHE_KEY,
-      JSON.stringify({
-        savedAt: Date.now(),
-        data: value,
-      }),
+      JSON.stringify({ savedAt: Date.now(), data: value }),
     );
   } catch {
-    // Storage can be unavailable in private/restricted browsing. Rendering
-    // should continue normally even when the cache cannot be persisted.
+    // Storage can be unavailable in private/restricted browsing.
   }
 }
 
@@ -165,6 +162,14 @@ function getItemKey(item, prefix, index) {
   return String(item?._id || item?.id || item?.slug || `${prefix}-${index}`);
 }
 
+function articleCategory(item) {
+  return item?.primaryCategoryId?.name || 'Tin Hòa Lạc';
+}
+
+function itemTime(item) {
+  return formatRelativeTime(item?.publishedAt || item?.createdAt);
+}
+
 function SectionHeader({ title, to, label = 'Xem tất cả' }) {
   return (
     <header className="home-ref-section-header">
@@ -172,7 +177,7 @@ function SectionHeader({ title, to, label = 'Xem tất cả' }) {
       {to ? (
         <Link to={to}>
           {label}
-          <ArrowRight size={14} />
+          <ArrowRight size={13} />
         </Link>
       ) : null}
     </header>
@@ -228,6 +233,238 @@ function MobileQuickNav() {
   );
 }
 
+function MetaLine({ item, showArea = true, showViews = true }) {
+  return (
+    <div className="home-card-meta">
+      {showArea && item?.primaryAreaId?.name ? (
+        <span><MapPin size={12} /> {item.primaryAreaId.name}</span>
+      ) : null}
+      <span><Clock3 size={12} /> {itemTime(item)}</span>
+      {showViews ? (
+        <span><Eye size={12} /> {formatNumber(item?.viewCount)}</span>
+      ) : null}
+      {Number(item?.commentCount || 0) > 0 ? (
+        <span><MessageCircle size={12} /> {formatNumber(item.commentCount)}</span>
+      ) : null}
+    </div>
+  );
+}
+
+function HomeHeroCard({ item }) {
+  if (!item) return null;
+  const href = contentPath(item);
+
+  return (
+    <article className="home-hero-card">
+      <Link className="home-hero-card__media" to={href} aria-label={item.title}>
+        <ContentImage
+          media={item.thumbnailMediaId}
+          alt={item.title}
+          ratio="hero"
+          loading="eager"
+          fetchPriority="high"
+          sizes="(max-width: 900px) 100vw, 920px"
+        />
+      </Link>
+      <div className="home-hero-card__shade" />
+      <div className="home-hero-card__content">
+        <span className="home-pill home-pill--gold">{articleCategory(item)}</span>
+        <h1><Link to={href}>{item.title}</Link></h1>
+        {item.summary ? <p>{truncate(item.summary, 155)}</p> : null}
+        <MetaLine item={item} showArea={false} />
+      </div>
+      <Link className="home-hero-card__more" to={href}>
+        Xem chi tiết <ArrowRight size={14} />
+      </Link>
+      <div className="home-hero-card__dots" aria-hidden="true">
+        <span className="is-active" />
+        <span />
+        <span />
+        <span />
+      </div>
+    </article>
+  );
+}
+
+function HomeSideStory({ item }) {
+  const href = contentPath(item);
+  return (
+    <article className="home-side-story">
+      <Link className="home-side-story__image" to={href}>
+        <ContentImage media={item.thumbnailMediaId} alt={item.title} ratio="wide" />
+      </Link>
+      <div className="home-side-story__body">
+        <span className="home-pill">{articleCategory(item)}</span>
+        <h3><Link to={href}>{item.title}</Link></h3>
+        <MetaLine item={item} />
+      </div>
+    </article>
+  );
+}
+
+function HomeLatestStory({ item }) {
+  const href = contentPath(item);
+  return (
+    <article className="home-latest-story">
+      <Link to={href} className="home-latest-story__image">
+        <ContentImage media={item.thumbnailMediaId} alt={item.title} ratio="wide" />
+      </Link>
+      <div>
+        <h3><Link to={href}>{item.title}</Link></h3>
+        <MetaLine item={item} />
+      </div>
+    </article>
+  );
+}
+
+function HomeSpotlightStory({ item }) {
+  const href = contentPath(item);
+  return (
+    <article className="home-spotlight-story">
+      <Link to={href} className="home-spotlight-story__image">
+        <ContentImage media={item.thumbnailMediaId} alt={item.title} ratio="wide" />
+      </Link>
+      <h3><Link to={href}>{item.title}</Link></h3>
+      <MetaLine item={item} />
+    </article>
+  );
+}
+
+function jobSalary(item) {
+  const job = item?.job || {};
+  if (job.salaryUnit === 'negotiable' || (!job.salaryMin && !job.salaryMax)) {
+    return 'Lương thỏa thuận';
+  }
+  const min = formatCurrency(job.salaryMin || 0);
+  const max = formatCurrency(job.salaryMax || job.salaryMin || 0);
+  return `${min} – ${max}`;
+}
+
+function HomeJobStory({ item }) {
+  const job = item?.job || {};
+  const href = contentPath(item);
+  return (
+    <article className="home-job-story">
+      <span className="home-job-story__icon"><BriefcaseBusiness size={18} /></span>
+      <div className="home-job-story__body">
+        <span className="home-job-story__type">{JOB_TYPES[job.jobType] || 'Việc làm'}</span>
+        <h3><Link to={href}>{item.title}</Link></h3>
+        <p>{job.companyName || 'Nhà tuyển dụng'}</p>
+        <div className="home-job-story__meta">
+          <span><MapPin size={11} /> {job.workLocation || item.primaryAreaId?.name || 'Hòa Lạc'}</span>
+        </div>
+      </div>
+      <strong className="home-job-story__salary">{jobSalary(item)}</strong>
+    </article>
+  );
+}
+
+function communityMedia(item) {
+  const media = [];
+  const seen = new Set();
+  const append = (value) => {
+    if (!value) return;
+    const key = String(value?._id || value?.id || value?.secureUrl || value?.url || value);
+    if (!key || seen.has(key)) return;
+    seen.add(key);
+    media.push(value);
+  };
+  append(item?.thumbnailMediaId);
+  (item?.body?.inlineMediaIds || []).forEach(append);
+  return media;
+}
+
+function HomeCommunityStory({ item }) {
+  const href = contentPath(item);
+  const author = item.authorId || item.author || {};
+  const authorName = author.displayName || author.username || 'Thành viên';
+  const media = communityMedia(item).slice(0, 2);
+  const text = String(item?.body?.bodyText || item?.summary || item?.title || '').trim();
+
+  return (
+    <article className={`home-community-story${media.length ? '' : ' is-text-only'}`}>
+      <div className="home-community-story__head">
+        <Avatar
+          src={author?.profile?.avatarMediaId || author?.avatarMediaId || null}
+          name={authorName}
+          size="xs"
+        />
+        <div>
+          <strong>{authorName}</strong>
+          <span>{itemTime(item)}</span>
+        </div>
+        <span className="home-community-story__type">
+          {COMMUNITY_TYPES[item?.community?.postType] || 'Cộng đồng'}
+        </span>
+      </div>
+      <p><Link to={href}>{truncate(text, 100)}</Link></p>
+      {media.length ? (
+        <Link className={`home-community-story__media is-${media.length}`} to={href}>
+          {media.map((image, index) => (
+            <ContentImage
+              key={String(image?._id || image?.id || image?.secureUrl || image?.url || index)}
+              media={image}
+              alt={item.title || 'Ảnh cộng đồng'}
+              ratio="wide"
+            />
+          ))}
+        </Link>
+      ) : (
+        <Link className="home-community-story__placeholder" to={href}>
+          <MessageSquareText size={28} />
+          <span>Xem cuộc trò chuyện</span>
+        </Link>
+      )}
+      <div className="home-community-story__stats">
+        <span><Heart size={15} /> {formatNumber(item.reactionCount)}</span>
+        <span><MessageCircle size={15} /> {formatNumber(item.commentCount)}</span>
+        <span className="home-community-story__bookmark"><Bookmark size={15} /></span>
+      </div>
+    </article>
+  );
+}
+
+function HomePropertyStory({ item }) {
+  const property = item.property || {};
+  const href = contentPath(item);
+  return (
+    <article className="home-property-story">
+      <Link className="home-property-story__image" to={href}>
+        <ContentImage media={item.thumbnailMediaId} alt={item.title} ratio="property" />
+        <span className="home-property-story__type">
+          {getPropertyTypeLabel(property.propertyType, 'Bất động sản')}
+        </span>
+      </Link>
+      <div className="home-property-story__body">
+        <h3><Link to={href}>{item.title}</Link></h3>
+        <div className="home-property-story__row">
+          <span><MapPin size={11} /> {item.primaryAreaId?.name || property.addressText || 'Hòa Lạc'}</span>
+          <strong>{formatCurrency(property.price, property.priceUnit)}</strong>
+        </div>
+        <div className="home-property-story__facts">
+          {property.landArea ? <span><Maximize2 size={11} /> {formatNumber(property.landArea)} m²</span> : null}
+          {property.bedrooms !== null && property.bedrooms !== undefined ? <span><BedDouble size={11} /> {property.bedrooms} PN</span> : null}
+          {property.bathrooms !== null && property.bathrooms !== undefined ? <span><Bath size={11} /> {property.bathrooms} WC</span> : null}
+        </div>
+      </div>
+    </article>
+  );
+}
+
+function HomeCta({ tone, icon: Icon, eyebrow, title, text, to, action }) {
+  return (
+    <article className={`home-reference-cta home-reference-cta--${tone}`}>
+      <span className="home-reference-cta__icon"><Icon size={28} /></span>
+      <div>
+        <small>{eyebrow}</small>
+        <h2>{title}</h2>
+        <p>{text}</p>
+      </div>
+      <Link to={to}>{action}<ArrowRight size={14} /></Link>
+    </article>
+  );
+}
+
 export default function HomePage() {
   const [cachedFeedAtMount] = useState(() => readHomeFeedCache());
   const [data, setData] = useState(() => cachedFeedAtMount || INITIAL_DATA);
@@ -244,8 +481,6 @@ export default function HomePage() {
     const controller = new AbortController();
     const alreadyHasContent = hasHomeFeedData(dataRef.current);
 
-    // Cached content stays visible while the network refresh happens. The
-    // skeleton is only needed for a genuinely cold first visit.
     if (!alreadyHasContent) {
       setLoading(INITIAL_LOADING);
     }
@@ -255,7 +490,6 @@ export default function HomePage() {
       .homeFeed({ signal: controller.signal })
       .then((response) => {
         if (!active) return;
-
         const nextData = normalizeHomeFeed(response);
         dataRef.current = nextData;
         setData(nextData);
@@ -264,20 +498,11 @@ export default function HomePage() {
       })
       .catch((error) => {
         if (!active || isCanceled(error)) return;
-
-        // A transient refresh failure should never replace usable cached data
-        // with an empty screen.
         if (!hasHomeFeedData(dataRef.current)) {
           dataRef.current = INITIAL_DATA;
           setData(INITIAL_DATA);
         }
-
-        setErrors({
-          articles: true,
-          community: true,
-          properties: true,
-          jobs: true,
-        });
+        setErrors({ articles: true, community: true, properties: true, jobs: true });
       })
       .finally(() => {
         if (!active) return;
@@ -296,24 +521,24 @@ export default function HomePage() {
 
   const leadArticle = data.articles[0] || null;
   const sideArticles = data.articles.slice(1, 4);
-  const latestArticles = data.articles.slice(4, 7);
-  const spotlightArticles = data.articles.slice(7, 10);
+  const latestArticles = data.articles.slice(4, 8);
+  const spotlightArticles = data.articles.slice(8, 12);
   const communityItems = data.community.slice(0, 4);
   const propertyItems = data.properties.slice(0, 4);
-  const jobItems = data.jobs.slice(0, 3);
+  const jobItems = data.jobs.slice(0, 4);
   const hasAnyError = Object.values(errors).some(Boolean);
   const hasAnyLoading = Object.values(loading).some(Boolean);
   const visibleContentCount =
     data.articles.length + data.community.length + data.properties.length + data.jobs.length;
 
   return (
-    <main className="dth-home home-ref">
+    <main className="dth-home home-ref home-reference-v2">
       <Seo
         title="Đô Thị Hòa Lạc - Tin tức, cộng đồng và dữ liệu địa phương"
         description="Tin mới Hòa Lạc về quy hoạch, hạ tầng, bất động sản, cộng đồng và việc làm trong khu vực."
       />
 
-      <section className="home-ref-top">
+      <section className="home-reference-main">
         <div className="container">
           <SectionState
             loading={loading.articles}
@@ -322,37 +547,20 @@ export default function HomePage() {
             onRetry={retryLoad}
             emptyTitle="Chưa có tin nổi bật"
           >
-            <div className="home-ref-hero-grid">
-              {leadArticle ? (
-                <div className="home-ref-lead">
-                  <ArticleCard item={leadArticle} featured />
-                </div>
-              ) : null}
-
-              <div className="home-ref-side-news">
+            <div className="home-reference-hero">
+              <HomeHeroCard item={leadArticle} />
+              <div className="home-reference-side-list">
                 {sideArticles.map((item, index) => (
-                  <div
-                    className="home-ref-side-story"
-                    key={getItemKey(item, 'hero-side', index)}
-                  >
-                    <ArticleCard item={item} />
-                  </div>
+                  <HomeSideStory key={getItemKey(item, 'side', index)} item={item} />
                 ))}
               </div>
-            </div>
-
-            <div className="home-mobile-hero-dots" aria-hidden="true">
-              <span className="is-active" />
-              <span />
-              <span />
-              <span />
             </div>
           </SectionState>
 
           <MobileQuickNav />
 
-          <div className="home-ref-dashboard">
-            <section className="home-ref-panel home-ref-latest-panel">
+          <div className="home-reference-dashboard">
+            <section className="home-reference-panel home-reference-panel--latest">
               <SectionHeader title="Tin nổi bật" to="/tin-tuc" />
               <SectionState
                 loading={loading.articles}
@@ -361,24 +569,16 @@ export default function HomePage() {
                 onRetry={retryLoad}
                 emptyTitle="Chưa có tin mới"
               >
-                <div className="home-ref-latest-list">
+                <div className="home-reference-latest-list">
                   {latestArticles.map((item, index) => (
-                    <div
-                      className="home-ref-latest-item"
-                      key={getItemKey(item, 'latest', index)}
-                    >
-                      <ArticleCard item={item} />
-                    </div>
+                    <HomeLatestStory key={getItemKey(item, 'latest', index)} item={item} />
                   ))}
                 </div>
               </SectionState>
             </section>
 
-            <section className="home-ref-panel home-ref-spotlight-panel">
-              <SectionHeader
-                title="Tiêu điểm phát triển đô thị"
-                to="/tin-tuc?category=quy-hoach"
-              />
+            <section className="home-reference-panel home-reference-panel--spotlight">
+              <SectionHeader title="Tiêu điểm phát triển đô thị" to="/tin-tuc?category=quy-hoach" />
               <SectionState
                 loading={loading.articles}
                 error={errors.articles}
@@ -386,20 +586,15 @@ export default function HomePage() {
                 onRetry={retryLoad}
                 emptyTitle="Chưa có tiêu điểm mới"
               >
-                <div className="home-ref-spotlight-grid">
+                <div className="home-reference-spotlight-grid">
                   {spotlightArticles.map((item, index) => (
-                    <div
-                      className="home-ref-spotlight-card"
-                      key={getItemKey(item, 'spotlight', index)}
-                    >
-                      <ArticleCard item={item} />
-                    </div>
+                    <HomeSpotlightStory key={getItemKey(item, 'spotlight', index)} item={item} />
                   ))}
                 </div>
               </SectionState>
             </section>
 
-            <section className="home-ref-panel home-ref-jobs-panel">
+            <section className="home-reference-panel home-reference-panel--jobs">
               <SectionHeader title="Cơ hội việc làm" to="/viec-lam" />
               <SectionState
                 loading={loading.jobs}
@@ -408,110 +603,101 @@ export default function HomePage() {
                 onRetry={retryLoad}
                 emptyTitle="Chưa có tin việc làm"
               >
-                <div className="home-ref-shared-jobs jobs-page">
-                  <div className="jobs-results__main">
-                    <div className="jobs-list">
-                      {jobItems.map((item, index) => (
-                        <article
-                          className="jobs-item"
-                          key={getItemKey(item, 'job', index)}
-                        >
-                          <JobCard item={item} />
-                        </article>
-                      ))}
-                    </div>
-                  </div>
+                <div className="home-reference-job-list">
+                  {jobItems.map((item, index) => (
+                    <HomeJobStory key={getItemKey(item, 'job', index)} item={item} />
+                  ))}
                 </div>
               </SectionState>
             </section>
           </div>
-        </div>
-      </section>
 
-      <section className="home-ref-community-section">
-        <div className="container home-ref-community-shell">
-          <SectionHeader title="Cộng đồng Hòa Lạc" to="/cong-dong" />
-          <SectionState
-            loading={loading.community}
-            error={errors.community}
-            items={communityItems}
-            onRetry={retryLoad}
-            emptyTitle="Chưa có chia sẻ cộng đồng"
-          >
-            <div className="home-ref-community-grid">
-              {communityItems.map((item, index) => (
-                <div
-                  className="home-ref-community-item"
-                  key={getItemKey(item, 'community', index)}
-                >
-                  <CommunityCard item={item} />
-                </div>
-              ))}
-            </div>
-          </SectionState>
-        </div>
-      </section>
-
-      <AdSlot slotKey="home_after_community" layout="strip" />
-
-      <section className="home-ref-property-section">
-        <div className="container home-ref-property-shell">
-          <div className="home-ref-property-title">
-            <div>
-              <span><Building2 size={18} /> Bất động sản khu vực</span>
-              <h2>Tin nhà đất mới đăng</h2>
-            </div>
-            <Link to="/nha-dat">
-              Xem tất cả
-              <ArrowRight size={15} />
-            </Link>
-          </div>
-
-          <SectionState
-            loading={loading.properties}
-            error={errors.properties}
-            items={propertyItems}
-            onRetry={retryLoad}
-            emptyTitle="Chưa có tin bất động sản"
-          >
-            <div className="home-ref-shared-properties properties-page">
-              <div className="home-ref-property-grid properties-grid is-list">
-                {propertyItems.map((item, index) => (
-                  <article
-                    className="properties-item"
-                    key={getItemKey(item, 'property', index)}
-                  >
-                    <PropertyCard item={item} />
-                  </article>
+          <section className="home-reference-community">
+            <header className="home-reference-wide-heading">
+              <h2>Cộng đồng Hòa Lạc</h2>
+              <nav aria-label="Bộ lọc cộng đồng">
+                {COMMUNITY_TABS.map((tab, index) => (
+                  <Link className={index === 0 ? 'is-active' : ''} key={tab.label} to={tab.to}>{tab.label}</Link>
+                ))}
+              </nav>
+              <Link className="home-reference-heading-action" to="/cong-dong/create">
+                <UsersRound size={14} /> Tham gia cộng đồng
+              </Link>
+            </header>
+            <SectionState
+              loading={loading.community}
+              error={errors.community}
+              items={communityItems}
+              onRetry={retryLoad}
+              emptyTitle="Chưa có chia sẻ cộng đồng"
+            >
+              <div className="home-reference-community-grid">
+                {communityItems.map((item, index) => (
+                  <HomeCommunityStory key={getItemKey(item, 'community', index)} item={item} />
                 ))}
               </div>
-            </div>
-          </SectionState>
-        </div>
-      </section>
+            </SectionState>
+          </section>
 
-      <section className="home-ref-contribute">
-        <div className="container">
-          <div className="home-ref-contribute__inner">
-            <span className="home-ref-contribute__icon">
-              <MessageSquareText size={25} />
-            </span>
-            <div className="home-ref-contribute__copy">
+          <section className="home-reference-properties">
+            <header className="home-reference-wide-heading home-reference-wide-heading--property">
+              <h2>Bất động sản Hòa Lạc</h2>
+              <nav aria-label="Loại bất động sản">
+                {PROPERTY_TABS.map((tab, index) => (
+                  <Link className={index === 0 ? 'is-active' : ''} key={tab.label} to={tab.to}>{tab.label}</Link>
+                ))}
+              </nav>
+              <Link className="home-reference-heading-link" to="/nha-dat">
+                Xem tất cả <ArrowRight size={13} />
+              </Link>
+            </header>
+            <SectionState
+              loading={loading.properties}
+              error={errors.properties}
+              items={propertyItems}
+              onRetry={retryLoad}
+              emptyTitle="Chưa có tin bất động sản"
+            >
+              <div className="home-reference-property-grid">
+                {propertyItems.map((item, index) => (
+                  <HomePropertyStory key={getItemKey(item, 'property', index)} item={item} />
+                ))}
+              </div>
+            </SectionState>
+          </section>
+
+          <section className="home-reference-cta-grid">
+            <HomeCta
+              tone="community"
+              icon={UsersRound}
+              eyebrow="Kết nối cộng đồng"
+              title="Kết nối – Chia sẻ – Phát triển cùng Hòa Lạc"
+              text="Tham gia cộng đồng, cập nhật tin tức, sự kiện và cơ hội mới mỗi ngày."
+              to="/cong-dong"
+              action="Tham gia ngay"
+            />
+            <HomeCta
+              tone="data"
+              icon={Building2}
+              eyebrow="Dữ liệu địa phương"
+              title="Dữ liệu & Quy hoạch Hòa Lạc"
+              text="Tra cứu bản đồ quy hoạch, pháp lý và dữ liệu thị trường trong khu vực."
+              to="/quy-hoach"
+              action="Khám phá ngay"
+            />
+          </section>
+
+          <section className="home-reference-tipbar">
+            <span><MessageSquareText size={17} /></span>
+            <div>
               <small>Đóng góp cho cộng đồng</small>
-              <h2>Chia sẻ thông tin hữu ích về Hòa Lạc</h2>
-              <p>Đăng bài cộng đồng, tin nhà đất, việc làm hoặc gửi nguồn tin địa phương tới Ban biên tập.</p>
+              <strong>Chia sẻ thông tin hữu ích về Hòa Lạc</strong>
             </div>
-            <div className="home-ref-contribute__actions">
-              <Link to="/dang-bai">
-                <FilePenLine size={17} />
-                Đăng nội dung
-              </Link>
-              <Link to="/gui-tin">
-                <Send size={17} />
-                Gửi tin
-              </Link>
+            <div>
+              <Link to="/dang-bai"><FilePenLine size={14} /> Đăng nội dung</Link>
+              <Link to="/gui-tin"><Send size={14} /> Gửi tin</Link>
             </div>
-          </div>
+          </section>
         </div>
       </section>
 
