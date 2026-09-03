@@ -2,8 +2,8 @@ import { useState } from 'react';
 import { mediaUrl } from '../../utils/media';
 import './ContentImage.css';
 
-const RESPONSIVE_WIDTHS = [480, 640, 768, 960, 1280, 1600, 1920, 2560];
-const DEFAULT_SOURCE_WIDTH = 1600;
+const RESPONSIVE_WIDTHS = [360, 480, 640, 768, 960, 1280, 1600, 1920];
+const DEFAULT_SOURCE_WIDTH = 1280;
 const DEFAULT_SIZES =
   '(max-width: 720px) calc(100vw - 32px), (max-width: 1200px) 70vw, 820px';
 const PROPERTY_SIZES =
