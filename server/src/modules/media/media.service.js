@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 
+import Comment from '../comments/comment.model.js';
 import Content from '../contents/content.model.js';
 import ContentBody from '../contents/contentBody.model.js';
 import ContentMedia from './contentMedia.model.js';
@@ -177,25 +178,38 @@ export async function getMediaUsage(id) {
     );
   }
 
-  const [thumbnailUsage, bodyUsage, relationUsage] =
-    await Promise.all([
-      Content.exists({
-        thumbnailMediaId: id,
-        deletedAt: null,
-      }),
-      ContentBody.exists({
-        inlineMediaIds: id,
-      }),
-      ContentMedia.exists({
-        mediaId: id,
-      }),
-    ]);
+  const [
+    thumbnailUsage,
+    bodyUsage,
+    relationUsage,
+    commentUsage,
+  ] = await Promise.all([
+    Content.exists({
+      thumbnailMediaId: id,
+      deletedAt: null,
+    }),
+    ContentBody.exists({
+      inlineMediaIds: id,
+    }),
+    ContentMedia.exists({
+      mediaId: id,
+    }),
+    Comment.exists({
+      mediaId: id,
+      status: { $ne: 'deleted' },
+      deletedAt: null,
+    }),
+  ]);
 
   return {
     usedAsThumbnail: Boolean(thumbnailUsage),
     usedInline: Boolean(bodyUsage || relationUsage),
+    usedInComment: Boolean(commentUsage),
     inUse: Boolean(
-      thumbnailUsage || bodyUsage || relationUsage,
+      thumbnailUsage ||
+        bodyUsage ||
+        relationUsage ||
+        commentUsage,
     ),
   };
 }
@@ -231,7 +245,7 @@ export async function remove(userId, id) {
   if (usage.inUse) {
     throw new ApiError(
       409,
-      'Tệp đang được sử dụng trong nội dung nên chưa thể xóa.',
+      'Tệp đang được sử dụng trong nội dung hoặc bình luận nên chưa thể xóa.',
       'MEDIA_IN_USE',
       usage,
     );
