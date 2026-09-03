@@ -2,13 +2,20 @@
    The public URL stays /cong-dong; this file only changes the presentation. */
 
 .community-quick-composer__mobile-header-publish,
-.community-quick-composer__mobile-scroll,
 .community-quick-composer__mobile-footer,
 .community-quick-composer__mobile-sheet-backdrop,
 .community-quick-composer__preview-backdrop,
 .community-quick-composer__cancel-icon,
-.community-quick-composer__character-count {
+.community-quick-composer__character-count,
+.community-quick-composer__mobile-author,
+.community-quick-composer__mobile-add-card,
+.community-quick-composer__mobile-setting-stack,
+.community-quick-composer__mobile-tip {
   display: none;
+}
+
+.community-quick-composer__mobile-scroll {
+  display: contents;
 }
 
 .community-quick-composer__desktop-footer {
@@ -658,6 +665,7 @@
   }
 
   .community-quick-composer__mobile-preview {
+    position: relative !important;
     display: grid !important;
     place-items: center !important;
     width: 54px !important;
