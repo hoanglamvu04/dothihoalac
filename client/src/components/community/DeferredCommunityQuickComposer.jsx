@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-import CommunityQuickComposer from './CommunityQuickComposer';
+import CommunityQuickComposerDesktop from './CommunityQuickComposerDesktop';
 import CommunityQuickComposerMobile from './CommunityQuickComposerMobile';
 import { useAuth } from '../../context/AuthContext';
 import { isPersistedContentId } from '../../utils/content';
@@ -172,5 +172,5 @@ export default function DeferredCommunityQuickComposer() {
 
   return isMobile
     ? <CommunityQuickComposerMobile />
-    : <CommunityQuickComposer />;
+    : <CommunityQuickComposerDesktop />;
 }
