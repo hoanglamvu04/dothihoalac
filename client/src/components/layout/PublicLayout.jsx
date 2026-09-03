@@ -8,7 +8,7 @@ import AdSlot from '../ads/AdSlot';
 
 import './PublicInteractionFixes.css';
 
-const HeaderNavigationUpgrade = lazy(() => import('./HeaderNavigationUpgrade'));
+const PrimaryNavigation = lazy(() => import('./PrimaryNavigation'));
 const CommunityAdRails = lazy(() => import('../community/CommunityAdRails'));
 
 function pageTopAdSlot(pathname) {
@@ -103,7 +103,7 @@ function DeferredHeaderNavigation() {
 
   return (
     <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 42 }} />}>
-      <HeaderNavigationUpgrade />
+      <PrimaryNavigation />
     </Suspense>
   );
 }
