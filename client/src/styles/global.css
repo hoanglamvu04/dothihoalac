@@ -28,7 +28,7 @@ code { color: var(--primary-800); font-family: ui-monospace, SFMono-Regular, Con
 .app-shell { min-height: 100vh; display: flex; flex-direction: column; }
 .main-content { flex: 1; }
 .page-section { padding: 64px 0; }
-.page-section--muted { background: #e9efed; }
+.page-section--muted { background: #f4f0e9; }
 .section-divider { height: 1px; background: var(--ink-200); margin: 32px 0; }
 .visually-hidden { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
@@ -43,7 +43,7 @@ input, select, textarea {
 }
 input:focus, select:focus, textarea:focus {
   border-color: var(--primary-600);
-  box-shadow: 0 0 0 4px rgb(11 130 159 / 0.13);
+  box-shadow: 0 0 0 4px rgb(181 153 101 / 0.14);
 }
 input[readonly], input:disabled, textarea:disabled, select:disabled { background: var(--ink-50); color: var(--ink-500); cursor: not-allowed; }
 
@@ -71,7 +71,7 @@ input[readonly], input:disabled, textarea:disabled, select:disabled { background
   max-width: 100%;
   height: auto;
   border-radius: var(--radius-md);
-  background: linear-gradient(135deg, #dce6e4, #edf2f1);
+  background: linear-gradient(135deg, #e8e1d5, #f7f3eb);
   object-fit: cover;
   object-position: center;
   transition: transform .5s ease;
