@@ -1,482 +1,546 @@
 /*
- * Shared compact social-feed presentation for CommunityCard.
- * Keeps the live CommunityCard component/API intact while making the feed
- * behave closer to Threads: continuous timeline, tight content rhythm,
- * media aligned with the author column, lightweight actions and comments
- * collapsed until the user explicitly focuses the comment field.
+ * DTHL Community shared Threads-style feed layer.
+ * This file intentionally contains presentation only. CommunityCard keeps
+ * the same live APIs and interaction logic while desktop/mobile share one
+ * compact social rhythm.
  */
+
+/* =========================
+   AUTHOR / POST RHYTHM
+========================= */
 
 .community-card--social {
   box-shadow: none;
 }
 
 .community-feed-card__header {
-  padding-bottom: 6px;
+  align-items: center;
+  padding-bottom: 3px;
+}
+
+/* Keep author, time and area on the same row like a modern social feed. */
+.community-feed-card__author {
+  display: flex;
+  align-items: baseline;
+  min-width: 0;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.community-feed-card__author > a {
+  display: block;
+  min-width: 0;
+  flex: 0 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.community-feed-card__author > div {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  flex: 1 1 auto;
+  gap: 4px;
+  margin-top: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.community-feed-card__author > div span {
+  flex: 0 0 auto;
+}
+
+.community-feed-card__author > div span:last-child {
+  min-width: 0;
+  flex: 0 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .community-feed-card__text {
-  padding-top: 4px;
-  padding-bottom: 10px;
-  line-height: 1.5;
+  padding-top: 2px;
+  padding-bottom: 8px;
+  line-height: 1.47;
 }
 
 .community-feed-card__stats {
-  min-height: 30px;
-  padding-top: 4px;
-  padding-bottom: 4px;
+  min-height: 0;
 }
 
 .community-feed-card__actions {
-  border-top-color: #f0f1f0;
-  border-bottom-color: #f0f1f0;
+  border-top: 0;
+  border-bottom: 0;
 }
 
-@media (min-width: 641px) {
+/* =========================
+   COMMUNITY PAGE TIMELINE
+========================= */
+
+.community-social-page.community-social-page.community-social-page
+  .community-social-feed-list {
+  display: grid !important;
+  gap: 0 !important;
+  overflow: hidden;
+  border: 1px solid #e3e6e4;
+  border-radius: 14px;
+  background: #fff;
+}
+
+.community-social-page.community-social-page.community-social-page
+  .community-social-feed-item
+  + .community-social-feed-item {
+  border-top: 0 !important;
+}
+
+.community-social-page.community-social-page.community-social-page
+  .community-reference-center
+  :is(.community-card--social, .community-card) {
+  overflow: visible !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-bottom: 1px solid #e6e8e7 !important;
+  border-radius: 0 !important;
+  background: #fff !important;
+  box-shadow: none !important;
+  transform: none !important;
+}
+
+.community-social-page.community-social-page.community-social-page
+  .community-social-feed-item:last-child
+  :is(.community-card--social, .community-card) {
+  border-bottom: 0 !important;
+}
+
+.community-social-page.community-social-page.community-social-page
+  .community-reference-center
+  .community-feed-card__header {
+  grid-template-columns: auto minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 9px !important;
+  padding: 12px 16px 2px !important;
+}
+
+.community-social-page.community-social-page.community-social-page
+  .community-reference-center
+  .community-feed-card__author {
+  display: flex !important;
+  align-items: baseline !important;
+  gap: 6px !important;
+  min-width: 0;
+}
+
+.community-social-page.community-social-page.community-social-page
+  .community-reference-center
+  .community-feed-card__author > a {
+  font-size: 0.88rem !important;
+  line-height: 1.15 !important;
+}
+
+.community-social-page.community-social-page.community-social-page
+  .community-reference-center
+  .community-feed-card__author > div {
+  gap: 4px !important;
+  margin-top: 0 !important;
+  color: #777e7a !important;
+  font-size: 0.67rem !important;
+  line-height: 1.2 !important;
+}
+
+.community-social-page.community-social-page.community-social-page
+  .community-reference-center
+  .community-feed-card__type {
+  padding: 3px 7px !important;
+  border: 1px solid #ece7db;
+  border-radius: 999px;
+  color: #756847;
+  background: #fbf8f1 !important;
+  font-size: 0.59rem !important;
+  line-height: 1.2;
+}
+
+.community-social-page.community-social-page.community-social-page
+  .community-reference-center
+  .community-feed-card__text {
+  padding: 2px 16px 8px 62px !important;
+  color: #171a18 !important;
+  font-size: 0.9rem !important;
+  line-height: 1.46 !important;
+  letter-spacing: -0.004em;
+}
+
+.community-social-page.community-social-page.community-social-page
+  .community-reference-center
+  .community-feed-card__text button {
+  margin-top: 3px;
+  color: #5d625f;
+  font-size: 0.76rem;
+  font-weight: 680;
+}
+
+/* Media follows the text column rather than creating a full-width Facebook card. */
+.community-social-page.community-social-page.community-social-page
+  .community-reference-center
+  .community-feed-media {
+  width: calc(100% - 78px) !important;
+  max-width: 610px;
+  margin: 1px 16px 7px 62px !important;
+  gap: 2px !important;
+  overflow: hidden !important;
+  border: 1px solid #e1e4e2;
+  border-radius: 11px !important;
+  background: #f2f3f2;
+}
+
+.community-social-page.community-social-page.community-social-page
+  .community-reference-center
+  .community-feed-media--1 {
+  max-height: 430px !important;
+}
+
+.community-social-page.community-social-page.community-social-page
+  .community-reference-center
+  .community-feed-media--1
+  .community-feed-media__item {
+  max-height: 430px !important;
+  aspect-ratio: auto !important;
+}
+
+.community-social-page.community-social-page.community-social-page
+  .community-reference-center
+  .community-feed-media--1
+  .content-image img {
+  height: auto;
+  max-height: 430px;
+  object-fit: cover;
+}
+
+.community-social-page.community-social-page.community-social-page
+  .community-reference-center
+  .community-feed-media--2 {
+  height: 310px !important;
+}
+
+.community-social-page.community-social-page.community-social-page
+  .community-reference-center
+  :is(.community-feed-media--3, .community-feed-media--4) {
+  height: 390px !important;
+}
+
+.community-social-page.community-social-page.community-social-page
+  .community-reference-center
+  .community-feed-card__stats {
+  justify-content: flex-start !important;
+  min-height: 0 !important;
+  padding: 0 16px 0 62px !important;
+  gap: 13px;
+  color: #767b78;
+  font-size: 0.66rem !important;
+}
+
+.community-social-page.community-social-page.community-social-page
+  .community-reference-center
+  .community-feed-card__stats > :is(span, a) {
+  min-height: 18px;
+}
+
+.community-social-page.community-social-page.community-social-page
+  .community-reference-center
+  .community-feed-card__stats:has(> span:empty):has(> a:empty) {
+  display: none !important;
+}
+
+.community-social-page.community-social-page.community-social-page
+  .community-reference-center
+  .community-feed-card__stats b {
+  width: auto;
+  height: auto;
+  border-radius: 0;
+  color: inherit;
+  background: transparent;
+  font-size: 0.75rem;
+}
+
+.community-social-page.community-social-page.community-social-page
+  .community-reference-center
+  .community-feed-card__actions {
+  display: flex !important;
+  grid-template-columns: none !important;
+  align-items: center;
+  justify-content: flex-start;
+  min-height: 36px;
+  padding: 0 16px 6px 54px !important;
+  gap: 7px;
+  border-top: 0 !important;
+  border-bottom: 0 !important;
+}
+
+.community-social-page.community-social-page.community-social-page
+  .community-reference-center
+  .community-feed-reaction {
+  flex: 0 0 auto;
+  width: auto;
+}
+
+.community-social-page.community-social-page.community-social-page
+  .community-reference-center
+  .community-feed-action {
+  flex: 0 0 auto;
+  width: auto !important;
+  min-width: 34px;
+  min-height: 32px !important;
+  padding: 0 6px !important;
+  gap: 0;
+  border-radius: 999px;
+  color: #333936;
+  background: transparent !important;
+  font-size: 0 !important;
+  font-weight: 600;
+}
+
+.community-social-page.community-social-page.community-social-page
+  .community-reference-center
+  .community-feed-action svg {
+  width: 19px;
+  height: 19px;
+  stroke-width: 1.8;
+}
+
+.community-social-page.community-social-page.community-social-page
+  .community-reference-center
+  .community-feed-action:hover {
+  background: #f4f5f4 !important;
+}
+
+.community-social-page.community-social-page.community-social-page
+  .community-reference-center
+  .community-feed-action.is-active {
+  color: #0e8a42;
+}
+
+.community-social-page.community-social-page.community-social-page
+  .community-reference-center
+  .community-feed-action__emoji {
+  font-size: 1.05rem !important;
+}
+
+.community-social-page.community-social-page.community-social-page
+  .community-reference-center
+  .community-feed-action__caret {
+  display: none !important;
+}
+
+.community-social-page.community-social-page.community-social-page
+  .community-reference-center
+  :is(.community-feed-card__more-comments, .community-feed-comments) {
+  display: none !important;
+}
+
+/* Keep comments available without permanently spending vertical space. */
+.community-social-page.community-social-page.community-social-page
+  .community-reference-center
+  .community-feed-comment-box {
+  max-height: 0 !important;
+  min-height: 0 !important;
+  padding: 0 16px 0 62px !important;
+  overflow: hidden;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    max-height 160ms ease,
+    padding 160ms ease,
+    opacity 120ms ease;
+}
+
+.community-social-page.community-social-page.community-social-page
+  .community-reference-center
+  .community-feed-comment-box:focus-within {
+  max-height: 56px !important;
+  padding: 2px 16px 8px 62px !important;
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* =========================
+   MOBILE DENSITY
+========================= */
+
+@media (max-width: 640px) {
+  .community-social-page.community-social-page.community-social-page
+    .community-social-page__container {
+    width: 100% !important;
+  }
+
   .community-social-page.community-social-page.community-social-page
     .community-social-feed-list {
-    display: grid !important;
-    gap: 0 !important;
-    overflow: hidden;
-    border: 1px solid #e2e5e3;
-    border-radius: 14px;
-    background: #fff;
+    border-right: 0;
+    border-left: 0;
+    border-radius: 0;
   }
 
+  .community-card--social,
   .community-social-page.community-social-page.community-social-page
     .community-reference-center
-    .community-card--social,
-  .community-social-page.community-social-page.community-social-page
-    .community-reference-center
-    .community-card {
-    overflow: visible !important;
-    border: 0 !important;
-    border-bottom: 1px solid #e6e8e7 !important;
+    :is(.community-card--social, .community-card) {
+    border-right: 0 !important;
+    border-left: 0 !important;
     border-radius: 0 !important;
-    background: #fff !important;
     box-shadow: none !important;
-    transform: none !important;
-  }
-
-  .community-social-page.community-social-page.community-social-page
-    .community-social-feed-item:last-child
-    .community-card--social,
-  .community-social-page.community-social-page.community-social-page
-    .community-social-feed-item:last-child
-    .community-card {
-    border-bottom: 0 !important;
   }
 
   .community-social-page.community-social-page.community-social-page
     .community-reference-center
     .community-feed-card__header {
-    align-items: start !important;
-    gap: 10px !important;
-    padding: 14px 16px 3px !important;
+    gap: 8px !important;
+    padding: 10px 14px 1px !important;
+  }
+
+  .community-feed-card__author,
+  .community-social-page.community-social-page.community-social-page
+    .community-reference-center
+    .community-feed-card__author {
+    gap: 5px !important;
+  }
+
+  .community-feed-card__author > a,
+  .community-social-page.community-social-page.community-social-page
+    .community-reference-center
+    .community-feed-card__author > a {
+    font-size: 0.86rem !important;
+  }
+
+  .community-feed-card__author > div,
+  .community-social-page.community-social-page.community-social-page
+    .community-reference-center
+    .community-feed-card__author > div {
+    gap: 3px !important;
+    margin-top: 0 !important;
+    font-size: 0.63rem !important;
+  }
+
+  .community-social-page.community-social-page.community-social-page
+    .community-reference-center
+    .community-feed-card__type {
+    padding: 3px 6px !important;
+    font-size: 0.56rem !important;
   }
 
   .community-social-page.community-social-page.community-social-page
     .community-reference-center
     .community-feed-card__text {
-    padding: 4px 16px 10px 62px !important;
-    color: #171a18 !important;
+    padding: 2px 14px 6px 58px !important;
     font-size: 0.88rem !important;
-    line-height: 1.5 !important;
+    line-height: 1.43 !important;
   }
 
   .community-social-page.community-social-page.community-social-page
     .community-reference-center
     .community-feed-media {
-    width: calc(100% - 78px) !important;
-    margin: 3px 16px 10px 62px !important;
-    overflow: hidden !important;
-    border: 1px solid #e1e4e2;
-    border-radius: 11px !important;
-    background: #f2f3f2;
+    width: calc(100% - 72px) !important;
+    max-width: none;
+    margin: 1px 14px 6px 58px !important;
+    border-radius: 10px !important;
+  }
+
+  .community-social-page.community-social-page.community-social-page
+    .community-reference-center
+    .community-feed-media--1,
+  .community-social-page.community-social-page.community-social-page
+    .community-reference-center
+    .community-feed-media--1
+    .community-feed-media__item {
+    max-height: 365px !important;
+  }
+
+  .community-social-page.community-social-page.community-social-page
+    .community-reference-center
+    .community-feed-media--1
+    .content-image img {
+    max-height: 365px;
+  }
+
+  .community-social-page.community-social-page.community-social-page
+    .community-reference-center
+    .community-feed-media--2 {
+    height: 225px !important;
+  }
+
+  .community-social-page.community-social-page.community-social-page
+    .community-reference-center
+    :is(.community-feed-media--3, .community-feed-media--4) {
+    height: 300px !important;
   }
 
   .community-social-page.community-social-page.community-social-page
     .community-reference-center
     .community-feed-card__stats {
-    justify-content: flex-start !important;
-    min-height: 0 !important;
-    padding: 0 16px 2px 62px !important;
-    gap: 14px;
-    font-size: 0.68rem !important;
-  }
-
-  .community-social-page.community-social-page.community-social-page
-    .community-reference-center
-    .community-feed-card__stats:has(> span:empty):has(> a:empty) {
-    display: none !important;
+    padding: 0 14px 0 58px !important;
+    gap: 11px;
+    font-size: 0.63rem !important;
   }
 
   .community-social-page.community-social-page.community-social-page
     .community-reference-center
     .community-feed-card__actions {
-    display: flex !important;
-    grid-template-columns: none !important;
-    align-items: center;
-    justify-content: flex-start;
-    min-height: 40px;
-    padding: 1px 16px 8px 54px !important;
-    gap: 8px;
-    border-top: 0 !important;
-    border-bottom: 0 !important;
+    min-height: 34px;
+    padding: 0 14px 5px 50px !important;
+    gap: 5px;
   }
 
   .community-social-page.community-social-page.community-social-page
     .community-reference-center
     .community-feed-action {
-    flex: 0 0 auto;
-    width: auto !important;
-    min-width: 36px;
-    min-height: 34px !important;
-    padding: 0 7px !important;
-    gap: 0;
-    border-radius: 999px;
-    background: transparent !important;
-    font-size: 0 !important;
+    min-width: 32px;
+    min-height: 31px !important;
+    padding-inline: 5px !important;
   }
 
   .community-social-page.community-social-page.community-social-page
     .community-reference-center
     .community-feed-action svg {
-    width: 19px;
-    height: 19px;
-    stroke-width: 1.8;
-  }
-
-  .community-social-page.community-social-page.community-social-page
-    .community-reference-center
-    .community-feed-action__emoji {
-    font-size: 1.05rem !important;
-  }
-
-  .community-social-page.community-social-page.community-social-page
-    .community-reference-center
-    .community-feed-action__caret {
-    display: none !important;
-  }
-
-  .community-social-page.community-social-page.community-social-page
-    .community-reference-center
-    .community-feed-card__more-comments,
-  .community-social-page.community-social-page.community-social-page
-    .community-reference-center
-    .community-feed-comments {
-    display: none !important;
+    width: 18px;
+    height: 18px;
   }
 
   .community-social-page.community-social-page.community-social-page
     .community-reference-center
     .community-feed-comment-box {
-    max-height: 0 !important;
-    min-height: 0 !important;
-    padding: 0 16px 0 62px !important;
-    overflow: hidden;
-    opacity: 0;
-    pointer-events: none;
-    transition:
-      max-height 160ms ease,
-      padding 160ms ease,
-      opacity 120ms ease;
-  }
-
-  .community-social-page.community-social-page.community-social-page
-    .community-reference-center
-    .community-feed-comment-box:focus-within {
-    max-height: 60px !important;
-    padding: 3px 16px 10px 62px !important;
-    opacity: 1;
-    pointer-events: auto;
-  }
-}
-
-@media (max-width: 640px) {
-  .community-card--social,
-  .community-social-page.community-social-page.community-social-page
-    .community-reference-center
-    .community-card--social,
-  .community-social-page.community-social-page.community-social-page
-    .community-reference-center
-    .community-card {
-    overflow: visible !important;
-    border: 0 !important;
-    border-bottom: 1px solid #e6e8e7 !important;
-    border-radius: 0 !important;
-    background: #fff !important;
-    box-shadow: none !important;
-    transform: none !important;
-  }
-
-  .community-social-page.community-social-page.community-social-page
-    .community-social-feed-list {
-    display: grid !important;
-    gap: 0 !important;
-    overflow: hidden;
-    border-top: 1px solid #e6e8e7;
-    border-bottom: 1px solid #e6e8e7;
-    border-radius: 0;
-    background: #fff;
-  }
-
-  .community-social-page.community-social-page.community-social-page
-    .community-social-feed-item
-    + .community-social-feed-item {
-    border-top: 0 !important;
-  }
-
-  .community-feed-card__header,
-  .community-social-page.community-social-page.community-social-page
-    .community-reference-center
-    .community-feed-card__header {
-    grid-template-columns: auto minmax(0, 1fr) auto !important;
-    align-items: start !important;
-    gap: 9px !important;
-    padding: 12px 14px 2px !important;
-  }
-
-  .community-feed-card__author > a {
-    font-size: 0.88rem;
-    line-height: 1.15;
-  }
-
-  .community-feed-card__author > div {
-    gap: 4px;
-    margin-top: 2px;
-    font-size: 0.66rem;
-    line-height: 1.25;
-  }
-
-  .community-feed-card__type {
-    padding: 3px 7px !important;
-    border: 1px solid #ece7db;
-    border-radius: 999px;
-    color: #766748;
-    background: #fbf8f1 !important;
-    font-size: 0.58rem !important;
-    line-height: 1.2;
-  }
-
-  .community-feed-card__text,
-  .community-social-page.community-social-page.community-social-page
-    .community-reference-center
-    .community-feed-card__text {
-    padding: 4px 14px 8px 58px !important;
-    color: #151816 !important;
-    font-size: 0.9rem !important;
-    line-height: 1.45 !important;
-    letter-spacing: -0.006em;
-  }
-
-  .community-feed-card__text button {
-    margin-top: 3px;
-    color: #5d625f;
-    font-size: 0.76rem;
-    font-weight: 680;
-  }
-
-  .community-feed-media,
-  .community-social-page.community-social-page.community-social-page
-    .community-reference-center
-    .community-feed-media {
-    width: calc(100% - 72px) !important;
-    margin: 2px 14px 8px 58px !important;
-    gap: 2px !important;
-    overflow: hidden !important;
-    border: 1px solid #e3e5e4;
-    border-radius: 10px !important;
-    background: #f2f3f2;
-  }
-
-  .community-feed-media--1,
-  .community-social-page.community-social-page.community-social-page
-    .community-reference-center
-    .community-feed-media--1 {
-    max-height: 370px !important;
-  }
-
-  .community-feed-media--1 .community-feed-media__item,
-  .community-social-page.community-social-page.community-social-page
-    .community-reference-center
-    .community-feed-media--1
-    .community-feed-media__item {
-    max-height: 370px !important;
-    aspect-ratio: auto !important;
-  }
-
-  .community-feed-media--1 .content-image img {
-    height: auto;
-    max-height: 370px;
-    object-fit: cover;
-  }
-
-  .community-feed-media--2 {
-    height: 230px !important;
-  }
-
-  .community-feed-media--3,
-  .community-feed-media--4 {
-    height: 310px !important;
-  }
-
-  .community-feed-card__stats,
-  .community-social-page.community-social-page.community-social-page
-    .community-reference-center
-    .community-feed-card__stats {
-    justify-content: flex-start !important;
-    min-height: 0 !important;
-    padding: 0 14px 2px 58px !important;
-    gap: 13px;
-    color: #767b78;
-    font-size: 0.66rem;
-  }
-
-  .community-feed-card__stats > span,
-  .community-feed-card__stats > a {
-    min-height: 20px;
-  }
-
-  .community-feed-card__stats > a {
-    margin-left: 0;
-  }
-
-  .community-feed-card__stats:has(> span:empty):has(> a:empty) {
-    display: none !important;
-  }
-
-  .community-feed-card__stats b {
-    width: auto;
-    height: auto;
-    border-radius: 0;
-    color: inherit;
-    background: transparent;
-    font-size: 0.75rem;
-  }
-
-  .community-feed-card__actions,
-  .community-social-page.community-social-page.community-social-page
-    .community-reference-center
-    .community-feed-card__actions {
-    display: flex !important;
-    grid-template-columns: none !important;
-    align-items: center;
-    justify-content: flex-start;
-    min-height: 38px;
-    padding: 1px 14px 7px 50px !important;
-    gap: 7px;
-    border-top: 0 !important;
-    border-bottom: 0 !important;
-  }
-
-  .community-feed-reaction {
-    flex: 0 0 auto;
-    width: auto;
-  }
-
-  .community-feed-action,
-  .community-social-page.community-social-page.community-social-page
-    .community-reference-center
-    .community-feed-action {
-    flex: 0 0 auto;
-    width: auto !important;
-    min-width: 34px;
-    min-height: 34px !important;
-    padding: 0 6px !important;
-    gap: 0;
-    border-radius: 999px;
-    color: #333936;
-    background: transparent !important;
-    font-size: 0 !important;
-    font-weight: 600;
-  }
-
-  .community-feed-action svg {
-    width: 19px;
-    height: 19px;
-    stroke-width: 1.8;
-  }
-
-  .community-feed-action:hover,
-  .community-feed-action:active {
-    background: #f4f5f4 !important;
-  }
-
-  .community-feed-action.is-active {
-    color: #0e8a42;
-  }
-
-  .community-feed-action__emoji {
-    font-size: 1.05rem !important;
-  }
-
-  .community-feed-action__caret {
-    display: none !important;
-  }
-
-  .community-feed-reaction-picker {
-    bottom: calc(100% + 3px);
-    left: 0 !important;
-  }
-
-  .community-feed-card__more-comments,
-  .community-feed-comments {
-    display: none !important;
-  }
-
-  .community-feed-comment-box,
-  .community-social-page.community-social-page.community-social-page
-    .community-reference-center
-    .community-feed-comment-box {
-    max-height: 0 !important;
-    min-height: 0 !important;
     padding: 0 14px 0 58px !important;
-    gap: 7px;
-    overflow: hidden;
-    opacity: 0;
-    pointer-events: none;
-    transition:
-      max-height 160ms ease,
-      padding 160ms ease,
-      opacity 120ms ease;
   }
 
-  .community-feed-comment-box:focus-within,
   .community-social-page.community-social-page.community-social-page
     .community-reference-center
     .community-feed-comment-box:focus-within {
-    max-height: 58px !important;
-    padding: 3px 14px 9px 58px !important;
-    opacity: 1;
-    pointer-events: auto;
+    max-height: 54px !important;
+    padding: 2px 14px 7px 58px !important;
   }
 
   .community-feed-comment-box > div {
-    min-height: 34px;
-    padding-left: 11px;
+    min-height: 33px;
+    padding-left: 10px;
     background: #f3f4f3;
   }
 
   .community-feed-comment-box input {
-    height: 33px;
-    font-size: 0.75rem;
+    height: 32px;
+    font-size: 0.74rem;
   }
 
   .community-feed-comment-box button {
-    width: 30px;
-    height: 30px;
+    width: 29px;
+    height: 29px;
   }
 }
 
 @media (max-width: 390px) {
-  .community-feed-card__header,
   .community-social-page.community-social-page.community-social-page
     .community-reference-center
     .community-feed-card__header {
-    padding-inline: 12px !important;
+    padding-right: 12px !important;
+    padding-left: 12px !important;
   }
 
-  .community-feed-card__text,
   .community-social-page.community-social-page.community-social-page
     .community-reference-center
     .community-feed-card__text {
@@ -484,7 +548,6 @@
     padding-left: 54px !important;
   }
 
-  .community-feed-media,
   .community-social-page.community-social-page.community-social-page
     .community-reference-center
     .community-feed-media {
@@ -493,7 +556,6 @@
     margin-left: 54px !important;
   }
 
-  .community-feed-card__stats,
   .community-social-page.community-social-page.community-social-page
     .community-reference-center
     .community-feed-card__stats {
@@ -501,7 +563,6 @@
     padding-left: 54px !important;
   }
 
-  .community-feed-card__actions,
   .community-social-page.community-social-page.community-social-page
     .community-reference-center
     .community-feed-card__actions {
