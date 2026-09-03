@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import CommunityQuickComposerDesktop from './CommunityQuickComposerDesktop';
@@ -8,6 +8,8 @@ import { isPersistedContentId } from '../../utils/content';
 
 const COMMUNITY_CREATE_ROUTE = '/cong-dong/create';
 const MOBILE_COMPOSER_QUERY = '(max-width: 640px)';
+const UNSAVED_MESSAGE =
+  'Bạn có thay đổi chưa được lưu. Bạn vẫn muốn thoát khỏi trang?';
 
 function readComposerTarget(anchor) {
   if (!anchor?.getAttribute) return null;
@@ -75,11 +77,21 @@ function useMobileComposer() {
   return isMobile;
 }
 
+function isComposerTarget(target) {
+  return Boolean(
+    target?.closest?.(
+      '.community-mobile-composer, .community-desktop-composer',
+    ),
+  );
+}
+
 export default function DeferredCommunityQuickComposer() {
   const { isAuthenticated, loading } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
   const isMobile = useMobileComposer();
+  const dirtyRef = useRef(false);
+  const restoringHistoryRef = useRef(false);
 
   const activeComposerState =
     location.state?.communityComposerRoute === COMMUNITY_CREATE_ROUTE
@@ -110,9 +122,12 @@ export default function DeferredCommunityQuickComposer() {
       event.preventDefault();
       event.stopPropagation();
 
-      const destination = location.pathname === '/cong-dong'
-        ? `${location.pathname}${location.search}`
-        : '/cong-dong';
+      const destination =
+        location.pathname === '/cong-dong'
+          ? `${location.pathname}${location.search}`
+          : '/cong-dong';
+
+      dirtyRef.current = false;
 
       navigate(destination, {
         replace: true,
@@ -132,6 +147,8 @@ export default function DeferredCommunityQuickComposer() {
       return undefined;
     }
 
+    dirtyRef.current = false;
+
     const timer = window.setTimeout(() => {
       window.dispatchEvent(
         new CustomEvent('dthl:open-community-composer', {
@@ -148,7 +165,73 @@ export default function DeferredCommunityQuickComposer() {
   useEffect(() => {
     if (!activeComposerState) return undefined;
 
+    const markDirtyFromInput = (event) => {
+      const target = event.target instanceof Element ? event.target : null;
+      if (isComposerTarget(target)) dirtyRef.current = true;
+    };
+
+    const markDirtyFromComposerClick = (event) => {
+      const target = event.target instanceof Element ? event.target : null;
+      if (!isComposerTarget(target)) return;
+
+      if (
+        target.closest(
+          '.community-mobile-composer__back, .community-desktop-composer__header > button:first-child, .community-mobile-composer__preview, .community-desktop-composer__footer-preview',
+        )
+      ) {
+        return;
+      }
+
+      if (target.closest('button, [role="button"]')) {
+        dirtyRef.current = true;
+      }
+    };
+
+    const handleBeforeUnload = (event) => {
+      if (!dirtyRef.current) return;
+      event.preventDefault();
+      event.returnValue = '';
+    };
+
+    const handlePopState = () => {
+      if (restoringHistoryRef.current) {
+        restoringHistoryRef.current = false;
+        return;
+      }
+
+      if (!dirtyRef.current) return;
+
+      const leave = window.confirm(UNSAVED_MESSAGE);
+      if (leave) {
+        dirtyRef.current = false;
+        return;
+      }
+
+      restoringHistoryRef.current = true;
+      window.history.forward();
+    };
+
+    document.addEventListener('input', markDirtyFromInput, true);
+    document.addEventListener('change', markDirtyFromInput, true);
+    document.addEventListener('click', markDirtyFromComposerClick, true);
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    window.addEventListener('popstate', handlePopState);
+
+    return () => {
+      document.removeEventListener('input', markDirtyFromInput, true);
+      document.removeEventListener('change', markDirtyFromInput, true);
+      document.removeEventListener('click', markDirtyFromComposerClick, true);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      window.removeEventListener('popstate', handlePopState);
+    };
+  }, [activeComposerState]);
+
+  useEffect(() => {
+    if (!activeComposerState) return undefined;
+
     const handleClosed = () => {
+      dirtyRef.current = false;
+
       const nextState = { ...(location.state || {}) };
       delete nextState.communityComposerRoute;
       delete nextState.communityComposerEditId;
@@ -159,12 +242,24 @@ export default function DeferredCommunityQuickComposer() {
       });
     };
 
+    const handleSaved = () => {
+      dirtyRef.current = false;
+    };
+
     window.addEventListener('dthl:community-composer-closed', handleClosed);
+    window.addEventListener('dthl:community-composer-saved', handleSaved);
 
     return () => {
       window.removeEventListener('dthl:community-composer-closed', handleClosed);
+      window.removeEventListener('dthl:community-composer-saved', handleSaved);
     };
-  }, [activeComposerState, location.pathname, location.search, location.state, navigate]);
+  }, [
+    activeComposerState,
+    location.pathname,
+    location.search,
+    location.state,
+    navigate,
+  ]);
 
   if (loading || !isAuthenticated) {
     return null;
