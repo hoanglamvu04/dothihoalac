@@ -1,0 +1,186 @@
+/*
+ * Unified public typography system.
+ * Keep this file focused on type only: no layout, spacing or color changes.
+ */
+
+.app-shell {
+  font-family: var(--font-sans);
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.app-shell :is(h1, h2, h3, h4, h5, h6, p, a, span, strong, small, label, button, input, select, textarea) {
+  font-family: var(--font-sans);
+}
+
+.app-shell :is(button, input, select, textarea) {
+  font-size: var(--text-sm);
+}
+
+.app-shell .main-content {
+  font-size: var(--text-base);
+  line-height: var(--leading-body);
+}
+
+/* Homepage: map every compact card to the shared scale instead of tiny ad-hoc rem values. */
+.home-reference-v2 .home-ref-section-header h2,
+.home-reference-v2 .home-reference-wide-heading h2 {
+  font-size: var(--text-xl) !important;
+  line-height: var(--leading-tight) !important;
+}
+
+.home-reference-v2 .home-ref-section-header a,
+.home-reference-v2 .home-reference-wide-heading > a,
+.home-reference-v2 .home-reference-wide-heading nav a {
+  font-size: var(--text-sm) !important;
+  line-height: 1.2 !important;
+}
+
+.home-reference-v2 .home-hero-card__content h1 {
+  font-size: clamp(2rem, 3vw, var(--text-5xl)) !important;
+  line-height: 1.08 !important;
+}
+
+.home-reference-v2 .home-hero-card__content p {
+  font-size: var(--text-base) !important;
+  line-height: var(--leading-body) !important;
+}
+
+.home-reference-v2 .home-pill,
+.home-reference-v2 .home-job-story__type,
+.home-reference-v2 .home-community-story__type,
+.home-reference-v2 .home-property-story__type {
+  font-size: var(--text-xs) !important;
+  line-height: 1.2 !important;
+}
+
+.home-reference-v2 .home-card-meta,
+.home-reference-v2 .home-card-meta span {
+  font-size: var(--text-xs) !important;
+  line-height: 1.25 !important;
+}
+
+.home-reference-v2 .home-side-story h3,
+.home-reference-v2 .home-latest-story h3,
+.home-reference-v2 .home-spotlight-story h3,
+.home-reference-v2 .home-job-story h3,
+.home-reference-v2 .home-community-story > p,
+.home-reference-v2 .home-property-story h3 {
+  font-size: var(--text-sm) !important;
+  line-height: var(--leading-snug) !important;
+}
+
+.home-reference-v2 .home-latest-story h3,
+.home-reference-v2 .home-job-story h3,
+.home-reference-v2 .home-property-story h3 {
+  font-weight: 720 !important;
+}
+
+.home-reference-v2 .home-job-story__body > p,
+.home-reference-v2 .home-community-story__head span,
+.home-reference-v2 .home-property-story__row,
+.home-reference-v2 .home-property-story__facts,
+.home-reference-v2 .home-job-story__meta {
+  font-size: var(--text-xs) !important;
+  line-height: 1.35 !important;
+}
+
+.home-reference-v2 .home-job-story__salary {
+  font-size: var(--text-sm) !important;
+  line-height: 1.25 !important;
+  font-weight: 760 !important;
+}
+
+.home-reference-v2 .home-community-story__head strong {
+  font-size: var(--text-sm) !important;
+  line-height: 1.25 !important;
+}
+
+.home-reference-v2 .home-community-story__stats,
+.home-reference-v2 .home-community-story__stats span {
+  font-size: var(--text-xs) !important;
+  line-height: 1 !important;
+}
+
+.home-reference-v2 .home-property-story__row strong {
+  font-size: var(--text-md) !important;
+  line-height: 1.2 !important;
+}
+
+.home-reference-v2 .home-reference-cta small {
+  font-size: var(--text-xs) !important;
+  line-height: 1.2 !important;
+}
+
+.home-reference-v2 .home-reference-cta h2 {
+  font-size: var(--text-xl) !important;
+  line-height: var(--leading-tight) !important;
+}
+
+.home-reference-v2 .home-reference-cta p {
+  font-size: var(--text-sm) !important;
+  line-height: var(--leading-body) !important;
+}
+
+.home-reference-v2 .home-reference-cta > a {
+  font-size: var(--text-sm) !important;
+  line-height: 1 !important;
+}
+
+/* Header/footer and persistent navigation: one readable baseline across the public site. */
+.app-shell .dthl-primary-nav__link,
+.app-shell .dthl-header-search input,
+.app-shell .dthl-header-search__submit,
+.app-shell .dthl-register-button,
+.app-shell .dthl-user-menu__trigger {
+  font-size: var(--text-sm);
+}
+
+.app-shell .site-footer__description,
+.app-shell .site-footer .site-footer__links > a,
+.app-shell .site-footer .site-footer__contact-row strong {
+  font-size: var(--text-sm);
+}
+
+.app-shell .site-footer__column h3 {
+  font-size: var(--text-base);
+}
+
+.app-shell .site-footer__logo strong {
+  font-size: var(--text-2xl);
+}
+
+@media (max-width: 760px) {
+  .app-shell {
+    font-size: var(--text-base);
+  }
+
+  .home-reference-v2 .home-ref-section-header h2,
+  .home-reference-v2 .home-reference-wide-heading h2 {
+    font-size: var(--text-lg) !important;
+  }
+
+  .home-reference-v2 .home-hero-card__content h1 {
+    font-size: var(--text-2xl) !important;
+  }
+
+  .home-reference-v2 .home-hero-card__content p {
+    font-size: var(--text-sm) !important;
+  }
+
+  .home-reference-v2 .home-side-story h3,
+  .home-reference-v2 .home-latest-story h3,
+  .home-reference-v2 .home-spotlight-story h3,
+  .home-reference-v2 .home-job-story h3,
+  .home-reference-v2 .home-community-story > p,
+  .home-reference-v2 .home-property-story h3 {
+    font-size: var(--text-sm) !important;
+  }
+
+  .home-reference-v2 .home-reference-cta h2 {
+    font-size: var(--text-lg) !important;
+  }
+}
