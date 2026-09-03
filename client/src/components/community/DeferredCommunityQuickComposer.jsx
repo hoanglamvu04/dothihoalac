@@ -1,13 +1,13 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 import CommunityQuickComposer from './CommunityQuickComposer';
+import CommunityQuickComposerMobile from './CommunityQuickComposerMobile';
 import { useAuth } from '../../context/AuthContext';
 import { isPersistedContentId } from '../../utils/content';
 
-import './CommunityQuickComposer.mobile.css';
-
 const COMMUNITY_CREATE_ROUTE = '/cong-dong/create';
+const MOBILE_COMPOSER_QUERY = '(max-width: 640px)';
 
 function readComposerTarget(anchor) {
   if (!anchor?.getAttribute) return null;
@@ -53,10 +53,33 @@ function composerState(editId = '') {
   };
 }
 
+function useMobileComposer() {
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== 'undefined'
+      ? window.matchMedia(MOBILE_COMPOSER_QUERY).matches
+      : false,
+  );
+
+  useEffect(() => {
+    const media = window.matchMedia(MOBILE_COMPOSER_QUERY);
+    const sync = () => setIsMobile(media.matches);
+
+    sync();
+    media.addEventListener?.('change', sync);
+
+    return () => {
+      media.removeEventListener?.('change', sync);
+    };
+  }, []);
+
+  return isMobile;
+}
+
 export default function DeferredCommunityQuickComposer() {
   const { isAuthenticated, loading } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
+  const isMobile = useMobileComposer();
 
   const activeComposerState =
     location.state?.communityComposerRoute === COMMUNITY_CREATE_ROUTE
@@ -97,8 +120,6 @@ export default function DeferredCommunityQuickComposer() {
       });
     };
 
-    // Window capture chạy trước document capture của composer cũ. Nhờ vậy
-    // BrowserRouter giữ URL /cong-dong nhưng vẫn có state logic /cong-dong/create.
     window.addEventListener('click', handleCreateLink, true);
 
     return () => {
@@ -122,7 +143,7 @@ export default function DeferredCommunityQuickComposer() {
     }, 0);
 
     return () => window.clearTimeout(timer);
-  }, [activeComposerState, isAuthenticated, loading]);
+  }, [activeComposerState, isAuthenticated, isMobile, loading]);
 
   useEffect(() => {
     if (!activeComposerState) return undefined;
@@ -149,5 +170,7 @@ export default function DeferredCommunityQuickComposer() {
     return null;
   }
 
-  return <CommunityQuickComposer />;
+  return isMobile
+    ? <CommunityQuickComposerMobile />
+    : <CommunityQuickComposer />;
 }
