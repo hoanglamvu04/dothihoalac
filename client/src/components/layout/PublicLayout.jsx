@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import SiteHeader from './SiteHeader';
 import DeferredSiteFooter from './DeferredSiteFooter';
+import MobileBottomNav from './MobileBottomNav';
 import DeferredCommunityQuickComposer from '../community/DeferredCommunityQuickComposer';
 import AdSlot from '../ads/AdSlot';
 
@@ -51,6 +52,25 @@ function loadRouteStyles(pathname) {
   return Promise.resolve();
 }
 
+function showMobileBottomNavigation(pathname) {
+  const hiddenPrefixes = [
+    '/cong-dong/create',
+    '/studio/',
+    '/dang-bai',
+    '/gui-tin',
+    '/dang-nhap',
+    '/dang-ky',
+    '/quen-mat-khau',
+    '/dat-lai-mat-khau',
+    '/xac-thuc-email',
+    '/xac-thuc-so-dien-thoai',
+  ];
+
+  return !hiddenPrefixes.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+  );
+}
+
 function DeferredHeaderNavigation() {
   const [ready, setReady] = useState(false);
 
@@ -92,6 +112,7 @@ export default function PublicLayout() {
   const location = useLocation();
   const normalizedPath = location.pathname.replace(/\/+$/, '') || '/';
   const showCommunityAds = normalizedPath === '/cong-dong';
+  const showBottomNav = showMobileBottomNavigation(normalizedPath);
   const topSlot = pageTopAdSlot(normalizedPath);
 
   useEffect(() => {
@@ -99,7 +120,7 @@ export default function PublicLayout() {
   }, [normalizedPath]);
 
   return (
-    <div className="app-shell">
+    <div className={`app-shell${showBottomNav ? ' app-shell--with-mobile-bottom-nav' : ''}`}>
       <SiteHeader />
       <DeferredHeaderNavigation />
 
@@ -117,6 +138,7 @@ export default function PublicLayout() {
 
       <AdSlot slotKey="site_before_footer" layout="strip" />
       <DeferredSiteFooter />
+      {showBottomNav ? <MobileBottomNav /> : null}
       <DeferredCommunityQuickComposer />
     </div>
   );
