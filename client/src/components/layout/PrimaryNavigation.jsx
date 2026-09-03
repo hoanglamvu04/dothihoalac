@@ -23,6 +23,7 @@ const PRIMARY_ITEMS = [
     label: 'Trang chủ',
     icon: House,
     match: (pathname) => pathname === '/',
+    prefetch: () => import('../../pages/public/HomePage'),
   },
   {
     key: 'jobs',
@@ -30,6 +31,7 @@ const PRIMARY_ITEMS = [
     label: 'Việc làm',
     icon: BriefcaseBusiness,
     match: (pathname) => pathname === '/viec-lam' || pathname.startsWith('/viec-lam/'),
+    prefetch: () => import('../../pages/public/JobsPage'),
   },
   {
     key: 'community',
@@ -37,6 +39,7 @@ const PRIMARY_ITEMS = [
     label: 'Cộng đồng',
     icon: UsersRound,
     match: (pathname) => pathname === '/cong-dong' || pathname.startsWith('/cong-dong/'),
+    prefetch: () => import('../../pages/public/CommunityPage'),
   },
   {
     key: 'news',
@@ -44,6 +47,7 @@ const PRIMARY_ITEMS = [
     label: 'Tin tức',
     icon: Newspaper,
     match: (pathname) => pathname === '/tin-tuc' || pathname.startsWith('/tin-tuc/'),
+    prefetch: () => import('../../pages/public/ArticlesPage'),
     children: [
       { to: '/tin-tuc', label: 'Tất cả tin tức' },
       { to: '/tin-tuc?category=quy-hoach', label: 'Quy hoạch' },
@@ -57,6 +61,7 @@ const PRIMARY_ITEMS = [
     label: 'Tài khoản',
     icon: UserRound,
     match: (pathname) => pathname === '/tai-khoan' || pathname.startsWith('/tai-khoan/'),
+    prefetch: () => import('../../pages/account/AccountOverviewPage'),
   },
   {
     key: 'property',
@@ -68,8 +73,14 @@ const PRIMARY_ITEMS = [
       pathname.startsWith('/bat-dong-san/') ||
       pathname === '/nha-dat' ||
       pathname.startsWith('/nha-dat/'),
+    prefetch: () => import('../../pages/public/PropertiesPage'),
   },
 ];
+
+function warmItem(item) {
+  if (!item?.prefetch) return;
+  void item.prefetch().catch(() => {});
+}
 
 function usePortalTarget(selector) {
   const [target, setTarget] = useState(null);
@@ -120,11 +131,14 @@ function DesktopNavigation() {
           <div
             className={`dthl-primary-nav__item${active ? ' is-active' : ''}${item.children ? ' has-children' : ''}`}
             key={item.key}
+            onPointerEnter={() => warmItem(item)}
           >
             <Link
               className={`dthl-primary-nav__link${active ? ' is-active' : ''}`}
               to={item.to}
               aria-current={active ? 'page' : undefined}
+              onFocus={() => warmItem(item)}
+              onTouchStart={() => warmItem(item)}
             >
               <span className="dthl-primary-nav__icon" aria-hidden="true">
                 <Icon size={17} strokeWidth={2.2} />
@@ -216,6 +230,9 @@ function MobileNavigation() {
               to={item.to}
               className={`dthl-primary-mobile__item${active ? ' is-active' : ''}`}
               aria-current={active ? 'page' : undefined}
+              onPointerEnter={() => warmItem(item)}
+              onTouchStart={() => warmItem(item)}
+              onFocus={() => warmItem(item)}
               onClick={closeMobileMenu}
             >
               <span className="dthl-primary-mobile__icon" aria-hidden="true">
