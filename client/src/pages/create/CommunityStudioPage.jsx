@@ -3,6 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 
 import { isPersistedContentId } from '../../utils/content';
 
+const COMMUNITY_CREATE_ROUTE = '/cong-dong/create';
+
 export default function CommunityStudioPage() {
   const navigate = useNavigate();
   const { editorId } = useParams();
@@ -10,15 +12,13 @@ export default function CommunityStudioPage() {
   useEffect(() => {
     const editId = isPersistedContentId(editorId) ? editorId : '';
 
-    navigate('/cong-dong', { replace: true });
-
-    window.setTimeout(() => {
-      window.dispatchEvent(
-        new CustomEvent('dthl:open-community-composer', {
-          detail: { editId },
-        }),
-      );
-    }, 0);
+    navigate('/cong-dong', {
+      replace: true,
+      state: {
+        communityComposerRoute: COMMUNITY_CREATE_ROUTE,
+        communityComposerEditId: editId,
+      },
+    });
   }, [editorId, navigate]);
 
   return null;
