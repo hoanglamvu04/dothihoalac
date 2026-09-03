@@ -458,11 +458,6 @@ export default function HomePage() {
           </div>
         </section>
       ) : null}
-
-      <Link className="home-mobile-publish" to="/dang-bai" aria-label="Đăng tin">
-        <FilePenLine size={21} />
-        <span>Đăng tin</span>
-      </Link>
     </main>
   );
 }
