@@ -7,14 +7,22 @@ import {
 } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import {
+  ArrowLeft,
   CheckCircle2,
   ChevronRight,
   Clock3,
+  FileText,
   Globe2,
+  ImagePlus,
+  Lightbulb,
   MapPin,
+  MessageCircle,
   RotateCcw,
+  Save,
   Send,
   SlidersHorizontal,
+  Tag,
+  UsersRound,
   X,
 } from 'lucide-react';
 
@@ -124,13 +132,46 @@ function serverPayload(form) {
   return payload;
 }
 
+function SettingCard({
+  icon: Icon,
+  title,
+  value,
+  tone = 'green',
+  onClick,
+}) {
+  const className = `community-composer-setting-card community-composer-setting-card--${tone}`;
+  const inner = (
+    <>
+      <span className="community-composer-setting-card__icon">
+        <Icon size={20} />
+      </span>
+      <span className="community-composer-setting-card__copy">
+        <strong>{title}</strong>
+        <small>{value}</small>
+      </span>
+      {onClick ? <ChevronRight size={19} className="community-composer-setting-card__arrow" /> : null}
+    </>
+  );
+
+  if (!onClick) {
+    return <div className={className}>{inner}</div>;
+  }
+
+  return (
+    <button type="button" className={className} onClick={onClick}>
+      {inner}
+    </button>
+  );
+}
+
 export default function CommunityStudioPage() {
   const { editorId } = useParams();
   const navigate = useNavigate();
   const toast = useToast();
   const { user } = useAuth();
-  const { areas = [] } = useTaxonomy();
+  const { areas = [], categoriesFor } = useTaxonomy();
   const autoSaveRef = useRef(null);
+  const editorWrapRef = useRef(null);
 
   const [source, setSource] = useState(null);
   const [form, setForm] = useState(null);
@@ -143,8 +184,13 @@ export default function CommunityStudioPage() {
   const [error, setError] = useState('');
   const [hasRecovery, setHasRecovery] = useState(false);
   const [optionsOpen, setOptionsOpen] = useState(false);
+  const [tipVisible, setTipVisible] = useState(true);
 
   const recoveryKey = `${RECOVERY_PREFIX}${editorId}`;
+  const communityCategories = useMemo(
+    () => categoriesFor?.('community') || [],
+    [categoriesFor],
+  );
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -203,10 +249,21 @@ export default function CommunityStudioPage() {
     return area?.name || 'Khu vực đã chọn';
   }, [areas, form?.primaryAreaId]);
 
+  const categoryLabel = useMemo(() => {
+    if (!form?.primaryCategoryId) return 'Chưa chọn chủ đề';
+
+    const category = communityCategories.find(
+      (item) => String(item?._id || item?.id) === String(form.primaryCategoryId),
+    );
+
+    return category?.name || 'Chủ đề đã chọn';
+  }, [communityCategories, form?.primaryCategoryId]);
+
   const postTypeLabel = POST_TYPE_LABELS[form?.postType] || 'Thảo luận';
   const moderationNote = source?.lastModeration?.note || '';
+  const plainText = stripHtml(form?.bodyHtml || '');
   const hasPostContent = Boolean(
-    form && (stripHtml(form.bodyHtml) || hasInlineMedia(form.bodyHtml)),
+    form && (plainText || hasInlineMedia(form.bodyHtml)),
   );
 
   const change = useCallback((key, value) => {
@@ -388,6 +445,29 @@ export default function CommunityStudioPage() {
     }
   };
 
+  const openOptions = useCallback(() => {
+    setOptionsOpen(true);
+    window.setTimeout(() => {
+      document.querySelector('.community-composer-options')?.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+      });
+    }, 60);
+  }, []);
+
+  const openImagePicker = useCallback(() => {
+    if (locked) return;
+    editorWrapRef.current?.querySelector('input[type="file"]')?.click();
+  }, [locked]);
+
+  const saveLabel = saveState === 'saving'
+    ? 'Đang tự lưu…'
+    : saveState === 'error'
+      ? 'Chưa lưu được'
+      : dirty
+        ? 'Đang chờ tự lưu'
+        : 'Đã lưu';
+
   return (
     <div className="community-composer-scene">
       <Seo title={source?.title === PLACEHOLDER_TITLE ? 'Bài viết mới' : 'Chỉnh sửa bài cộng đồng'} />
@@ -426,7 +506,8 @@ export default function CommunityStudioPage() {
                   disabled={closing || submitting}
                   onClick={() => void closeComposer()}
                 >
-                  Hủy
+                  <ArrowLeft size={21} />
+                  <span>Hủy</span>
                 </button>
 
                 <strong>
@@ -435,12 +516,11 @@ export default function CommunityStudioPage() {
 
                 <button
                   type="button"
-                  className={`community-composer-settings${optionsOpen ? ' is-active' : ''}`}
-                  aria-label="Lựa chọn về bài viết"
-                  aria-expanded={optionsOpen}
-                  onClick={() => setOptionsOpen((current) => !current)}
+                  className="community-composer-header-submit"
+                  disabled={locked || saving || submitting || closing || !hasPostContent}
+                  onClick={submit}
                 >
-                  <SlidersHorizontal size={22} />
+                  {submitting ? 'Đang gửi…' : source?.status === 'needs_revision' ? 'Gửi lại' : 'Đăng'}
                 </button>
               </header>
 
@@ -476,33 +556,107 @@ export default function CommunityStudioPage() {
                 <div className="community-composer-author">
                   <Avatar src={composerAvatar} name={composerName} size="md" />
                   <div>
-                    <div className="community-composer-author__line">
-                      <strong>{composerName}</strong>
-                      <button
-                        type="button"
-                        disabled={locked}
-                        onClick={() => setOptionsOpen(true)}
-                      >
-                        {postTypeLabel} · {areaLabel}
-                        <ChevronRight size={15} />
-                      </button>
-                    </div>
-                    <span>
-                      <Globe2 size={14} />
+                    <strong>{composerName}</strong>
+                    <button
+                      type="button"
+                      className="community-composer-public-pill"
+                      onClick={openOptions}
+                      disabled={locked}
+                    >
+                      <Globe2 size={16} />
                       Công khai
-                    </span>
+                      <ChevronRight size={15} />
+                    </button>
                   </div>
                 </div>
 
-                <div className="community-composer-editor-wrap">
-                  <CommunitySocialEditor
-                    value={form.bodyHtml}
-                    disabled={locked}
-                    onChange={(value) => change('bodyHtml', value)}
-                    placeholder="Có gì mới?"
-                    className="community-composer-editor"
+                <section className="community-composer-writing-card">
+                  <div ref={editorWrapRef} className="community-composer-editor-wrap">
+                    <CommunitySocialEditor
+                      value={form.bodyHtml}
+                      disabled={locked}
+                      onChange={(value) => change('bodyHtml', value)}
+                      placeholder="Bạn đang nghĩ gì?"
+                      className="community-composer-editor"
+                    />
+                  </div>
+                  <span className="community-composer-character-count">
+                    {plainText.length.toLocaleString('vi-VN')} ký tự
+                  </span>
+                </section>
+
+                <section className="community-composer-add-card" aria-label="Thêm vào bài viết">
+                  <h2>Thêm vào bài viết</h2>
+                  <div className="community-composer-add-grid">
+                    <button type="button" onClick={openImagePicker} disabled={locked}>
+                      <span className="is-media"><ImagePlus size={22} /></span>
+                      <small>Ảnh/Video</small>
+                    </button>
+                    <button type="button" onClick={openOptions} disabled={locked}>
+                      <span className="is-location"><MapPin size={22} /></span>
+                      <small>Vị trí</small>
+                    </button>
+                    <button type="button" onClick={openOptions} disabled={locked}>
+                      <span className="is-topic"><Tag size={22} /></span>
+                      <small>Chủ đề</small>
+                    </button>
+                    <button type="button" onClick={openOptions} disabled={locked}>
+                      <span className="is-type"><FileText size={22} /></span>
+                      <small>Dạng bài</small>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => change('allowComments', !form.allowComments)}
+                      disabled={locked}
+                    >
+                      <span className="is-comments"><MessageCircle size={22} /></span>
+                      <small>Bình luận</small>
+                    </button>
+                  </div>
+                </section>
+
+                <section className="community-composer-setting-grid" aria-label="Thiết lập nhanh">
+                  <SettingCard
+                    icon={MapPin}
+                    title="Vị trí"
+                    value={form.locationText || areaLabel}
+                    tone="location"
+                    onClick={openOptions}
                   />
-                </div>
+                  <SettingCard
+                    icon={UsersRound}
+                    title="Đối tượng"
+                    value="Công khai"
+                    tone="audience"
+                  />
+                  <SettingCard
+                    icon={Tag}
+                    title="Chủ đề"
+                    value={categoryLabel}
+                    tone="topic"
+                    onClick={openOptions}
+                  />
+                  <SettingCard
+                    icon={FileText}
+                    title="Dạng bài"
+                    value={postTypeLabel}
+                    tone="type"
+                    onClick={openOptions}
+                  />
+                </section>
+
+                {tipVisible ? (
+                  <aside className="community-composer-tip">
+                    <span><Lightbulb size={20} /></span>
+                    <div>
+                      <strong>Gợi ý</strong>
+                      <p>Chia sẻ thông tin hữu ích, tích cực và tránh đăng dữ liệu cá nhân nhạy cảm.</p>
+                    </div>
+                    <button type="button" aria-label="Ẩn gợi ý" onClick={() => setTipVisible(false)}>
+                      <X size={18} />
+                    </button>
+                  </aside>
+                ) : null}
 
                 {optionsOpen ? (
                   <section className="community-composer-options" aria-label="Lựa chọn về bài viết">
@@ -589,7 +743,10 @@ export default function CommunityStudioPage() {
                         disabled={locked}
                         onChange={(event) => change('allowComments', event.target.checked)}
                       />
-                      <span>Cho phép thành viên bình luận</span>
+                      <span>
+                        <strong>Cho phép bình luận</strong>
+                        <small>{form.allowComments ? 'Thành viên có thể trao đổi dưới bài viết.' : 'Bình luận đang được tắt cho bài này.'}</small>
+                      </span>
                     </label>
                   </section>
                 ) : null}
@@ -598,39 +755,29 @@ export default function CommunityStudioPage() {
               <footer className="community-composer-footer">
                 <button
                   type="button"
-                  className="community-composer-options-trigger"
-                  disabled={locked}
-                  onClick={() => setOptionsOpen((current) => !current)}
+                  className="community-composer-save-draft"
+                  disabled={locked || saving || submitting || !dirty}
+                  onClick={() => void saveNow()}
                 >
-                  <SlidersHorizontal size={18} />
-                  <span>Lựa chọn về bài viết</span>
+                  <Save size={18} />
+                  <span>{saving ? 'Đang lưu…' : 'Lưu nháp'}</span>
                 </button>
 
-                <div className="community-composer-footer__right">
-                  <div className="community-composer-save-state" aria-live="polite">
-                    {saveState === 'saving' ? <Clock3 size={14} /> : <CheckCircle2 size={14} />}
-                    <span>
-                      {saveState === 'saving'
-                        ? 'Đang tự lưu…'
-                        : saveState === 'error'
-                          ? 'Chưa lưu được'
-                          : dirty
-                            ? 'Đang chờ tự lưu'
-                            : 'Đã lưu'}
-                    </span>
-                    <small>Bài sẽ được kiểm duyệt trước khi hiển thị.</small>
-                  </div>
-
-                  <button
-                    type="button"
-                    className="community-composer-submit"
-                    disabled={locked || saving || submitting || closing || !hasPostContent}
-                    onClick={submit}
-                  >
-                    <Send size={17} />
-                    {submitting ? 'Đang gửi…' : source?.status === 'needs_revision' ? 'Gửi lại' : 'Đăng'}
-                  </button>
+                <div className="community-composer-save-state" aria-live="polite">
+                  {saveState === 'saving' ? <Clock3 size={14} /> : <CheckCircle2 size={14} />}
+                  <span>{saveLabel}</span>
+                  <small>Bài sẽ được kiểm duyệt trước khi hiển thị.</small>
                 </div>
+
+                <button
+                  type="button"
+                  className="community-composer-submit"
+                  disabled={locked || saving || submitting || closing || !hasPostContent}
+                  onClick={submit}
+                >
+                  <Send size={18} />
+                  {submitting ? 'Đang gửi…' : source?.status === 'needs_revision' ? 'Gửi lại' : 'Đăng bài'}
+                </button>
               </footer>
             </>
           ) : null}
