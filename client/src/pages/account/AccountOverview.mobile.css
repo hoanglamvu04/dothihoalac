@@ -1,0 +1,289 @@
+.account-overview-v2__tab-create,
+.account-overview-v2__membership {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .account-center-page.is-overview .account-center-workspace {
+    margin-top: 12px !important;
+  }
+
+  .account-center-page.is-overview .account-overview-v2 {
+    gap: 12px !important;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__tabs {
+    display: grid !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    gap: 0 !important;
+    padding: 10px 7px !important;
+    overflow: hidden !important;
+    border: 1px solid #e4ece6 !important;
+    border-radius: 18px !important;
+    background: #fff !important;
+    box-shadow: 0 8px 24px rgb(10 65 33 / 0.045) !important;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__tabs > a {
+    position: relative;
+    display: grid !important;
+    place-items: center;
+    align-content: center;
+    min-width: 0;
+    min-height: 70px !important;
+    padding: 4px 2px !important;
+    gap: 7px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    color: #1b3d29 !important;
+    background: transparent !important;
+    font-size: 0.54rem !important;
+    font-weight: 760 !important;
+    text-align: center;
+    box-shadow: none !important;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__tabs > a + a::before {
+    position: absolute;
+    top: 8px;
+    bottom: 8px;
+    left: 0;
+    width: 1px;
+    background: #edf1ee;
+    content: '';
+  }
+
+  .account-center-page.is-overview .account-overview-v2__tabs > a > svg {
+    width: 24px !important;
+    height: 24px !important;
+    color: #138944 !important;
+    stroke-width: 2.15 !important;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__tabs > a:first-child > svg {
+    display: grid;
+    width: 42px !important;
+    height: 42px !important;
+    padding: 9px;
+    border-radius: 50%;
+    color: #fff !important;
+    background: linear-gradient(135deg, #0c8a43, #23a957);
+    box-shadow: 0 8px 18px rgb(16 145 70 / 0.22);
+  }
+
+  .account-center-page.is-overview .account-overview-v2__tab-create {
+    display: grid !important;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__section {
+    padding: 17px 14px !important;
+    border: 1px solid #e4ece6 !important;
+    border-radius: 18px !important;
+    background: #fff !important;
+    box-shadow: 0 8px 24px rgb(10 65 33 / 0.04) !important;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__section-heading {
+    align-items: center !important;
+    margin-bottom: 14px !important;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__section-heading h3 {
+    font-size: 0.88rem !important;
+    font-weight: 820 !important;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__section-heading p {
+    display: none !important;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__details-link {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 2px;
+    color: #0c833f !important;
+    font-size: 0.59rem !important;
+    font-weight: 760 !important;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__highlight-grid {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    gap: 7px !important;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__highlight-grid > article,
+  .account-center-page.is-overview .account-overview-v2__highlight-grid > article:first-child,
+  .account-center-page.is-overview .account-overview-v2__membership {
+    display: flex !important;
+    grid-column: auto !important;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    min-height: 112px !important;
+    padding: 10px 5px !important;
+    gap: 7px !important;
+    border: 1px solid #e7ede9 !important;
+    border-radius: 13px !important;
+    background: linear-gradient(180deg, #fff, #fbfcfb) !important;
+    text-align: center;
+    box-shadow: none !important;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__highlight-grid > article > span {
+    display: grid !important;
+    place-items: center;
+    width: 42px !important;
+    height: 42px !important;
+    border-radius: 50% !important;
+    color: #138944 !important;
+    background: #eef8f1 !important;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__highlight-grid > article > div {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__highlight-grid small {
+    min-height: 24px;
+    color: #68776f !important;
+    font-size: 0.5rem !important;
+    line-height: 1.25 !important;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__highlight-grid strong {
+    margin-top: 2px !important;
+    overflow: hidden;
+    color: #142e20 !important;
+    font-size: 0.69rem !important;
+    font-weight: 820 !important;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__highlight-grid p {
+    display: none !important;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__membership p {
+    display: block !important;
+    margin: 3px 0 0 !important;
+    color: #6f7d75 !important;
+    font-size: 0.49rem !important;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__completion {
+    width: calc(100% - 10px);
+    height: 4px;
+    margin: 8px auto 0;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #e6eee9;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__completion > span {
+    display: block;
+    height: 100%;
+    border-radius: inherit;
+    background: #159447;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__account-info {
+    display: none !important;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__quick {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    padding: 0 14px !important;
+    gap: 0 !important;
+    border: 1px solid #e4ece6 !important;
+    border-radius: 18px !important;
+    background: #fff !important;
+    box-shadow: 0 8px 24px rgb(10 65 33 / 0.04) !important;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__quick > a {
+    position: relative;
+    display: grid !important;
+    grid-template-columns: 42px minmax(0, 1fr) 18px !important;
+    align-items: center !important;
+    min-height: 74px !important;
+    padding: 10px 2px !important;
+    gap: 10px !important;
+    border: 0 !important;
+    border-bottom: 1px solid #edf1ee !important;
+    border-radius: 0 !important;
+    color: #243c2f !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__quick > a:last-child {
+    border-bottom: 0 !important;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__quick > a::after {
+    justify-self: end;
+    color: #68766e;
+    content: '›';
+    font-size: 1.35rem;
+    font-weight: 500;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__quick > a > svg {
+    display: grid !important;
+    width: 42px !important;
+    height: 42px !important;
+    padding: 10px !important;
+    border-radius: 13px !important;
+    color: #35483e !important;
+    background: #f2f5f3 !important;
+    stroke-width: 2 !important;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__quick strong {
+    color: #132d1f !important;
+    font-size: 0.76rem !important;
+    font-weight: 790 !important;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__quick small {
+    margin-top: 4px !important;
+    color: #7a877f !important;
+    font-size: 0.57rem !important;
+    line-height: 1.4 !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .account-center-page.is-overview .account-overview-v2__tabs {
+    padding-inline: 4px !important;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__tabs > a {
+    min-height: 66px !important;
+    font-size: 0.49rem !important;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__tabs > a:first-child > svg {
+    width: 38px !important;
+    height: 38px !important;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__highlight-grid {
+    gap: 5px !important;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__highlight-grid > article {
+    min-height: 106px !important;
+    padding-inline: 3px !important;
+  }
+
+  .account-center-page.is-overview .account-overview-v2__highlight-grid > article > span {
+    width: 38px !important;
+    height: 38px !important;
+  }
+}
