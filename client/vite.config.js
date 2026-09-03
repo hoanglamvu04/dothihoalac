@@ -109,15 +109,10 @@ export default defineConfig(async ({ command }) => {
       : Promise.resolve(null),
   ]);
 
-  const discoveredServerUrl = backendPort
-    ? `http://localhost:${backendPort}`
-    : '';
-  const discoveredApiUrl = discoveredServerUrl
-    ? `${discoveredServerUrl}/api/v1`
-    : '';
-
   if (backendPort) {
-    console.info(`[DTHL CLIENT] Backend được phát hiện tại ${discoveredApiUrl}.`);
+    console.info(
+      `[DTHL CLIENT] Backend local được phát hiện ở port ${backendPort}. Trình duyệt sẽ dùng hostname hiện tại để kết nối API.`,
+    );
   } else if (command === 'serve') {
     console.warn(
       `[DTHL CLIENT] Chưa thấy DTHL API trong dải ${API_START_PORT}-${API_START_PORT + API_PORT_SCAN_LIMIT - 1}. Frontend sẽ dùng runtime discovery khi có request.`,
@@ -127,8 +122,9 @@ export default defineConfig(async ({ command }) => {
   return {
     plugins: [react()],
     define: {
-      'import.meta.env.VITE_DISCOVERED_API_URL': JSON.stringify(discoveredApiUrl),
-      'import.meta.env.VITE_DISCOVERED_SERVER_URL': JSON.stringify(discoveredServerUrl),
+      'import.meta.env.VITE_DISCOVERED_API_PORT': JSON.stringify(
+        backendPort ? String(backendPort) : '',
+      ),
     },
     server: {
       port,
