@@ -5,13 +5,6 @@ import DeferredSiteFooter from './DeferredSiteFooter';
 import MobileBottomNav from './MobileBottomNav';
 import DeferredCommunityQuickComposer from '../community/DeferredCommunityQuickComposer';
 import AdSlot from '../ads/AdSlot';
-import {
-  articleApi,
-  communityApi,
-  jobApi,
-  propertyApi,
-} from '../../api/content.api';
-import { prefetchListPage } from '../../hooks/useListPage';
 
 import './PublicInteractionFixes.css';
 
@@ -173,23 +166,33 @@ export default function PublicLayout() {
     const warmCoreTabs = () => {
       if (canceled) return;
 
-      // Warm route chunks + route-specific CSS so React.lazy/Suspense does not
-      // flash PageLoading when the user taps another primary public tab.
+      // Warm route chunks + page CSS so React.lazy/Suspense does not flash
+      // PageLoading when the user taps another primary public tab.
       CORE_PUBLIC_ROUTE_IMPORTS.forEach((loadModule) => {
         void loadModule().catch(() => {});
       });
       void loadRouteStyles('/tin-tuc').catch(() => {});
       void loadRouteStyles('/cong-dong').catch(() => {});
 
-      // Warm default list data. useListPage keeps this stale-while-revalidate,
-      // so tab navigation can paint cached cards immediately and update later.
-      void Promise.allSettled([
-        prefetchListPage(articleApi.list, { limit: 12 }),
-        prefetchListPage(communityApi.list, {}),
-        prefetchListPage(communityApi.list, { sort: 'popular', limit: 5 }),
-        prefetchListPage(propertyApi.list, {}),
-        prefetchListPage(jobApi.list, {}),
-      ]);
+      // Keep the data-prefetch implementation itself outside the critical
+      // PublicLayout bundle. It is only downloaded once the browser is idle.
+      void Promise.all([
+        import('../../api/content.api'),
+        import('../../hooks/useListPage'),
+      ])
+        .then(([contentApi, listPage]) =>
+          Promise.allSettled([
+            listPage.prefetchListPage(contentApi.articleApi.list, { limit: 12 }),
+            listPage.prefetchListPage(contentApi.communityApi.list, {}),
+            listPage.prefetchListPage(contentApi.communityApi.list, {
+              sort: 'popular',
+              limit: 5,
+            }),
+            listPage.prefetchListPage(contentApi.propertyApi.list, {}),
+            listPage.prefetchListPage(contentApi.jobApi.list, {}),
+          ]),
+        )
+        .catch(() => {});
     };
 
     delayId = window.setTimeout(() => {
