@@ -1,0 +1,219 @@
+@media (max-width: 760px) {
+  .account-center-page.is-overview .account-shell-profile {
+    position: relative;
+    min-height: 228px;
+    overflow: hidden !important;
+    border: 0 !important;
+    border-radius: 22px !important;
+    background: #0b6f36 !important;
+    box-shadow: 0 14px 34px rgb(5 61 29 / 0.14) !important;
+  }
+
+  .account-center-page.is-overview .account-shell-cover {
+    position: absolute !important;
+    inset: 0 !important;
+    height: 100% !important;
+    border-radius: 22px !important;
+    overflow: hidden !important;
+    background: linear-gradient(135deg, #0a6a34, #159447) !important;
+  }
+
+  .account-center-page.is-overview .account-shell-cover > img,
+  .account-center-page.is-overview .account-shell-cover__fallback,
+  .account-center-page.is-overview .account-shell-cover::after {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 22px !important;
+  }
+
+  .account-center-page.is-overview .account-shell-cover > img {
+    opacity: 0.42;
+    filter: saturate(0.86) contrast(1.04);
+  }
+
+  .account-center-page.is-overview .account-shell-cover__fallback {
+    background:
+      radial-gradient(circle at 82% 23%, rgb(238 213 118 / 0.2) 0 28px, transparent 29px),
+      radial-gradient(circle at 88% 76%, rgb(255 255 255 / 0.07) 0 58px, transparent 59px),
+      linear-gradient(135deg, #0a6a34 0%, #168a46 58%, #0d6835 100%) !important;
+  }
+
+  .account-center-page.is-overview .account-shell-cover::after {
+    z-index: 1 !important;
+    background:
+      linear-gradient(90deg, rgb(4 56 27 / 0.28), rgb(4 56 27 / 0.08) 56%, rgb(4 56 27 / 0.26)),
+      linear-gradient(180deg, rgb(5 54 27 / 0.02), rgb(5 54 27 / 0.24)) !important;
+  }
+
+  .account-center-page.is-overview .account-shell-cover-actions {
+    top: 13px !important;
+    right: 13px !important;
+    bottom: auto !important;
+    z-index: 12 !important;
+  }
+
+  .account-center-page.is-overview .account-shell-cover__edit {
+    width: 34px !important;
+    height: 34px !important;
+    min-height: 34px !important;
+    padding: 0 !important;
+    border: 1px solid rgb(255 255 255 / 0.28) !important;
+    color: #fff !important;
+    background: rgb(8 69 34 / 0.35) !important;
+    box-shadow: none !important;
+    backdrop-filter: blur(8px);
+  }
+
+  .account-center-page.is-overview .account-shell-profile__body {
+    position: relative !important;
+    z-index: 4 !important;
+    display: grid !important;
+    grid-template-columns: 92px minmax(0, 1fr) !important;
+    grid-template-rows: auto auto !important;
+    align-items: center !important;
+    justify-items: stretch !important;
+    min-height: 228px !important;
+    padding: 24px 18px 20px !important;
+    gap: 10px 16px !important;
+    border-radius: 22px !important;
+    color: #fff !important;
+    background: transparent !important;
+    text-align: left !important;
+  }
+
+  .account-center-page.is-overview .account-shell-avatar-wrap {
+    grid-column: 1;
+    grid-row: 1 / 3;
+    align-self: center !important;
+    width: 92px !important;
+    height: 92px !important;
+    margin: 0 !important;
+  }
+
+  .account-center-page.is-overview .account-shell-avatar {
+    width: 92px !important;
+    height: 92px !important;
+    border: 4px solid rgb(255 255 255 / 0.96) !important;
+    background: linear-gradient(135deg, #0c8040, #25a957) !important;
+    box-shadow: 0 8px 22px rgb(0 0 0 / 0.18) !important;
+  }
+
+  .account-center-page.is-overview .account-shell-avatar__camera {
+    right: -1px !important;
+    bottom: -1px !important;
+    width: 27px !important;
+    height: 27px !important;
+    border: 3px solid #fff !important;
+    color: #0c6f38 !important;
+    background: #f7fbf8 !important;
+  }
+
+  .account-center-page.is-overview .account-shell-identity {
+    grid-column: 2;
+    grid-row: 1;
+    width: 100% !important;
+    align-self: end;
+  }
+
+  .account-center-page.is-overview .account-shell-identity__title {
+    justify-content: flex-start !important;
+    gap: 7px !important;
+  }
+
+  .account-center-page.is-overview .account-shell-identity__title h1 {
+    max-width: 100% !important;
+    color: #fff !important;
+    font-size: clamp(1.25rem, 5.5vw, 1.55rem) !important;
+    font-weight: 820 !important;
+  }
+
+  .account-center-page.is-overview .account-shell-identity__title > span {
+    width: 23px !important;
+    height: 23px !important;
+    color: #fff !important;
+    background: #25b35b !important;
+    box-shadow: 0 0 0 3px rgb(255 255 255 / 0.12);
+  }
+
+  .account-center-page.is-overview .account-shell-identity > p {
+    margin-top: 4px !important;
+    color: rgb(255 255 255 / 0.86) !important;
+    font-size: 0.72rem !important;
+    font-weight: 650 !important;
+  }
+
+  .account-center-page.is-overview .account-shell-identity__meta {
+    justify-content: flex-start !important;
+    margin-top: 8px !important;
+    gap: 5px !important;
+  }
+
+  .account-center-page.is-overview .account-shell-identity__meta span {
+    min-height: 27px !important;
+    padding: 0 10px !important;
+    color: #fff !important;
+    background: rgb(255 255 255 / 0.12) !important;
+    font-size: 0.58rem !important;
+    backdrop-filter: blur(6px);
+  }
+
+  .account-center-page.is-overview .account-shell-identity__meta span:nth-child(n + 2) {
+    display: none !important;
+  }
+
+  .account-center-page.is-overview .account-shell-profile__actions {
+    grid-column: 2;
+    grid-row: 2;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    width: auto !important;
+    margin: 0 !important;
+    gap: 7px !important;
+    align-self: start;
+  }
+
+  .account-center-page.is-overview .account-shell-button--primary {
+    display: none !important;
+  }
+
+  .account-center-page.is-overview .account-shell-button--ghost {
+    min-height: 36px !important;
+    padding: 0 13px !important;
+    border: 1px solid rgb(255 255 255 / 0.45) !important;
+    border-radius: 999px !important;
+    color: #10482a !important;
+    background: rgb(255 255 255 / 0.96) !important;
+    font-size: 0.62rem !important;
+    box-shadow: 0 6px 16px rgb(0 0 0 / 0.09) !important;
+  }
+
+  .account-center-page.is-overview .account-shell-image-menu--cover {
+    top: calc(100% + 7px) !important;
+    right: 0 !important;
+    bottom: auto !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .account-center-page.is-overview .account-shell-profile,
+  .account-center-page.is-overview .account-shell-profile__body {
+    min-height: 214px !important;
+  }
+
+  .account-center-page.is-overview .account-shell-profile__body {
+    grid-template-columns: 82px minmax(0, 1fr) !important;
+    padding: 21px 15px 18px !important;
+    gap: 8px 13px !important;
+  }
+
+  .account-center-page.is-overview .account-shell-avatar-wrap,
+  .account-center-page.is-overview .account-shell-avatar {
+    width: 82px !important;
+    height: 82px !important;
+  }
+
+  .account-center-page.is-overview .account-shell-identity__title h1 {
+    font-size: 1.2rem !important;
+  }
+}
