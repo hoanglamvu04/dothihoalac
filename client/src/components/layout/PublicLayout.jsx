@@ -145,11 +145,14 @@ export default function PublicLayout() {
         .filter(Boolean)
         .join(' ')}
     >
-      <SiteHeader />
-      <DeferredHeaderNavigation />
-
-      <AdSlot slotKey="site_below_header" layout="strip" deferMs={450} />
-      {topSlot ? <AdSlot slotKey={topSlot} layout="strip" deferMs={650} /> : null}
+      {!authRoute ? (
+        <>
+          <SiteHeader />
+          <DeferredHeaderNavigation />
+          <AdSlot slotKey="site_below_header" layout="strip" deferMs={450} />
+          {topSlot ? <AdSlot slotKey={topSlot} layout="strip" deferMs={650} /> : null}
+        </>
+      ) : null}
 
       <main className={`main-content${showCommunityAds ? ' main-content--community' : ''}`}>
         {showCommunityAds ? (
@@ -160,10 +163,14 @@ export default function PublicLayout() {
         <Outlet />
       </main>
 
-      <AdSlot slotKey="site_before_footer" layout="strip" />
-      <DeferredSiteFooter />
-      {showBottomNav ? <MobileBottomNav /> : null}
-      <DeferredCommunityQuickComposer />
+      {!authRoute ? (
+        <>
+          <AdSlot slotKey="site_before_footer" layout="strip" />
+          <DeferredSiteFooter />
+          {showBottomNav ? <MobileBottomNav /> : null}
+          <DeferredCommunityQuickComposer />
+        </>
+      ) : null}
     </div>
   );
 }
