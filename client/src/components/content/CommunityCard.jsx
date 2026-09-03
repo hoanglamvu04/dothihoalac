@@ -5,11 +5,10 @@ import {
 } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
-  ChevronDown,
+  Heart,
   MessageCircle,
   Send,
   Share2,
-  ThumbsUp,
 } from 'lucide-react';
 
 import Avatar from '../common/Avatar';
@@ -19,10 +18,7 @@ import { commentApi, reactionApi } from '../../api/interaction.api';
 import { apiErrorMessage } from '../../api/http';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
-import {
-  COMMUNITY_TYPES,
-  REACTIONS,
-} from '../../utils/constants';
+import { COMMUNITY_TYPES } from '../../utils/constants';
 import { formatRelativeTime } from '../../utils/formatters';
 import { contentPath } from '../../utils/content';
 
@@ -73,71 +69,6 @@ function profileAvatar(user) {
     user?.profile?.avatarMediaId ||
     user?.avatarMediaId ||
     null
-  );
-}
-
-function ReactionButton({
-  reaction,
-  onReact,
-}) {
-  const [open, setOpen] = useState(false);
-
-  const current = REACTIONS.find(
-    (item) => item.value === reaction,
-  );
-
-  return (
-    <div
-      className="community-feed-reaction"
-      onMouseEnter={() => setOpen(true)}
-      onMouseLeave={() => setOpen(false)}
-    >
-      <button
-        type="button"
-        className={`community-feed-action${reaction ? ' is-active' : ''}`}
-        onClick={() => onReact(reaction || 'like')}
-      >
-        {current ? (
-          <span className="community-feed-action__emoji">
-            {current.emoji}
-          </span>
-        ) : (
-          <ThumbsUp size={18} />
-        )}
-
-        <span>{current?.label || 'Thích'}</span>
-
-        <ChevronDown
-          className="community-feed-action__caret"
-          size={13}
-          onClick={(event) => {
-            event.preventDefault();
-            event.stopPropagation();
-            setOpen((value) => !value);
-          }}
-        />
-      </button>
-
-      {open ? (
-        <div className="community-feed-reaction-picker">
-          {REACTIONS.map((item) => (
-            <button
-              type="button"
-              key={item.value}
-              className={reaction === item.value ? 'is-active' : ''}
-              title={item.label}
-              onClick={() => {
-                onReact(item.value);
-                setOpen(false);
-              }}
-            >
-              <span>{item.emoji}</span>
-              <small>{item.label}</small>
-            </button>
-          ))}
-        </div>
-      ) : null}
-    </div>
   );
 }
 
@@ -208,23 +139,23 @@ export default function CommunityCard({ item }) {
     return false;
   };
 
-  const react = async (type) => {
+  const toggleLike = async () => {
     if (!requireLogin()) return;
 
     try {
-      if (reaction === type) {
+      if (reaction === 'like') {
         await reactionApi.remove('content', item._id);
         setReaction(null);
         setReactionCount((value) => Math.max(0, value - 1));
         return;
       }
 
-      await reactionApi.put('content', item._id, type);
+      await reactionApi.put('content', item._id, 'like');
       setReactionCount((value) => (reaction ? value : value + 1));
-      setReaction(type);
+      setReaction('like');
     } catch (error) {
       toast.error(
-        apiErrorMessage(error, 'Không thể cập nhật cảm xúc.'),
+        apiErrorMessage(error, 'Không thể cập nhật lượt thích.'),
       );
     }
   };
@@ -309,49 +240,51 @@ export default function CommunityCard({ item }) {
           size="sm"
         />
 
-        <div className="community-feed-card__author">
-          <Link
-            to={
-              author.username
-                ? `/thanh-vien/${author.username}`
-                : href
-            }
-          >
-            {authorName}
-          </Link>
+        <div className="community-feed-card__content">
+          <div className="community-feed-card__author">
+            <Link
+              to={
+                author.username
+                  ? `/thanh-vien/${author.username}`
+                  : href
+              }
+            >
+              {authorName}
+            </Link>
 
-          <div>
-            <span>
-              {formatRelativeTime(item.publishedAt || item.createdAt)}
-            </span>
-            {item.primaryAreaId?.name ? (
-              <>
-                <span>·</span>
-                <span>{item.primaryAreaId.name}</span>
-              </>
-            ) : null}
+            <div>
+              <span>
+                {formatRelativeTime(item.publishedAt || item.createdAt)}
+              </span>
+              {item.primaryAreaId?.name ? (
+                <>
+                  <span>·</span>
+                  <span>{item.primaryAreaId.name}</span>
+                </>
+              ) : null}
+            </div>
           </div>
+
+          {text ? (
+            <div className="community-feed-card__text">
+              <p>{visibleText}</p>
+
+              {isLong ? (
+                <button
+                  type="button"
+                  onClick={() => setExpanded((value) => !value)}
+                >
+                  {expanded ? 'Thu gọn' : 'Xem thêm'}
+                </button>
+              ) : null}
+            </div>
+          ) : null}
         </div>
 
         <span className="community-feed-card__type">
           {typeLabel}
         </span>
       </header>
-
-      {text ? (
-        <div className="community-feed-card__text">
-          <p>{visibleText}</p>
-
-          {isLong ? (
-            <button
-              type="button"
-              onClick={() => setExpanded((value) => !value)}
-            >
-              {expanded ? 'Thu gọn' : 'Xem thêm'}
-            </button>
-          ) : null}
-        </div>
-      ) : null}
 
       {media.length ? (
         <div
@@ -388,45 +321,48 @@ export default function CommunityCard({ item }) {
         </div>
       ) : null}
 
-      <div className="community-feed-card__stats">
-        <span>
-          {reactionCount > 0 ? (
-            <>
-              <b>👍</b>
-              {reactionCount.toLocaleString('vi-VN')}
-            </>
-          ) : null}
-        </span>
-
-        <Link to={`${href}#binh-luan`}>
-          {commentCount > 0
-            ? `${commentCount.toLocaleString('vi-VN')} bình luận`
-            : ''}
-        </Link>
-      </div>
-
       <div className="community-feed-card__actions">
-        <ReactionButton
-          reaction={reaction}
-          onReact={react}
-        />
-
         <button
           type="button"
-          className="community-feed-action"
-          onClick={focusComment}
+          className={`community-feed-action community-feed-like${
+            reaction === 'like' ? ' is-active' : ''
+          }`}
+          aria-label={reaction === 'like' ? 'Bỏ thích' : 'Thích bài viết'}
+          aria-pressed={reaction === 'like'}
+          onClick={toggleLike}
         >
-          <MessageCircle size={18} />
-          Bình luận
+          <Heart
+            size={19}
+            fill={reaction === 'like' ? 'currentColor' : 'none'}
+          />
+          {reactionCount > 0 ? (
+            <span className="community-feed-action__count">
+              {reactionCount.toLocaleString('vi-VN')}
+            </span>
+          ) : null}
         </button>
 
         <button
           type="button"
           className="community-feed-action"
+          aria-label="Bình luận"
+          onClick={focusComment}
+        >
+          <MessageCircle size={19} />
+          {commentCount > 0 ? (
+            <span className="community-feed-action__count">
+              {commentCount.toLocaleString('vi-VN')}
+            </span>
+          ) : null}
+        </button>
+
+        <button
+          type="button"
+          className="community-feed-action"
+          aria-label="Chia sẻ"
           onClick={share}
         >
-          <Share2 size={18} />
-          Chia sẻ
+          <Share2 size={19} />
         </button>
       </div>
 

@@ -8,7 +8,7 @@ const CONTENT_SECTIONS = {
 };
 
 const EDITOR_SECTIONS = {
-  community: '/studio/cong-dong',
+  community: '/cong-dong/create',
   property: '/studio/bat-dong-san',
   job: '/studio/viec-lam',
   article: '/quan-tri/bai-viet',

@@ -1,0 +1,323 @@
+.dthl-header-nav__inner > nav:not(.dthl-primary-nav) {
+  display: none !important;
+}
+
+.dthl-primary-nav {
+  order: -1;
+  display: flex;
+  align-items: stretch;
+  align-self: stretch;
+  min-width: 0;
+  gap: 4px;
+}
+
+.dthl-primary-nav__item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  align-self: stretch;
+}
+
+.dthl-primary-nav__link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 12px;
+  gap: 7px;
+  border-radius: 12px;
+  color: #29443a;
+  font-size: 0.86rem;
+  font-weight: 720;
+  line-height: 1;
+  text-decoration: none;
+  transition: color 150ms ease, background 150ms ease, box-shadow 150ms ease;
+}
+
+.dthl-primary-nav__icon {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  flex: 0 0 auto;
+  border-radius: 9px;
+  color: #24794b;
+  background: #eef8f1;
+}
+
+.dthl-primary-nav__link:hover,
+.dthl-primary-nav__link.is-active {
+  color: #08743d;
+  background: #f0f8f3;
+}
+
+.dthl-primary-nav__link.is-active {
+  box-shadow: inset 0 -2px 0 #18a558;
+}
+
+.dthl-primary-nav__link.is-active .dthl-primary-nav__icon {
+  color: #fff;
+  background: #1b9e52;
+}
+
+.dthl-primary-nav__submenu {
+  position: absolute;
+  top: calc(100% - 1px);
+  left: 0;
+  z-index: 1400;
+  display: grid;
+  width: 220px;
+  padding: 10px;
+  gap: 3px;
+  border: 1px solid #dbe9e0;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 18px 42px rgb(8 61 32 / 0.14);
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-5px);
+  transition: opacity 150ms ease, transform 150ms ease;
+}
+
+.dthl-primary-nav__submenu::before {
+  position: absolute;
+  top: -8px;
+  right: 0;
+  left: 0;
+  height: 8px;
+  content: '';
+}
+
+.dthl-primary-nav__item:hover .dthl-primary-nav__submenu,
+.dthl-primary-nav__item:focus-within .dthl-primary-nav__submenu {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
+}
+
+.dthl-primary-nav__submenu strong {
+  padding: 6px 8px 9px;
+  border-bottom: 1px solid #edf3ef;
+  color: #173e2b;
+  font-size: 0.72rem;
+}
+
+.dthl-primary-nav__submenu a {
+  min-height: 38px;
+  padding: 9px 10px;
+  border-radius: 9px;
+  color: #40594c;
+  font-size: 0.75rem;
+  font-weight: 650;
+}
+
+.dthl-primary-nav__submenu a:hover {
+  color: #08743d;
+  background: #edf8f1;
+}
+
+.dthl-mobile-nav__links > a {
+  display: none !important;
+}
+
+.dthl-primary-mobile-wrap {
+  display: grid;
+  width: 100%;
+  gap: 12px;
+}
+
+.dthl-primary-mobile {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.dthl-primary-mobile__item {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  min-height: 68px;
+  padding: 10px 11px;
+  gap: 9px;
+  border: 1px solid #e0e9e3;
+  border-radius: 13px;
+  color: #173b2a;
+  background: #fff;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgb(10 62 34 / 0.025);
+}
+
+.dthl-primary-mobile__item:hover,
+.dthl-primary-mobile__item.is-active {
+  border-color: #c6e2d0;
+  color: #08743d;
+  background: #f3faf5;
+}
+
+.dthl-primary-mobile__icon {
+  display: grid;
+  place-items: center;
+  width: 38px;
+  height: 38px;
+  flex: 0 0 auto;
+  border-radius: 12px;
+  color: #138148;
+  background: #eaf7ee;
+}
+
+.dthl-primary-mobile__item.is-active .dthl-primary-mobile__icon {
+  color: #fff;
+  background: #1b9e52;
+  box-shadow: 0 5px 13px rgb(27 158 82 / 0.18);
+}
+
+.dthl-primary-mobile__item strong {
+  min-width: 0;
+  overflow: hidden;
+  font-size: 0.76rem;
+  font-weight: 760;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+}
+
+.dthl-primary-mobile-session {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  min-width: 0;
+  padding: 10px;
+  gap: 10px;
+  border: 1px solid #dfe9e2;
+  border-radius: 13px;
+  background: #f8fbf9;
+}
+
+.dthl-primary-mobile-session__identity {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  align-items: center;
+  min-width: 0;
+  gap: 8px;
+}
+
+.dthl-primary-mobile-session__identity > span {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  color: #08743d;
+  background: #e7f5ec;
+}
+
+.dthl-primary-mobile-session__identity div {
+  min-width: 0;
+}
+
+.dthl-primary-mobile-session__identity strong,
+.dthl-primary-mobile-session__identity small {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dthl-primary-mobile-session__identity strong {
+  color: #183b2b;
+  font-size: 0.72rem;
+}
+
+.dthl-primary-mobile-session__identity small {
+  margin-top: 2px;
+  color: #77867e;
+  font-size: 0.56rem;
+}
+
+.dthl-primary-mobile-session button,
+.dthl-primary-mobile-session--guest a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 37px;
+  padding: 0 10px;
+  gap: 6px;
+  border: 1px solid #e6caca;
+  border-radius: 9px;
+  color: #a12f2f;
+  background: #fff;
+  font: inherit;
+  font-size: 0.65rem;
+  font-weight: 720;
+  cursor: pointer;
+}
+
+.dthl-primary-mobile-session button:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.dthl-primary-mobile-session--guest {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.dthl-primary-mobile-session--guest a {
+  border-color: #d8e8dd;
+  color: #176f40;
+}
+
+.dthl-primary-mobile-session--guest a:last-child {
+  color: #fff;
+  border-color: #1b9e52;
+  background: #1b9e52;
+}
+
+/* The session actions are now shown directly after the six primary items. */
+.dthl-mobile-account,
+.dthl-mobile-auth {
+  display: none !important;
+}
+
+@media (max-width: 1180px) {
+  .dthl-primary-nav__link {
+    padding-inline: 9px;
+    gap: 5px;
+    font-size: 0.79rem;
+  }
+
+  .dthl-primary-nav__icon {
+    width: 25px;
+    height: 25px;
+  }
+}
+
+@media (max-width: 900px) {
+  .dthl-primary-nav {
+    display: none;
+  }
+}
+
+@media (max-width: 390px) {
+  .dthl-primary-mobile__item {
+    min-height: 62px;
+    padding: 8px;
+    gap: 7px;
+  }
+
+  .dthl-primary-mobile__icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+  }
+
+  .dthl-primary-mobile__item strong {
+    font-size: 0.7rem;
+  }
+
+  .dthl-primary-mobile-session {
+    grid-template-columns: 1fr;
+  }
+
+  .dthl-primary-mobile-session button {
+    width: 100%;
+  }
+}

@@ -75,10 +75,10 @@ const sourceSchema = new mongoose.Schema(
 
 const schema = new mongoose.Schema(
   {
-    code: { type: String, trim: true, uppercase: true, maxlength: 60, index: true },
+    code: { type: String, trim: true, uppercase: true, maxlength: 60 },
     name: { type: String, required: true, trim: true, maxlength: 300, index: true },
     shortName: { type: String, trim: true, maxlength: 180, default: '' },
-    slug: { type: String, required: true, trim: true, lowercase: true, maxlength: 320, index: true },
+    slug: { type: String, required: true, trim: true, lowercase: true, maxlength: 320 },
 
     projectType: { type: String, enum: PROJECT_TYPES, default: 'other', index: true },
     status: { type: String, enum: PROJECT_STATUSES, default: 'proposed', index: true },

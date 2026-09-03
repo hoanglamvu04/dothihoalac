@@ -1,5 +1,5 @@
 const API_PATH = '/api/v1';
-const LOCAL_HOSTS = new Set(['localhost', '127.0.0.1']);
+const LOOPBACK_HOSTS = new Set(['localhost', '127.0.0.1', '::1', '[::1]']);
 
 function normalizeUrl(value = '') {
   return String(value || '').trim().replace(/\/+$/, '');
@@ -15,10 +15,89 @@ function numberFromEnv(value, fallback, { min = 1, max = 65535 } = {}) {
   return parsed;
 }
 
-const discoveredApiUrl = normalizeUrl(import.meta.env.VITE_DISCOVERED_API_URL);
-const discoveredServerUrl = normalizeUrl(import.meta.env.VITE_DISCOVERED_SERVER_URL);
-const envApiUrl = normalizeUrl(import.meta.env.VITE_API_URL);
-const envServerUrl = normalizeUrl(import.meta.env.VITE_SERVER_URL);
+function normalizeHostname(value = '') {
+  return String(value || '').trim().replace(/^\[/, '').replace(/\]$/, '').toLowerCase();
+}
+
+function isLoopbackHostname(hostname = '') {
+  return LOOPBACK_HOSTS.has(normalizeHostname(hostname));
+}
+
+function isPrivateIpv4(hostname = '') {
+  const parts = normalizeHostname(hostname).split('.').map(Number);
+
+  if (
+    parts.length !== 4 ||
+    parts.some((part) => !Number.isInteger(part) || part < 0 || part > 255)
+  ) {
+    return false;
+  }
+
+  const [a, b] = parts;
+
+  return (
+    a === 10 ||
+    a === 127 ||
+    (a === 172 && b >= 16 && b <= 31) ||
+    (a === 192 && b === 168)
+  );
+}
+
+function isDevelopmentHostname(hostname = '') {
+  return isLoopbackHostname(hostname) || isPrivateIpv4(hostname);
+}
+
+function getBrowserHostname() {
+  if (typeof window !== 'undefined' && window.location?.hostname) {
+    return normalizeHostname(window.location.hostname) || 'localhost';
+  }
+
+  return 'localhost';
+}
+
+function formatHostForUrl(hostname = '') {
+  const normalized = normalizeHostname(hostname) || 'localhost';
+  return normalized.includes(':') ? `[${normalized}]` : normalized;
+}
+
+function adaptLoopbackUrlForBrowser(value = '') {
+  const normalized = normalizeUrl(value);
+
+  if (!normalized || !import.meta.env.DEV) {
+    return normalized;
+  }
+
+  try {
+    const url = new URL(normalized);
+    const browserHostname = getBrowserHostname();
+
+    if (
+      isLoopbackHostname(url.hostname) &&
+      !isLoopbackHostname(browserHostname) &&
+      isDevelopmentHostname(browserHostname)
+    ) {
+      url.hostname = browserHostname;
+      return normalizeUrl(url.toString());
+    }
+  } catch {
+    return normalized;
+  }
+
+  return normalized;
+}
+
+const discoveredBackendPort = numberFromEnv(
+  import.meta.env.VITE_DISCOVERED_API_PORT,
+  0,
+);
+const discoveredApiUrl = adaptLoopbackUrlForBrowser(
+  import.meta.env.VITE_DISCOVERED_API_URL,
+);
+const discoveredServerUrl = adaptLoopbackUrlForBrowser(
+  import.meta.env.VITE_DISCOVERED_SERVER_URL,
+);
+const envApiUrl = adaptLoopbackUrlForBrowser(import.meta.env.VITE_API_URL);
+const envServerUrl = adaptLoopbackUrlForBrowser(import.meta.env.VITE_SERVER_URL);
 
 function serverFromApiUrl(apiUrl) {
   if (!apiUrl) return '';
@@ -41,12 +120,23 @@ function serverFromApiUrl(apiUrl) {
   }
 }
 
+function serverFromDiscoveredPort(port) {
+  if (!port) return '';
+  return `http://${formatHostForUrl(getBrowserHostname())}:${port}`;
+}
+
 const configuredApiUrl = discoveredApiUrl || envApiUrl;
 const configuredServer =
-  discoveredServerUrl || envServerUrl || serverFromApiUrl(configuredApiUrl);
-const hasViteDiscoveredBackend = Boolean(discoveredApiUrl || discoveredServerUrl);
+  discoveredServerUrl ||
+  serverFromDiscoveredPort(discoveredBackendPort) ||
+  envServerUrl ||
+  serverFromApiUrl(configuredApiUrl);
+const hasViteDiscoveredBackend = Boolean(
+  discoveredBackendPort || discoveredApiUrl || discoveredServerUrl,
+);
 
 function configuredPortFallback() {
+  if (discoveredBackendPort) return discoveredBackendPort;
   if (!configuredServer) return 5000;
 
   try {
@@ -80,7 +170,7 @@ function isLocalHttpUrl(value) {
 
   try {
     const url = new URL(value);
-    return url.protocol === 'http:' && LOCAL_HOSTS.has(url.hostname);
+    return url.protocol === 'http:' && isDevelopmentHostname(url.hostname);
   } catch {
     return false;
   }
@@ -98,17 +188,13 @@ function getDiscoveryHost() {
   if (configuredServer) {
     try {
       const { hostname } = new URL(configuredServer);
-      if (LOCAL_HOSTS.has(hostname)) return hostname;
+      if (hostname) return formatHostForUrl(hostname);
     } catch {
-      // Dùng hostname của frontend hoặc localhost.
+      // Dùng hostname đang mở frontend ở bên dưới.
     }
   }
 
-  if (typeof window !== 'undefined' && LOCAL_HOSTS.has(window.location.hostname)) {
-    return window.location.hostname;
-  }
-
-  return 'localhost';
+  return formatHostForUrl(getBrowserHostname());
 }
 
 async function probeServer(serverUrl) {
@@ -162,8 +248,6 @@ async function discoverLocalBackend() {
   const host = getDiscoveryHost();
   const preferred = `http://${host}:${START_PORT}`;
 
-  // Phần lớn môi trường dev dùng đúng cổng cấu hình. Kiểm tra cổng này trước
-  // để không khởi tạo đồng thời hàng chục request health không cần thiết.
   if (await probeServer(preferred)) {
     resolvedServerUrl = preferred;
     resolvedApiUrl = `${preferred}${API_PATH}`;
@@ -184,8 +268,6 @@ async function discoverLocalBackend() {
     candidates.push(`http://${host}:${port}`);
   }
 
-  // Trả về ngay khi cổng hợp lệ đầu tiên phản hồi, thay vì chờ toàn bộ dải
-  // cổng timeout xong như Promise.all trước đây.
   const winner = await firstReachableServer(candidates);
 
   if (!winner) {

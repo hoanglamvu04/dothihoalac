@@ -2,12 +2,13 @@ import { lazy, Suspense, useEffect, useState } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import SiteHeader from './SiteHeader';
 import DeferredSiteFooter from './DeferredSiteFooter';
+import MobileBottomNav from './MobileBottomNav';
 import DeferredCommunityQuickComposer from '../community/DeferredCommunityQuickComposer';
 import AdSlot from '../ads/AdSlot';
 
 import './PublicInteractionFixes.css';
 
-const HeaderNavigationUpgrade = lazy(() => import('./HeaderNavigationUpgrade'));
+const PrimaryNavigation = lazy(() => import('./PrimaryNavigation'));
 const CommunityAdRails = lazy(() => import('../community/CommunityAdRails'));
 
 function pageTopAdSlot(pathname) {
@@ -51,6 +52,40 @@ function loadRouteStyles(pathname) {
   return Promise.resolve();
 }
 
+function isAuthenticationPath(pathname) {
+  const authPrefixes = [
+    '/dang-nhap',
+    '/dang-ky',
+    '/quen-mat-khau',
+    '/dat-lai-mat-khau',
+    '/xac-thuc-email',
+    '/xac-thuc-so-dien-thoai',
+  ];
+
+  return authPrefixes.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+  );
+}
+
+function showMobileBottomNavigation(pathname) {
+  const hiddenPrefixes = [
+    '/cong-dong/create',
+    '/studio',
+    '/dang-bai',
+    '/gui-tin',
+    '/dang-nhap',
+    '/dang-ky',
+    '/quen-mat-khau',
+    '/dat-lai-mat-khau',
+    '/xac-thuc-email',
+    '/xac-thuc-so-dien-thoai',
+  ];
+
+  return !hiddenPrefixes.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+  );
+}
+
 function DeferredHeaderNavigation() {
   const [ready, setReady] = useState(false);
 
@@ -83,7 +118,7 @@ function DeferredHeaderNavigation() {
 
   return (
     <Suspense fallback={<div aria-hidden="true" style={{ minHeight: 42 }} />}>
-      <HeaderNavigationUpgrade />
+      <PrimaryNavigation />
     </Suspense>
   );
 }
@@ -92,6 +127,8 @@ export default function PublicLayout() {
   const location = useLocation();
   const normalizedPath = location.pathname.replace(/\/+$/, '') || '/';
   const showCommunityAds = normalizedPath === '/cong-dong';
+  const showBottomNav = showMobileBottomNavigation(normalizedPath);
+  const authRoute = isAuthenticationPath(normalizedPath);
   const topSlot = pageTopAdSlot(normalizedPath);
 
   useEffect(() => {
@@ -99,12 +136,23 @@ export default function PublicLayout() {
   }, [normalizedPath]);
 
   return (
-    <div className="app-shell">
-      <SiteHeader />
-      <DeferredHeaderNavigation />
-
-      <AdSlot slotKey="site_below_header" layout="strip" deferMs={450} />
-      {topSlot ? <AdSlot slotKey={topSlot} layout="strip" deferMs={650} /> : null}
+    <div
+      className={[
+        'app-shell',
+        showBottomNav ? 'app-shell--with-mobile-bottom-nav' : '',
+        authRoute ? 'app-shell--auth-route' : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+    >
+      {!authRoute ? (
+        <>
+          <SiteHeader />
+          <DeferredHeaderNavigation />
+          <AdSlot slotKey="site_below_header" layout="strip" deferMs={450} />
+          {topSlot ? <AdSlot slotKey={topSlot} layout="strip" deferMs={650} /> : null}
+        </>
+      ) : null}
 
       <main className={`main-content${showCommunityAds ? ' main-content--community' : ''}`}>
         {showCommunityAds ? (
@@ -115,9 +163,14 @@ export default function PublicLayout() {
         <Outlet />
       </main>
 
-      <AdSlot slotKey="site_before_footer" layout="strip" />
-      <DeferredSiteFooter />
-      <DeferredCommunityQuickComposer />
+      {!authRoute ? (
+        <>
+          <AdSlot slotKey="site_before_footer" layout="strip" />
+          <DeferredSiteFooter />
+          {showBottomNav ? <MobileBottomNav /> : null}
+          <DeferredCommunityQuickComposer />
+        </>
+      ) : null}
     </div>
   );
 }

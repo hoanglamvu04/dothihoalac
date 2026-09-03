@@ -1,5 +1,15 @@
-/* Homepage-only card polish. Loaded after HomePage.css so the shared cards keep
-   their existing behavior on listing/detail pages. */
+/*
+ * Homepage presentation layer.
+ * JobCard, CommunityCard and PropertyCard are intentionally rendered from the
+ * same components used by their dedicated public pages. This file only owns
+ * homepage layout/density; it does not duplicate the card internals.
+ */
+
+.home-mobile-shortcuts,
+.home-mobile-hero-dots,
+.home-mobile-publish {
+  display: none;
+}
 
 .home-ref .home-ref-dashboard {
   align-items: stretch;
@@ -31,7 +41,7 @@
   padding: 0 2px;
 }
 
-/* Latest news: equal thumbnail size, fixed copy column and meta pinned below. */
+/* Latest articles */
 .home-ref .home-ref-latest-list {
   flex: 1;
   align-content: start;
@@ -49,10 +59,7 @@
   gap: 11px;
 }
 
-.home-ref .home-ref-latest-item .article-card > a:first-child {
-  height: 70px;
-}
-
+.home-ref .home-ref-latest-item .article-card > a:first-child,
 .home-ref .home-ref-latest-item .article-card > a:first-child img {
   width: 108px;
   height: 70px;
@@ -80,7 +87,7 @@
   line-height: 1.1;
 }
 
-/* Spotlight: every tile uses the same image/body rows, so titles and meta line up. */
+/* Spotlight */
 .home-ref .home-ref-spotlight-grid {
   flex: 1;
   align-items: stretch;
@@ -133,46 +140,30 @@
   line-height: 1.1;
 }
 
-/* Jobs: same vertical rhythm as the news list; empty state no longer looks oversized. */
-.home-ref .home-ref-jobs-panel .home-ref-job-list {
-  flex: 1;
-  align-content: start;
+/* Shared jobs scope. The inner JobCard is styled by JobsPage.css/mobile.css. */
+.home-ref .home-ref-shared-jobs.jobs-page {
+  min-height: 0;
+  padding: 0;
+  color: inherit;
+  background: transparent;
 }
 
-.home-ref .home-ref-job {
-  grid-template-columns: 40px minmax(0, 1fr) 18px;
-  min-height: 91px;
-  padding: 10px 0;
-  gap: 10px;
+.home-ref .home-ref-shared-jobs .jobs-results__main {
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
 }
 
-.home-ref .home-ref-job__icon {
-  width: 40px;
-  height: 40px;
+.home-ref .home-ref-shared-jobs .jobs-list {
+  grid-template-columns: 1fr;
+  gap: 8px;
 }
 
-.home-ref .home-ref-job > div {
-  display: grid;
-  grid-template-rows: auto auto auto;
-  align-content: center;
-  min-height: 58px;
-}
-
-.home-ref .home-ref-job strong {
-  min-height: 2.6em;
-  font-size: 0.75rem;
-  line-height: 1.3;
-}
-
-.home-ref .home-ref-job small,
-.home-ref .home-ref-job time {
-  min-height: 15px;
-  margin-top: 3px;
-  line-height: 1.1;
-}
-
-.home-ref .home-ref-job > svg {
-  justify-self: end;
+.home-ref .home-ref-shared-jobs .jobs-item {
+  min-width: 0;
 }
 
 .home-ref .home-ref-jobs-panel .home-ref-state {
@@ -183,34 +174,8 @@
   background: #fbfdfb;
 }
 
-.home-ref .home-ref-jobs-panel .empty-state {
-  display: grid;
-  justify-items: center;
-  max-width: 240px;
-  margin: auto;
-  text-align: center;
-}
-
-.home-ref .home-ref-jobs-panel .empty-state img {
-  width: 118px;
-  max-height: 92px;
-  margin-bottom: 10px;
-}
-
-.home-ref .home-ref-jobs-panel .empty-state h3 {
-  margin: 0;
-  font-size: 0.91rem;
-}
-
-.home-ref .home-ref-jobs-panel .empty-state p {
-  max-width: 210px;
-  margin: 6px 0 0;
-  color: var(--home-muted);
-  font-size: 0.69rem;
-  line-height: 1.45;
-}
-
-/* Community: three balanced social-preview cards. */
+/* Shared community card. Hide the inline discussion composer on homepage only;
+   author, content, media, stats and social actions remain identical to feed. */
 .home-ref .home-ref-community-shell {
   padding: 14px;
   border-radius: 16px;
@@ -221,80 +186,29 @@
 }
 
 .home-ref .home-ref-community-grid {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-items: stretch;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
   gap: 12px;
 }
 
-.home-ref .home-ref-community-grid .home-community-card {
-  min-height: 205px;
+.home-ref .home-ref-community-item {
+  min-width: 0;
+}
+
+.home-ref .home-ref-community-item .community-card--social {
   height: 100%;
+  margin: 0;
   border-radius: 14px;
 }
 
-.home-ref .home-ref-community-grid .home-community-card--with-media {
-  grid-template-columns: minmax(0, 58%) minmax(130px, 42%);
+.home-ref .home-ref-community-item .community-feed-comments,
+.home-ref .home-ref-community-item .community-feed-comment-box,
+.home-ref .home-ref-community-item .community-feed-card__more-comments {
+  display: none;
 }
 
-.home-ref .home-ref-community-grid .home-community-card--text-only {
-  grid-template-columns: minmax(0, 1fr);
-}
-
-.home-ref .home-ref-community-grid .home-community-card__body {
-  grid-template-rows: auto minmax(0, 1fr) auto;
-  min-height: 100%;
-  padding: 14px;
-  gap: 10px;
-}
-
-.home-ref .home-ref-community-grid .home-community-card__author {
-  min-height: 30px;
-}
-
-.home-ref .home-ref-community-grid .home-community-card__author strong {
-  font-size: 0.69rem;
-}
-
-.home-ref .home-ref-community-grid .home-community-card__author span,
-.home-ref .home-ref-community-grid .home-community-card__author small {
-  font-size: 0.56rem;
-}
-
-.home-ref .home-ref-community-grid .home-community-card__copy {
-  display: grid;
-  grid-template-rows: auto auto;
-  align-content: start;
-  gap: 6px;
-}
-
-.home-ref .home-ref-community-grid .home-community-card__copy h3 {
-  min-height: 2.7em;
-  margin: 0;
-  font-size: 0.75rem;
-  line-height: 1.35;
-  -webkit-line-clamp: 2;
-}
-
-.home-ref .home-ref-community-grid .home-community-card__copy p {
-  min-height: 2.7em;
-  margin: 0;
-  font-size: 0.64rem;
-  line-height: 1.35;
-  -webkit-line-clamp: 2;
-}
-
-.home-ref .home-ref-community-grid .home-community-card__footer {
-  min-height: 30px;
-  font-size: 0.56rem;
-}
-
-.home-ref .home-ref-community-grid .home-community-card__media,
-.home-ref .home-ref-community-grid .home-community-card__media img {
-  min-height: 205px;
-  height: 100%;
-}
-
-/* Property cards: adaptive column count and a dedicated single-result layout. */
+/* Shared property scope. PropertyCard internals come from PropertiesPage.css. */
 .home-ref .home-ref-property-shell {
   padding: 16px;
   border-radius: 16px;
@@ -307,228 +221,27 @@
   border-bottom: 1px solid #edf2ee;
 }
 
-.home-ref .home-ref-property-grid {
-  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-  align-items: stretch;
-  gap: 14px;
+.home-ref .home-ref-shared-properties.properties-page {
+  min-height: 0;
+  padding: 0;
+  color: inherit;
+  background: transparent;
 }
 
-.home-ref .home-ref-property-grid > * {
-  height: 100%;
-}
-
-.home-ref .home-ref-property-grid .property-card {
-  display: grid;
-  grid-template-rows: 188px minmax(0, 1fr);
-  min-width: 0;
-  height: 100%;
-  overflow: hidden;
-  border: 1px solid #dde7e0;
-  border-radius: 14px;
-  background: #fff;
-  box-shadow: 0 5px 18px rgb(14 58 34 / 0.045);
-  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
-}
-
-.home-ref .home-ref-property-grid .property-card:hover {
-  border-color: #bfd8c7;
-  box-shadow: 0 12px 28px rgb(14 58 34 / 0.08);
-  transform: translateY(-2px);
-}
-
-.home-ref .home-ref-property-grid .property-card__image {
-  display: block;
-  min-width: 0;
-  height: 188px;
-  overflow: hidden;
-  background: #eef3ef;
-}
-
-.home-ref .home-ref-property-grid .property-card__image > img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 180ms ease;
-}
-
-.home-ref .home-ref-property-grid .property-card:hover .property-card__image > img {
-  transform: scale(1.02);
-}
-
-.home-ref .home-ref-property-grid .property-card__badges {
-  top: 12px;
-  left: 12px;
-  flex-wrap: wrap;
-  max-width: calc(100% - 24px);
-}
-
-.home-ref .home-ref-property-grid .property-card__body {
-  display: grid;
-  grid-template-rows: auto auto auto minmax(0, 1fr) auto;
-  align-content: stretch;
-  min-width: 0;
-  padding: 15px 16px 14px;
-  gap: 10px;
-}
-
-.home-ref .home-ref-property-grid .property-card__heading {
-  display: grid;
-  align-content: start;
-  gap: 8px;
-}
-
-.home-ref .home-ref-property-grid .property-card__heading h3,
-.home-ref .home-ref-property-grid .property-card h3 {
-  display: -webkit-box;
-  min-height: 2.72em;
-  margin: 0;
-  overflow: hidden;
-  color: var(--home-ink);
-  font-size: 0.9rem;
-  font-weight: 790;
-  line-height: 1.36;
-  letter-spacing: -0.012em;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-}
-
-.home-ref .home-ref-property-grid .property-card__price {
-  display: block;
-  min-height: 24px;
-  margin: 0;
-  color: var(--home-green-dark);
-  font-size: 1.08rem;
-  font-weight: 840;
-  line-height: 1.2;
-}
-
-.home-ref .home-ref-property-grid .property-card__facts {
-  display: flex;
-  align-items: center;
-  min-height: 26px;
-  margin: 0;
-  gap: 7px 12px;
-  color: #65746b;
-  font-size: 0.69rem;
-  line-height: 1.2;
-}
-
-.home-ref .home-ref-property-grid .property-card__facts span {
-  min-height: 20px;
-  white-space: nowrap;
-}
-
-.home-ref .home-ref-property-grid .property-card__location {
-  display: grid;
-  grid-template-columns: 16px minmax(0, 1fr);
-  align-items: center;
-  min-height: 24px;
-  margin: 0;
-  gap: 6px;
-  color: #65746b;
-  font-size: 0.72rem;
-  line-height: 1.25;
-}
-
-.home-ref .home-ref-property-grid .property-card__location span {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.home-ref .home-ref-property-grid .property-card__summary {
-  display: none;
-}
-
-.home-ref .home-ref-property-grid .property-card__footer {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  grid-auto-rows: minmax(22px, auto);
-  align-items: center;
-  min-height: 45px;
-  margin-top: 2px;
-  padding-top: 10px;
-  gap: 4px 10px;
-  border-top: 1px solid #edf2ee;
-}
-
-.home-ref .home-ref-property-grid .property-card__footer span {
-  grid-column: 1;
-  display: flex;
-  align-items: center;
-  min-width: 0;
-  gap: 5px;
-  overflow: hidden;
-  color: #68766e;
-  font-size: 0.66rem;
-  line-height: 1.2;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.home-ref .home-ref-property-grid .property-card__footer a {
-  grid-column: 2;
-  grid-row: 1 / span 2;
-  align-self: center;
-  justify-self: end;
-  display: inline-flex;
-  align-items: center;
-  min-height: 34px;
-  padding: 0 11px;
-  border: 1px solid #cfe1d5;
-  border-radius: 9px;
-  color: var(--home-green-dark);
-  background: #f7fbf8;
-  font-size: 0.67rem;
-  font-weight: 760;
-  white-space: nowrap;
-}
-
-.home-ref .home-ref-property-grid .property-card__footer a:hover {
-  border-color: #9fc7ad;
-  background: #edf7f0;
-}
-
-.home-ref .home-ref-property-grid > .property-card:only-child {
-  grid-template-columns: minmax(330px, 40%) minmax(0, 1fr);
-  grid-template-rows: minmax(300px, auto);
-  min-height: 300px;
-}
-
-.home-ref .home-ref-property-grid > .property-card:only-child .property-card__image {
-  height: 100%;
-  min-height: 300px;
-}
-
-.home-ref .home-ref-property-grid > .property-card:only-child .property-card__body {
-  padding: 22px 24px;
+.home-ref .home-ref-shared-properties .home-ref-property-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 12px;
+  margin: 0;
 }
 
-.home-ref .home-ref-property-grid > .property-card:only-child .property-card__heading h3,
-.home-ref .home-ref-property-grid > .property-card:only-child h3 {
-  max-width: 720px;
-  min-height: 2.55em;
-  font-size: 1.18rem;
-  line-height: 1.28;
-}
-
-.home-ref .home-ref-property-grid > .property-card:only-child .property-card__price {
-  font-size: 1.35rem;
+.home-ref .home-ref-shared-properties .properties-item {
+  min-width: 0;
 }
 
 @media (max-width: 1100px) {
-  .home-ref .home-ref-community-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .home-ref .home-ref-property-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .home-ref .home-ref-property-grid > .property-card:only-child {
-    grid-column: 1 / -1;
+  .home-ref .home-ref-community-grid,
+  .home-ref .home-ref-shared-properties .home-ref-property-grid {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -541,79 +254,458 @@
   .home-ref .home-ref-spotlight-card .article-card > a:first-child img {
     height: 128px;
   }
-
-  .home-ref .home-ref-community-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .home-ref .home-ref-community-grid .home-community-card {
-    min-height: 185px;
-  }
-
-  .home-ref .home-ref-property-grid > .property-card:only-child {
-    grid-template-columns: minmax(250px, 42%) minmax(0, 1fr);
-  }
 }
 
 @media (max-width: 620px) {
-  .home-ref .home-ref-panel {
+  .dth-home.home-ref {
+    padding-bottom: 92px;
+    background: #f4f7f5;
+  }
+
+  .home-ref .container {
+    width: calc(100% - 14px);
+  }
+
+  .home-ref-top {
+    padding: 7px 0 10px;
+    background: #f4f7f5;
+  }
+
+  /* Mobile hero: one prominent story like the supplied reference. */
+  .home-ref .home-ref-hero-grid {
+    display: block;
+  }
+
+  .home-ref .home-ref-lead .article-card {
+    height: min(78vw, 350px);
+    min-height: 288px;
+    border: 0;
+    border-radius: 18px;
+    box-shadow: 0 8px 24px rgb(15 55 33 / 0.12);
+  }
+
+  .home-ref .home-ref-lead .content-card__body {
+    padding: 17px 18px 18px;
+  }
+
+  .home-ref .home-ref-lead .content-card__body h3 {
+    max-width: 94%;
+    font-size: clamp(1.28rem, 6vw, 1.62rem);
+    line-height: 1.14;
+    letter-spacing: -0.028em;
+  }
+
+  .home-ref .home-ref-lead .content-card__body p {
+    display: none;
+  }
+
+  .home-ref .home-ref-lead .content-meta {
+    margin-top: 10px;
+    font-size: 0.66rem;
+  }
+
+  .home-ref .home-ref-side-news {
+    display: none;
+  }
+
+  .home-mobile-hero-dots {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 27px;
+  }
+
+  .home-mobile-hero-dots span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #cfd5d1;
+  }
+
+  .home-mobile-hero-dots span.is-active {
+    width: 9px;
+    height: 9px;
+    background: #0a8143;
+  }
+
+  /* Mobile shortcut rail */
+  .home-mobile-shortcuts {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    margin: 2px 0 11px;
+    padding: 12px 7px 11px;
+    gap: 4px;
+    overflow: hidden;
+    border: 1px solid #e4e9e5;
+    border-radius: 17px;
+    background: #fff;
+    box-shadow: 0 5px 18px rgb(17 57 36 / 0.045);
+  }
+
+  .home-mobile-shortcuts a {
+    display: grid;
+    justify-items: center;
+    min-width: 0;
+    gap: 6px;
+    color: #14281c;
+    text-align: center;
+  }
+
+  .home-mobile-shortcuts a > span {
+    display: grid;
+    place-items: center;
+    width: clamp(40px, 11vw, 48px);
+    height: clamp(40px, 11vw, 48px);
+    border-radius: 50%;
+    color: #08743d;
+    background: linear-gradient(180deg, #f3faf5, #e9f5ed);
+  }
+
+  .home-mobile-shortcuts strong {
+    display: block;
+    max-width: 100%;
+    overflow: hidden;
+    font-size: clamp(0.49rem, 2.15vw, 0.6rem);
+    font-weight: 750;
+    line-height: 1.22;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Stacked white content cards */
+  .home-ref .home-ref-dashboard {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 11px;
+    margin-top: 0;
+  }
+
+  .home-ref .home-ref-panel,
+  .home-ref .home-ref-community-shell,
+  .home-ref .home-ref-property-shell {
     padding: 12px;
+    border: 1px solid #e4e9e5;
+    border-radius: 17px;
+    background: #fff;
+    box-shadow: 0 4px 16px rgb(19 57 38 / 0.04);
+  }
+
+  .home-ref .home-ref-section-header,
+  .home-ref .home-ref-property-title {
+    min-height: 32px;
+    margin-bottom: 8px;
+    padding-bottom: 7px;
+    border-bottom: 0;
+  }
+
+  .home-ref .home-ref-section-header h2,
+  .home-ref .home-ref-property-title h2 {
+    font-size: 0.78rem;
+    font-weight: 850;
+    line-height: 1.2;
+  }
+
+  .home-ref .home-ref-section-header a,
+  .home-ref .home-ref-property-title a {
+    gap: 3px;
+    color: #08743d;
+    font-size: 0.55rem;
+    font-weight: 760;
+  }
+
+  /* Featured news list */
+  .home-ref .home-ref-latest-item {
+    min-height: 91px;
+    padding: 9px 0;
+    border-top: 1px solid #edf1ee;
+  }
+
+  .home-ref .home-ref-latest-item:first-child {
+    padding-top: 0;
+    border-top: 0;
   }
 
   .home-ref .home-ref-latest-item .article-card {
-    grid-template-columns: 104px minmax(0, 1fr);
+    display: grid;
+    grid-template-columns: 112px minmax(0, 1fr);
+    min-height: 78px;
+    gap: 10px;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
   }
 
+  .home-ref .home-ref-latest-item .article-card > a:first-child,
   .home-ref .home-ref-latest-item .article-card > a:first-child img {
-    width: 104px;
+    width: 112px;
+    height: 78px;
+    border-radius: 11px;
+    object-fit: cover;
+  }
+
+  .home-ref .home-ref-latest-item .content-card__body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 78px;
+    padding: 0;
+  }
+
+  .home-ref .home-ref-latest-item .content-card__labels,
+  .home-ref .home-ref-latest-item .content-card__body > p {
+    display: none;
+  }
+
+  .home-ref .home-ref-latest-item .content-card__body h3 {
+    min-height: 0;
+    margin: 0;
+    font-size: 0.72rem;
+    font-weight: 780;
+    line-height: 1.32;
+    -webkit-line-clamp: 3;
+  }
+
+  .home-ref .home-ref-latest-item .content-meta {
+    margin-top: 6px;
+    font-size: 0.51rem;
+  }
+
+  /* Three compact urban-development tiles, matching the reference density. */
+  .home-ref .home-ref-spotlight-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 7px;
   }
 
   .home-ref .home-ref-spotlight-card .article-card {
-    grid-template-columns: 124px minmax(0, 1fr);
-    grid-template-rows: minmax(94px, auto);
-    gap: 0;
+    display: block;
+    height: 100%;
+    overflow: hidden;
+    border: 1px solid #e6ebe7;
+    border-radius: 12px;
+    background: #fff;
   }
 
   .home-ref .home-ref-spotlight-card .article-card > a:first-child,
   .home-ref .home-ref-spotlight-card .article-card > a:first-child img {
-    height: 100%;
-    min-height: 94px;
+    display: block;
+    width: 100%;
+    height: clamp(76px, 22vw, 96px);
+    min-height: 0;
+    border-radius: 0;
+    object-fit: cover;
   }
 
   .home-ref .home-ref-spotlight-card .content-card__body {
-    min-height: 94px;
-    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    min-height: 102px;
+    padding: 8px 7px 7px;
   }
 
-  .home-ref .home-ref-community-grid .home-community-card--with-media {
-    grid-template-columns: minmax(0, 1fr) 132px;
+  .home-ref .home-ref-spotlight-card .content-card__labels,
+  .home-ref .home-ref-spotlight-card .content-card__body > p {
+    display: none;
   }
 
-  .home-ref .home-ref-community-grid .home-community-card--text-only {
-    grid-template-columns: 1fr;
+  .home-ref .home-ref-spotlight-card .content-card__body h3 {
+    display: -webkit-box;
+    min-height: 4.05em;
+    margin: 0;
+    overflow: hidden;
+    font-size: clamp(0.55rem, 2.45vw, 0.66rem);
+    font-weight: 790;
+    line-height: 1.35;
+    text-transform: uppercase;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
   }
 
-  .home-ref .home-ref-property-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .home-ref .home-ref-property-grid > .property-card:only-child {
-    grid-template-columns: 1fr;
-    grid-template-rows: 210px minmax(0, 1fr);
+  .home-ref .home-ref-spotlight-card .content-meta {
     min-height: 0;
+    margin-top: auto;
+    padding-top: 6px;
+    gap: 4px;
+    font-size: 0.46rem;
   }
 
-  .home-ref .home-ref-property-grid > .property-card:only-child .property-card__image {
-    height: 210px;
-    min-height: 210px;
+  /* Jobs reuse the exact mobile JobCard rules from JobsPage.mobile.css. */
+  .home-ref .home-ref-shared-jobs.jobs-page {
+    width: 100%;
+    min-height: 0;
+    padding: 0;
+    background: transparent;
   }
 
-  .home-ref .home-ref-property-grid > .property-card:only-child .property-card__body {
-    padding: 16px;
+  .home-ref .home-ref-shared-jobs.jobs-page .jobs-results__main {
+    min-height: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
   }
 
-  .home-ref .home-ref-property-grid > .property-card:only-child .property-card__heading h3,
-  .home-ref .home-ref-property-grid > .property-card:only-child h3 {
-    font-size: 0.98rem;
+  .home-ref .home-ref-shared-jobs .jobs-results__body {
+    margin: 0;
+  }
+
+  .home-ref .home-ref-shared-jobs .jobs-list {
+    gap: 7px;
+  }
+
+  /* Community uses CommunityCard itself, with only feed comments hidden here. */
+  .home-ref-community-section {
+    padding: 0 0 11px;
+    border: 0;
+    background: #f4f7f5;
+  }
+
+  .home-ref .home-ref-community-shell {
+    width: calc(100% - 14px);
+  }
+
+  .home-ref .home-ref-community-grid {
+    grid-template-columns: 1fr;
+    gap: 9px;
+  }
+
+  .home-ref .home-ref-community-item:nth-child(n + 3) {
+    display: none;
+  }
+
+  .home-ref .home-ref-community-item .community-card--social {
+    border-radius: 13px;
+    box-shadow: none;
+  }
+
+  .home-ref .home-ref-community-item .community-feed-card__header,
+  .home-ref .home-ref-community-item .community-feed-card__text,
+  .home-ref .home-ref-community-item .community-feed-card__stats,
+  .home-ref .home-ref-community-item .community-feed-card__actions {
+    padding-right: 11px;
+    padding-left: 11px;
+  }
+
+  .home-ref .home-ref-community-item .community-feed-card__text p {
+    color: #14271c;
+    font-size: 0.69rem;
+    line-height: 1.48;
+  }
+
+  .home-ref .home-ref-community-item .community-feed-action {
+    min-height: 34px;
+    font-size: 0.55rem;
+  }
+
+  /* Property cards reuse the responsive rules from PropertiesPage.css. */
+  .home-ref-property-section {
+    padding: 0 0 12px;
+    background: #f4f7f5;
+  }
+
+  .home-ref .home-ref-property-title {
+    align-items: center;
+  }
+
+  .home-ref .home-ref-property-title > div > span {
+    margin-bottom: 2px;
+    font-size: 0.51rem;
+  }
+
+  .home-ref .home-ref-shared-properties.properties-page {
+    width: 100%;
+    min-height: 0;
+    padding: 0;
+    background: transparent;
+  }
+
+  .home-ref .home-ref-shared-properties .home-ref-property-grid {
+    grid-template-columns: 1fr;
+    gap: 8px;
+    margin: 0;
+  }
+
+  .home-ref .home-ref-shared-properties .properties-item:nth-child(n + 3) {
+    display: none;
+  }
+
+  /* The dark contribution banner is redundant on the compact mobile home. */
+  .home-ref-contribute {
+    display: none;
+  }
+
+  .home-ref-state {
+    min-height: 132px;
+    padding: 14px;
+    border-radius: 12px;
+  }
+
+  .home-ref-warning .container,
+  .home-ref-empty-note .container {
+    width: calc(100% - 20px);
+  }
+
+  .home-mobile-publish {
+    position: fixed;
+    right: 14px;
+    bottom: calc(76px + env(safe-area-inset-bottom));
+    z-index: 880;
+    display: grid;
+    place-items: center;
+    width: 68px;
+    height: 68px;
+    gap: 2px;
+    border: 1px solid rgb(255 255 255 / 0.55);
+    border-radius: 50%;
+    color: #fff !important;
+    background: linear-gradient(145deg, #16a452, #08763b);
+    box-shadow: 0 12px 28px rgb(9 105 52 / 0.28);
+    font-size: 0.51rem;
+    font-weight: 760;
+  }
+
+  .home-mobile-publish svg {
+    width: 20px;
+    height: 20px;
+  }
+
+  .home-mobile-publish span {
+    line-height: 1;
+  }
+}
+
+@media (max-width: 390px) {
+  .home-mobile-shortcuts {
+    padding-right: 4px;
+    padding-left: 4px;
+    gap: 2px;
+  }
+
+  .home-mobile-shortcuts a > span {
+    width: 38px;
+    height: 38px;
+  }
+
+  .home-mobile-shortcuts strong {
+    font-size: 0.48rem;
+  }
+
+  .home-ref .home-ref-latest-item .article-card {
+    grid-template-columns: 102px minmax(0, 1fr);
+  }
+
+  .home-ref .home-ref-latest-item .article-card > a:first-child,
+  .home-ref .home-ref-latest-item .article-card > a:first-child img {
+    width: 102px;
+  }
+
+  .home-ref .home-ref-spotlight-grid {
+    gap: 5px;
+  }
+
+  .home-ref .home-ref-spotlight-card .content-card__body {
+    padding: 7px 6px 6px;
   }
 }

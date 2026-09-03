@@ -1,5 +1,6 @@
 import Comment from './comment.model.js';
 import Content from '../contents/content.model.js';
+import Media from '../media/media.model.js';
 import Reaction from '../reactions/reaction.model.js';
 import UserProfile from '../users/userProfile.model.js';
 import { createNotification } from '../../services/notification.service.js';
@@ -50,12 +51,16 @@ export async function list(contentId, query, viewerId = null) {
     deletedAt: null,
   };
 
+  const mediaFields =
+    'url secureUrl altText width height format resourceType originalFilename';
+
   const [items, total] = await Promise.all([
     Comment.find(filter)
       .populate(
         'userId',
         'username displayName emailVerifiedAt phoneVerifiedAt',
       )
+      .populate('mediaId', mediaFields)
       .sort(sort)
       .skip(skip)
       .limit(limit)
@@ -74,6 +79,7 @@ export async function list(contentId, query, viewerId = null) {
           'userId',
           'username displayName emailVerifiedAt phoneVerifiedAt',
         )
+        .populate('mediaId', mediaFields)
         .sort({ createdAt: 1 })
         .lean()
     : [];
@@ -156,11 +162,34 @@ export async function create(userId, contentId, data) {
     }
   }
 
+  let mediaId = null;
+  if (data.mediaId) {
+    const media = await Media.findOne({
+      _id: data.mediaId,
+      ownerId: userId,
+      status: 'active',
+      resourceType: 'image',
+    }).select('_id');
+
+    if (!media) {
+      throw new ApiError(
+        422,
+        'Ảnh/GIF đính kèm không hợp lệ hoặc không thuộc tài khoản của bạn.',
+        'COMMENT_MEDIA_INVALID',
+      );
+    }
+
+    mediaId = media._id;
+  }
+
+  const body = String(data.body || '').trim();
+
   const comment = await Comment.create({
     contentId,
     userId,
     parentId: data.parentId ?? null,
-    body: data.body,
+    body,
+    mediaId,
   });
 
   await Content.updateOne(
@@ -169,6 +198,9 @@ export async function create(userId, contentId, data) {
   );
 
   const recipient = parent?.userId ?? content.authorId;
+  const notificationMessage = body
+    ? body.slice(0, 160)
+    : '[Đã gửi một ảnh/GIF]';
 
   await createNotification({
     recipientId: recipient,
@@ -181,7 +213,7 @@ export async function create(userId, contentId, data) {
     title: parent
       ? 'Có người trả lời bình luận của bạn'
       : 'Bài viết của bạn có bình luận mới',
-    message: data.body.slice(0, 160),
+    message: notificationMessage,
     payload: {
       contentId: content._id,
       contentType: content.contentType,
@@ -189,7 +221,13 @@ export async function create(userId, contentId, data) {
     },
   });
 
-  return comment;
+  return Comment.findById(comment._id)
+    .populate('mediaId', mediaFieldsForComment())
+    .lean();
+}
+
+function mediaFieldsForComment() {
+  return 'url secureUrl altText width height format resourceType originalFilename';
 }
 
 export async function update(userId, id, body, isModerator = false) {
@@ -223,6 +261,7 @@ export async function remove(userId, id, isModerator = false) {
   comment.status = 'deleted';
   comment.deletedAt = new Date();
   comment.body = '[Bình luận đã bị xóa]';
+  comment.mediaId = null;
   await comment.save();
 
   await Content.updateOne(

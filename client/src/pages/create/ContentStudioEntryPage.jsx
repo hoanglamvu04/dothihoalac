@@ -8,6 +8,7 @@ import { apiErrorMessage } from '../../api/http';
 import { editorBasePath } from '../../utils/content';
 
 const createTasks = new Map();
+const COMMUNITY_CREATE_ROUTE = '/cong-dong/create';
 
 function sharedCreate(contentType) {
   if (!createTasks.has(contentType)) {
@@ -25,7 +26,6 @@ function sharedCreate(contentType) {
 }
 
 const LABELS = {
-  community: 'bài cộng đồng',
   property: 'tin bất động sản',
   job: 'tin tuyển dụng',
 };
@@ -36,6 +36,17 @@ export default function ContentStudioEntryPage({ contentType }) {
   const [error, setError] = useState('');
 
   useEffect(() => {
+    if (contentType === 'community') {
+      navigate('/cong-dong', {
+        replace: true,
+        state: {
+          communityComposerRoute: COMMUNITY_CREATE_ROUTE,
+          communityComposerEditId: '',
+        },
+      });
+      return undefined;
+    }
+
     let active = true;
 
     setError('');
@@ -62,6 +73,10 @@ export default function ContentStudioEntryPage({ contentType }) {
       active = false;
     };
   }, [attempt, contentType, navigate]);
+
+  if (contentType === 'community') {
+    return null;
+  }
 
   return (
     <main className="content-studio-entry">

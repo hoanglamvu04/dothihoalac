@@ -1,0 +1,80 @@
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 18px;
+}
+
+.pagination > button {
+  display: inline-grid;
+  place-items: center;
+  min-width: 42px;
+  height: 42px;
+  padding: 0 11px;
+  border: 1px solid #dbe6df;
+  border-radius: 11px;
+  color: #173c28 !important;
+  background: #fff;
+  font-size: 0.84rem;
+  font-weight: 800;
+  line-height: 1;
+  box-shadow: none;
+  cursor: pointer;
+}
+
+.pagination > button > span {
+  display: inline-block;
+  color: inherit !important;
+  line-height: 1;
+}
+
+.pagination > button:hover:not(:disabled):not(.is-active) {
+  border-color: #a9d2b9;
+  color: #0c7438 !important;
+  background: #f1faf4;
+}
+
+.pagination > button.is-active,
+.pagination > button[aria-current='page'] {
+  border-color: #0f7f3e !important;
+  color: #fff !important;
+  background: #0f7f3e !important;
+  box-shadow: 0 6px 16px rgb(15 127 62 / 0.18);
+}
+
+.pagination > button.is-active > span,
+.pagination > button[aria-current='page'] > span {
+  color: #fff !important;
+}
+
+.pagination > button:disabled {
+  cursor: not-allowed;
+  opacity: 0.42;
+  color: #829087 !important;
+  background: #f7f9f7;
+}
+
+.pagination > span {
+  display: inline-grid;
+  place-items: center;
+  min-width: 20px;
+  color: #87938c;
+  font-size: 0.8rem;
+}
+
+@media (max-width: 520px) {
+  .pagination {
+    gap: 6px;
+    margin-top: 14px;
+  }
+
+  .pagination > button {
+    min-width: 38px;
+    height: 38px;
+    padding-inline: 9px;
+    border-radius: 10px;
+    font-size: 0.78rem;
+  }
+}

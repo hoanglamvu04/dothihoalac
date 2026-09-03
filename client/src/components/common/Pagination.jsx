@@ -1,5 +1,7 @@
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 
+import './Pagination.css';
+
 export default function Pagination({ meta, onPageChange }) {
   const page = Number(meta?.page || 1);
   const totalPages = Math.max(1, Number(meta?.totalPages || 1));
@@ -12,15 +14,24 @@ export default function Pagination({ meta, onPageChange }) {
 
   return (
     <nav className="pagination" aria-label="Phân trang">
-      <button type="button" disabled={page <= 1} onClick={() => onPageChange(page - 1)}>
+      <button
+        type="button"
+        disabled={page <= 1}
+        onClick={() => onPageChange(page - 1)}
+        aria-label="Trang trước"
+      >
         <ChevronLeft size={18} />
       </button>
+
       {start > 1 ? (
         <>
-          <button type="button" onClick={() => onPageChange(1)}>1</button>
-          {start > 2 ? <span>…</span> : null}
+          <button type="button" onClick={() => onPageChange(1)} aria-label="Trang 1">
+            1
+          </button>
+          {start > 2 ? <span aria-hidden="true">…</span> : null}
         </>
       ) : null}
+
       {pages.map((value) => (
         <button
           type="button"
@@ -28,17 +39,31 @@ export default function Pagination({ meta, onPageChange }) {
           key={value}
           onClick={() => onPageChange(value)}
           aria-current={value === page ? 'page' : undefined}
+          aria-label={`Trang ${value}${value === page ? ', trang hiện tại' : ''}`}
         >
-          {value}
+          <span>{value}</span>
         </button>
       ))}
+
       {end < totalPages ? (
         <>
-          {end < totalPages - 1 ? <span>…</span> : null}
-          <button type="button" onClick={() => onPageChange(totalPages)}>{totalPages}</button>
+          {end < totalPages - 1 ? <span aria-hidden="true">…</span> : null}
+          <button
+            type="button"
+            onClick={() => onPageChange(totalPages)}
+            aria-label={`Trang ${totalPages}`}
+          >
+            {totalPages}
+          </button>
         </>
       ) : null}
-      <button type="button" disabled={page >= totalPages} onClick={() => onPageChange(page + 1)}>
+
+      <button
+        type="button"
+        disabled={page >= totalPages}
+        onClick={() => onPageChange(page + 1)}
+        aria-label="Trang sau"
+      >
         <ChevronRight size={18} />
       </button>
     </nav>

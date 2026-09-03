@@ -125,25 +125,37 @@ export async function uploadImage(
     );
   }
 
+  const isGif =
+    String(file.mimetype || '').toLowerCase() === 'image/gif' ||
+    safeExtension(file.originalname) === '.gif';
+
   const result = await uploadBuffer({
     buffer: file.buffer,
     folder: buildTargetFolder(folder),
     publicId: createPublicId(file.originalname),
     resourceType: 'image',
 
-    // Ép ảnh lưu trên Cloudinary thành WebP.
-    format: 'webp',
+    // Ảnh tĩnh được chuẩn hóa về WebP; GIF giữ nguyên để không mất animation.
+    format: isGif ? 'gif' : 'webp',
 
-    transformation: [
-      {
-        width: maxWidth,
-        height: maxHeight,
-        crop: 'limit',
-      },
-      {
-        quality,
-      },
-    ],
+    transformation: isGif
+      ? [
+          {
+            width: maxWidth,
+            height: maxHeight,
+            crop: 'limit',
+          },
+        ]
+      : [
+          {
+            width: maxWidth,
+            height: maxHeight,
+            crop: 'limit',
+          },
+          {
+            quality,
+          },
+        ],
   });
 
   return {

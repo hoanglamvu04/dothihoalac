@@ -43,7 +43,7 @@ function emptyResult(page, limit, total = 0) {
 }
 
 export async function listPublicJobs(query = {}) {
-  const { page, limit, skip } = parsePagination(query);
+  const { page, limit, skip } = parsePagination(query, { limit: 10 });
 
   const jobFilter = {
     deadline: { $gte: new Date() },
