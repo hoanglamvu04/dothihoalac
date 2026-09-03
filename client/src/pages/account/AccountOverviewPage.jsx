@@ -1,9 +1,11 @@
 import { Link, useOutletContext } from 'react-router-dom';
 import {
+  Activity,
   Bell,
   Bookmark,
   CheckCircle2,
   FileText,
+  Files,
   Home,
   Lock,
   MapPin,
@@ -72,9 +74,9 @@ export default function AccountOverviewPage() {
       </div>
 
       <nav className="account-overview-v2__tabs" aria-label="Lối tắt tài khoản">
-        <Link to="/tai-khoan/bai-viet">
+        <Link to="/tai-khoan/noi-dung">
           <FileText size={16} />
-          Bài viết
+          Bài đăng
         </Link>
         <Link to="/tai-khoan/tin-nha-dat">
           <Home size={16} />
@@ -93,7 +95,7 @@ export default function AccountOverviewPage() {
       <section className="account-overview-v2__section">
         <div className="account-overview-v2__section-heading">
           <div>
-            <h3>Tin nổi bật</h3>
+            <h3>Tổng quan tài khoản</h3>
             <p>Các trạng thái quan trọng nhất của tài khoản.</p>
           </div>
         </div>
@@ -104,6 +106,9 @@ export default function AccountOverviewPage() {
             <div>
               <small>Hoàn thiện hồ sơ</small>
               <strong>{completion}%</strong>
+              <div className="account-overview-v2__completion" aria-label={`Hoàn thiện hồ sơ ${completion}%`}>
+                <span style={{ width: `${completion}%` }} />
+              </div>
               <p>{completion >= 80 ? 'Hồ sơ của bạn đã khá đầy đủ.' : 'Bổ sung thêm thông tin để hồ sơ rõ ràng hơn.'}</p>
             </div>
           </article>
@@ -132,7 +137,7 @@ export default function AccountOverviewPage() {
         <div className="account-overview-v2__section-heading">
           <div>
             <h3>Thông tin tài khoản</h3>
-            <p>Bố cục gọn theo bản thiết kế mới, tập trung vào các trường chính.</p>
+            <p>Các trường chính đang được sử dụng trong hồ sơ của bạn.</p>
           </div>
           <Link to="/tai-khoan/ho-so">Cập nhật thông tin</Link>
         </div>
@@ -147,38 +152,49 @@ export default function AccountOverviewPage() {
         </div>
       </section>
 
-      <section className="account-overview-v2__quick">
-        <Link to="/dang-bai/cong-dong">
-          <FileText size={19} />
+      <section className="account-overview-v2__quick" aria-label="Truy cập nhanh">
+        <Link to="/tai-khoan/ho-so">
+          <UserRound size={19} />
           <span>
-            <strong>Đăng bài cộng đồng</strong>
-            <small>Chia sẻ tin, hỏi đáp hoặc thảo luận.</small>
+            <strong>Thông tin tài khoản</strong>
+            <small>Cập nhật hồ sơ và thông tin hiển thị.</small>
           </span>
         </Link>
-        <Link to="/dang-bai/nha-dat">
-          <Home size={19} />
+        <Link to="/tai-khoan/bao-mat">
+          <ShieldCheck size={19} />
           <span>
-            <strong>Đăng tin bất động sản</strong>
-            <small>Tạo tin bán, cho thuê hoặc sang nhượng.</small>
+            <strong>Bảo mật tài khoản</strong>
+            <small>Mật khẩu, email và số điện thoại.</small>
           </span>
         </Link>
-        {!user?.emailVerifiedAt || !user?.phoneVerifiedAt ? (
-          <Link to="/tai-khoan/bao-mat">
-            <ShieldCheck size={19} />
-            <span>
-              <strong>Hoàn thiện xác thực</strong>
-              <small>Kiểm tra email và số điện thoại của tài khoản.</small>
-            </span>
-          </Link>
-        ) : (
-          <Link to="/tai-khoan/thong-bao">
-            <Bell size={19} />
-            <span>
-              <strong>Xem thông báo</strong>
-              <small>Theo dõi các cập nhật mới nhất.</small>
-            </span>
-          </Link>
-        )}
+        <Link to="/tai-khoan/noi-dung">
+          <Files size={19} />
+          <span>
+            <strong>Bài đăng của tôi</strong>
+            <small>Quản lý bài cộng đồng, BĐS và việc làm.</small>
+          </span>
+        </Link>
+        <Link to="/tai-khoan/da-luu">
+          <Bookmark size={19} />
+          <span>
+            <strong>Tin đã lưu</strong>
+            <small>Xem lại những nội dung bạn đã đánh dấu.</small>
+          </span>
+        </Link>
+        <Link to="/tai-khoan/hoat-dong">
+          <Activity size={19} />
+          <span>
+            <strong>Nhật ký hoạt động</strong>
+            <small>Tìm kiếm, bình luận và nội dung đã thích.</small>
+          </span>
+        </Link>
+        <Link to="/tai-khoan/thong-bao">
+          <Bell size={19} />
+          <span>
+            <strong>Cài đặt & thông báo</strong>
+            <small>Theo dõi các cập nhật mới nhất của tài khoản.</small>
+          </span>
+        </Link>
       </section>
     </div>
   );
