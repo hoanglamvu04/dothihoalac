@@ -1,10 +1,10 @@
 import { Link, useLocation } from 'react-router-dom';
 import {
   BriefcaseBusiness,
-  Building2,
   House,
   Newspaper,
   UserRound,
+  UsersRound,
 } from 'lucide-react';
 
 import './MobileBottomNav.css';
@@ -23,14 +23,10 @@ const ITEMS = [
     match: (pathname) => pathname === '/viec-lam' || pathname.startsWith('/viec-lam/'),
   },
   {
-    to: '/bat-dong-san',
-    label: 'Bất động sản',
-    icon: Building2,
-    match: (pathname) =>
-      pathname === '/bat-dong-san' ||
-      pathname.startsWith('/bat-dong-san/') ||
-      pathname === '/nha-dat' ||
-      pathname.startsWith('/nha-dat/'),
+    to: '/cong-dong',
+    label: 'Cộng đồng',
+    icon: UsersRound,
+    match: (pathname) => pathname === '/cong-dong' || pathname.startsWith('/cong-dong/'),
   },
   {
     to: '/tin-tuc',
