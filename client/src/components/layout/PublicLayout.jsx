@@ -52,6 +52,21 @@ function loadRouteStyles(pathname) {
   return Promise.resolve();
 }
 
+function isAuthenticationPath(pathname) {
+  const authPrefixes = [
+    '/dang-nhap',
+    '/dang-ky',
+    '/quen-mat-khau',
+    '/dat-lai-mat-khau',
+    '/xac-thuc-email',
+    '/xac-thuc-so-dien-thoai',
+  ];
+
+  return authPrefixes.some(
+    (prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`),
+  );
+}
+
 function showMobileBottomNavigation(pathname) {
   const hiddenPrefixes = [
     '/cong-dong/create',
@@ -113,6 +128,7 @@ export default function PublicLayout() {
   const normalizedPath = location.pathname.replace(/\/+$/, '') || '/';
   const showCommunityAds = normalizedPath === '/cong-dong';
   const showBottomNav = showMobileBottomNavigation(normalizedPath);
+  const authRoute = isAuthenticationPath(normalizedPath);
   const topSlot = pageTopAdSlot(normalizedPath);
 
   useEffect(() => {
@@ -120,7 +136,15 @@ export default function PublicLayout() {
   }, [normalizedPath]);
 
   return (
-    <div className={`app-shell${showBottomNav ? ' app-shell--with-mobile-bottom-nav' : ''}`}>
+    <div
+      className={[
+        'app-shell',
+        showBottomNav ? 'app-shell--with-mobile-bottom-nav' : '',
+        authRoute ? 'app-shell--auth-route' : '',
+      ]
+        .filter(Boolean)
+        .join(' ')}
+    >
       <SiteHeader />
       <DeferredHeaderNavigation />
 
