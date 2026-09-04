@@ -5,13 +5,13 @@ export const SITE_PALETTES = [
   {
     id: 'earth',
     label: 'Nâu đất',
-    description: 'Tone thương hiệu hiện tại: nâu đất, kem và xanh trầm.',
+    description: 'Nâu đất, kem và nâu trầm đồng bộ, không pha xanh thương hiệu cũ.',
     swatches: ['#B59965', '#4A3D2C', '#FFFDF9'],
   },
   {
     id: 'green',
-    label: 'Xanh Hòa Lạc',
-    description: 'Phong cách xanh truyền thống, tươi nhưng vẫn sạch và hiện đại.',
+    label: 'Xanh truyền thống',
+    description: 'Phong cách xanh Hòa Lạc truyền thống, đồng bộ toàn bộ accent và CTA.',
     swatches: ['#1F8A4C', '#0B5A3B', '#F2F8F4'],
   },
   {
