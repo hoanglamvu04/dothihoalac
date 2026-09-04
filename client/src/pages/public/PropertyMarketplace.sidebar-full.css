@@ -1,0 +1,203 @@
+/*
+ * Property detail rail fix.
+ * Keep the listing marketplace sticky rail intact, but let the detail sidebar
+ * render its complete stack in normal document flow with no nested scrollbox.
+ * Palette is aligned with the main Bất động sản marketplace: deep Hòa Lạc
+ * green, earth-gold accent and warm off-white surfaces.
+ */
+
+@media (min-width: 1101px) {
+  .app-shell .property-detail-page {
+    --property-detail-green: #0b5a3b !important;
+    --property-detail-green-hover: #084c32 !important;
+    --property-detail-green-dark: #06462e !important;
+    --property-detail-green-deep: #053523 !important;
+    --property-detail-green-soft: #eef5f0 !important;
+    --property-detail-green-border: #d8e5dc !important;
+    --property-detail-gold: #b59662;
+    --property-detail-gold-soft: #f4ede1;
+    --property-detail-ink: #12251a !important;
+    --property-detail-text: #536159 !important;
+    --property-detail-muted: #7d8982 !important;
+    --property-detail-border: #e1e5e0 !important;
+    --property-detail-background: #f7f7f3 !important;
+    --property-detail-surface: #fffdf9 !important;
+    background: #f7f7f3 !important;
+  }
+
+  /* Full right rail: never crop cards and never create a nested scrollbar. */
+  .app-shell .property-detail-sidebar {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    inset: auto !important;
+    align-self: start !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    overscroll-behavior: auto !important;
+    scrollbar-width: auto !important;
+  }
+
+  .app-shell .property-detail-sidebar__content {
+    position: relative !important;
+    inset: auto !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    align-content: start !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    gap: 12px !important;
+    overflow: visible !important;
+    transform: none !important;
+  }
+
+  .app-shell .property-detail-sidebar .property-contact-card,
+  .app-shell .property-detail-sidebar .property-sidebar-card {
+    position: relative !important;
+    inset: auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    height: auto !important;
+    max-height: none !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    transform: none !important;
+  }
+
+  /* Prevent the summary/contact rows from forcing horizontal scrolling. */
+  .app-shell .property-sidebar-info,
+  .app-shell .property-sidebar-info dl,
+  .app-shell .property-sidebar-info dl > div,
+  .app-shell .property-contact-email,
+  .app-shell .property-contact-phone {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .app-shell .property-sidebar-info dl > div {
+    gap: 10px !important;
+  }
+
+  .app-shell .property-sidebar-info dt {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+  }
+
+  .app-shell .property-sidebar-info dd {
+    flex: 0 1 52% !important;
+    min-width: 0 !important;
+    max-width: 52% !important;
+    overflow-wrap: anywhere;
+    white-space: normal !important;
+  }
+
+  .app-shell .property-contact-email {
+    overflow: hidden !important;
+  }
+
+  .app-shell .property-contact-email span,
+  .app-shell .property-contact-phone > span {
+    min-width: 0 !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  /* Match the listing page's warm white + Hòa Lạc green visual language. */
+  .app-shell .property-detail-header__content,
+  .app-shell .property-gallery,
+  .app-shell .property-detail-main > section,
+  .app-shell .property-contact-card,
+  .app-shell .property-sidebar-card {
+    border-color: #e1e5e0 !important;
+    background: #fffdf9 !important;
+    box-shadow: 0 6px 22px rgb(31 45 36 / 0.045) !important;
+  }
+
+  .app-shell .property-detail-price-box {
+    border-color: #e4d8c2 !important;
+    background: linear-gradient(145deg, #fffdf9 0%, #f6efe4 100%) !important;
+    box-shadow: 0 6px 22px rgb(61 48 29 / 0.045) !important;
+  }
+
+  .app-shell .property-detail-price-box > span,
+  .app-shell .property-contact-price span {
+    color: #796b56 !important;
+  }
+
+  .app-shell .property-detail-price-box > strong,
+  .app-shell .property-contact-price strong {
+    color: #06462e !important;
+  }
+
+  .app-shell .property-contact-card {
+    border-color: #ddd4c5 !important;
+  }
+
+  .app-shell .property-contact-price {
+    border: 1px solid #e7dcc9 !important;
+    background: #f7f1e7 !important;
+  }
+
+  .app-shell .property-contact-reveal,
+  .app-shell .property-contact-phone {
+    border-color: #0b5a3b !important;
+    background: linear-gradient(135deg, #0b5a3b, #06462e) !important;
+  }
+
+  .app-shell .property-contact-reveal:hover:not(:disabled) {
+    background: #06462e !important;
+  }
+
+  .app-shell .property-section-heading > span,
+  .app-shell .property-contact-card__heading > span {
+    color: #0b5a3b !important;
+    background: #eef5f0 !important;
+  }
+
+  .app-shell .property-section-heading h2,
+  .app-shell .property-sidebar-heading h2,
+  .app-shell .property-contact-card__heading h2 {
+    color: #12251a !important;
+  }
+
+  .app-shell .property-sidebar-heading > svg,
+  .app-shell .property-sidebar-info dt svg {
+    color: #0b5a3b !important;
+  }
+
+  .app-shell .property-feature-list span {
+    border-color: #d7e4db !important;
+    color: #0b5a3b !important;
+    background: #f3f7f4 !important;
+  }
+
+  .app-shell .property-sidebar-architecture {
+    border-color: #0a4933 !important;
+    background:
+      radial-gradient(circle at 92% 12%, rgb(181 150 98 / 0.22), transparent 34%),
+      linear-gradient(145deg, #06462e, #0b5a3b) !important;
+  }
+
+  .app-shell .property-sidebar-architecture > span {
+    color: #ddc89f !important;
+  }
+
+  .app-shell .property-sidebar-architecture a {
+    color: #2f281e !important;
+    background: #d8bd8a !important;
+  }
+
+  .app-shell .property-sidebar-architecture a:hover {
+    background: #e3cda3 !important;
+  }
+}
