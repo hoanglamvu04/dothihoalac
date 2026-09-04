@@ -1,4 +1,5 @@
-/* Compact discovery rail: show only the first four items on initial visit. */
+/* Compact discovery rail: keep the original horizontal rhythm while only showing
+   the first four items on initial visit. */
 .community-reference-left .community-discovery-section--disclosure .community-discovery-list > :nth-child(n + 5) {
   display: none !important;
 }
@@ -7,34 +8,46 @@
   display: grid !important;
 }
 
+/* Keep the disclosure control visually identical to the original "Xem tất cả"
+   row instead of turning it into a large centered button. */
 .community-reference-left .community-discovery-section--disclosure .community-discovery-more--disclosure {
-  width: calc(100% - 16px);
-  min-height: 40px;
-  margin: 8px 8px 0;
-  padding: 0 12px;
-  display: inline-flex;
+  width: 100%;
+  min-height: 38px;
+  margin: 4px 0 0;
+  padding: 0 8px;
+  display: flex;
   align-items: center;
-  justify-content: center;
-  gap: 8px;
-  border: 1px solid color-mix(in srgb, var(--community-green, #135d3b) 18%, var(--community-border, #e3e8e4));
-  border-radius: 10px;
-  background: color-mix(in srgb, var(--community-green-soft, #eef6f1) 46%, var(--community-surface, #fff));
+  justify-content: space-between;
+  gap: 10px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
   color: var(--community-green-dark, #0b432b);
-  font-size: 13px;
-  font-weight: 760;
-  line-height: 1;
+  font-size: 12.5px;
+  font-weight: 700;
+  line-height: 1.2;
+  text-align: left;
   cursor: pointer;
-  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease, transform 160ms ease;
+  box-shadow: none;
+  transition: background-color 160ms ease, color 160ms ease;
 }
 
 .community-reference-left .community-discovery-section--disclosure .community-discovery-more--disclosure:hover {
-  border-color: color-mix(in srgb, var(--community-green, #135d3b) 34%, var(--community-border, #e3e8e4));
-  background: color-mix(in srgb, var(--community-green-soft, #eef6f1) 72%, var(--community-surface, #fff));
+  border-color: transparent;
+  background: color-mix(in srgb, var(--community-green-soft, #eef6f1) 72%, transparent);
+  color: var(--community-green, #135d3b);
+}
+
+.community-reference-left .community-discovery-section--disclosure .community-discovery-more--disclosure > span:first-child {
+  min-width: 0;
+  flex: 1 1 auto;
 }
 
 .community-reference-left .community-discovery-section--disclosure .community-discovery-more--disclosure svg {
   width: 14px;
   height: 14px;
+  flex: 0 0 auto;
+  margin-left: auto;
   transition: transform 180ms ease;
 }
 
@@ -42,29 +55,39 @@
   transform: rotate(-90deg);
 }
 
+/* Do not add a fade overlay: the old rail had a clean, flat horizontal layout
+   and the extra gradient made the section feel like a separate card. */
 .community-reference-left .community-discovery-section--disclosure:not(.is-expanded) .community-discovery-list {
   position: relative;
 }
 
 .community-reference-left .community-discovery-section--disclosure:not(.is-expanded) .community-discovery-list::after {
-  content: '';
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: -2px;
-  height: 18px;
-  pointer-events: none;
-  background: linear-gradient(to bottom, transparent, color-mix(in srgb, var(--community-surface, #fff) 92%, transparent));
-  opacity: 0.62;
+  content: none;
+}
+
+/* Preserve the original rail widths/spacing from CommunityPageReferenceV3. */
+.community-reference-left .community-discovery-section--disclosure {
+  width: 100%;
+  min-width: 0;
+}
+
+.community-reference-left .community-discovery-section--disclosure .community-discovery-list,
+.community-reference-left .community-discovery-section--disclosure .community-discovery-list > button {
+  width: 100%;
 }
 
 html[data-dthl-theme='dark'] .community-reference-left .community-discovery-section--disclosure .community-discovery-more--disclosure {
-  background: color-mix(in srgb, var(--community-surface-2) 86%, var(--community-green-soft) 14%);
+  background: transparent;
+  color: color-mix(in srgb, var(--community-green-soft, #eef6f1) 78%, #ffffff 22%);
+}
+
+html[data-dthl-theme='dark'] .community-reference-left .community-discovery-section--disclosure .community-discovery-more--disclosure:hover {
+  background: color-mix(in srgb, var(--community-surface-2) 84%, var(--community-green-soft) 16%);
 }
 
 @media (max-width: 1100px) {
   .community-reference-left .community-discovery-section--disclosure .community-discovery-more--disclosure {
-    min-height: 38px;
+    min-height: 36px;
     font-size: 12.5px;
   }
 }
