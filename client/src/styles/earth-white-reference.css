@@ -1,0 +1,362 @@
+/* =========================================================
+   EARTH PALETTE — WHITE-FIRST REFERENCE
+   Keep earth #B59965 as recognition/accent, but make the visual system
+   predominantly white. Loaded last so legacy green/cream page CSS cannot
+   reintroduce tinted canvases into the earth palette.
+========================================================= */
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] {
+  --dthl-palette-canvas: #ffffff !important;
+  --dthl-palette-surface: #ffffff !important;
+  --dthl-palette-surface-2: #ffffff !important;
+  --dthl-palette-surface-3: #faf9f7 !important;
+  --dthl-palette-border: #e7e3dc !important;
+  --dthl-palette-border-strong: #d8d0c4 !important;
+  --dthl-palette-ink: #25231f !important;
+  --dthl-palette-text: #5e5951 !important;
+  --dthl-palette-muted: #8b857c !important;
+  --dthl-palette-brand: #b59965 !important;
+  --dthl-palette-brand-hover: #9f8252 !important;
+  --dthl-palette-brand-dark: #4a3d2c !important;
+  --dthl-palette-brand-soft: #f7f3ed !important;
+  --dthl-palette-support: #725f42 !important;
+  --dthl-palette-support-soft: #f7f3ed !important;
+  --dthl-palette-shadow: 0 8px 24px rgb(37 35 31 / 0.045) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  body,
+  #root,
+  .app-shell,
+  .main-content,
+  .dth-home.home-ref,
+  .home-reference-v2,
+  .news-hub,
+  .article-view-page,
+  .properties-page,
+  .property-detail-page,
+  .jobs-page,
+  .job-detail-page,
+  .community-social-page,
+  .community-detail-page,
+  .area-page,
+  .search-page,
+  .static-page-view,
+  .contact-page,
+  .lead-page,
+  .public-member-page,
+  .create-hub-page,
+  .job-editor-page,
+  .property-editor-page,
+  .news-tip-page,
+  .account-center-page
+) {
+  background: #ffffff !important;
+}
+
+/* Large surfaces are white. Earth is reserved for recognition and actions. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .home-reference-panel,
+  .home-reference-community,
+  .home-reference-properties,
+  .home-ref-state,
+  .news-masthead,
+  .news-category-bar,
+  .news-filter-panel,
+  .news-content-layout__main,
+  .news-content-layout__rail,
+  .news-stream,
+  .news-story,
+  .article-view-main,
+  .article-view-header,
+  .article-view-cover,
+  .article-view-content,
+  .article-view-reactions,
+  .article-view-comments,
+  .article-sidebar-card,
+  .properties-page__container,
+  .properties-market-shell,
+  .properties-results,
+  .property-detail-header__content,
+  .property-detail-price-box,
+  .property-gallery,
+  .property-detail-main > section,
+  .property-contact-card,
+  .property-sidebar-card,
+  .jobs-market-search,
+  .jobs-employers-panel,
+  .jobs-featured-panel,
+  .jobs-results__main,
+  .jobs-page .job-card,
+  .job-detail-header,
+  .job-detail-main > section,
+  .job-apply-card,
+  .job-sidebar-card,
+  .community-reference-card,
+  .community-reference-composer,
+  .search-start,
+  .search-results,
+  .public-member-header
+) {
+  background: #ffffff !important;
+  border-color: var(--dthl-palette-border) !important;
+  box-shadow: var(--dthl-palette-shadow) !important;
+}
+
+/* =========================================================
+   HEADER — white shell, earth only as active/interactive accent.
+========================================================= */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .dthl-header,
+  .dthl-header-main,
+  .dthl-header-nav,
+  .dthl-header-nav-upgrade
+) {
+  background: rgb(255 255 255 / 0.98) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .dthl-header-nav__link.is-active,
+  .dthl-header-nav-upgrade__link.is-active
+) {
+  color: var(--dthl-palette-brand-dark) !important;
+  background: #ffffff !important;
+  border-color: var(--dthl-palette-border) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-nav__link.is-active::after {
+  background: var(--dthl-palette-brand) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .dthl-icon-button:hover,
+  .dthl-icon-button.is-active,
+  .dthl-mobile-menu-button:hover
+) {
+  color: var(--dthl-palette-brand-dark) !important;
+  background: #ffffff !important;
+  border-color: color-mix(in srgb, var(--dthl-palette-brand) 45%, var(--dthl-palette-border)) !important;
+}
+
+/* =========================================================
+   NEWS LIST — white editorial canvas.
+========================================================= */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-hub {
+  --news-surface: #ffffff !important;
+  --news-background: #ffffff !important;
+  --news-canvas: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .news-masthead,
+  .news-filter-panel,
+  .news-lead-grid,
+  .news-stream,
+  .news-story,
+  .news-context-rail,
+  .news-context-card
+) {
+  background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .news-category-bar nav button,
+  .news-filter-toggle,
+  .news-filter-panel select,
+  .news-filter-panel input
+) {
+  background: #ffffff !important;
+  border-color: var(--dthl-palette-border) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .news-category-bar nav button.is-active,
+  .news-filter-toggle.is-active,
+  .news-masthead__search button
+) {
+  color: #ffffff !important;
+  background: var(--dthl-palette-brand) !important;
+  border-color: var(--dthl-palette-brand) !important;
+}
+
+/* =========================================================
+   ARTICLE DETAIL — remove the exposed tinted gutter/card look.
+========================================================= */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .article-view-page {
+  --article-background: #ffffff !important;
+  --article-surface: #ffffff !important;
+  --article-border: var(--dthl-palette-border) !important;
+  --article-green: var(--dthl-palette-brand) !important;
+  --article-green-hover: var(--dthl-palette-brand-hover) !important;
+  --article-green-dark: var(--dthl-palette-brand-dark) !important;
+  --article-green-soft: var(--dthl-palette-brand-soft) !important;
+  --article-green-border: var(--dthl-palette-border-strong) !important;
+  background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .article-view-main {
+  overflow: visible !important;
+  border-color: var(--dthl-palette-border) !important;
+  border-radius: 16px !important;
+  background: #ffffff !important;
+  box-shadow: 0 5px 20px rgb(37 35 31 / 0.04) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .article-view-header {
+  background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .article-view-header::after {
+  opacity: 0.2 !important;
+  border-color: color-mix(in srgb, var(--dthl-palette-brand) 18%, transparent) !important;
+  box-shadow:
+    0 0 0 35px color-mix(in srgb, var(--dthl-palette-brand) 4%, transparent),
+    0 0 0 72px color-mix(in srgb, var(--dthl-palette-brand) 2%, transparent) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .article-view-cover,
+  .article-view-reactions
+) {
+  background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .article-sidebar-card {
+  background: #ffffff !important;
+  border-color: var(--dthl-palette-border) !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .article-sidebar-toc button:hover,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .article-sidebar-share__actions button:hover {
+  color: var(--dthl-palette-brand-dark) !important;
+  background: var(--dthl-palette-brand-soft) !important;
+  border-color: var(--dthl-palette-border-strong) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .article-sidebar-share__actions button {
+  color: var(--dthl-palette-brand-dark) !important;
+  background: #ffffff !important;
+  border-color: color-mix(in srgb, var(--dthl-palette-brand) 34%, var(--dthl-palette-border)) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .article-sidebar-cta {
+  border-color: color-mix(in srgb, var(--dthl-palette-brand) 35%, transparent) !important;
+  background:
+    radial-gradient(circle at 92% 10%, rgb(181 153 101 / 0.16), transparent 32%),
+    linear-gradient(145deg, #4a3d2c, #725f42) !important;
+  box-shadow: 0 14px 34px rgb(74 61 44 / 0.16) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .article-sidebar-cta > span {
+  color: #eadcc4 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .article-sidebar-cta a {
+  color: var(--dthl-palette-brand-dark) !important;
+  background: #ffffff !important;
+}
+
+/* =========================================================
+   JOB DETAIL — white header and compact top-aligned secondary actions.
+========================================================= */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-detail-header {
+  align-items: start !important;
+  background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-detail-header h1 {
+  max-width: none !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-detail-header__actions {
+  align-self: start !important;
+  padding-top: 12px !important;
+  gap: 8px !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-detail-header__actions button {
+  min-height: 38px !important;
+  color: var(--dthl-palette-brand-dark) !important;
+  background: #ffffff !important;
+  border-color: color-mix(in srgb, var(--dthl-palette-brand) 34%, var(--dthl-palette-border)) !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-detail-header__actions button:hover {
+  color: #ffffff !important;
+  background: var(--dthl-palette-brand) !important;
+  border-color: var(--dthl-palette-brand) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .job-detail-company-logo,
+  .job-deadline-badge,
+  .job-section-heading > span,
+  .job-facts-grid article > span,
+  .job-apply-card__company > span
+) {
+  color: var(--dthl-palette-brand-dark) !important;
+  background: var(--dthl-palette-brand-soft) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .job-facts-grid article,
+  .job-description-lead,
+  .job-application-method__content,
+  .job-apply-card__salary,
+  .job-apply-deadline,
+  .job-sidebar-share__actions button,
+  .job-apply-card__contacts > button
+) {
+  background: #ffffff !important;
+  border-color: var(--dthl-palette-border) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card__contacts a:first-of-type,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-scroll-top {
+  color: #ffffff !important;
+  background: var(--dthl-palette-brand) !important;
+  border-color: var(--dthl-palette-brand) !important;
+}
+
+/* =========================================================
+   PROPERTY / HOME / COMMUNITY — keep only small accents warm.
+========================================================= */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .properties-hero-search,
+  .properties-filter-toolbar,
+  .properties-results,
+  .properties-sidebar-card,
+  .community-reference-feed-tabs,
+  .home-mobile-shortcuts
+) {
+  background: #ffffff !important;
+  border-color: var(--dthl-palette-border) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .properties-type-tabs button.is-active,
+  .properties-filter-chip.is-active,
+  .community-reference-feed-tabs button.is-active
+) {
+  color: #ffffff !important;
+  background: var(--dthl-palette-brand) !important;
+  border-color: var(--dthl-palette-brand) !important;
+}
+
+/* Mobile: do not reintroduce beige canvases from page-specific media rules. */
+@media (max-width: 760px) {
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+    .jobs-page,
+    .job-detail-page,
+    .article-view-page,
+    .news-hub,
+    .properties-page,
+    .property-detail-page,
+    .community-social-page,
+    .community-detail-page
+  ) {
+    background: #ffffff !important;
+  }
+}
