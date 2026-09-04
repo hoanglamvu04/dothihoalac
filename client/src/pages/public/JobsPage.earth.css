@@ -1,0 +1,549 @@
+/*
+ * Jobs marketplace earth-brand polish.
+ * Intentionally keeps the existing layout/DOM untouched and only aligns
+ * color, typography, surfaces and interaction states with the BĐS visual
+ * system: earth #B59965, dark earth #4A3D2C, warm canvas #F7F4ED,
+ * warm card #FFFDF9 and supporting green #365443.
+ */
+
+.app-shell .jobs-page,
+.app-shell .jobs-page * {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.app-shell .jobs-page {
+  --jobs-brand: #b59965;
+  --jobs-brand-deep: #4a3d2c;
+  --jobs-brand-soft: #efe8dc;
+  --jobs-ink: #28251f;
+  --jobs-text: #514b43;
+  --jobs-muted: #7a7268;
+  --jobs-border: #e3dbcf;
+  --jobs-border-soft: #eee8de;
+  --jobs-surface: #fffdf9;
+  --jobs-background: #f7f4ed;
+  --jobs-green: #365443;
+  --jobs-green-hover: #294336;
+  --jobs-green-dark: #2b4939;
+  --jobs-green-soft: #eef2ef;
+  --jobs-green-soft-strong: #e1e8e3;
+  --jobs-shadow: 0 12px 34px rgb(74 61 44 / 0.08);
+  --jobs-shadow-soft: 0 5px 18px rgb(74 61 44 / 0.05);
+
+  color: var(--jobs-ink) !important;
+  background:
+    radial-gradient(circle at 12% 4%, rgb(181 153 101 / 0.08), transparent 24%),
+    linear-gradient(180deg, #fbf9f4 0%, var(--jobs-background) 48%, #f5f1e9 100%) !important;
+}
+
+/* =========================================================
+   HERO — same composition, earth-led palette
+========================================================= */
+
+.app-shell .jobs-market-hero {
+  border-color: #ded4c4 !important;
+  background:
+    radial-gradient(circle at 4% 20%, rgb(239 232 220 / 0.98) 0 70px, transparent 72px),
+    linear-gradient(110deg, #fffdf9 0%, #f5efe5 47%, #e8eee8 100%) !important;
+  box-shadow: 0 8px 26px rgb(74 61 44 / 0.055) !important;
+}
+
+.app-shell .jobs-market-hero::before {
+  background: #d8c49f !important;
+  opacity: 0.78 !important;
+}
+
+.app-shell .jobs-market-hero::after {
+  background: #cfae76 !important;
+  opacity: 0.72 !important;
+}
+
+.app-shell .jobs-market-hero__eyebrow {
+  color: var(--jobs-brand-deep) !important;
+}
+
+.app-shell .jobs-market-hero__eyebrow svg {
+  color: var(--jobs-brand) !important;
+}
+
+.app-shell .jobs-market-hero h1 {
+  color: var(--jobs-brand-deep) !important;
+  text-wrap: balance;
+}
+
+.app-shell .jobs-market-hero h2 {
+  color: var(--jobs-green) !important;
+}
+
+.app-shell .jobs-market-hero__copy > p {
+  color: var(--jobs-text) !important;
+}
+
+.app-shell .jobs-market-hero__chips span {
+  border-color: #ddd1be !important;
+  color: var(--jobs-brand-deep) !important;
+  background: rgb(255 253 249 / 0.88) !important;
+  box-shadow: 0 4px 14px rgb(74 61 44 / 0.035) !important;
+}
+
+.app-shell .jobs-market-hero__chips svg {
+  color: var(--jobs-brand) !important;
+}
+
+/* Keep the campus artwork, but mute its greens into the shared palette. */
+.app-shell .jobs-market-hero__sun {
+  background: #d9b77d !important;
+  box-shadow: 0 0 0 14px rgb(227 207 173 / 0.32) !important;
+}
+
+.app-shell .jobs-market-hero__hill--back {
+  background: #dfe8e1 !important;
+}
+
+.app-shell .jobs-market-hero__hill--front {
+  background: #cbd9ce !important;
+}
+
+.app-shell .jobs-market-campus__building {
+  border-color: rgb(74 61 44 / 0.12) !important;
+  color: #72887a !important;
+  background:
+    repeating-linear-gradient(90deg, transparent 0 17px, rgb(74 61 44 / 0.055) 18px 20px),
+    linear-gradient(180deg, #f5f3ed, #e4e8e2) !important;
+  box-shadow: 0 8px 20px rgb(74 61 44 / 0.08) !important;
+}
+
+.app-shell .jobs-market-campus__tree {
+  background: #708a6e !important;
+  box-shadow:
+    inset -10px -8px 0 rgb(54 84 67 / 0.16),
+    0 12px 0 -8px #765b3d !important;
+}
+
+.app-shell .jobs-market-campus__road {
+  background: linear-gradient(180deg, #ddd8ce, #f0ede7) !important;
+}
+
+.app-shell .jobs-market-campus > strong {
+  border-color: #d7cab6 !important;
+  color: var(--jobs-brand-deep) !important;
+  background: #f4ede1 !important;
+}
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.app-shell .jobs-market-search {
+  border-color: #ddd4c6 !important;
+  background: rgb(255 253 249 / 0.97) !important;
+  box-shadow: 0 18px 42px rgb(74 61 44 / 0.12) !important;
+}
+
+.app-shell .jobs-market-search > label {
+  color: var(--jobs-brand) !important;
+  border-right-color: #e8e0d4 !important;
+}
+
+.app-shell .jobs-market-search > label:focus-within {
+  background: #faf6ef !important;
+}
+
+.app-shell .jobs-market-search input,
+.app-shell .jobs-market-search select {
+  color: var(--jobs-ink) !important;
+}
+
+.app-shell .jobs-market-search input::placeholder {
+  color: #9a9185 !important;
+}
+
+.app-shell .jobs-market-search__keyword > button:hover {
+  color: var(--jobs-brand-deep) !important;
+  background: var(--jobs-brand-soft) !important;
+}
+
+.app-shell .jobs-market-search > button {
+  color: #fff !important;
+  background: linear-gradient(135deg, #b59965, #8f754d) !important;
+  box-shadow: 0 10px 24px rgb(181 153 101 / 0.22) !important;
+}
+
+.app-shell .jobs-market-search > button:hover {
+  background: linear-gradient(135deg, #aa8c59, #806744) !important;
+  box-shadow: 0 14px 28px rgb(181 153 101 / 0.26) !important;
+}
+
+/* =========================================================
+   HEADINGS + DISCOVERY
+========================================================= */
+
+.app-shell .jobs-section-heading > div > span,
+.app-shell .jobs-panel-heading > div > span,
+.app-shell .jobs-safety-card__eyebrow,
+.app-shell .jobs-results__eyebrow {
+  color: #8d744d !important;
+}
+
+.app-shell .jobs-section-heading h2,
+.app-shell .jobs-panel-heading h2,
+.app-shell .jobs-results__header h2,
+.app-shell .jobs-safety-card h3 {
+  color: var(--jobs-brand-deep) !important;
+}
+
+.app-shell .jobs-section-heading > button,
+.app-shell .jobs-panel-heading > a {
+  color: var(--jobs-green) !important;
+}
+
+.app-shell .jobs-discovery__grid > button {
+  border-color: #e3dbcf !important;
+  color: var(--jobs-text) !important;
+  background: var(--jobs-surface) !important;
+  box-shadow: var(--jobs-shadow-soft) !important;
+}
+
+.app-shell .jobs-discovery__grid > button:hover,
+.app-shell .jobs-discovery__grid > button.is-active {
+  border-color: #cdb88f !important;
+  background: #fffaf1 !important;
+  box-shadow: 0 9px 24px rgb(74 61 44 / 0.08) !important;
+}
+
+.app-shell .jobs-discovery__grid strong {
+  color: var(--jobs-brand-deep) !important;
+}
+
+.app-shell .jobs-discovery__grid small {
+  color: var(--jobs-muted) !important;
+}
+
+/* Preserve category differentiation, but pull each icon toward natural tones. */
+.app-shell .jobs-discovery__icon.is-green {
+  background: linear-gradient(135deg, #56715f, #365443) !important;
+}
+
+.app-shell .jobs-discovery__icon.is-blue {
+  background: linear-gradient(135deg, #718b94, #526e79) !important;
+}
+
+.app-shell .jobs-discovery__icon.is-cyan {
+  background: linear-gradient(135deg, #6c9890, #4f7f77) !important;
+}
+
+.app-shell .jobs-discovery__icon.is-orange {
+  background: linear-gradient(135deg, #c59462, #ae754a) !important;
+}
+
+.app-shell .jobs-discovery__icon.is-violet {
+  background: linear-gradient(135deg, #887a8c, #6f6075) !important;
+}
+
+.app-shell .jobs-discovery__icon.is-amber {
+  background: linear-gradient(135deg, #b59965, #927344) !important;
+}
+
+.app-shell .jobs-discovery__icon.is-pink {
+  background: linear-gradient(135deg, #b57b7d, #9c6568) !important;
+}
+
+/* =========================================================
+   PANELS / EMPLOYERS / FEATURED JOBS
+========================================================= */
+
+.app-shell .jobs-employers-panel,
+.app-shell .jobs-featured-panel,
+.app-shell .jobs-results__main {
+  border-color: var(--jobs-border) !important;
+  background: var(--jobs-surface) !important;
+  box-shadow: var(--jobs-shadow-soft) !important;
+}
+
+.app-shell .jobs-employers-panel__companies button {
+  border-color: #e8e0d5 !important;
+  color: var(--jobs-text) !important;
+  background: #fbf8f2 !important;
+}
+
+.app-shell .jobs-employers-panel__companies button:hover {
+  border-color: #cfba94 !important;
+  background: #fffaf1 !important;
+}
+
+.app-shell .jobs-employers-panel__companies button > span {
+  color: var(--jobs-brand-deep) !important;
+  background: var(--jobs-brand-soft) !important;
+}
+
+.app-shell .jobs-employers-panel__companies strong {
+  color: #635b51 !important;
+}
+
+.app-shell .jobs-employer-cta {
+  background:
+    radial-gradient(circle at 86% 45%, rgb(181 153 101 / 0.18), transparent 34%),
+    linear-gradient(135deg, #f0e7d8, #f7f2e8) !important;
+}
+
+.app-shell .jobs-employer-cta::after {
+  background: rgb(181 153 101 / 0.08) !important;
+}
+
+.app-shell .jobs-employer-cta strong {
+  color: var(--jobs-brand-deep) !important;
+}
+
+.app-shell .jobs-employer-cta span {
+  color: var(--jobs-muted) !important;
+}
+
+.app-shell .jobs-employer-cta > a {
+  color: #fff !important;
+  background: var(--jobs-green) !important;
+}
+
+.app-shell .jobs-featured-card .job-card {
+  border-color: #e8e0d5 !important;
+  background: #fbf8f2 !important;
+}
+
+.app-shell .jobs-featured-card .job-card:hover {
+  border-color: #cfba94 !important;
+  background: #fffdf9 !important;
+}
+
+/* =========================================================
+   RESULTS CONTROLS + FILTERS
+========================================================= */
+
+.app-shell .jobs-results__header p {
+  color: var(--jobs-muted) !important;
+}
+
+.app-shell .jobs-results__reload,
+.app-shell .jobs-results-controls__types button,
+.app-shell .jobs-results-controls__actions > button,
+.app-shell .jobs-results-controls__actions > label,
+.app-shell .jobs-view-switch button {
+  border-color: #e2dacf !important;
+  color: #6d655c !important;
+  background: var(--jobs-surface) !important;
+}
+
+.app-shell .jobs-results-controls {
+  border-top-color: var(--jobs-border-soft) !important;
+  border-bottom-color: var(--jobs-border-soft) !important;
+}
+
+.app-shell .jobs-results-controls__types button:hover,
+.app-shell .jobs-results-controls__types button.is-active {
+  border-color: #b59965 !important;
+  color: #fff !important;
+  background: #b59965 !important;
+}
+
+.app-shell .jobs-results-controls__actions > button b {
+  background: var(--jobs-brand) !important;
+}
+
+.app-shell .jobs-view-switch {
+  border-color: #e2dacf !important;
+  background: #f8f4ed !important;
+}
+
+.app-shell .jobs-view-switch button.is-active {
+  color: var(--jobs-brand-deep) !important;
+  background: var(--jobs-brand-soft) !important;
+}
+
+.app-shell .jobs-active-filters > button {
+  border-color: #dacbad !important;
+  color: #6f5738 !important;
+  background: #faf4e8 !important;
+}
+
+.app-shell .jobs-active-filters > button.jobs-active-filters__clear {
+  color: var(--jobs-muted) !important;
+  background: transparent !important;
+}
+
+/* =========================================================
+   JOB CARDS — typography + earth/green balance
+========================================================= */
+
+.app-shell .jobs-page .jobs-results__main .job-card {
+  border-color: #e7ded2 !important;
+  background: #fffdf9 !important;
+}
+
+.app-shell .jobs-page .jobs-results__main .job-card:hover {
+  border-color: #cdb88f !important;
+  box-shadow: 0 8px 24px rgb(74 61 44 / 0.075) !important;
+}
+
+.app-shell .jobs-page .jobs-results__main .job-card__icon {
+  color: var(--jobs-green) !important;
+  background: var(--jobs-green-soft) !important;
+}
+
+.app-shell .jobs-page .job-card h3,
+.app-shell .jobs-page .jobs-results__main .job-card h3 {
+  color: var(--jobs-brand-deep) !important;
+}
+
+.app-shell .jobs-page .job-card h3 a:hover,
+.app-shell .jobs-page .jobs-results__main .job-card h3 a:hover {
+  color: var(--jobs-green) !important;
+}
+
+.app-shell .jobs-page .job-card__body > strong,
+.app-shell .jobs-page .jobs-results__main .job-card__body > strong {
+  color: #71685e !important;
+}
+
+.app-shell .jobs-page .job-card__salary,
+.app-shell .jobs-page .jobs-results__main .job-card__salary {
+  color: var(--jobs-green) !important;
+}
+
+.app-shell .jobs-page .job-card__body > div:last-child,
+.app-shell .jobs-page .jobs-results__main .job-card__body > div:last-child {
+  color: var(--jobs-muted) !important;
+}
+
+.app-shell .jobs-page .job-card__body > div:last-child svg,
+.app-shell .jobs-page .jobs-results__main .job-card__body > div:last-child svg {
+  color: var(--jobs-brand) !important;
+}
+
+/* =========================================================
+   SAFETY / SIDEBAR
+========================================================= */
+
+.app-shell .jobs-safety-card {
+  border-color: #ded5c7 !important;
+  background:
+    radial-gradient(circle at 84% 18%, rgb(181 153 101 / 0.14), transparent 35%),
+    linear-gradient(180deg, #fffdf9, #f7f1e7) !important;
+  box-shadow: var(--jobs-shadow-soft) !important;
+  scrollbar-color: #d7c9b4 transparent;
+}
+
+.app-shell .jobs-safety-card__art > span:first-child {
+  color: var(--jobs-green) !important;
+  background: var(--jobs-green-soft) !important;
+}
+
+.app-shell .jobs-safety-card__art > span:last-child {
+  color: var(--jobs-brand-deep) !important;
+  background: var(--jobs-brand-soft) !important;
+}
+
+.app-shell .jobs-safety-card > p,
+.app-shell .jobs-safety-card li {
+  color: var(--jobs-text) !important;
+}
+
+.app-shell .jobs-safety-card li svg {
+  color: var(--jobs-brand) !important;
+}
+
+.app-shell .jobs-safety-card > a {
+  border-color: #d7c8ae !important;
+  color: var(--jobs-brand-deep) !important;
+  background: #fffaf1 !important;
+}
+
+.app-shell .jobs-safety-card > a:hover {
+  border-color: #b59965 !important;
+  background: var(--jobs-brand-soft) !important;
+}
+
+/* =========================================================
+   EMPTY / PAGINATION / FILTER MODAL
+========================================================= */
+
+.app-shell .jobs-empty-state {
+  border-color: #d9cdbc !important;
+  background: #fbf8f2 !important;
+}
+
+.app-shell .jobs-empty-state > span {
+  color: var(--jobs-brand-deep) !important;
+  background: var(--jobs-brand-soft) !important;
+}
+
+.app-shell .jobs-empty-state h3 {
+  color: var(--jobs-brand-deep) !important;
+}
+
+.app-shell .jobs-empty-state p {
+  color: var(--jobs-muted) !important;
+}
+
+.app-shell .jobs-page .pagination > button {
+  border-color: #ddd4c6 !important;
+  color: var(--jobs-brand-deep) !important;
+  background: var(--jobs-surface) !important;
+}
+
+.app-shell .jobs-page .pagination > button:hover:not(:disabled):not(.is-active) {
+  border-color: #c8b28c !important;
+  color: var(--jobs-brand-deep) !important;
+  background: #faf4e8 !important;
+}
+
+.app-shell .jobs-page .pagination > button.is-active,
+.app-shell .jobs-page .pagination > button[aria-current='page'] {
+  border-color: #b59965 !important;
+  color: #fff !important;
+  background: #b59965 !important;
+  box-shadow: 0 6px 16px rgb(181 153 101 / 0.2) !important;
+}
+
+/* Keep modal layout intact; only align its surfaces and typography. */
+.app-shell .jobs-filter-modal,
+.app-shell .jobs-filter-dialog,
+.app-shell .jobs-filter-panel {
+  color: var(--jobs-ink) !important;
+  background: var(--jobs-surface) !important;
+}
+
+.app-shell .jobs-page :is(input, select, textarea) {
+  accent-color: #b59965;
+}
+
+.app-shell .jobs-page :is(a, button, input, select, textarea):focus-visible {
+  outline: 3px solid rgb(181 153 101 / 0.22) !important;
+  outline-offset: 2px;
+}
+
+/* Mobile/tablet retain their existing layout and only inherit the palette. */
+@media (max-width: 760px) {
+  .app-shell .jobs-page {
+    background: #f7f4ed !important;
+  }
+
+  .app-shell .jobs-market-hero {
+    border-color: #ded4c4 !important;
+    background: linear-gradient(145deg, #fffdf9, #f1e9dc) !important;
+  }
+
+  .app-shell .jobs-market-search,
+  .app-shell .jobs-employers-panel,
+  .app-shell .jobs-featured-panel,
+  .app-shell .jobs-results__main,
+  .app-shell .jobs-safety-card,
+  .app-shell .jobs-page .job-card {
+    border-color: #e3dbcf !important;
+    background: #fffdf9 !important;
+  }
+
+  .app-shell .jobs-market-search > button,
+  .app-shell .jobs-results-controls__types button.is-active {
+    background: #b59965 !important;
+  }
+}
