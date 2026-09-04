@@ -1,0 +1,169 @@
+.dthl-site-palette-picker {
+  padding: 14px 0 2px;
+  margin-top: 12px;
+  border-top: 1px solid var(--dthl-mode-border, #e4ddd1);
+}
+
+.dthl-site-palette-picker__heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+
+.dthl-site-palette-picker__heading > div {
+  min-width: 0;
+}
+
+.dthl-site-palette-picker__heading strong,
+.dthl-site-palette-picker__heading span {
+  display: block;
+}
+
+.dthl-site-palette-picker__heading strong {
+  color: var(--dthl-mode-ink, #28251f);
+  font-size: 13px;
+  font-weight: 780;
+}
+
+.dthl-site-palette-picker__heading span {
+  margin-top: 3px;
+  color: var(--dthl-mode-muted, #8b8173);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.dthl-site-palette-picker__badge {
+  flex: 0 0 auto;
+  min-height: 24px;
+  padding: 0 8px;
+  border: 1px solid color-mix(in srgb, var(--dthl-mode-brand, #b59965) 26%, var(--dthl-mode-border, #e4ddd1));
+  border-radius: 999px;
+  color: var(--dthl-mode-brand-dark, #4a3d2c);
+  background: var(--dthl-mode-brand-soft, #efe8dc);
+  font-size: 10px;
+  font-weight: 760;
+  line-height: 22px;
+  white-space: nowrap;
+}
+
+.dthl-site-palette-picker__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.dthl-site-palette-picker__option {
+  position: relative;
+  display: grid;
+  grid-template-columns: 48px minmax(0, 1fr) 20px;
+  align-items: center;
+  width: 100%;
+  min-height: 62px;
+  padding: 9px 10px;
+  gap: 9px;
+  border: 1px solid var(--dthl-mode-border, #e4ddd1);
+  border-radius: 12px;
+  color: var(--dthl-mode-text, #5e574d);
+  background: var(--dthl-mode-surface, #fffdf9);
+  text-align: left;
+  cursor: pointer;
+  transition: border-color 150ms ease, box-shadow 150ms ease, transform 150ms ease, background 150ms ease;
+}
+
+.dthl-site-palette-picker__option:hover {
+  border-color: color-mix(in srgb, var(--dthl-mode-brand, #b59965) 48%, var(--dthl-mode-border, #e4ddd1));
+  box-shadow: 0 7px 18px color-mix(in srgb, var(--dthl-mode-brand-dark, #4a3d2c) 9%, transparent);
+  transform: translateY(-1px);
+}
+
+.dthl-site-palette-picker__option.is-active {
+  border-color: var(--dthl-mode-brand, #b59965);
+  background: color-mix(in srgb, var(--dthl-mode-brand-soft, #efe8dc) 62%, var(--dthl-mode-surface, #fffdf9));
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--dthl-mode-brand, #b59965) 10%, transparent);
+}
+
+.dthl-site-palette-picker__swatches {
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 48px;
+  height: 34px;
+}
+
+.dthl-site-palette-picker__swatches i {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--dthl-mode-surface, #fff);
+  border-radius: 50%;
+  box-shadow: 0 2px 7px rgb(0 0 0 / 0.12);
+}
+
+.dthl-site-palette-picker__swatches i:nth-child(1) {
+  left: 0;
+  background: var(--swatch-1);
+}
+
+.dthl-site-palette-picker__swatches i:nth-child(2) {
+  left: 12px;
+  background: var(--swatch-2);
+}
+
+.dthl-site-palette-picker__swatches i:nth-child(3) {
+  left: 24px;
+  background: var(--swatch-3);
+}
+
+.dthl-site-palette-picker__copy {
+  min-width: 0;
+}
+
+.dthl-site-palette-picker__copy strong,
+.dthl-site-palette-picker__copy small {
+  display: block;
+}
+
+.dthl-site-palette-picker__copy strong {
+  color: var(--dthl-mode-ink, #28251f);
+  font-size: 12px;
+  font-weight: 750;
+  line-height: 1.2;
+}
+
+.dthl-site-palette-picker__copy small {
+  display: -webkit-box;
+  margin-top: 3px;
+  overflow: hidden;
+  color: var(--dthl-mode-muted, #8b8173);
+  font-size: 9.5px;
+  line-height: 1.35;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.dthl-site-palette-picker__check {
+  display: grid;
+  width: 19px;
+  height: 19px;
+  place-items: center;
+  border: 1px solid var(--dthl-mode-border, #e4ddd1);
+  border-radius: 50%;
+  color: transparent;
+  background: var(--dthl-mode-surface-2, #fbf7f0);
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.dthl-site-palette-picker__option.is-active .dthl-site-palette-picker__check {
+  border-color: var(--dthl-mode-brand, #b59965);
+  color: #fff;
+  background: var(--dthl-mode-brand, #b59965);
+}
+
+@media (max-width: 620px) {
+  .dthl-site-palette-picker__grid {
+    grid-template-columns: 1fr;
+  }
+}
