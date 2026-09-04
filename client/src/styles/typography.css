@@ -1,6 +1,7 @@
 /*
  * Unified public typography system.
- * Keep this file focused on type only: no layout, spacing or color changes.
+ * Typography V2 raises the readable floor across public pages while keeping
+ * layout, spacing and color ownership in the route styles.
  */
 
 .app-shell {
@@ -25,7 +26,20 @@
   line-height: var(--leading-body);
 }
 
-/* Homepage: map every compact card to the shared scale instead of tiny ad-hoc rem values. */
+/* Shared public content floor: metadata is secondary, but should still be readable. */
+.app-shell .content-meta,
+.app-shell .content-meta span,
+.app-shell .property-card__facts,
+.app-shell .job-card__body > div,
+.app-shell .community-card > header > div > div,
+.app-shell .community-card > footer {
+  font-size: var(--text-xs);
+}
+
+/* =========================================================
+   HOMEPAGE
+========================================================= */
+
 .home-reference-v2 .home-ref-section-header h2,
 .home-reference-v2 .home-reference-wide-heading h2 {
   font-size: var(--text-xl) !important;
@@ -40,7 +54,7 @@
 }
 
 .home-reference-v2 .home-hero-card__content h1 {
-  font-size: clamp(2rem, 3vw, var(--text-5xl)) !important;
+  font-size: clamp(2.15rem, 3vw, var(--text-5xl)) !important;
   line-height: 1.08 !important;
 }
 
@@ -60,7 +74,7 @@
 .home-reference-v2 .home-card-meta,
 .home-reference-v2 .home-card-meta span {
   font-size: var(--text-xs) !important;
-  line-height: 1.25 !important;
+  line-height: 1.3 !important;
 }
 
 .home-reference-v2 .home-side-story h3,
@@ -69,7 +83,7 @@
 .home-reference-v2 .home-job-story h3,
 .home-reference-v2 .home-community-story > p,
 .home-reference-v2 .home-property-story h3 {
-  font-size: var(--text-sm) !important;
+  font-size: var(--text-base) !important;
   line-height: var(--leading-snug) !important;
 }
 
@@ -85,7 +99,7 @@
 .home-reference-v2 .home-property-story__facts,
 .home-reference-v2 .home-job-story__meta {
   font-size: var(--text-xs) !important;
-  line-height: 1.35 !important;
+  line-height: 1.42 !important;
 }
 
 .home-reference-v2 .home-job-story__salary {
@@ -130,13 +144,17 @@
   line-height: 1 !important;
 }
 
-/* Header/footer and persistent navigation: one readable baseline across the public site. */
+/* =========================================================
+   HEADER / FOOTER / PERSISTENT NAVIGATION
+========================================================= */
+
 .app-shell .dthl-primary-nav__link,
+.app-shell .dthl-header-nav-upgrade__link,
 .app-shell .dthl-header-search input,
 .app-shell .dthl-header-search__submit,
 .app-shell .dthl-register-button,
 .app-shell .dthl-user-menu__trigger {
-  font-size: var(--text-sm);
+  font-size: var(--text-sm) !important;
 }
 
 .app-shell .site-footer__description,
@@ -152,6 +170,232 @@
 .app-shell .site-footer__logo strong {
   font-size: var(--text-2xl);
 }
+
+/* =========================================================
+   JOBS MARKETPLACE
+   Several route rules intentionally use compact rem values. Override only
+   typography here so cards stay the same physical size but become readable.
+========================================================= */
+
+.app-shell .jobs-market-hero__eyebrow {
+  font-size: 13px !important;
+}
+
+.app-shell .jobs-market-hero h2 {
+  font-size: clamp(18px, 1.7vw, 23px) !important;
+}
+
+.app-shell .jobs-market-hero__copy > p {
+  font-size: 15px !important;
+}
+
+.app-shell .jobs-market-hero__chips span {
+  font-size: 13px !important;
+}
+
+.app-shell .jobs-market-search input,
+.app-shell .jobs-market-search select,
+.app-shell .jobs-market-search > button {
+  font-size: 14px !important;
+}
+
+.app-shell .jobs-section-heading > div > span,
+.app-shell .jobs-panel-heading > div > span,
+.app-shell .jobs-safety-card__eyebrow,
+.app-shell .jobs-results__eyebrow {
+  font-size: 12px !important;
+}
+
+.app-shell .jobs-section-heading h2,
+.app-shell .jobs-panel-heading h2,
+.app-shell .jobs-results__header h2 {
+  font-size: 18px !important;
+  line-height: 1.25 !important;
+}
+
+.app-shell .jobs-section-heading > button,
+.app-shell .jobs-panel-heading > a,
+.app-shell .jobs-results__reload {
+  font-size: 13px !important;
+}
+
+.app-shell .jobs-discovery__grid strong {
+  font-size: 14px !important;
+}
+
+.app-shell .jobs-discovery__grid small,
+.app-shell .jobs-employers-panel__companies strong,
+.app-shell .jobs-employers-panel__empty,
+.app-shell .jobs-employer-cta span {
+  font-size: 12px !important;
+}
+
+.app-shell .jobs-employer-cta strong,
+.app-shell .jobs-employer-cta > a {
+  font-size: 13px !important;
+}
+
+.app-shell .jobs-featured-card .job-card h3 {
+  font-size: 15px !important;
+  line-height: 1.38 !important;
+}
+
+.app-shell .jobs-featured-card .job-card__body > strong {
+  font-size: 13px !important;
+}
+
+.app-shell .jobs-featured-card .job-card__salary {
+  font-size: 14px !important;
+}
+
+.app-shell .jobs-featured-card .job-card__body > div:last-child {
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+}
+
+.app-shell .jobs-results__header p {
+  font-size: 13px !important;
+}
+
+.app-shell .jobs-results-controls__types button,
+.app-shell .jobs-results-controls__actions > button,
+.app-shell .jobs-results-controls__actions > label,
+.app-shell .jobs-results-controls__actions select,
+.app-shell .jobs-active-filters > button {
+  font-size: 12.5px !important;
+}
+
+.app-shell .jobs-page .jobs-results__main .job-card h3 {
+  font-size: 16px !important;
+  line-height: 1.38 !important;
+}
+
+.app-shell .jobs-page .jobs-results__main .job-card__body > strong {
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+}
+
+.app-shell .jobs-page .jobs-results__main .job-card__salary {
+  font-size: 15px !important;
+}
+
+.app-shell .jobs-page .jobs-results__main .job-card__body > div:last-child {
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+}
+
+.app-shell .jobs-safety-card h3 {
+  font-size: 17px !important;
+}
+
+.app-shell .jobs-safety-card > p,
+.app-shell .jobs-safety-card li {
+  font-size: 13px !important;
+  line-height: 1.55 !important;
+}
+
+/* =========================================================
+   NEWS HUB
+========================================================= */
+
+.app-shell .news-masthead__eyebrow,
+.app-shell .news-story__kicker span,
+.app-shell .news-stream__heading span,
+.app-shell .news-rail-card__head span,
+.app-shell .news-project-item__top span {
+  font-size: 13px !important;
+}
+
+.app-shell .news-masthead p {
+  font-size: 15px !important;
+}
+
+.app-shell .news-masthead__search input,
+.app-shell .news-masthead__search button,
+.app-shell .news-category-bar nav button,
+.app-shell .news-filter-toggle {
+  font-size: 14px !important;
+}
+
+.app-shell .news-filter-panel label > span {
+  font-size: 12px !important;
+}
+
+.app-shell .news-filter-panel select,
+.app-shell .news-filter-panel input,
+.app-shell .news-filter-reset {
+  font-size: 13px !important;
+}
+
+.app-shell .news-hub .content-meta,
+.app-shell .news-hub .content-meta span,
+.app-shell .news-story .content-meta {
+  font-size: 13px !important;
+}
+
+.app-shell .news-story--lead p {
+  font-size: 15px !important;
+}
+
+.app-shell .news-story--side h3 {
+  font-size: 16px !important;
+  line-height: 1.36 !important;
+}
+
+/* =========================================================
+   COMMUNITY / THREADS-LIKE FEED
+========================================================= */
+
+.app-shell .community-social-page .community-reference-center .community-feed-card__author > a {
+  font-size: 15px !important;
+}
+
+.app-shell .community-social-page .community-reference-center .community-feed-card__author > div {
+  font-size: 13px !important;
+}
+
+.app-shell .community-social-page .community-reference-center .community-feed-card__type {
+  font-size: 12px !important;
+}
+
+.app-shell .community-social-page .community-reference-center .community-feed-card__content .community-feed-card__text {
+  font-size: 16px !important;
+  line-height: 1.48 !important;
+}
+
+.app-shell .community-social-page .community-reference-center .community-feed-action__count {
+  font-size: 13px !important;
+}
+
+.app-shell .community-feed-comment-box input,
+.app-shell .community-feed-comment-box textarea {
+  font-size: 14px !important;
+}
+
+/* =========================================================
+   GENERIC PUBLIC CARDS / PROPERTY
+========================================================= */
+
+.app-shell .property-card__price {
+  font-size: 18px;
+}
+
+.app-shell .property-card h3,
+.app-shell .content-card h3,
+.app-shell .community-card h3,
+.app-shell .job-card h3 {
+  line-height: 1.4;
+}
+
+.app-shell .property-card__facts,
+.app-shell .content-card p,
+.app-shell .community-card > p,
+.app-shell .result-summary {
+  font-size: 14px;
+}
+
+/* Article detail long-form body already has a dedicated editorial scale
+   (17px body, 40-50px title), so Typography V2 deliberately leaves it intact. */
 
 @media (max-width: 760px) {
   .app-shell {
@@ -177,10 +421,71 @@
   .home-reference-v2 .home-job-story h3,
   .home-reference-v2 .home-community-story > p,
   .home-reference-v2 .home-property-story h3 {
-    font-size: var(--text-sm) !important;
+    font-size: 15px !important;
   }
 
   .home-reference-v2 .home-reference-cta h2 {
     font-size: var(--text-lg) !important;
+  }
+
+  .app-shell .jobs-market-hero__copy > p,
+  .app-shell .jobs-market-search input,
+  .app-shell .jobs-market-search select,
+  .app-shell .jobs-market-search > button {
+    font-size: 14px !important;
+  }
+
+  .app-shell .jobs-page .jobs-results__main .job-card h3 {
+    font-size: 15px !important;
+  }
+
+  .app-shell .jobs-page .jobs-results__main .job-card__body > strong,
+  .app-shell .jobs-page .jobs-results__main .job-card__body > div:last-child,
+  .app-shell .jobs-safety-card > p,
+  .app-shell .jobs-safety-card li {
+    font-size: 12.5px !important;
+  }
+
+  .app-shell .jobs-page .jobs-results__main .job-card__salary {
+    font-size: 14px !important;
+  }
+
+  .app-shell .news-masthead p,
+  .app-shell .news-story--lead p {
+    font-size: 14px !important;
+  }
+
+  .app-shell .news-masthead__search input,
+  .app-shell .news-masthead__search button,
+  .app-shell .news-category-bar nav button,
+  .app-shell .news-filter-toggle {
+    font-size: 13px !important;
+  }
+
+  .app-shell .news-hub .content-meta,
+  .app-shell .news-hub .content-meta span,
+  .app-shell .news-story .content-meta {
+    font-size: 12px !important;
+  }
+
+  .app-shell .community-social-page .community-reference-center .community-feed-card__author > a {
+    font-size: 14.5px !important;
+  }
+
+  .app-shell .community-social-page .community-reference-center .community-feed-card__author > div {
+    font-size: 12.5px !important;
+  }
+
+  .app-shell .community-social-page .community-reference-center .community-feed-card__type {
+    font-size: 12px !important;
+  }
+
+  .app-shell .community-social-page .community-reference-center .community-feed-card__content .community-feed-card__text {
+    font-size: 15.5px !important;
+    line-height: 1.46 !important;
+  }
+
+  .app-shell .community-social-page .community-reference-center .community-feed-action__count {
+    font-size: 12.5px !important;
   }
 }
