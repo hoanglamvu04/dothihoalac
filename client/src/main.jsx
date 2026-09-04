@@ -32,6 +32,7 @@ import './pages/public/HomeReferenceLayout.fix.css';
 import './pages/public/PropertiesPage.system.css';
 import './pages/public/PropertyMarketplace.reference.css';
 import './pages/public/PropertyMarketplace.sidebar-full.css';
+import './pages/public/JobsPage.earth.css';
 import './pages/public/CommunityPageRailDisclosure.css';
 import './features/communityRailDisclosure';
 import './features/propertySubmitReviewGuard';
