@@ -1,0 +1,577 @@
+/*
+ * Public earth-tone visual system.
+ * Loaded last from main.jsx so legacy green/blue route styles resolve to the
+ * current Do Thi Hoa Lac palette without changing page structure or data flow.
+ */
+
+html[data-dthl-theme='light'] {
+  --dthl-mode-canvas: #f7f4ed !important;
+  --dthl-mode-surface: #fffdf9 !important;
+  --dthl-mode-surface-2: #fbf7f0 !important;
+  --dthl-mode-surface-3: #efe8dc !important;
+  --dthl-mode-border: #e4ddd1 !important;
+  --dthl-mode-border-strong: #d3c7b5 !important;
+  --dthl-mode-ink: #28251f !important;
+  --dthl-mode-text: #5e574d !important;
+  --dthl-mode-muted: #8b8173 !important;
+  --dthl-mode-brand: #b59965 !important;
+  --dthl-mode-brand-dark: #4a3d2c !important;
+  --dthl-mode-brand-soft: #efe8dc !important;
+  --dthl-mode-green: #365443 !important;
+  --dthl-mode-shadow: 0 8px 26px rgb(74 61 44 / 0.07) !important;
+
+  --dthl-brand-force: #b59965 !important;
+  --dthl-brand-force-hover: #9f8252 !important;
+  --dthl-brand-force-dark: #4a3d2c !important;
+  --dthl-brand-force-soft: #efe8dc !important;
+  --dthl-brand-force-border: #d8cdbd !important;
+}
+
+html[data-dthl-theme='light'] :is(
+  .job-detail-page,
+  .jobs-page,
+  .properties-page,
+  .property-detail-page,
+  .news-hub,
+  .article-view-page,
+  .community-social-page,
+  .community-detail-page,
+  .area-page,
+  .search-page,
+  .static-page-view,
+  .contact-page,
+  .lead-page,
+  .public-member-page
+),
+html[data-dthl-theme='light'] :is(
+  .job-detail-page,
+  .jobs-page,
+  .properties-page,
+  .property-detail-page,
+  .news-hub,
+  .article-view-page,
+  .community-social-page,
+  .community-detail-page,
+  .area-page,
+  .search-page,
+  .static-page-view,
+  .contact-page,
+  .lead-page,
+  .public-member-page
+) * {
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+}
+
+/* =========================================================
+   JOB DETAIL
+========================================================= */
+html[data-dthl-theme='light'] .job-detail-page {
+  --job-green: #b59965 !important;
+  --job-green-hover: #9f8252 !important;
+  --job-green-dark: #4a3d2c !important;
+  --job-green-soft: #efe8dc !important;
+  --job-green-border: #d8cdbd !important;
+  --job-ink: #28251f !important;
+  --job-text: #5e574d !important;
+  --job-muted: #8b8173 !important;
+  --job-border: #e4ddd1 !important;
+  --job-background: #f7f4ed !important;
+  --job-surface: #fffdf9 !important;
+  color: #28251f !important;
+  background: #f7f4ed !important;
+}
+
+html[data-dthl-theme='light'] .job-reading-progress span {
+  background: linear-gradient(90deg, #b59965, #d4bd91) !important;
+  box-shadow: 0 0 12px rgb(181 153 101 / 0.34) !important;
+}
+
+html[data-dthl-theme='light'] :is(
+  .job-detail-header,
+  .job-detail-main > section,
+  .job-apply-card,
+  .job-sidebar-card
+) {
+  border-color: #e4ddd1 !important;
+  background: #fffdf9 !important;
+  box-shadow: 0 6px 22px rgb(74 61 44 / 0.055) !important;
+}
+
+html[data-dthl-theme='light'] :is(
+  .job-detail-header h1,
+  .job-section-heading h2,
+  .job-description-body .article-body > section > h2,
+  .job-description-body .article-body > h2,
+  .job-apply-card__contacts h2,
+  .job-sidebar-heading h2
+) {
+  color: #4a3d2c !important;
+}
+
+html[data-dthl-theme='light'] :is(
+  .job-detail-company,
+  .job-detail-header-meta svg,
+  .job-section-heading > span,
+  .job-facts-grid article > span,
+  .job-apply-card__company > span,
+  .job-sidebar-heading > svg,
+  .job-sidebar-summary dt svg
+) {
+  color: #365443 !important;
+}
+
+html[data-dthl-theme='light'] :is(
+  .job-detail-company-logo,
+  .job-section-heading > span,
+  .job-facts-grid article > span,
+  .job-apply-card__company > span
+) {
+  border-color: #e1d7c8 !important;
+  background: #f3ede3 !important;
+}
+
+html[data-dthl-theme='light'] .job-detail-company-logo {
+  color: #4a3d2c !important;
+}
+
+html[data-dthl-theme='light'] .job-deadline-badge,
+html[data-dthl-theme='light'] .job-apply-deadline {
+  border-color: #dfd2bf !important;
+  color: #4a3d2c !important;
+  background: #f6f0e6 !important;
+}
+
+html[data-dthl-theme='light'] .job-facts-grid article,
+html[data-dthl-theme='light'] .job-description-lead,
+html[data-dthl-theme='light'] .job-contact-empty {
+  border-color: #e7e0d5 !important;
+  background: #fbf8f2 !important;
+}
+
+html[data-dthl-theme='light'] .job-description-body,
+html[data-dthl-theme='light'] .job-description-body .article-body {
+  color: #4f4a42 !important;
+}
+
+html[data-dthl-theme='light'] .job-description-body .article-body > section {
+  border-color: #e8e1d7 !important;
+}
+
+html[data-dthl-theme='light'] .job-description-body .article-body > section > h2::before,
+html[data-dthl-theme='light'] .job-description-body .article-body > h2::before {
+  background: #b59965 !important;
+}
+
+html[data-dthl-theme='light'] .job-description-body .article-body > section[data-job-requirements='true'] {
+  background: linear-gradient(90deg, rgb(181 153 101 / 0.055), transparent 46%) !important;
+}
+
+html[data-dthl-theme='light'] .job-description-body .article-body blockquote,
+html[data-dthl-theme='light'] .job-application-method__content {
+  border-color: #ddcfba !important;
+  color: #4a3d2c !important;
+  background: #f5eee3 !important;
+}
+
+html[data-dthl-theme='light'] .job-apply-card {
+  border-color: #d9ccb8 !important;
+}
+
+html[data-dthl-theme='light'] .job-apply-card__salary {
+  border-color: #e0d2bd !important;
+  background: linear-gradient(145deg, #fffdf9, #f3eadc) !important;
+}
+
+html[data-dthl-theme='light'] .job-apply-card__salary strong {
+  color: #365443 !important;
+}
+
+html[data-dthl-theme='light'] .job-apply-card__contacts a {
+  border-color: #b59965 !important;
+  color: #fff !important;
+  background: linear-gradient(135deg, #b59965, #9f8252) !important;
+}
+
+html[data-dthl-theme='light'] .job-apply-card__contacts a + a {
+  border-color: #ddd2c2 !important;
+  color: #4a3d2c !important;
+  background: #fffdf9 !important;
+}
+
+html[data-dthl-theme='light'] .job-apply-card__contacts a:hover {
+  border-color: #4a3d2c !important;
+  background: #4a3d2c !important;
+}
+
+html[data-dthl-theme='light'] .job-apply-card__contacts > button,
+html[data-dthl-theme='light'] .job-sidebar-share__actions button,
+html[data-dthl-theme='light'] .job-detail-header__actions button {
+  border-color: #e0d6c7 !important;
+  color: #4a3d2c !important;
+  background: #f6f1e9 !important;
+}
+
+html[data-dthl-theme='light'] .job-scroll-top {
+  background: #b59965 !important;
+  box-shadow: 0 10px 24px rgb(181 153 101 / 0.22) !important;
+}
+
+html[data-dthl-theme='light'] .job-scroll-top:hover {
+  background: #9f8252 !important;
+}
+
+@media (max-width: 760px) {
+  html[data-dthl-theme='light'] .job-detail-page {
+    background: #f7f4ed !important;
+  }
+
+  html[data-dthl-theme='light'] .job-detail-page .job-detail-breadcrumb {
+    border-color: #e5ddd1 !important;
+    background: rgb(255 253 249 / 0.96) !important;
+  }
+
+  html[data-dthl-theme='light'] .job-detail-page .job-detail-header {
+    background:
+      radial-gradient(circle at 100% 0, rgb(181 153 101 / 0.18), transparent 34%),
+      radial-gradient(circle at 16% 8%, rgb(239 232 220 / 0.9), transparent 35%),
+      linear-gradient(180deg, #fffaf2 0%, #fffdf9 74%) !important;
+    box-shadow: 0 10px 28px rgb(74 61 44 / 0.07) !important;
+  }
+
+  html[data-dthl-theme='light'] .job-detail-page .job-detail-header::before {
+    background: rgb(181 153 101 / 0.06) !important;
+  }
+
+  html[data-dthl-theme='light'] .job-detail-page .job-detail-header h1,
+  html[data-dthl-theme='light'] .job-detail-page .job-section-heading h2,
+  html[data-dthl-theme='light'] .job-detail-page .job-apply-card__contacts h2 {
+    color: #4a3d2c !important;
+  }
+
+  html[data-dthl-theme='light'] .job-detail-page .job-detail-company {
+    color: #365443 !important;
+  }
+
+  html[data-dthl-theme='light'] .job-detail-page .job-detail-header-meta,
+  html[data-dthl-theme='light'] .job-detail-page .job-apply-card,
+  html[data-dthl-theme='light'] .job-detail-page :is(
+    .job-facts-section,
+    .job-description-section,
+    .job-application-method,
+    .job-comments-section
+  ) {
+    border-color: #e7e0d5 !important;
+    background: #fffdf9 !important;
+  }
+
+  html[data-dthl-theme='light'] .job-detail-page .job-description-lead {
+    background: linear-gradient(135deg, #f3ece1, #fffaf3) !important;
+  }
+}
+
+/* =========================================================
+   NEWS LIST + ARTICLE DETAIL
+========================================================= */
+html[data-dthl-theme='light'] .news-hub {
+  --news-green: #b59965 !important;
+  --news-green-dark: #4a3d2c !important;
+  --news-green-soft: #efe8dc !important;
+  --news-ink: #28251f !important;
+  --news-text: #5e574d !important;
+  --news-muted: #8b8173 !important;
+  --news-border: #e4ddd1 !important;
+  --news-surface: #fffdf9 !important;
+  color: #28251f !important;
+  background: #f7f4ed !important;
+}
+
+html[data-dthl-theme='light'] :is(
+  .news-masthead__search,
+  .news-category-bar,
+  .news-filter-panel,
+  .news-story,
+  .news-stream,
+  .news-hub__empty,
+  .news-hub__error
+) {
+  border-color: #e4ddd1 !important;
+  background: #fffdf9 !important;
+}
+
+html[data-dthl-theme='light'] .news-masthead__eyebrow,
+html[data-dthl-theme='light'] .news-stream__heading > div > span {
+  color: #4a3d2c !important;
+}
+
+html[data-dthl-theme='light'] .news-masthead__search button,
+html[data-dthl-theme='light'] .news-category-bar nav button.is-active,
+html[data-dthl-theme='light'] .news-filter-toggle.is-active {
+  border-color: #b59965 !important;
+  color: #fff !important;
+  background: #b59965 !important;
+}
+
+html[data-dthl-theme='light'] .article-view-page {
+  --article-green: #b59965 !important;
+  --article-green-hover: #9f8252 !important;
+  --article-green-dark: #4a3d2c !important;
+  --article-green-deep: #3d3225 !important;
+  --article-green-soft: #efe8dc !important;
+  --article-green-border: #d8cdbd !important;
+  --article-ink: #28251f !important;
+  --article-text: #544e45 !important;
+  --article-muted: #8b8173 !important;
+  --article-border: #e4ddd1 !important;
+  --article-background: #f7f4ed !important;
+  --article-surface: #fffdf9 !important;
+  background: #f7f4ed !important;
+}
+
+html[data-dthl-theme='light'] .article-reading-progress span {
+  background: linear-gradient(90deg, #b59965, #d4bd91) !important;
+  box-shadow: 0 0 12px rgb(181 153 101 / 0.32) !important;
+}
+
+html[data-dthl-theme='light'] :is(
+  .article-view-main,
+  .article-view-sidebar > section,
+  .article-view-card,
+  .article-related-card
+) {
+  border-color: #e4ddd1 !important;
+  background: #fffdf9 !important;
+}
+
+/* =========================================================
+   COMMUNITY
+========================================================= */
+html[data-dthl-theme='light'] .community-social-page {
+  --c-green: #4a3d2c !important;
+  --c-green-2: #365443 !important;
+  --c-green-soft: #efe8dc !important;
+  --c-ink: #28251f !important;
+  --c-text: #5e574d !important;
+  --c-muted: #8b8173 !important;
+  --c-line: #e4ddd1 !important;
+  --c-surface: #fffdf9 !important;
+  --c-surface-2: #fbf7f0 !important;
+  --c-canvas: #f7f4ed !important;
+  --c-gold: #b59965 !important;
+  --c-shadow: 0 8px 26px rgb(74 61 44 / 0.055) !important;
+  background: #f7f4ed !important;
+}
+
+html[data-dthl-theme='light'] .community-left-primary a:hover,
+html[data-dthl-theme='light'] .community-left-primary button:hover,
+html[data-dthl-theme='light'] .community-left-primary a.is-active,
+html[data-dthl-theme='light'] .community-discovery-list button:hover,
+html[data-dthl-theme='light'] .community-discovery-list button.is-active,
+html[data-dthl-theme='light'] .community-discovery-more:hover {
+  color: #4a3d2c !important;
+  background: #f2eadf !important;
+}
+
+html[data-dthl-theme='light'] .community-left-primary a.is-active .community-left-primary__icon,
+html[data-dthl-theme='light'] .community-reference-composer__submit,
+html[data-dthl-theme='light'] .community-reference-feed-tabs button.is-active {
+  color: #fff !important;
+  background: #b59965 !important;
+}
+
+html[data-dthl-theme='light'] .community-detail-page {
+  --thread-green: #b59965 !important;
+  --thread-ink: #28251f !important;
+  --thread-text: #514b43 !important;
+  --thread-muted: #8b8173 !important;
+  --thread-line: #e4ddd1 !important;
+  --thread-bg: #f7f4ed !important;
+  background: #f7f4ed !important;
+}
+
+html[data-dthl-theme='light'] .community-reading-progress span {
+  background: #b59965 !important;
+}
+
+html[data-dthl-theme='light'] :is(
+  .community-thread,
+  .community-thread-comments,
+  .community-comment,
+  .community-thread-composer
+) {
+  border-color: #e4ddd1 !important;
+  background: #fffdf9 !important;
+}
+
+/* =========================================================
+   AREA / SEARCH / STATIC / CONTACT / LEADS / PUBLIC PROFILE
+========================================================= */
+html[data-dthl-theme='light'] .area-page {
+  --area-green: #b59965 !important;
+  --area-green-hover: #9f8252 !important;
+  --area-green-dark: #4a3d2c !important;
+  --area-green-deep: #3b3024 !important;
+  --area-green-soft: #efe8dc !important;
+  --area-green-border: #d8cdbd !important;
+  --area-ink: #28251f !important;
+  --area-text: #5e574d !important;
+  --area-muted: #8b8173 !important;
+  --area-border: #e4ddd1 !important;
+  --area-background: #f7f4ed !important;
+  --area-surface: #fffdf9 !important;
+  background: #f7f4ed !important;
+}
+
+html[data-dthl-theme='light'] .search-page {
+  --search-green: #b59965 !important;
+  --search-green-dark: #4a3d2c !important;
+  --search-green-soft: #efe8dc !important;
+  --search-ink: #28251f !important;
+  --search-text: #5e574d !important;
+  --search-muted: #8b8173 !important;
+  --search-border: #e4ddd1 !important;
+  --search-bg: #f7f4ed !important;
+  background: #f7f4ed !important;
+}
+
+html[data-dthl-theme='light'] :is(
+  .search-page-form,
+  .search-start,
+  .search-results,
+  .search-result-card
+) {
+  border-color: #e4ddd1 !important;
+  background: #fffdf9 !important;
+  box-shadow: 0 8px 26px rgb(74 61 44 / 0.05) !important;
+}
+
+html[data-dthl-theme='light'] .static-page-view {
+  --static-green: #b59965 !important;
+  --static-green-hover: #9f8252 !important;
+  --static-green-dark: #4a3d2c !important;
+  --static-green-deep: #3b3024 !important;
+  --static-green-soft: #efe8dc !important;
+  --static-green-border: #d8cdbd !important;
+  --static-ink: #28251f !important;
+  --static-text: #5e574d !important;
+  --static-muted: #8b8173 !important;
+  --static-border: #e4ddd1 !important;
+  --static-surface: #fffdf9 !important;
+  --static-background: #f7f4ed !important;
+  background: #f7f4ed !important;
+}
+
+html[data-dthl-theme='light'] .contact-page {
+  --contact-green: #b59965 !important;
+  --contact-green-hover: #9f8252 !important;
+  --contact-green-dark: #4a3d2c !important;
+  --contact-green-deep: #3b3024 !important;
+  --contact-green-soft: #efe8dc !important;
+  --contact-green-border: #d8cdbd !important;
+  --contact-ink: #28251f !important;
+  --contact-text: #5e574d !important;
+  --contact-muted: #8b8173 !important;
+  --contact-border: #e4ddd1 !important;
+  --contact-background: #f7f4ed !important;
+  --contact-surface: #fffdf9 !important;
+  background: #f7f4ed !important;
+}
+
+html[data-dthl-theme='light'] .lead-page {
+  --lead-primary: #b59965 !important;
+  --lead-primary-hover: #9f8252 !important;
+  --lead-primary-dark: #4a3d2c !important;
+  --lead-primary-deep: #3b3024 !important;
+  --lead-primary-soft: #efe8dc !important;
+  --lead-primary-border: #d8cdbd !important;
+  --lead-ink: #28251f !important;
+  --lead-text: #5e574d !important;
+  --lead-muted: #8b8173 !important;
+  --lead-border: #e4ddd1 !important;
+  --lead-background: #f7f4ed !important;
+  --lead-surface: #fffdf9 !important;
+  background: #f7f4ed !important;
+}
+
+html[data-dthl-theme='light'] :is(.area-hero, .contact-hero, .lead-page-hero) {
+  color: #fff !important;
+  border: 1px solid rgb(181 153 101 / 0.28) !important;
+  background:
+    radial-gradient(circle at 88% 15%, rgb(181 153 101 / 0.24), transparent 30%),
+    radial-gradient(circle at 18% 100%, rgb(54 84 67 / 0.2), transparent 34%),
+    linear-gradient(135deg, #3f3528 0%, #594a36 56%, #745f42 100%) !important;
+  box-shadow: 0 18px 44px rgb(74 61 44 / 0.16) !important;
+}
+
+html[data-dthl-theme='light'] .public-member-page {
+  --member-green: #b59965 !important;
+  --member-green-dark: #4a3d2c !important;
+  --member-green-soft: #efe8dc !important;
+  --member-border: #e4ddd1 !important;
+  --member-ink: #28251f !important;
+  --member-text: #5e574d !important;
+  --member-muted: #8b8173 !important;
+  background: #f7f4ed !important;
+}
+
+html[data-dthl-theme='light'] :is(
+  .public-member-header,
+  .public-member-card,
+  .public-member-panel
+) {
+  border-color: #e4ddd1 !important;
+  background: #fffdf9 !important;
+  box-shadow: 0 8px 26px rgb(74 61 44 / 0.055) !important;
+}
+
+html[data-dthl-theme='light'] .public-member-cover__fallback {
+  background:
+    radial-gradient(circle at 75% 25%, rgb(181 153 101 / 0.2), transparent 32%),
+    linear-gradient(135deg, #e8dfd0, #fffaf2 45%, #d8c5a6) !important;
+}
+
+/* Generic light-mode form/button polish across public pages. */
+html[data-dthl-theme='light'] :is(
+  .job-detail-page,
+  .news-hub,
+  .article-view-page,
+  .community-social-page,
+  .community-detail-page,
+  .area-page,
+  .search-page,
+  .static-page-view,
+  .contact-page,
+  .lead-page,
+  .public-member-page
+) :is(input, select, textarea) {
+  border-color: #e4ddd1 !important;
+  color: #28251f !important;
+  background: #fffdf9 !important;
+}
+
+html[data-dthl-theme='light'] :is(
+  .job-detail-page,
+  .news-hub,
+  .article-view-page,
+  .community-social-page,
+  .community-detail-page,
+  .area-page,
+  .search-page,
+  .static-page-view,
+  .contact-page,
+  .lead-page,
+  .public-member-page
+) :is(input, select, textarea):focus {
+  border-color: #b59965 !important;
+  box-shadow: 0 0 0 3px rgb(181 153 101 / 0.12) !important;
+  outline: 0 !important;
+}
+
+html[data-dthl-theme='light'] .dthl-header-top {
+  color: #5e574d !important;
+  background: #f3ede4 !important;
+}
+
+html[data-dthl-theme='light'] :is(.dthl-header-main, .dthl-header-nav) {
+  border-color: #e4ddd1 !important;
+  background: #fffdf9 !important;
+}
