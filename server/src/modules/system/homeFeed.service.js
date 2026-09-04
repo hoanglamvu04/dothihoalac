@@ -169,8 +169,15 @@ async function loadJobCards(now) {
       $project: {
         content: 1,
         contentId: 1,
+        jobType: 1,
         companyName: 1,
+        salaryMin: 1,
+        salaryMax: 1,
+        salaryUnit: 1,
+        experienceLevel: 1,
         workLocation: 1,
+        deadline: 1,
+        positionsCount: 1,
       },
     },
   ]);

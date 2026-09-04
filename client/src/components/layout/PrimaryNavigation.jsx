@@ -14,6 +14,10 @@ import {
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 
 import { useAuth } from '../../context/AuthContext';
+import {
+  DesktopThemeToggle,
+  MobileThemePicker,
+} from '../theme/ThemeSwitcher';
 import './PrimaryNavigation.css';
 
 const PRIMARY_ITEMS = [
@@ -157,6 +161,8 @@ function DesktopNavigation() {
           </div>
         );
       })}
+
+      <DesktopThemeToggle />
     </nav>
   );
 }
@@ -243,6 +249,8 @@ function MobileNavigation() {
           );
         })}
       </nav>
+
+      <MobileThemePicker />
       <MobileSession />
     </div>
   );

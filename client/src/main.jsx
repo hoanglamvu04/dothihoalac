@@ -1,6 +1,7 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './app/App';
+import { initializeSiteTheme } from './theme/siteTheme';
 import './styles/tokens.css';
 import './styles/reset.css';
 import './styles/global.css';
@@ -24,7 +25,17 @@ import './styles/brand-logo-v3.css';
 import './styles/brand-theme.css';
 import './styles/brand-force.css';
 import './styles/brand-accent.css';
+import './styles/theme-modes.css';
+import './pages/public/HomeReferenceLayout.css';
+import './styles/typography.css';
+import './pages/public/HomeReferenceLayout.fix.css';
+import './pages/public/CommunityPageRailDisclosure.css';
+import './features/communityRailDisclosure';
 import './features/propertySubmitReviewGuard';
+
+// Apply the saved appearance before React paints so reloads do not flash the
+// wrong theme. The default remains the light reference palette.
+initializeSiteTheme();
 
 const root = createRoot(document.getElementById('root'));
 const enableStrictMode = import.meta.env.VITE_REACT_STRICT_MODE === 'true';

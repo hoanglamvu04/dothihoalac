@@ -14,15 +14,16 @@ import {
 import {
   ArrowRight,
   BarChart3,
-  CheckCircle2,
   ChevronLeft,
   ChevronRight,
+  Compass,
   Filter,
+  Hash,
+  Home,
   ImagePlus,
   MapPin,
   MessageCircle,
   MoreHorizontal,
-  PenLine,
   Plus,
   RotateCcw,
   Search,
@@ -46,29 +47,24 @@ import { useTaxonomy } from '../../context/TaxonomyContext';
 import { useAuth } from '../../context/AuthContext';
 import { COMMUNITY_TYPES } from '../../utils/constants';
 import { contentPath } from '../../utils/content';
+import { formatRelativeTime } from '../../utils/formatters';
 
 import './CommunityPageSocial.css';
+import './CommunityPageReferenceV3.css';
 
 const FEED_TABS = [
   { key: 'all', label: 'Tất cả' },
   { key: 'popular', label: 'Đang hot', sort: 'popular' },
-  { key: 'question', label: COMMUNITY_TYPES.question, type: 'question' },
-  { key: 'report', label: COMMUNITY_TYPES.report, type: 'report' },
-  { key: 'sharing', label: COMMUNITY_TYPES.sharing, type: 'sharing' },
-  { key: 'review', label: COMMUNITY_TYPES.review, type: 'review' },
-  { key: 'marketplace', label: COMMUNITY_TYPES.marketplace, type: 'marketplace' },
-];
-
-const COMMUNITY_RULES = [
-  'Thông tin chính xác, có nguồn gốc rõ ràng',
-  'Tôn trọng, văn minh, lịch sự',
-  'Không spam, quảng cáo, lừa đảo',
-  'Bảo vệ thông tin cá nhân',
+  { key: 'question', label: COMMUNITY_TYPES.question || 'Hỏi đáp', type: 'question' },
+  { key: 'sharing', label: COMMUNITY_TYPES.sharing || 'Chia sẻ', type: 'sharing' },
+  { key: 'review', label: COMMUNITY_TYPES.review || 'Review', type: 'review' },
+  { key: 'marketplace', label: COMMUNITY_TYPES.marketplace || 'Mua bán - trao đổi', type: 'marketplace' },
+  { key: 'jobs', label: 'Việc làm', href: '/viec-lam' },
 ];
 
 const POPULAR_PARAMS = {
   sort: 'popular',
-  limit: 5,
+  limit: 6,
 };
 
 function getTotal(meta, itemCount) {
@@ -163,6 +159,18 @@ function popularMedia(item) {
   return item?.thumbnailMediaId || item?.body?.inlineMediaIds?.[0] || null;
 }
 
+function profileAvatar(user) {
+  return user?.profile?.avatarMediaId || user?.avatarMediaId || null;
+}
+
+function memberKey(member) {
+  return String(member?._id || member?.id || member?.username || member?.displayName || '');
+}
+
+function memberName(member) {
+  return member?.displayName || member?.profile?.displayName || member?.username || 'Thành viên';
+}
+
 function CommunityPagination({
   page,
   totalPages,
@@ -177,10 +185,7 @@ function CommunityPagination({
 
   return (
     <div className="community-social-pagination">
-      <nav
-        className="community-social-pagination__nav"
-        aria-label="Phân trang cộng đồng"
-      >
+      <nav className="community-social-pagination__nav" aria-label="Phân trang cộng đồng">
         <button
           type="button"
           className="community-social-pagination__direction"
@@ -194,9 +199,7 @@ function CommunityPagination({
         <div className="community-social-pagination__numbers">
           {items.map((item) =>
             typeof item === 'string' ? (
-              <span className="community-social-pagination__ellipsis" key={item}>
-                …
-              </span>
+              <span className="community-social-pagination__ellipsis" key={item}>…</span>
             ) : (
               <button
                 type="button"
@@ -246,62 +249,34 @@ function DiscoveryRail({
   const visibleCategories = categories.slice(0, 6);
 
   return (
-    <aside className="community-reference-left" aria-label="Khám phá cộng đồng">
-      <section className="community-reference-card community-discovery-card">
-        <h2>Khám phá cộng đồng</h2>
+    <aside className="community-reference-left" aria-label="Điều hướng cộng đồng">
+      <section className="community-reference-card community-left-shell">
+        <nav className="community-left-primary" aria-label="Cộng đồng">
+          <Link className="is-active" to="/cong-dong">
+            <span className="community-left-primary__icon"><Home size={17} /></span>
+            <span>Trang chủ</span>
+          </Link>
 
-        <div className="community-discovery-section">
-          <h3>Khu vực</h3>
-          <div className="community-discovery-list">
-            {visibleAreas.map((item) => {
-              const active =
-                String(currentArea) === String(item._id) ||
-                String(currentArea) === String(item.slug);
-              const count = taxonomyCount(item);
+          <button type="button" onClick={onOpenFilters}>
+            <span className="community-left-primary__icon"><Compass size={17} /></span>
+            <span>Khám phá</span>
+          </button>
 
-              return (
-                <button
-                  type="button"
-                  key={item._id || item.slug}
-                  className={active ? 'is-active' : ''}
-                  onClick={() =>
-                    onAreaChange(active ? '' : taxonomyUrlValue(item))
-                  }
-                >
-                  <span className="community-discovery-list__icon">
-                    <MapPin size={15} />
-                  </span>
-                  <span className="community-discovery-list__copy">
-                    <strong>{item.name}</strong>
-                    {count !== null ? (
-                      <small>{count.toLocaleString('vi-VN')} bài viết</small>
-                    ) : null}
-                  </span>
-                </button>
-              );
-            })}
-          </div>
+          <a href="#community-members">
+            <span className="community-left-primary__icon"><UsersRound size={17} /></span>
+            <span>Thành viên</span>
+          </a>
+        </nav>
 
-          {areas.length > visibleAreas.length ? (
-            <button
-              type="button"
-              className="community-discovery-more"
-              onClick={onOpenFilters}
-            >
-              <span>Xem tất cả khu vực</span>
-              <ArrowRight size={14} />
-            </button>
-          ) : null}
-        </div>
+        <div className="community-discovery-card">
+          <h2>Khám phá khu vực</h2>
 
-        {visibleCategories.length ? (
-          <div className="community-discovery-section community-discovery-section--topics">
-            <h3>Chủ đề phổ biến</h3>
-            <div className="community-discovery-list community-discovery-list--topics">
-              {visibleCategories.map((item, index) => {
+          <div className="community-discovery-section">
+            <div className="community-discovery-list">
+              {visibleAreas.map((item) => {
                 const active =
-                  String(currentCategory) === String(item._id) ||
-                  String(currentCategory) === String(item.slug);
+                  String(currentArea) === String(item._id) ||
+                  String(currentArea) === String(item.slug);
                 const count = taxonomyCount(item);
 
                 return (
@@ -309,52 +284,72 @@ function DiscoveryRail({
                     type="button"
                     key={item._id || item.slug}
                     className={active ? 'is-active' : ''}
-                    onClick={() =>
-                      onCategoryChange(
-                        active ? '' : taxonomyUrlValue(item),
-                      )
-                    }
+                    onClick={() => onAreaChange(active ? '' : taxonomyUrlValue(item))}
                   >
-                    <span
-                      className={`community-discovery-list__topic-dot community-discovery-list__topic-dot--${
-                        (index % 5) + 1
-                      }`}
-                    >
-                      <MessageCircle size={14} />
-                    </span>
+                    <span className="community-discovery-list__icon"><MapPin size={15} /></span>
                     <span className="community-discovery-list__copy">
                       <strong>{item.name}</strong>
-                      {count !== null ? (
-                        <small>{count.toLocaleString('vi-VN')} bài viết</small>
-                      ) : null}
+                      <small>{count !== null ? `${count.toLocaleString('vi-VN')} bài viết` : 'Bài viết khu vực'}</small>
                     </span>
                   </button>
                 );
               })}
             </div>
 
-            {categories.length > visibleCategories.length ? (
-              <button
-                type="button"
-                className="community-discovery-more"
-                onClick={onOpenFilters}
-              >
-                <span>Xem tất cả chủ đề</span>
+            {areas.length > visibleAreas.length ? (
+              <button type="button" className="community-discovery-more" onClick={onOpenFilters}>
+                <span>Xem tất cả khu vực</span>
                 <ArrowRight size={14} />
               </button>
             ) : null}
           </div>
-        ) : null}
+
+          {visibleCategories.length ? (
+            <div className="community-discovery-section community-discovery-section--topics">
+              <h3>Chủ đề phổ biến</h3>
+              <div className="community-discovery-list community-discovery-list--topics">
+                {visibleCategories.map((item) => {
+                  const active =
+                    String(currentCategory) === String(item._id) ||
+                    String(currentCategory) === String(item.slug);
+                  const count = taxonomyCount(item);
+
+                  return (
+                    <button
+                      type="button"
+                      key={item._id || item.slug}
+                      className={active ? 'is-active' : ''}
+                      onClick={() => onCategoryChange(active ? '' : taxonomyUrlValue(item))}
+                    >
+                      <span className="community-discovery-list__topic-dot"><Hash size={14} /></span>
+                      <span className="community-discovery-list__copy">
+                        <strong>{item.name}</strong>
+                        <small>{count !== null ? `${count.toLocaleString('vi-VN')} bài viết` : 'Chủ đề cộng đồng'}</small>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {categories.length > visibleCategories.length ? (
+                <button type="button" className="community-discovery-more" onClick={onOpenFilters}>
+                  <span>Xem tất cả chủ đề</span>
+                  <ArrowRight size={14} />
+                </button>
+              ) : null}
+            </div>
+          ) : null}
+        </div>
       </section>
     </aside>
   );
 }
 
-function PopularRail({ items, loading }) {
+function PopularRail({ items, loading, members }) {
   return (
     <aside className="community-reference-right" aria-label="Thông tin cộng đồng">
       <section className="community-reference-card community-popular-card">
-        <h2>Đang được quan tâm</h2>
+        <h2>Đang hoạt động</h2>
 
         {loading && !items.length ? (
           <div className="community-popular-loading">Đang tải...</div>
@@ -363,23 +358,15 @@ function PopularRail({ items, loading }) {
             {items.slice(0, 5).map((item) => {
               const media = popularMedia(item);
               const comments = Number(item.commentCount || 0);
-              const type =
-                COMMUNITY_TYPES[item.community?.postType] || 'Cộng đồng';
+              const type = COMMUNITY_TYPES[item.community?.postType] || 'Cộng đồng';
 
               return (
-                <Link
-                  className="community-popular-item"
-                  key={item._id}
-                  to={contentPath(item)}
-                >
+                <Link className="community-popular-item" key={item._id} to={contentPath(item)}>
                   <span className="community-popular-item__media">
                     {media ? (
-                      <ContentImage
-                        media={media}
-                        alt={item.title || 'Bài viết cộng đồng'}
-                      />
+                      <ContentImage media={media} alt={item.title || 'Bài viết cộng đồng'} />
                     ) : (
-                      <MessageCircle size={19} />
+                      <MessageCircle size={18} />
                     )}
                   </span>
 
@@ -387,10 +374,12 @@ function PopularRail({ items, loading }) {
                     <strong>{item.title || item.summary || 'Bài viết cộng đồng'}</strong>
                     <small>
                       {type}
-                      {comments > 0
-                        ? ` · ${comments.toLocaleString('vi-VN')} bình luận`
-                        : ''}
+                      {comments > 0 ? ` · ${comments.toLocaleString('vi-VN')} bình luận` : ''}
                     </small>
+                  </span>
+
+                  <span className="community-popular-item__time">
+                    {formatRelativeTime(item.publishedAt || item.createdAt)}
                   </span>
                 </Link>
               );
@@ -403,31 +392,37 @@ function PopularRail({ items, loading }) {
         <h2>Tham gia cộng đồng</h2>
         <p>Chia sẻ, hỏi đáp, kết nối với cộng đồng Hòa Lạc.</p>
         <div className="community-join-card__actions">
-          <Link to="/dang-bai/cong-dong">
-            <Plus size={16} />
+          <Link to="/cong-dong/create">
+            <Plus size={15} />
             Viết bài
           </Link>
-          <Link to="/dang-bai/cong-dong?type=report">
-            <MessageCircle size={16} />
-            Gửi phản ánh
+          <Link to="/cong-dong/create?type=sharing">
+            <UsersRound size={15} />
+            Giới thiệu
           </Link>
         </div>
       </section>
 
-      <section className="community-reference-card community-rules-card">
-        <h2>Nguyên tắc cộng đồng</h2>
-        <ul>
-          {COMMUNITY_RULES.map((rule) => (
-            <li key={rule}>
-              <CheckCircle2 size={15} />
-              <span>{rule}</span>
-            </li>
-          ))}
-        </ul>
-        <Link to="/quy-dinh-dang-bai">
-          <span>Xem chi tiết quy tắc</span>
-          <ArrowRight size={14} />
-        </Link>
+      <section id="community-members" className="community-reference-card community-members-card">
+        <h2>Thành viên nổi bật</h2>
+        <div className="community-members-list">
+          {members.length ? members.map((member) => (
+            <div className="community-member-item" key={memberKey(member)}>
+              <Avatar src={profileAvatar(member)} name={memberName(member)} size="sm" />
+              <div className="community-member-item__copy">
+                <strong>{memberName(member)}</strong>
+                <small>{member?.role === 'admin' ? 'Quản trị viên' : 'Thành viên tích cực'}</small>
+              </div>
+              {member?.username ? (
+                <Link className="community-member-item__action" to={`/thanh-vien/${member.username}`}>
+                  Xem
+                </Link>
+              ) : null}
+            </div>
+          )) : (
+            <div className="community-popular-loading">Chưa có dữ liệu thành viên.</div>
+          )}
+        </div>
       </section>
     </aside>
   );
@@ -471,55 +466,37 @@ export default function CommunityPage() {
   const currentQuery = searchParams.get('q') || '';
 
   const selectedCategory = useMemo(
-    () =>
-      communityCategories.find(
-        (item) =>
-          String(item._id) === String(currentCategory) ||
-          String(item.slug) === String(currentCategory),
-      ),
+    () => communityCategories.find(
+      (item) =>
+        String(item._id) === String(currentCategory) ||
+        String(item.slug) === String(currentCategory),
+    ),
     [communityCategories, currentCategory],
   );
 
   const selectedArea = useMemo(
-    () =>
-      areas.find(
-        (item) =>
-          String(item._id) === String(currentArea) ||
-          String(item.slug) === String(currentArea),
-      ),
+    () => areas.find(
+      (item) =>
+        String(item._id) === String(currentArea) ||
+        String(item.slug) === String(currentArea),
+    ),
     [areas, currentArea],
   );
 
   useEffect(() => {
     const categorySlug = String(selectedCategory?.slug || '');
     const areaSlug = String(selectedArea?.slug || '');
-    const replaceCategory =
-      Boolean(currentCategory && categorySlug) &&
-      currentCategory !== categorySlug;
-    const replaceArea =
-      Boolean(currentArea && areaSlug) &&
-      currentArea !== areaSlug;
+    const replaceCategory = Boolean(currentCategory && categorySlug) && currentCategory !== categorySlug;
+    const replaceArea = Boolean(currentArea && areaSlug) && currentArea !== areaSlug;
 
-    if (!replaceCategory && !replaceArea) {
-      return;
-    }
+    if (!replaceCategory && !replaceArea) return;
 
-    setSearchParams(
-      (current) => {
-        const next = new URLSearchParams(current);
-
-        if (replaceCategory) {
-          next.set('category', categorySlug);
-        }
-
-        if (replaceArea) {
-          next.set('area', areaSlug);
-        }
-
-        return next;
-      },
-      { replace: true },
-    );
+    setSearchParams((current) => {
+      const next = new URLSearchParams(current);
+      if (replaceCategory) next.set('category', categorySlug);
+      if (replaceArea) next.set('area', areaSlug);
+      return next;
+    }, { replace: true });
   }, [
     currentArea,
     currentCategory,
@@ -528,56 +505,36 @@ export default function CommunityPage() {
     setSearchParams,
   ]);
 
-  const setUrlParams = useCallback(
-    (mutator, options = {}) => {
-      setSearchParams(
-        (current) => {
-          const next = new URLSearchParams(current);
-          mutator(next);
+  const setUrlParams = useCallback((mutator, options = {}) => {
+    setSearchParams((current) => {
+      const next = new URLSearchParams(current);
+      mutator(next);
+      if (next.get('page') === '1') next.delete('page');
+      return next;
+    }, options);
+  }, [setSearchParams]);
 
-          if (next.get('page') === '1') next.delete('page');
-          return next;
-        },
-        options,
-      );
-    },
-    [setSearchParams],
-  );
+  const update = useCallback((key, value, options = {}) => {
+    setUrlParams((next) => {
+      if (value) next.set(key, value);
+      else next.delete(key);
+      next.delete('page');
+    }, options);
+  }, [setUrlParams]);
 
-  const update = useCallback(
-    (key, value, options = {}) => {
-      setUrlParams(
-        (next) => {
-          if (value) next.set(key, value);
-          else next.delete(key);
-          next.delete('page');
-        },
-        options,
-      );
-    },
-    [setUrlParams],
-  );
+  const selectFeedTab = useCallback((tab) => {
+    setUrlParams((next) => {
+      next.delete('page');
+      next.delete('type');
+      next.delete('sort');
+      if (tab.type) next.set('type', tab.type);
+      if (tab.sort) next.set('sort', tab.sort);
+    });
+  }, [setUrlParams]);
 
-  const selectFeedTab = useCallback(
-    (tab) => {
-      setUrlParams((next) => {
-        next.delete('page');
-        next.delete('type');
-        next.delete('sort');
-
-        if (tab.type) next.set('type', tab.type);
-        if (tab.sort) next.set('sort', tab.sort);
-      });
-    },
-    [setUrlParams],
-  );
-
-  const commitSearch = useCallback(
-    (value, replace = false) => {
-      update('q', String(value || '').trim(), { replace });
-    },
-    [update],
-  );
+  const commitSearch = useCallback((value, replace = false) => {
+    update('q', String(value || '').trim(), { replace });
+  }, [update]);
 
   useEffect(() => {
     setSearchInput(currentQuery);
@@ -587,7 +544,6 @@ export default function CommunityPage() {
     if (!filtersOpen) return undefined;
 
     const previousOverflow = document.body.style.overflow;
-
     const handleEscape = (event) => {
       if (event.key === 'Escape') setFiltersOpen(false);
     };
@@ -603,30 +559,21 @@ export default function CommunityPage() {
 
   const clearAllFilters = useCallback(() => {
     setSearchInput('');
-
     setUrlParams((next) => {
-      ['type', 'category', 'area', 'sort', 'q', 'page'].forEach((key) =>
-        next.delete(key),
-      );
+      ['type', 'category', 'area', 'sort', 'q', 'page'].forEach((key) => next.delete(key));
     });
   }, [setUrlParams]);
 
-  const setPage = useCallback(
-    (page) => {
-      setUrlParams((next) => {
-        if (Number(page) <= 1) next.delete('page');
-        else next.set('page', String(page));
-      });
+  const setPage = useCallback((page) => {
+    setUrlParams((next) => {
+      if (Number(page) <= 1) next.delete('page');
+      else next.set('page', String(page));
+    });
 
-      window.setTimeout(() => {
-        resultsRef.current?.scrollIntoView({
-          behavior: 'smooth',
-          block: 'start',
-        });
-      }, 40);
-    },
-    [setUrlParams],
-  );
+    window.setTimeout(() => {
+      resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 40);
+  }, [setUrlParams]);
 
   const activeFilterCount =
     (currentType ? 1 : 0) +
@@ -641,33 +588,31 @@ export default function CommunityPage() {
   const pageSize = getPageSize(result.meta, result.items.length);
   const totalPages = Math.max(
     1,
-    Number(
-      result.meta?.totalPages ||
-        (pageSize > 0 ? Math.ceil(total / pageSize) : 1),
-    ),
+    Number(result.meta?.totalPages || (pageSize > 0 ? Math.ceil(total / pageSize) : 1)),
   );
-
-  const fromItem =
-    total > 0
-      ? (currentPage - 1) * Math.max(pageSize, 1) + 1
-      : 0;
-  const toItem =
-    total > 0
-      ? Math.min(fromItem + result.items.length - 1, total)
-      : 0;
+  const fromItem = total > 0 ? (currentPage - 1) * Math.max(pageSize, 1) + 1 : 0;
+  const toItem = total > 0 ? Math.min(fromItem + result.items.length - 1, total) : 0;
 
   const composerName =
     user?.displayName ||
     user?.profile?.displayName ||
     user?.username ||
     'Bạn';
-
-  const composerAvatar =
-    user?.profile?.avatarMediaId || user?.avatarMediaId || null;
+  const composerAvatar = profileAvatar(user);
 
   const popularItems = popularResult.items.length
     ? popularResult.items
-    : result.items.slice(0, 5);
+    : result.items.slice(0, 6);
+
+  const featuredMembers = useMemo(() => {
+    const unique = new Map();
+    [...result.items, ...popularItems].forEach((item) => {
+      const author = item?.authorId;
+      const key = memberKey(author);
+      if (author && key && !unique.has(key)) unique.set(key, author);
+    });
+    return [...unique.values()].slice(0, 3);
+  }, [result.items, popularItems]);
 
   return (
     <section className="community-social-page">
@@ -692,41 +637,31 @@ export default function CommunityPage() {
 
           <div className="community-reference-center">
             <section className="community-reference-composer" aria-label="Tạo bài viết cộng đồng">
-              <Link
-                className="community-reference-composer__top"
-                to="/dang-bai/cong-dong"
-              >
-                <Avatar
-                  src={composerAvatar}
-                  name={composerName}
-                  size="md"
-                />
+              <Link className="community-reference-composer__top" to="/cong-dong/create">
+                <Avatar src={composerAvatar} name={composerName} size="md" />
                 <span className="community-reference-composer__prompt">
-                  {isAuthenticated ? 'Có gì mới?' : 'Đăng nhập để chia sẻ với cộng đồng'}
+                  {isAuthenticated ? 'Bạn đang nghĩ gì?' : 'Đăng nhập để chia sẻ với cộng đồng'}
                 </span>
               </Link>
 
               <div className="community-reference-composer__actions">
-                <Link to="/dang-bai/cong-dong">
+                <Link to="/cong-dong/create">
                   <ImagePlus size={16} />
                   <span>Ảnh / Video</span>
                 </Link>
-                <Link to="/dang-bai/cong-dong">
+                <Link to="/cong-dong/create">
                   <BarChart3 size={16} />
                   <span>Thăm dò ý kiến</span>
                 </Link>
-                <Link to="/dang-bai/cong-dong">
+                <Link to="/cong-dong/create">
                   <MapPin size={16} />
                   <span>Gắn địa điểm</span>
                 </Link>
-                <Link to="/dang-bai/cong-dong">
+                <Link to="/cong-dong/create">
                   <MoreHorizontal size={16} />
                   <span>Khác</span>
                 </Link>
-                <Link
-                  className="community-reference-composer__submit"
-                  to="/dang-bai/cong-dong"
-                >
+                <Link className="community-reference-composer__submit" to="/cong-dong/create">
                   Đăng
                 </Link>
               </div>
@@ -735,6 +670,10 @@ export default function CommunityPage() {
             <section className="community-reference-feed-tabs" aria-label="Lọc bảng tin">
               <nav>
                 {FEED_TABS.map((tab) => {
+                  if (tab.href) {
+                    return <Link key={tab.key} to={tab.href}>{tab.label}</Link>;
+                  }
+
                   const active = tab.sort
                     ? currentSort === tab.sort && !currentType
                     : tab.type
@@ -791,22 +730,14 @@ export default function CommunityPage() {
                     <X size={13} />
                   </button>
                 ) : null}
-                <button
-                  type="button"
-                  className="community-reference-active-filters__clear"
-                  onClick={clearAllFilters}
-                >
+                <button type="button" onClick={clearAllFilters}>
                   <RotateCcw size={13} />
                   Đặt lại
                 </button>
               </div>
             ) : null}
 
-            <main
-              id="community-feed"
-              ref={resultsRef}
-              className="community-social-feed"
-            >
+            <main id="community-feed" ref={resultsRef} className="community-social-feed">
               {result.loading ? (
                 <LoadingBlock />
               ) : result.error ? (
@@ -834,7 +765,7 @@ export default function CommunityPage() {
                       Xóa bộ lọc
                     </button>
                   ) : (
-                    <Link to="/dang-bai/cong-dong">
+                    <Link to="/cong-dong/create">
                       <Plus size={16} />
                       Viết bài
                     </Link>
@@ -855,7 +786,11 @@ export default function CommunityPage() {
             ) : null}
           </div>
 
-          <PopularRail items={popularItems} loading={popularResult.loading} />
+          <PopularRail
+            items={popularItems}
+            loading={popularResult.loading}
+            members={featuredMembers}
+          />
         </div>
 
         {filtersOpen ? (
@@ -875,9 +810,7 @@ export default function CommunityPage() {
             >
               <header className="community-social-filter-drawer__header">
                 <div>
-                  <span className="community-social-filter-drawer__icon">
-                    <Filter size={18} />
-                  </span>
+                  <span className="community-social-filter-drawer__icon"><Filter size={18} /></span>
                   <div>
                     <h2>Tìm & lọc</h2>
                     <p>Thu hẹp bảng tin theo nhu cầu của bạn.</p>
@@ -916,10 +849,7 @@ export default function CommunityPage() {
                   <span>Loại bài</span>
                   <div>
                     <MessageCircle size={17} />
-                    <select
-                      value={currentType}
-                      onChange={(event) => update('type', event.target.value)}
-                    >
+                    <select value={currentType} onChange={(event) => update('type', event.target.value)}>
                       <option value="">Mọi loại bài</option>
                       {Object.entries(COMMUNITY_TYPES).map(([value, label]) => (
                         <option key={value} value={value}>{label}</option>
@@ -932,18 +862,10 @@ export default function CommunityPage() {
                   <span>Chủ đề</span>
                   <div>
                     <Tags size={17} />
-                    <select
-                      value={currentCategory}
-                      onChange={(event) => update('category', event.target.value)}
-                    >
+                    <select value={currentCategory} onChange={(event) => update('category', event.target.value)}>
                       <option value="">Mọi chủ đề</option>
                       {communityCategories.map((item) => (
-                        <option
-                          key={item._id || item.slug}
-                          value={taxonomyUrlValue(item)}
-                        >
-                          {item.name}
-                        </option>
+                        <option key={item._id || item.slug} value={taxonomyUrlValue(item)}>{item.name}</option>
                       ))}
                     </select>
                   </div>
@@ -953,18 +875,10 @@ export default function CommunityPage() {
                   <span>Khu vực</span>
                   <div>
                     <MapPin size={17} />
-                    <select
-                      value={currentArea}
-                      onChange={(event) => update('area', event.target.value)}
-                    >
+                    <select value={currentArea} onChange={(event) => update('area', event.target.value)}>
                       <option value="">Mọi khu vực</option>
                       {areas.map((item) => (
-                        <option
-                          key={item._id || item.slug}
-                          value={taxonomyUrlValue(item)}
-                        >
-                          {item.name}
-                        </option>
+                        <option key={item._id || item.slug} value={taxonomyUrlValue(item)}>{item.name}</option>
                       ))}
                     </select>
                   </div>
@@ -974,10 +888,7 @@ export default function CommunityPage() {
                   <span>Sắp xếp</span>
                   <div>
                     <TrendingUp size={17} />
-                    <select
-                      value={currentSort}
-                      onChange={(event) => update('sort', event.target.value)}
-                    >
+                    <select value={currentSort} onChange={(event) => update('sort', event.target.value)}>
                       <option value="">Mới nhất</option>
                       <option value="popular">Đang quan tâm</option>
                     </select>
@@ -986,11 +897,7 @@ export default function CommunityPage() {
               </div>
 
               <div className="community-social-filter-drawer__actions">
-                <button
-                  type="button"
-                  onClick={clearAllFilters}
-                  disabled={!hasFilters && !searchInput}
-                >
+                <button type="button" onClick={clearAllFilters} disabled={!hasFilters && !searchInput}>
                   <RotateCcw size={15} />
                   Xóa lọc
                 </button>

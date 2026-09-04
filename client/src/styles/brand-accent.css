@@ -79,6 +79,12 @@
   background: #fffdf9 !important;
 }
 
+/* Article detail: the numbered popular-news rail uses the official brand gold
+   instead of green so the ranking reads as editorial emphasis. */
+.article-view-page .article-popular-sidebar__item::before {
+  color: #b59965 !important;
+}
+
 /* =========================
    PROPERTY MARKETPLACE
    Primary CTAs stay green; chosen filters use earth.
