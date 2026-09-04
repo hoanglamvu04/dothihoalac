@@ -1,0 +1,571 @@
+/* =========================================================
+   DTHL COLOR PALETTES
+   Loaded after legacy/page styles. The palette changes color only; layouts,
+   content and backend behavior stay untouched. Dark appearance is unchanged.
+========================================================= */
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] {
+  --dthl-palette-canvas: #ffffff;
+  --dthl-palette-surface: #fffdf9;
+  --dthl-palette-surface-2: #fbf7f0;
+  --dthl-palette-surface-3: #f3ede4;
+  --dthl-palette-border: #e4ddd1;
+  --dthl-palette-border-strong: #d3c7b5;
+  --dthl-palette-ink: #28251f;
+  --dthl-palette-text: #5e574d;
+  --dthl-palette-muted: #8b8173;
+  --dthl-palette-brand: #b59965;
+  --dthl-palette-brand-hover: #9f8252;
+  --dthl-palette-brand-dark: #4a3d2c;
+  --dthl-palette-brand-soft: #efe8dc;
+  --dthl-palette-support: #365443;
+  --dthl-palette-support-soft: #edf2ef;
+  --dthl-palette-shadow: 0 8px 26px rgb(74 61 44 / 0.07);
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='green'] {
+  --dthl-palette-canvas: #f7faf8;
+  --dthl-palette-surface: #ffffff;
+  --dthl-palette-surface-2: #f2f8f4;
+  --dthl-palette-surface-3: #eaf5ee;
+  --dthl-palette-border: #d9e7de;
+  --dthl-palette-border-strong: #bfd4c6;
+  --dthl-palette-ink: #14251a;
+  --dthl-palette-text: #4d5c53;
+  --dthl-palette-muted: #7d8982;
+  --dthl-palette-brand: #1f8a4c;
+  --dthl-palette-brand-hover: #17743f;
+  --dthl-palette-brand-dark: #0b5a3b;
+  --dthl-palette-brand-soft: #eaf7ef;
+  --dthl-palette-support: #0b5a3b;
+  --dthl-palette-support-soft: #e6f2eb;
+  --dthl-palette-shadow: 0 8px 26px rgb(11 90 59 / 0.07);
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='white'] {
+  --dthl-palette-canvas: #ffffff;
+  --dthl-palette-surface: #ffffff;
+  --dthl-palette-surface-2: #f8f9f8;
+  --dthl-palette-surface-3: #f1f3f2;
+  --dthl-palette-border: #e3e6e4;
+  --dthl-palette-border-strong: #cfd4d1;
+  --dthl-palette-ink: #1f2321;
+  --dthl-palette-text: #59605c;
+  --dthl-palette-muted: #8b918d;
+  --dthl-palette-brand: #3f4743;
+  --dthl-palette-brand-hover: #2f3532;
+  --dthl-palette-brand-dark: #202522;
+  --dthl-palette-brand-soft: #f0f2f1;
+  --dthl-palette-support: #59635e;
+  --dthl-palette-support-soft: #f1f3f2;
+  --dthl-palette-shadow: 0 8px 24px rgb(31 35 33 / 0.065);
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='stone'] {
+  --dthl-palette-canvas: #f5f4f2;
+  --dthl-palette-surface: #ffffff;
+  --dthl-palette-surface-2: #f1efec;
+  --dthl-palette-surface-3: #e9e6e1;
+  --dthl-palette-border: #ded9d2;
+  --dthl-palette-border-strong: #c9c0b6;
+  --dthl-palette-ink: #2e2a26;
+  --dthl-palette-text: #655e57;
+  --dthl-palette-muted: #918980;
+  --dthl-palette-brand: #857568;
+  --dthl-palette-brand-hover: #706257;
+  --dthl-palette-brand-dark: #4a4038;
+  --dthl-palette-brand-soft: #ebe6e1;
+  --dthl-palette-support: #59675d;
+  --dthl-palette-support-soft: #edf0ed;
+  --dthl-palette-shadow: 0 8px 25px rgb(74 64 56 / 0.07);
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='mist'] {
+  --dthl-palette-canvas: #f5f8fa;
+  --dthl-palette-surface: #ffffff;
+  --dthl-palette-surface-2: #eef4f7;
+  --dthl-palette-surface-3: #e4edf2;
+  --dthl-palette-border: #d8e1e6;
+  --dthl-palette-border-strong: #bdccd4;
+  --dthl-palette-ink: #1d2a31;
+  --dthl-palette-text: #56666f;
+  --dthl-palette-muted: #87949b;
+  --dthl-palette-brand: #4b7891;
+  --dthl-palette-brand-hover: #3e687f;
+  --dthl-palette-brand-dark: #2f586f;
+  --dthl-palette-brand-soft: #e7f0f5;
+  --dthl-palette-support: #45675d;
+  --dthl-palette-support-soft: #edf3f1;
+  --dthl-palette-shadow: 0 8px 26px rgb(47 88 111 / 0.07);
+}
+
+html[data-dthl-theme='light'][data-dthl-palette] {
+  --dthl-mode-canvas: var(--dthl-palette-canvas) !important;
+  --dthl-mode-surface: var(--dthl-palette-surface) !important;
+  --dthl-mode-surface-2: var(--dthl-palette-surface-2) !important;
+  --dthl-mode-surface-3: var(--dthl-palette-surface-3) !important;
+  --dthl-mode-border: var(--dthl-palette-border) !important;
+  --dthl-mode-border-strong: var(--dthl-palette-border-strong) !important;
+  --dthl-mode-ink: var(--dthl-palette-ink) !important;
+  --dthl-mode-text: var(--dthl-palette-text) !important;
+  --dthl-mode-muted: var(--dthl-palette-muted) !important;
+  --dthl-mode-brand: var(--dthl-palette-brand) !important;
+  --dthl-mode-brand-dark: var(--dthl-palette-brand-dark) !important;
+  --dthl-mode-brand-soft: var(--dthl-palette-brand-soft) !important;
+  --dthl-mode-green: var(--dthl-palette-support) !important;
+  --dthl-mode-shadow: var(--dthl-palette-shadow) !important;
+
+  --dthl-brand-force: var(--dthl-palette-brand) !important;
+  --dthl-brand-force-hover: var(--dthl-palette-brand-hover) !important;
+  --dthl-brand-force-dark: var(--dthl-palette-brand-dark) !important;
+  --dthl-brand-force-soft: var(--dthl-palette-brand-soft) !important;
+  --dthl-brand-force-border: var(--dthl-palette-border-strong) !important;
+
+  --paper: var(--dthl-palette-surface) !important;
+  --canvas: var(--dthl-palette-canvas) !important;
+  --ink-950: var(--dthl-palette-ink) !important;
+  --ink-900: var(--dthl-palette-ink) !important;
+  --ink-800: color-mix(in srgb, var(--dthl-palette-ink) 88%, var(--dthl-palette-text)) !important;
+  --ink-700: var(--dthl-palette-text) !important;
+  --ink-600: color-mix(in srgb, var(--dthl-palette-text) 82%, var(--dthl-palette-muted)) !important;
+  --ink-500: var(--dthl-palette-muted) !important;
+  --ink-400: color-mix(in srgb, var(--dthl-palette-muted) 72%, white) !important;
+  --ink-300: var(--dthl-palette-border-strong) !important;
+  --ink-200: var(--dthl-palette-border) !important;
+  --ink-100: var(--dthl-palette-surface-3) !important;
+  --ink-50: var(--dthl-palette-surface-2) !important;
+
+  --primary-900: var(--dthl-palette-brand-dark) !important;
+  --primary-800: color-mix(in srgb, var(--dthl-palette-brand-dark) 86%, var(--dthl-palette-brand)) !important;
+  --primary-700: color-mix(in srgb, var(--dthl-palette-brand) 82%, var(--dthl-palette-brand-dark)) !important;
+  --primary-600: var(--dthl-palette-brand) !important;
+  --primary-500: color-mix(in srgb, var(--dthl-palette-brand) 82%, white) !important;
+  --primary-200: color-mix(in srgb, var(--dthl-palette-brand) 34%, white) !important;
+  --primary-100: color-mix(in srgb, var(--dthl-palette-brand) 19%, white) !important;
+  --primary-50: var(--dthl-palette-brand-soft) !important;
+
+  --accent-700: color-mix(in srgb, var(--dthl-palette-support) 86%, black) !important;
+  --accent-600: var(--dthl-palette-support) !important;
+  --accent-500: color-mix(in srgb, var(--dthl-palette-support) 82%, white) !important;
+  --accent-100: color-mix(in srgb, var(--dthl-palette-support) 18%, white) !important;
+  --accent-50: var(--dthl-palette-support-soft) !important;
+}
+
+/* Base canvas + surfaces for every user-facing route. */
+html[data-dthl-theme='light'][data-dthl-palette] body,
+html[data-dthl-theme='light'][data-dthl-palette] .app-shell,
+html[data-dthl-theme='light'][data-dthl-palette] .main-content,
+html[data-dthl-theme='light'][data-dthl-palette] :is(
+  .dth-home.home-ref,
+  .home-reference-v2,
+  .properties-page,
+  .property-detail-page,
+  .jobs-page,
+  .job-detail-page,
+  .news-hub,
+  .article-view-page,
+  .community-social-page,
+  .community-detail-page,
+  .area-page,
+  .search-page,
+  .static-page-view,
+  .contact-page,
+  .lead-page,
+  .public-member-page,
+  .create-hub-page,
+  .job-editor-page,
+  .property-editor-page,
+  .news-tip-page,
+  .account-center-page,
+  .dthl-login-page,
+  .dthl-register-page,
+  .dthl-forgot-page,
+  .dthl-reset-page
+) {
+  color: var(--dthl-palette-ink) !important;
+  background: var(--dthl-palette-canvas) !important;
+}
+
+/* Public view pages. */
+html[data-dthl-theme='light'][data-dthl-palette] .properties-page {
+  --property-green: var(--dthl-palette-support) !important;
+  --property-green-strong: color-mix(in srgb, var(--dthl-palette-support) 82%, black) !important;
+  --property-green-soft: var(--dthl-palette-support-soft) !important;
+  --property-gold: var(--dthl-palette-brand) !important;
+  --property-ink: var(--dthl-palette-ink) !important;
+  --property-text: var(--dthl-palette-text) !important;
+  --property-muted: var(--dthl-palette-muted) !important;
+  --property-border: var(--dthl-palette-border) !important;
+  --property-surface: var(--dthl-palette-surface) !important;
+  --property-surface-2: var(--dthl-palette-surface-2) !important;
+  --property-canvas: var(--dthl-palette-canvas) !important;
+  --property-warm: var(--dthl-palette-brand-soft) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette] .property-detail-page {
+  --property-detail-green: var(--dthl-palette-brand) !important;
+  --property-detail-green-hover: var(--dthl-palette-brand-hover) !important;
+  --property-detail-green-dark: var(--dthl-palette-brand-dark) !important;
+  --property-detail-green-deep: color-mix(in srgb, var(--dthl-palette-brand-dark) 84%, black) !important;
+  --property-detail-green-soft: var(--dthl-palette-brand-soft) !important;
+  --property-detail-green-border: var(--dthl-palette-border-strong) !important;
+  --property-detail-ink: var(--dthl-palette-ink) !important;
+  --property-detail-text: var(--dthl-palette-text) !important;
+  --property-detail-muted: var(--dthl-palette-muted) !important;
+  --property-detail-border: var(--dthl-palette-border) !important;
+  --property-detail-background: var(--dthl-palette-canvas) !important;
+  --property-detail-surface: var(--dthl-palette-surface) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette] .jobs-page {
+  --jobs-brand: var(--dthl-palette-brand) !important;
+  --jobs-brand-dark: var(--dthl-palette-brand-dark) !important;
+  --jobs-bg: var(--dthl-palette-canvas) !important;
+  --jobs-background: var(--dthl-palette-canvas) !important;
+  --jobs-surface: var(--dthl-palette-surface) !important;
+  --jobs-text: var(--dthl-palette-ink) !important;
+  --jobs-muted: var(--dthl-palette-muted) !important;
+  --jobs-soft-brand: var(--dthl-palette-brand-soft) !important;
+  --jobs-line: var(--dthl-palette-border) !important;
+  --jobs-border: var(--dthl-palette-border) !important;
+  --jobs-green: var(--dthl-palette-support) !important;
+  --jobs-green-dark: var(--dthl-palette-brand-dark) !important;
+  --jobs-green-soft: var(--dthl-palette-support-soft) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette] .job-detail-page,
+html[data-dthl-theme='light'][data-dthl-palette] .job-editor-page {
+  --job-green: var(--dthl-palette-brand) !important;
+  --job-green-hover: var(--dthl-palette-brand-hover) !important;
+  --job-green-dark: var(--dthl-palette-brand-dark) !important;
+  --job-green-deep: color-mix(in srgb, var(--dthl-palette-brand-dark) 84%, black) !important;
+  --job-green-soft: var(--dthl-palette-brand-soft) !important;
+  --job-green-soft-2: var(--dthl-palette-surface-2) !important;
+  --job-green-border: var(--dthl-palette-border-strong) !important;
+  --job-ink: var(--dthl-palette-ink) !important;
+  --job-text: var(--dthl-palette-text) !important;
+  --job-muted: var(--dthl-palette-muted) !important;
+  --job-border: var(--dthl-palette-border) !important;
+  --job-border-strong: var(--dthl-palette-border-strong) !important;
+  --job-background: var(--dthl-palette-canvas) !important;
+  --job-surface: var(--dthl-palette-surface) !important;
+  --job-shadow: var(--dthl-palette-shadow) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette] .news-hub {
+  --news-green: var(--dthl-palette-brand) !important;
+  --news-green-dark: var(--dthl-palette-brand-dark) !important;
+  --news-green-soft: var(--dthl-palette-brand-soft) !important;
+  --news-ink: var(--dthl-palette-ink) !important;
+  --news-text: var(--dthl-palette-text) !important;
+  --news-muted: var(--dthl-palette-muted) !important;
+  --news-border: var(--dthl-palette-border) !important;
+  --news-surface: var(--dthl-palette-surface) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette] .article-view-page {
+  --article-green: var(--dthl-palette-brand) !important;
+  --article-green-hover: var(--dthl-palette-brand-hover) !important;
+  --article-green-dark: var(--dthl-palette-brand-dark) !important;
+  --article-green-deep: color-mix(in srgb, var(--dthl-palette-brand-dark) 84%, black) !important;
+  --article-green-soft: var(--dthl-palette-brand-soft) !important;
+  --article-green-border: var(--dthl-palette-border-strong) !important;
+  --article-ink: var(--dthl-palette-ink) !important;
+  --article-text: var(--dthl-palette-text) !important;
+  --article-muted: var(--dthl-palette-muted) !important;
+  --article-border: var(--dthl-palette-border) !important;
+  --article-background: var(--dthl-palette-canvas) !important;
+  --article-surface: var(--dthl-palette-surface) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette] .community-social-page {
+  --c-green: var(--dthl-palette-brand-dark) !important;
+  --c-green-2: var(--dthl-palette-support) !important;
+  --c-green-soft: var(--dthl-palette-brand-soft) !important;
+  --c-ink: var(--dthl-palette-ink) !important;
+  --c-text: var(--dthl-palette-text) !important;
+  --c-muted: var(--dthl-palette-muted) !important;
+  --c-line: var(--dthl-palette-border) !important;
+  --c-surface: var(--dthl-palette-surface) !important;
+  --c-surface-2: var(--dthl-palette-surface-2) !important;
+  --c-canvas: var(--dthl-palette-canvas) !important;
+  --c-gold: var(--dthl-palette-brand) !important;
+  --c-shadow: var(--dthl-palette-shadow) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette] .community-detail-page {
+  --thread-green: var(--dthl-palette-brand) !important;
+  --thread-ink: var(--dthl-palette-ink) !important;
+  --thread-text: var(--dthl-palette-text) !important;
+  --thread-muted: var(--dthl-palette-muted) !important;
+  --thread-line: var(--dthl-palette-border) !important;
+  --thread-bg: var(--dthl-palette-canvas) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette] .area-page {
+  --area-green: var(--dthl-palette-brand) !important;
+  --area-green-hover: var(--dthl-palette-brand-hover) !important;
+  --area-green-dark: var(--dthl-palette-brand-dark) !important;
+  --area-green-deep: color-mix(in srgb, var(--dthl-palette-brand-dark) 84%, black) !important;
+  --area-green-soft: var(--dthl-palette-brand-soft) !important;
+  --area-green-border: var(--dthl-palette-border-strong) !important;
+  --area-ink: var(--dthl-palette-ink) !important;
+  --area-text: var(--dthl-palette-text) !important;
+  --area-muted: var(--dthl-palette-muted) !important;
+  --area-border: var(--dthl-palette-border) !important;
+  --area-background: var(--dthl-palette-canvas) !important;
+  --area-surface: var(--dthl-palette-surface) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette] .search-page {
+  --search-green: var(--dthl-palette-brand) !important;
+  --search-green-dark: var(--dthl-palette-brand-dark) !important;
+  --search-green-soft: var(--dthl-palette-brand-soft) !important;
+  --search-ink: var(--dthl-palette-ink) !important;
+  --search-text: var(--dthl-palette-text) !important;
+  --search-muted: var(--dthl-palette-muted) !important;
+  --search-border: var(--dthl-palette-border) !important;
+  --search-bg: var(--dthl-palette-canvas) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette] .static-page-view {
+  --static-green: var(--dthl-palette-brand) !important;
+  --static-green-hover: var(--dthl-palette-brand-hover) !important;
+  --static-green-dark: var(--dthl-palette-brand-dark) !important;
+  --static-green-deep: color-mix(in srgb, var(--dthl-palette-brand-dark) 84%, black) !important;
+  --static-green-soft: var(--dthl-palette-brand-soft) !important;
+  --static-green-border: var(--dthl-palette-border-strong) !important;
+  --static-ink: var(--dthl-palette-ink) !important;
+  --static-text: var(--dthl-palette-text) !important;
+  --static-muted: var(--dthl-palette-muted) !important;
+  --static-border: var(--dthl-palette-border) !important;
+  --static-surface: var(--dthl-palette-surface) !important;
+  --static-background: var(--dthl-palette-canvas) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette] .contact-page {
+  --contact-green: var(--dthl-palette-brand) !important;
+  --contact-green-hover: var(--dthl-palette-brand-hover) !important;
+  --contact-green-dark: var(--dthl-palette-brand-dark) !important;
+  --contact-green-deep: color-mix(in srgb, var(--dthl-palette-brand-dark) 84%, black) !important;
+  --contact-green-soft: var(--dthl-palette-brand-soft) !important;
+  --contact-green-border: var(--dthl-palette-border-strong) !important;
+  --contact-ink: var(--dthl-palette-ink) !important;
+  --contact-text: var(--dthl-palette-text) !important;
+  --contact-muted: var(--dthl-palette-muted) !important;
+  --contact-border: var(--dthl-palette-border) !important;
+  --contact-background: var(--dthl-palette-canvas) !important;
+  --contact-surface: var(--dthl-palette-surface) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette] .lead-page {
+  --lead-primary: var(--dthl-palette-brand) !important;
+  --lead-primary-hover: var(--dthl-palette-brand-hover) !important;
+  --lead-primary-dark: var(--dthl-palette-brand-dark) !important;
+  --lead-primary-deep: color-mix(in srgb, var(--dthl-palette-brand-dark) 84%, black) !important;
+  --lead-primary-soft: var(--dthl-palette-brand-soft) !important;
+  --lead-primary-border: var(--dthl-palette-border-strong) !important;
+  --lead-ink: var(--dthl-palette-ink) !important;
+  --lead-text: var(--dthl-palette-text) !important;
+  --lead-muted: var(--dthl-palette-muted) !important;
+  --lead-border: var(--dthl-palette-border) !important;
+  --lead-background: var(--dthl-palette-canvas) !important;
+  --lead-surface: var(--dthl-palette-surface) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette] .public-member-page {
+  --member-green: var(--dthl-palette-brand) !important;
+  --member-green-dark: var(--dthl-palette-brand-dark) !important;
+  --member-green-soft: var(--dthl-palette-brand-soft) !important;
+  --member-border: var(--dthl-palette-border) !important;
+  --member-ink: var(--dthl-palette-ink) !important;
+  --member-text: var(--dthl-palette-text) !important;
+  --member-muted: var(--dthl-palette-muted) !important;
+}
+
+/* Create / submit / account routes were the main remaining green legacy areas. */
+html[data-dthl-theme='light'][data-dthl-palette] .create-hub-page {
+  --create-green: var(--dthl-palette-brand) !important;
+  --create-green-hover: var(--dthl-palette-brand-hover) !important;
+  --create-green-dark: var(--dthl-palette-brand-dark) !important;
+  --create-green-deep: color-mix(in srgb, var(--dthl-palette-brand-dark) 84%, black) !important;
+  --create-green-soft: var(--dthl-palette-brand-soft) !important;
+  --create-green-border: var(--dthl-palette-border-strong) !important;
+  --create-ink: var(--dthl-palette-ink) !important;
+  --create-text: var(--dthl-palette-text) !important;
+  --create-muted: var(--dthl-palette-muted) !important;
+  --create-border: var(--dthl-palette-border) !important;
+  --create-background: var(--dthl-palette-canvas) !important;
+  --create-surface: var(--dthl-palette-surface) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette] .property-editor-page {
+  --post-green: var(--dthl-palette-brand) !important;
+  --post-green-dark: var(--dthl-palette-brand-dark) !important;
+  --post-green-deep: color-mix(in srgb, var(--dthl-palette-brand-dark) 84%, black) !important;
+  --post-green-soft: var(--dthl-palette-brand-soft) !important;
+  --post-green-border: var(--dthl-palette-border-strong) !important;
+  --post-ink: var(--dthl-palette-ink) !important;
+  --post-text: var(--dthl-palette-text) !important;
+  --post-muted: var(--dthl-palette-muted) !important;
+  --post-border: var(--dthl-palette-border) !important;
+  --post-surface: var(--dthl-palette-surface) !important;
+  --post-bg: var(--dthl-palette-canvas) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette] .news-tip-page {
+  --tip-green: var(--dthl-palette-brand) !important;
+  --tip-green-hover: var(--dthl-palette-brand-hover) !important;
+  --tip-green-dark: var(--dthl-palette-brand-dark) !important;
+  --tip-green-deep: color-mix(in srgb, var(--dthl-palette-brand-dark) 84%, black) !important;
+  --tip-green-soft: var(--dthl-palette-brand-soft) !important;
+  --tip-green-border: var(--dthl-palette-border-strong) !important;
+  --tip-ink: var(--dthl-palette-ink) !important;
+  --tip-text: var(--dthl-palette-text) !important;
+  --tip-muted: var(--dthl-palette-muted) !important;
+  --tip-border: var(--dthl-palette-border) !important;
+  --tip-background: var(--dthl-palette-canvas) !important;
+  --tip-surface: var(--dthl-palette-surface) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette] .account-center-page {
+  --account-green: var(--dthl-palette-brand) !important;
+  --account-green-dark: var(--dthl-palette-brand-dark) !important;
+  --account-green-soft: var(--dthl-palette-brand-soft) !important;
+  --account-border: var(--dthl-palette-border) !important;
+  --account-ink: var(--dthl-palette-ink) !important;
+  --account-muted: var(--dthl-palette-muted) !important;
+}
+
+/* Replace hard-coded green hero panels in the earth/neutral palettes. */
+html[data-dthl-theme='light'][data-dthl-palette] :is(
+  .create-hub-hero,
+  .contact-hero,
+  .lead-page-hero,
+  .area-hero,
+  .news-tip-hero
+) {
+  border-color: color-mix(in srgb, var(--dthl-palette-brand) 34%, transparent) !important;
+  background:
+    radial-gradient(circle at 88% 15%, color-mix(in srgb, var(--dthl-palette-brand) 26%, transparent), transparent 30%),
+    radial-gradient(circle at 16% 100%, color-mix(in srgb, var(--dthl-palette-support) 20%, transparent), transparent 34%),
+    linear-gradient(
+      135deg,
+      color-mix(in srgb, var(--dthl-palette-brand-dark) 82%, #171717) 0%,
+      var(--dthl-palette-brand-dark) 58%,
+      color-mix(in srgb, var(--dthl-palette-brand) 72%, var(--dthl-palette-brand-dark)) 100%
+    ) !important;
+  box-shadow: 0 18px 44px color-mix(in srgb, var(--dthl-palette-brand-dark) 20%, transparent) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette] :is(
+  .create-hub-hero__eyebrow,
+  .news-tip-hero__eyebrow
+) {
+  color: color-mix(in srgb, white 74%, var(--dthl-palette-brand)) !important;
+}
+
+/* Authentication pages still had fixed forest-green intro columns. */
+html[data-dthl-theme='light'][data-dthl-palette] :is(
+  .dthl-login-page,
+  .dthl-register-page,
+  .dthl-forgot-page,
+  .dthl-reset-page
+) {
+  --dthl-login-earth: var(--dthl-palette-brand) !important;
+  --dthl-login-earth-dark: var(--dthl-palette-brand-dark) !important;
+  --dthl-login-earth-soft: var(--dthl-palette-brand-soft) !important;
+  --dthl-auth-earth: var(--dthl-palette-brand) !important;
+  --dthl-auth-earth-dark: var(--dthl-palette-brand-dark) !important;
+  --dthl-auth-earth-soft: var(--dthl-palette-brand-soft) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette] :is(
+  .dthl-login-intro,
+  .dthl-register-intro,
+  .dthl-forgot-intro,
+  .dthl-reset-intro
+) {
+  background:
+    radial-gradient(circle at 82% 17%, color-mix(in srgb, var(--dthl-palette-brand) 28%, transparent), transparent 30%),
+    linear-gradient(
+      150deg,
+      color-mix(in srgb, var(--dthl-palette-brand-dark) 84%, #151515) 0%,
+      var(--dthl-palette-brand-dark) 52%,
+      color-mix(in srgb, var(--dthl-palette-brand) 68%, var(--dthl-palette-brand-dark)) 100%
+    ) !important;
+}
+
+/* Header / navigation / action colors now follow the selected palette. */
+html[data-dthl-theme='light'][data-dthl-palette] .dthl-header-top {
+  color: var(--dthl-palette-text) !important;
+  background: var(--dthl-palette-surface-3) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette] :is(.dthl-header-main, .dthl-header-nav) {
+  border-color: var(--dthl-palette-border) !important;
+  background: color-mix(in srgb, var(--dthl-palette-surface) 97%, transparent) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette] .dthl-header-search__submit,
+html[data-dthl-theme='light'][data-dthl-palette] :is(.dthl-register-button, .dthl-post-button, .dthl-mobile-post-button),
+html[data-dthl-theme='light'][data-dthl-palette] .community-reference-composer__submit,
+html[data-dthl-theme='light'][data-dthl-palette] .community-reference-feed-tabs button.is-active,
+html[data-dthl-theme='light'][data-dthl-palette] .news-masthead__search button,
+html[data-dthl-theme='light'][data-dthl-palette] .news-category-bar nav button.is-active,
+html[data-dthl-theme='light'][data-dthl-palette] .news-filter-toggle.is-active {
+  border-color: var(--dthl-palette-brand) !important;
+  color: #fff !important;
+  background: var(--dthl-palette-brand) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette] :is(
+  .home-reference-panel,
+  .home-reference-community,
+  .home-reference-properties,
+  .home-ref-state,
+  .home-mobile-shortcuts,
+  .community-reference-card,
+  .community-reference-composer,
+  .news-story,
+  .news-stream,
+  .article-view-main,
+  .job-detail-header,
+  .job-detail-main > section,
+  .job-apply-card,
+  .job-sidebar-card,
+  .search-start,
+  .search-results,
+  .public-member-header
+) {
+  border-color: var(--dthl-palette-border) !important;
+  background-color: var(--dthl-palette-surface) !important;
+  box-shadow: var(--dthl-palette-shadow) !important;
+}
+
+/* Small cards deliberately use surface-2 so the hierarchy stays visible. */
+html[data-dthl-theme='light'][data-dthl-palette] :is(
+  .home-spotlight-story,
+  .home-job-story,
+  .home-community-story,
+  .home-property-story,
+  .jobs-featured-card .job-card,
+  .jobs-employers-panel__companies button
+) {
+  border-color: var(--dthl-palette-border) !important;
+  background: var(--dthl-palette-surface-2) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette] :is(input, select, textarea):focus {
+  border-color: var(--dthl-palette-brand) !important;
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--dthl-palette-brand) 15%, transparent) !important;
+  outline: 0 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-dthl-palette] *,
+  html[data-dthl-palette] *::before,
+  html[data-dthl-palette] *::after {
+    transition-duration: 0.01ms !important;
+  }
+}
