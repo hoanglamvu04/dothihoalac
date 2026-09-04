@@ -1,0 +1,411 @@
+/* =========================================================
+   EARTH PALETTE — PREMIUM WHITE HEADER
+   White is the field color. Earth is a deliberate accent only.
+   This file is intentionally scoped to light + earth so every other
+   selectable palette keeps its own header language.
+========================================================= */
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] {
+  --earth-header-white: #ffffff;
+  --earth-header-ink: #302d28;
+  --earth-header-text: #57534c;
+  --earth-header-muted: #7c776f;
+  --earth-header-border: #e8e5de;
+  --earth-header-border-strong: #dcd5ca;
+  --earth-header-accent: #b59965;
+  --earth-header-accent-hover: #957947;
+  --earth-header-accent-dark: #4a3d2c;
+  --earth-header-accent-soft: #f7f3ed;
+  --earth-header-neutral-soft: #f7f8f6;
+  --earth-header-logo-green: #164e35;
+}
+
+/* ---------------------------------------------------------
+   SHELL
+--------------------------------------------------------- */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header {
+  color: var(--earth-header-ink) !important;
+  background: rgba(255, 255, 255, 0.985) !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header.is-scrolled:not(.is-hidden) {
+  box-shadow: 0 10px 28px rgb(37 35 31 / 0.055) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .dthl-header-main,
+  .dthl-header-nav,
+  .dthl-header-nav-upgrade
+) {
+  background: rgba(255, 255, 255, 0.985) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-main,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-nav {
+  border-color: var(--earth-header-border) !important;
+}
+
+/* Keep the original green/gold logo untouched; it provides useful contrast. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-brand__mark {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-brand__content strong {
+  color: var(--earth-header-accent) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-brand__content small {
+  color: var(--earth-header-logo-green) !important;
+}
+
+/* ---------------------------------------------------------
+   SEARCH — neutral field, one confident earth CTA
+--------------------------------------------------------- */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search {
+  border: 1px solid var(--earth-header-border) !important;
+  background: #ffffff !important;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.7) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search:hover {
+  border-color: var(--earth-header-border-strong) !important;
+  background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search:focus-within {
+  border-color: color-mix(in srgb, var(--earth-header-accent) 62%, var(--earth-header-border)) !important;
+  background: #ffffff !important;
+  box-shadow:
+    0 0 0 3px rgb(181 153 101 / 0.10),
+    0 8px 22px rgb(74 61 44 / 0.045) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search__leading-icon {
+  color: var(--earth-header-accent-dark) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search input {
+  color: var(--earth-header-ink) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search input::placeholder {
+  color: #96918a !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search__clear {
+  color: var(--earth-header-muted) !important;
+  background: transparent !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search__clear:hover {
+  color: var(--earth-header-accent-dark) !important;
+  background: var(--earth-header-accent-soft) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search__submit {
+  border-color: #a98b58 !important;
+  color: #ffffff !important;
+  background: #a98b58 !important;
+  box-shadow: 0 7px 16px rgb(74 61 44 / 0.10) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search__submit:hover:not(:disabled) {
+  border-color: var(--earth-header-accent-hover) !important;
+  background: var(--earth-header-accent-hover) !important;
+  box-shadow: 0 9px 20px rgb(74 61 44 / 0.14) !important;
+  transform: translateY(-1px);
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search__submit:disabled {
+  border-color: #d8c9ae !important;
+  color: rgb(255 255 255 / 0.94) !important;
+  background: #d8c9ae !important;
+  opacity: 1 !important;
+}
+
+/* ---------------------------------------------------------
+   RIGHT-SIDE UTILITIES — neutral until interaction
+--------------------------------------------------------- */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .dthl-icon-button,
+  .dthl-mobile-menu-button
+) {
+  border: 1px solid var(--earth-header-border) !important;
+  color: #373832 !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .dthl-icon-button:hover,
+  .dthl-icon-button.is-active,
+  .dthl-mobile-menu-button:hover
+) {
+  border-color: color-mix(in srgb, var(--earth-header-accent) 42%, var(--earth-header-border)) !important;
+  color: var(--earth-header-accent-dark) !important;
+  background: var(--earth-header-accent-soft) !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-user-menu__trigger {
+  border: 1px solid var(--earth-header-border) !important;
+  color: var(--earth-header-ink) !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-user-menu__trigger:hover,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-user-menu__trigger[aria-expanded='true'] {
+  border-color: var(--earth-header-border-strong) !important;
+  background: #ffffff !important;
+}
+
+/* A green avatar echoes the logo and prevents the earth palette becoming monochrome. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-user-menu__trigger .avatar {
+  border-color: rgb(22 78 53 / 0.14) !important;
+  color: #ffffff !important;
+  background: var(--earth-header-logo-green) !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-user-menu__name {
+  color: var(--earth-header-ink) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-notification-badge {
+  border-color: #ffffff !important;
+  color: #ffffff !important;
+  background: #b7463f !important;
+}
+
+/* ---------------------------------------------------------
+   PRIMARY NAV — no beige pills. White tabs + earth context.
+--------------------------------------------------------- */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-nav__inner {
+  background: transparent !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .dthl-header-nav__link,
+  .dthl-header-nav-upgrade__link
+) {
+  position: relative;
+  border: 1px solid transparent !important;
+  color: #4f504a !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .dthl-header-nav__link:hover,
+  .dthl-header-nav-upgrade__link:hover,
+  .dthl-header-nav-upgrade__item:focus-within > .dthl-header-nav-upgrade__link
+) {
+  border-color: var(--earth-header-border) !important;
+  color: var(--earth-header-accent-dark) !important;
+  background: #ffffff !important;
+  box-shadow: 0 3px 12px rgb(37 35 31 / 0.035) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .dthl-header-nav__link.is-active,
+  .dthl-header-nav-upgrade__link.is-active
+) {
+  border-color: transparent !important;
+  color: var(--earth-header-accent-dark) !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
+}
+
+/* Thin underline gives context without painting the entire tab. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-nav__link.is-active::after {
+  right: 13px !important;
+  bottom: -1px !important;
+  left: 13px !important;
+  height: 3px !important;
+  border-radius: 999px 999px 0 0 !important;
+  background: var(--earth-header-accent) !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-nav-upgrade__link.is-active {
+  box-shadow: inset 0 -3px 0 var(--earth-header-accent) !important;
+}
+
+/* If the active navigation implementation includes SVG icon tiles, make the
+   active icon the only filled earth element. Text-only navigation is unchanged. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-nav__link > svg {
+  box-sizing: content-box !important;
+  width: 18px !important;
+  height: 18px !important;
+  padding: 5px !important;
+  border-radius: 8px !important;
+  color: #555851 !important;
+  background: var(--earth-header-neutral-soft) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-nav__link.is-active > svg {
+  color: #ffffff !important;
+  background: var(--earth-header-accent) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-nav-upgrade__chevron {
+  color: #969187 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-nav-upgrade__item:hover .dthl-header-nav-upgrade__chevron,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-nav-upgrade__item:focus-within .dthl-header-nav-upgrade__chevron {
+  color: var(--earth-header-accent-dark) !important;
+}
+
+/* Quick links stay quiet so the primary nav reads first. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-nav__quick-links a {
+  color: #747a73 !important;
+  background: transparent !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-nav__quick-links a:hover {
+  color: var(--earth-header-accent-dark) !important;
+}
+
+/* ---------------------------------------------------------
+   THEME / DISPLAY CONTROLS
+   Any dedicated toggle living in the nav should read neutral at rest.
+--------------------------------------------------------- */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .dthl-theme-toggle,
+  .dthl-theme-button,
+  .dthl-header-theme-toggle,
+  .dthl-header-nav__theme-toggle,
+  [data-dthl-theme-toggle]
+) {
+  border-color: var(--earth-header-border) !important;
+  color: #545149 !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .dthl-theme-toggle,
+  .dthl-theme-button,
+  .dthl-header-theme-toggle,
+  .dthl-header-nav__theme-toggle,
+  [data-dthl-theme-toggle]
+) svg {
+  color: var(--earth-header-accent-hover) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .dthl-theme-toggle,
+  .dthl-theme-button,
+  .dthl-header-theme-toggle,
+  .dthl-header-nav__theme-toggle,
+  [data-dthl-theme-toggle]
+):hover {
+  border-color: color-mix(in srgb, var(--earth-header-accent) 40%, var(--earth-header-border)) !important;
+  color: var(--earth-header-accent-dark) !important;
+  background: var(--earth-header-accent-soft) !important;
+}
+
+/* ---------------------------------------------------------
+   DROPDOWNS — white editorial surfaces, subtle earth focus only.
+--------------------------------------------------------- */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .dthl-header-submenu,
+  .dthl-user-menu__panel,
+  .dthl-notification-panel,
+  .dthl-header-preferences__panel
+) {
+  border-color: var(--earth-header-border) !important;
+  color: var(--earth-header-ink) !important;
+  background: rgba(255, 255, 255, 0.995) !important;
+  box-shadow:
+    0 20px 48px rgb(37 35 31 / 0.10),
+    0 4px 14px rgb(37 35 31 / 0.035) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .dthl-header-submenu__root:hover,
+  .dthl-header-submenu__root.is-active,
+  .dthl-header-submenu__child:hover,
+  .dthl-header-submenu__child.is-active
+) {
+  color: var(--earth-header-accent-dark) !important;
+  background: var(--earth-header-accent-soft) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .dthl-header-submenu__root.is-active,
+  .dthl-header-submenu__child.is-active
+) {
+  box-shadow: inset 3px 0 0 var(--earth-header-accent) !important;
+}
+
+/* ---------------------------------------------------------
+   AUTH ACTIONS
+--------------------------------------------------------- */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-login-link {
+  color: var(--earth-header-ink) !important;
+  background: transparent !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-login-link:hover {
+  color: var(--earth-header-accent-dark) !important;
+  background: var(--earth-header-accent-soft) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-register-button {
+  border-color: var(--earth-header-accent) !important;
+  color: #ffffff !important;
+  background: var(--earth-header-accent) !important;
+  box-shadow: 0 7px 16px rgb(74 61 44 / 0.10) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-register-button:hover {
+  border-color: var(--earth-header-accent-hover) !important;
+  background: var(--earth-header-accent-hover) !important;
+}
+
+/* Desktop-only refinements. */
+@media (min-width: 1021px) {
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-main__inner {
+    min-height: 70px !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-nav__inner {
+    min-height: 50px !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-nav__link,
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-nav-upgrade__link {
+    min-height: 40px !important;
+  }
+}
+
+/* Mobile retains the compact layout but follows the same white-first language. */
+@media (max-width: 1020px) {
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+    .dthl-mobile-nav__panel,
+    .dthl-mobile-search
+  ) {
+    border-color: var(--earth-header-border) !important;
+    background: #ffffff !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+    .dthl-mobile-nav__link.is-active,
+    .dthl-mobile-nav-upgrade__link.is-active,
+    .dthl-mobile-nav-upgrade__category.is-active
+  ) {
+    color: var(--earth-header-accent-dark) !important;
+    background: var(--earth-header-accent-soft) !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html[data-dthl-palette='earth'] .dthl-header * {
+    transition: none !important;
+  }
+}
