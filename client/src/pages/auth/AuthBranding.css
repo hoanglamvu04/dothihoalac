@@ -41,6 +41,98 @@
   display: none !important;
 }
 
+/* Login palette: green remains the structural/trust color while the official
+   earth-gold brand tone is used for the decisive interaction accents. */
+.dthl-login-page {
+  --dthl-login-earth: var(--dthl-mode-brand, #b59965);
+  --dthl-login-earth-dark: var(--dthl-mode-brand-dark, #846a44);
+  --dthl-login-earth-soft: var(--dthl-mode-brand-soft, #f6f4ef);
+}
+
+html[data-dthl-theme='light'] .dthl-login-page {
+  background:
+    radial-gradient(circle at 7% 9%, rgb(47 91 66 / 0.1), transparent 27%),
+    radial-gradient(circle at 92% 10%, rgb(181 153 101 / 0.11), transparent 24%),
+    #f5f6f4;
+}
+
+.dthl-login-page .dthl-login-shell {
+  border-color: rgb(181 153 101 / 0.2);
+  box-shadow:
+    0 30px 80px rgb(23 36 29 / 0.1),
+    0 5px 18px rgb(181 153 101 / 0.07);
+}
+
+.dthl-login-page .dthl-login-intro {
+  background:
+    radial-gradient(circle at 82% 17%, rgb(181 153 101 / 0.18), transparent 30%),
+    linear-gradient(150deg, #062f18 0%, #083d20 48%, #0f6334 100%);
+}
+
+.dthl-login-page :is(
+  .dthl-login-eyebrow,
+  .dthl-login-intro__heading h1 em,
+  .dthl-login-card__header > span
+) {
+  color: var(--dthl-login-earth) !important;
+}
+
+.dthl-login-page .dthl-login-benefits > div > span {
+  color: #f4dfb3;
+  border: 1px solid rgb(181 153 101 / 0.28);
+  background: rgb(181 153 101 / 0.15);
+}
+
+.dthl-login-page .dthl-login-field label em,
+.dthl-login-page .dthl-login-input > svg,
+.dthl-login-page .dthl-login-field__label-row a,
+.dthl-login-page .dthl-login-switch a,
+.dthl-login-page .dthl-login-card__security > svg {
+  color: var(--dthl-login-earth-dark) !important;
+}
+
+.dthl-login-page .dthl-login-field__label-row a:hover,
+.dthl-login-page .dthl-login-switch a:hover {
+  color: var(--dthl-login-earth) !important;
+}
+
+.dthl-login-page .dthl-login-input:focus-within {
+  border-color: var(--dthl-login-earth) !important;
+  background: #fff;
+  box-shadow:
+    0 0 0 4px rgb(181 153 101 / 0.13),
+    0 8px 22px rgb(181 153 101 / 0.07) !important;
+}
+
+.dthl-login-page .dthl-login-password-toggle:hover {
+  color: var(--dthl-login-earth-dark) !important;
+  background: var(--dthl-login-earth-soft) !important;
+}
+
+.dthl-login-page .dthl-login-remember input:checked + .dthl-login-checkbox {
+  border-color: var(--dthl-login-earth) !important;
+  color: #fff !important;
+  background: var(--dthl-login-earth) !important;
+}
+
+.dthl-login-page .dthl-login-submit {
+  border-color: var(--dthl-login-earth) !important;
+  color: #fff !important;
+  background: linear-gradient(135deg, #bda574 0%, #a88955 100%) !important;
+  box-shadow: 0 13px 28px rgb(181 153 101 / 0.24) !important;
+}
+
+.dthl-login-page .dthl-login-submit:hover:not(:disabled) {
+  border-color: var(--dthl-login-earth-dark) !important;
+  background: linear-gradient(135deg, #aa8d59 0%, #846a44 100%) !important;
+  box-shadow: 0 15px 30px rgb(132 106 68 / 0.24) !important;
+}
+
+.dthl-login-page .dthl-login-card__security {
+  border-color: rgb(181 153 101 / 0.2) !important;
+  background: var(--dthl-login-earth-soft) !important;
+}
+
 @media (max-width: 760px) {
   :is(.dthl-login-page, .dthl-register-page, .dthl-forgot-page, .dthl-reset-page)
     :is(.dthl-login-intro, .dthl-register-intro, .dthl-forgot-intro, .dthl-reset-intro) {
