@@ -133,6 +133,213 @@ html[data-dthl-theme='light'] .dthl-login-page {
   background: var(--dthl-login-earth-soft) !important;
 }
 
+/* Shared earth-gold accents for the rest of the authentication journey. */
+:is(.dthl-register-page, .dthl-forgot-page, .dthl-reset-page) {
+  --dthl-auth-earth: var(--dthl-mode-brand, #b59965);
+  --dthl-auth-earth-dark: var(--dthl-mode-brand-dark, #846a44);
+  --dthl-auth-earth-soft: var(--dthl-mode-brand-soft, #f6f4ef);
+}
+
+html[data-dthl-theme='light'] :is(.dthl-register-page, .dthl-forgot-page, .dthl-reset-page) {
+  background:
+    radial-gradient(circle at 7% 9%, rgb(47 91 66 / 0.09), transparent 27%),
+    radial-gradient(circle at 92% 10%, rgb(181 153 101 / 0.11), transparent 24%),
+    #f5f6f4 !important;
+}
+
+:is(.dthl-register-page, .dthl-forgot-page, .dthl-reset-page)
+  :is(.dthl-register-shell, .dthl-forgot-shell, .dthl-reset-shell) {
+  border-color: rgb(181 153 101 / 0.2) !important;
+  box-shadow:
+    0 30px 80px rgb(23 36 29 / 0.1),
+    0 5px 18px rgb(181 153 101 / 0.07) !important;
+}
+
+:is(.dthl-register-page, .dthl-forgot-page, .dthl-reset-page)
+  :is(.dthl-register-intro, .dthl-forgot-intro, .dthl-reset-intro) {
+  background:
+    radial-gradient(circle at 82% 17%, rgb(181 153 101 / 0.18), transparent 30%),
+    linear-gradient(150deg, #062f18 0%, #083d20 48%, #0f6334 100%) !important;
+}
+
+:is(.dthl-register-page, .dthl-forgot-page, .dthl-reset-page)
+  :is(
+    .dthl-register-eyebrow,
+    .dthl-forgot-eyebrow,
+    .dthl-reset-eyebrow,
+    .dthl-register-intro__heading h1 em,
+    .dthl-forgot-intro__heading h1 em,
+    .dthl-reset-intro__heading h1 em,
+    .dthl-register-card__header > span,
+    .dthl-forgot-card__header > span,
+    .dthl-reset-card__header > span,
+    .dthl-forgot-success__eyebrow,
+    .dthl-reset-invalid__eyebrow
+  ) {
+  color: var(--dthl-auth-earth) !important;
+}
+
+:is(.dthl-register-page, .dthl-forgot-page, .dthl-reset-page)
+  :is(
+    .dthl-register-benefits > div > span,
+    .dthl-forgot-benefits > div > span,
+    .dthl-reset-benefits > div > span
+  ) {
+  color: #f4dfb3 !important;
+  border: 1px solid rgb(181 153 101 / 0.28) !important;
+  background: rgb(181 153 101 / 0.15) !important;
+}
+
+:is(.dthl-register-page, .dthl-forgot-page, .dthl-reset-page)
+  :is(
+    .dthl-register-field label em,
+    .dthl-forgot-field label em,
+    .dthl-reset-field label em,
+    .dthl-register-input > svg,
+    .dthl-forgot-input > svg,
+    .dthl-reset-input > svg,
+    .dthl-register-switch a,
+    .dthl-forgot-switch a,
+    .dthl-reset-switch a,
+    .dthl-forgot-back-link,
+    .dthl-reset-back-link,
+    .dthl-register-card__security > svg,
+    .dthl-forgot-card__security > svg,
+    .dthl-reset-card__security > svg
+  ) {
+  color: var(--dthl-auth-earth-dark) !important;
+}
+
+:is(.dthl-register-page, .dthl-forgot-page, .dthl-reset-page)
+  :is(
+    .dthl-register-input,
+    .dthl-forgot-input,
+    .dthl-reset-input
+  ):focus-within {
+  border-color: var(--dthl-auth-earth) !important;
+  background: #fff !important;
+  box-shadow:
+    0 0 0 4px rgb(181 153 101 / 0.13),
+    0 8px 22px rgb(181 153 101 / 0.07) !important;
+}
+
+:is(.dthl-register-page, .dthl-reset-page)
+  :is(.dthl-register-password-toggle, .dthl-reset-password-toggle):hover {
+  color: var(--dthl-auth-earth-dark) !important;
+  background: var(--dthl-auth-earth-soft) !important;
+}
+
+.dthl-register-page .dthl-register-terms input:checked + .dthl-register-checkbox {
+  border-color: var(--dthl-auth-earth) !important;
+  color: #fff !important;
+  background: var(--dthl-auth-earth) !important;
+}
+
+.dthl-register-page .dthl-register-terms input:focus-visible + .dthl-register-checkbox {
+  box-shadow: 0 0 0 4px rgb(181 153 101 / 0.13) !important;
+}
+
+.dthl-register-page .dthl-register-terms a,
+.dthl-forgot-page :is(.dthl-forgot-switch a, .dthl-forgot-back-link, .dthl-forgot-edit-email),
+.dthl-reset-page :is(.dthl-reset-switch a, .dthl-reset-back-link) {
+  color: var(--dthl-auth-earth-dark) !important;
+}
+
+.dthl-register-page .dthl-register-submit,
+.dthl-forgot-page .dthl-forgot-submit,
+.dthl-reset-page :is(.dthl-reset-submit, .dthl-reset-request-link) {
+  border-color: var(--dthl-auth-earth) !important;
+  color: #fff !important;
+  background: linear-gradient(135deg, #bda574 0%, #a88955 100%) !important;
+  box-shadow: 0 13px 28px rgb(181 153 101 / 0.24) !important;
+}
+
+.dthl-register-page .dthl-register-submit:hover:not(:disabled),
+.dthl-forgot-page .dthl-forgot-submit:hover:not(:disabled),
+.dthl-reset-page :is(.dthl-reset-submit, .dthl-reset-request-link):hover {
+  border-color: var(--dthl-auth-earth-dark) !important;
+  background: linear-gradient(135deg, #aa8d59 0%, #846a44 100%) !important;
+  box-shadow: 0 15px 30px rgb(132 106 68 / 0.24) !important;
+}
+
+.dthl-forgot-page .dthl-forgot-resend {
+  border-color: rgb(181 153 101 / 0.32) !important;
+  color: var(--dthl-auth-earth-dark) !important;
+  background: var(--dthl-auth-earth-soft) !important;
+}
+
+.dthl-forgot-page .dthl-forgot-dev,
+:is(.dthl-register-page, .dthl-forgot-page, .dthl-reset-page)
+  :is(.dthl-register-card__security, .dthl-forgot-card__security, .dthl-reset-card__security) {
+  border-color: rgb(181 153 101 / 0.2) !important;
+  background: var(--dthl-auth-earth-soft) !important;
+}
+
+.dthl-forgot-page .dthl-forgot-success__icon {
+  border-color: rgb(181 153 101 / 0.25) !important;
+  color: var(--dthl-auth-earth-dark) !important;
+  background: var(--dthl-auth-earth-soft) !important;
+}
+
+/* Compact verification pages still use the legacy generic auth shell. Give
+   them the same neutral + green + earth-gold hierarchy as the modern flows. */
+html[data-dthl-theme='light'] .auth-page {
+  background:
+    radial-gradient(circle at 10% 10%, rgb(47 91 66 / 0.09), transparent 31%),
+    radial-gradient(circle at 90% 85%, rgb(181 153 101 / 0.12), transparent 28%),
+    #f5f6f4 !important;
+}
+
+.auth-page .auth-card {
+  border-color: rgb(181 153 101 / 0.2) !important;
+  box-shadow:
+    0 22px 55px rgb(23 36 29 / 0.1),
+    0 4px 16px rgb(181 153 101 / 0.07) !important;
+}
+
+.auth-page .auth-card__intro h1 {
+  color: var(--dthl-mode-ink, #1d2621) !important;
+}
+
+.auth-page .auth-card__intro p strong,
+.auth-page .dev-token strong {
+  color: var(--dthl-mode-brand-dark, #846a44) !important;
+}
+
+.auth-page :is(input, select, textarea):focus {
+  border-color: var(--dthl-mode-brand, #b59965) !important;
+  outline: 0 !important;
+  box-shadow: 0 0 0 4px rgb(181 153 101 / 0.13) !important;
+}
+
+.auth-page .btn--primary {
+  border-color: var(--dthl-mode-brand, #b59965) !important;
+  color: #fff !important;
+  background: linear-gradient(135deg, #bda574 0%, #a88955 100%) !important;
+  box-shadow: 0 12px 26px rgb(181 153 101 / 0.22) !important;
+}
+
+.auth-page .btn--primary:hover:not(:disabled) {
+  border-color: var(--dthl-mode-brand-dark, #846a44) !important;
+  background: linear-gradient(135deg, #aa8d59 0%, #846a44 100%) !important;
+}
+
+.auth-page .btn--outline {
+  border-color: rgb(181 153 101 / 0.42) !important;
+  color: var(--dthl-mode-brand-dark, #846a44) !important;
+  background: var(--dthl-mode-brand-soft, #f6f4ef) !important;
+}
+
+.auth-page .dev-token {
+  border-color: rgb(181 153 101 / 0.24) !important;
+  background: var(--dthl-mode-brand-soft, #f6f4ef) !important;
+}
+
+.auth-page .success-panel {
+  border-radius: 16px;
+  background: linear-gradient(180deg, #fff, var(--dthl-mode-brand-soft, #f6f4ef));
+}
+
 @media (max-width: 760px) {
   :is(.dthl-login-page, .dthl-register-page, .dthl-forgot-page, .dthl-reset-page)
     :is(.dthl-login-intro, .dthl-register-intro, .dthl-forgot-intro, .dthl-reset-intro) {
