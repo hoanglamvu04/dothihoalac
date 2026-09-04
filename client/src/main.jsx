@@ -39,6 +39,7 @@ import './styles/public-earth-system.css';
 import './styles/public-white-canvas.css';
 import './styles/site-palettes.css';
 import './styles/site-palette-picker.css';
+import './styles/site-palette-hardening.css';
 import './features/communityRailDisclosure';
 import './features/propertySubmitReviewGuard';
 import './features/propertyMarketplacePaging';
