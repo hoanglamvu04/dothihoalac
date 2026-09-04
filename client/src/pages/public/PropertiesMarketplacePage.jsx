@@ -389,7 +389,7 @@ export default function PropertiesMarketplacePage() {
   }, [currentPropertyType, currentTransaction, update, updateMultiple]);
 
   const marketSummary = useMemo(() => {
-    const byType = new Map();
+    const byType = new globalThis.Map();
     result.items.forEach((item) => {
       const key = item?.property?.propertyType || 'other';
       byType.set(key, (byType.get(key) || 0) + 1);
