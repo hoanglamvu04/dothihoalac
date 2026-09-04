@@ -1,0 +1,99 @@
+/*
+ * White base canvas for the light public site.
+ * Keep the earth-gold brand on actions, tabs and accents, but make the
+ * lowest/background layer of every public route neutral white.
+ */
+
+html[data-dthl-theme='light'] {
+  --dthl-mode-canvas: #ffffff !important;
+}
+
+html[data-dthl-theme='light'] body,
+html[data-dthl-theme='light'] .app-shell,
+html[data-dthl-theme='light'] .main-content {
+  background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'] :is(
+  .dth-home.home-ref,
+  .properties-page,
+  .property-detail-page,
+  .jobs-page,
+  .job-detail-page,
+  .news-hub,
+  .article-view-page,
+  .community-social-page,
+  .community-detail-page,
+  .area-page,
+  .search-page,
+  .static-page-view,
+  .contact-page,
+  .lead-page,
+  .public-member-page
+) {
+  background-color: #ffffff !important;
+  background-image: none !important;
+}
+
+/* Route variables that legacy page styles still read directly. */
+html[data-dthl-theme='light'] .jobs-page {
+  --jobs-bg: #ffffff !important;
+  --jobs-background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'] .job-detail-page {
+  --job-background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'] .property-detail-page {
+  --property-detail-background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'] .news-hub {
+  --news-background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'] .article-view-page {
+  --article-background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'] .community-social-page {
+  --c-canvas: #ffffff !important;
+}
+
+html[data-dthl-theme='light'] .community-detail-page {
+  --thread-bg: #ffffff !important;
+}
+
+html[data-dthl-theme='light'] .area-page {
+  --area-background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'] .search-page {
+  --search-bg: #ffffff !important;
+}
+
+html[data-dthl-theme='light'] .static-page-view {
+  --static-background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'] .contact-page {
+  --contact-background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'] .lead-page {
+  --lead-background: #ffffff !important;
+}
+
+/* Homepage sections that intentionally inherit the route canvas. */
+html[data-dthl-theme='light'] :is(
+  .home-ref-top,
+  .home-ref-property-section,
+  .home-ref-community-section
+) {
+  background: #ffffff !important;
+}
+
+/* Keep cards/surfaces and brand accents untouched so the hierarchy remains
+ * visible against the white canvas. Dark mode is intentionally unchanged.
+ */
