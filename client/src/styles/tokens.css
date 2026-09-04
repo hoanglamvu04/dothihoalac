@@ -5,17 +5,17 @@
   --font-sans: Inter, "Segoe UI", Roboto, Helvetica, Arial, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
   --font-display: var(--font-sans);
 
-  /* Shared type scale: keep public pages readable without oversized cards. */
-  --text-xs: 0.75rem;      /* 12px */
-  --text-sm: 0.875rem;     /* 14px */
+  /* Typography V2: readable public UI without making layouts feel oversized. */
+  --text-xs: 0.8125rem;    /* 13px */
+  --text-sm: 0.9375rem;    /* 15px */
   --text-base: 1rem;       /* 16px */
   --text-md: 1.0625rem;    /* 17px */
-  --text-lg: 1.125rem;     /* 18px */
-  --text-xl: 1.25rem;      /* 20px */
-  --text-2xl: 1.5rem;      /* 24px */
-  --text-3xl: 1.875rem;    /* 30px */
-  --text-4xl: 2.25rem;     /* 36px */
-  --text-5xl: 2.75rem;     /* 44px */
+  --text-lg: 1.1875rem;    /* 19px */
+  --text-xl: 1.375rem;     /* 22px */
+  --text-2xl: 1.625rem;    /* 26px */
+  --text-3xl: 2rem;        /* 32px */
+  --text-4xl: 2.375rem;    /* 38px */
+  --text-5xl: 2.875rem;    /* 46px */
 
   --leading-tight: 1.2;
   --leading-snug: 1.35;
