@@ -6,26 +6,27 @@
  */
 
 html[data-dthl-theme='light'] {
-  --dthl-mode-canvas: #f8f7f3;
+  /* Light mode: white/neutral first, earth gold only as the brand accent. */
+  --dthl-mode-canvas: #f5f6f4;
   --dthl-mode-surface: #ffffff;
-  --dthl-mode-surface-2: #fbfaf7;
-  --dthl-mode-surface-3: #f3efe6;
-  --dthl-mode-border: #e5e1d8;
-  --dthl-mode-border-strong: #d8d0c0;
-  --dthl-mode-ink: #20241f;
-  --dthl-mode-text: #5d625b;
-  --dthl-mode-muted: #858a83;
+  --dthl-mode-surface-2: #fbfcfb;
+  --dthl-mode-surface-3: #f1f3f0;
+  --dthl-mode-border: #e2e6e2;
+  --dthl-mode-border-strong: #cfd5d0;
+  --dthl-mode-ink: #1d2621;
+  --dthl-mode-text: #59645d;
+  --dthl-mode-muted: #879087;
   --dthl-mode-brand: #b59965;
-  --dthl-mode-brand-dark: #8b7048;
-  --dthl-mode-brand-soft: #f3eee4;
-  --dthl-mode-green: #365c43;
-  --dthl-mode-shadow: 0 8px 28px rgb(56 47 31 / 0.07);
+  --dthl-mode-brand-dark: #846a44;
+  --dthl-mode-brand-soft: #f6f4ef;
+  --dthl-mode-green: #2f5b42;
+  --dthl-mode-shadow: 0 8px 28px rgb(23 36 29 / 0.07);
 
   --dthl-brand-force: #b59965;
   --dthl-brand-force-hover: #9d8152;
   --dthl-brand-force-dark: #806642;
-  --dthl-brand-force-soft: #f3eee4;
-  --dthl-brand-force-border: #d9c7a6;
+  --dthl-brand-force-soft: #f6f4ef;
+  --dthl-brand-force-border: #dedfd9;
 }
 
 html[data-dthl-theme='dark'] {
@@ -79,8 +80,8 @@ html[data-dthl-theme] .dthl-header-top {
 }
 
 html[data-dthl-theme='light'] .dthl-header-top {
-  color: #5f625d;
-  background: #f4f2ed !important;
+  color: #59645d;
+  background: #f5f6f4 !important;
 }
 
 html[data-dthl-theme] :is(.dthl-header-main, .dthl-header-nav) {
