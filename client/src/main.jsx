@@ -28,6 +28,7 @@ import './styles/brand-accent.css';
 import './styles/theme-modes.css';
 import './pages/public/HomeReferenceLayout.css';
 import './styles/typography.css';
+import './pages/public/HomeReferenceLayout.fix.css';
 import './features/propertySubmitReviewGuard';
 
 // Apply the saved appearance before React paints so reloads do not flash the
