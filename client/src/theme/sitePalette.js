@@ -5,8 +5,8 @@ export const SITE_PALETTES = [
   {
     id: 'earth',
     label: 'Nâu đất',
-    description: 'Nâu đất, kem và nâu trầm đồng bộ, không pha xanh thương hiệu cũ.',
-    swatches: ['#B59965', '#4A3D2C', '#FFFDF9'],
+    description: 'Nâu đất làm màu nhận diện trên nền trắng xanh rất nhạt, sạch và thoáng.',
+    swatches: ['#B59965', '#4A3D2C', '#F7FAF8'],
   },
   {
     id: 'green',
@@ -44,7 +44,7 @@ function syncThemeColor(palette) {
   if (typeof document === 'undefined') return;
 
   const lightColors = {
-    earth: '#ffffff',
+    earth: '#f7faf8',
     green: '#f7faf8',
     white: '#ffffff',
     stone: '#f5f4f2',
