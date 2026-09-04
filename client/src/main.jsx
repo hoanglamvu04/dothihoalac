@@ -40,6 +40,7 @@ import './styles/public-white-canvas.css';
 import './styles/site-palettes.css';
 import './styles/site-palette-picker.css';
 import './styles/site-palette-hardening.css';
+import './styles/header-topbar-removal.css';
 import './features/communityRailDisclosure';
 import './features/propertySubmitReviewGuard';
 import './features/propertyMarketplacePaging';
