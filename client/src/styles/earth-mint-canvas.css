@@ -1,0 +1,140 @@
+/* =========================================================
+   EARTH PALETTE — SOFT MINT CANVAS
+   Keep the earth brand accents, but reuse the clean green palette canvas
+   (#F7FAF8) behind white cards/surfaces. This is intentionally loaded after
+   earth-white-reference.css so only the outer canvas changes; cards stay white.
+========================================================= */
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] {
+  --dthl-palette-canvas: #f7faf8 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  body,
+  #root,
+  .app-shell,
+  .main-content,
+  .dth-home.home-ref,
+  .home-reference-v2,
+  .news-hub,
+  .article-view-page,
+  .properties-page,
+  .property-detail-page,
+  .jobs-page,
+  .job-detail-page,
+  .community-social-page,
+  .community-detail-page,
+  .area-page,
+  .search-page,
+  .static-page-view,
+  .contact-page,
+  .lead-page,
+  .public-member-page,
+  .create-hub-page,
+  .job-editor-page,
+  .property-editor-page,
+  .news-tip-page,
+  .account-center-page
+) {
+  background: var(--dthl-palette-canvas) !important;
+}
+
+/* Keep the content itself white so the earth palette remains premium and airy. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .home-reference-panel,
+  .home-reference-community,
+  .home-reference-properties,
+  .home-ref-state,
+  .news-masthead,
+  .news-category-bar,
+  .news-filter-panel,
+  .news-content-layout__main,
+  .news-content-layout__rail,
+  .news-stream,
+  .news-story,
+  .article-view-main,
+  .article-view-header,
+  .article-view-cover,
+  .article-view-content,
+  .article-view-reactions,
+  .article-view-comments,
+  .article-sidebar-card,
+  .properties-page__container,
+  .properties-market-shell,
+  .properties-results,
+  .property-detail-header__content,
+  .property-detail-price-box,
+  .property-gallery,
+  .property-detail-main > section,
+  .property-contact-card,
+  .property-sidebar-card,
+  .jobs-market-search,
+  .jobs-employers-panel,
+  .jobs-featured-panel,
+  .jobs-results__main,
+  .jobs-page .job-card,
+  .job-detail-header,
+  .job-detail-main > section,
+  .job-apply-card,
+  .job-sidebar-card,
+  .community-reference-card,
+  .community-reference-composer,
+  .search-start,
+  .search-results,
+  .public-member-header
+) {
+  background: #ffffff !important;
+}
+
+/* Page-specific canvas variables that older styles still read directly. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-hub {
+  --news-background: var(--dthl-palette-canvas) !important;
+  --news-canvas: var(--dthl-palette-canvas) !important;
+  --news-surface: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .article-view-page {
+  --article-background: var(--dthl-palette-canvas) !important;
+  --article-surface: #ffffff !important;
+  background: var(--dthl-palette-canvas) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page {
+  --jobs-bg: var(--dthl-palette-canvas) !important;
+  --jobs-background: var(--dthl-palette-canvas) !important;
+  --jobs-surface: #ffffff !important;
+  background: var(--dthl-palette-canvas) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-detail-page {
+  --job-background: var(--dthl-palette-canvas) !important;
+  --job-surface: #ffffff !important;
+  background: var(--dthl-palette-canvas) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-page {
+  --property-canvas: var(--dthl-palette-canvas) !important;
+  --property-surface: #ffffff !important;
+  background: var(--dthl-palette-canvas) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .property-detail-page {
+  --property-detail-background: var(--dthl-palette-canvas) !important;
+  --property-detail-surface: #ffffff !important;
+  background: var(--dthl-palette-canvas) !important;
+}
+
+@media (max-width: 760px) {
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+    .jobs-page,
+    .job-detail-page,
+    .article-view-page,
+    .news-hub,
+    .properties-page,
+    .property-detail-page,
+    .community-social-page,
+    .community-detail-page
+  ) {
+    background: var(--dthl-palette-canvas) !important;
+  }
+}
