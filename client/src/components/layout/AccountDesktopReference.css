@@ -1,0 +1,443 @@
+/* Desktop account center reference layout.
+   Keeps mobile behavior untouched while giving /tai-khoan a wider, calmer dashboard rhythm. */
+
+@media (min-width: 901px) {
+  .account-center-page {
+    --account-desktop-surface: var(--dthl-mode-surface, #ffffff);
+    --account-desktop-surface-2: var(--dthl-mode-surface-2, #f8faf8);
+    --account-desktop-canvas: var(--dthl-mode-canvas, #f4f6f4);
+    --account-desktop-border: var(--dthl-mode-border, #dce7e0);
+    --account-desktop-ink: var(--dthl-mode-ink, #10261a);
+    --account-desktop-text: var(--dthl-mode-text, #4f6056);
+    --account-desktop-muted: var(--dthl-mode-muted, #748078);
+    --account-desktop-green: #13753c;
+    --account-desktop-green-soft: color-mix(in srgb, #eaf8ef 86%, var(--account-desktop-surface) 14%);
+    --account-desktop-gold: var(--dthl-mode-brand, #b59965);
+
+    padding: 20px 0 64px;
+    background: var(--account-desktop-canvas);
+  }
+
+  .account-center-page.is-overview {
+    padding-top: 20px;
+  }
+
+  .account-center-container {
+    width: min(calc(100% - 40px), 1520px);
+  }
+
+  /* Profile hero */
+  .account-center-page .account-shell-profile {
+    overflow: visible;
+    border-color: var(--account-desktop-border);
+    border-radius: 20px;
+    background: var(--account-desktop-surface);
+    box-shadow: 0 12px 34px rgb(16 38 26 / 0.065);
+  }
+
+  .account-center-page .account-shell-cover {
+    height: clamp(220px, 15vw, 265px);
+    border-radius: 20px 20px 0 0;
+  }
+
+  .account-center-page .account-shell-cover > img,
+  .account-center-page .account-shell-cover__fallback,
+  .account-center-page .account-shell-cover::after {
+    border-radius: 20px 20px 0 0;
+  }
+
+  .account-center-page .account-shell-cover::after {
+    background: linear-gradient(180deg, rgb(4 36 20 / 0.02), rgb(4 36 20 / 0.24));
+  }
+
+  .account-center-page .account-shell-profile__body {
+    grid-template-columns: 150px minmax(0, 1fr) auto;
+    min-height: 136px;
+    padding: 18px 28px 20px 38px;
+    gap: 22px;
+    border-radius: 0 0 20px 20px;
+    background: var(--account-desktop-surface);
+  }
+
+  .account-center-page .account-shell-avatar-wrap,
+  .account-center-page .account-shell-avatar {
+    width: 126px;
+    height: 126px;
+  }
+
+  .account-center-page .account-shell-avatar-wrap {
+    margin-top: -72px;
+  }
+
+  .account-center-page .account-shell-avatar {
+    border-width: 6px;
+  }
+
+  .account-center-page .account-shell-avatar__camera {
+    right: 2px;
+    bottom: 3px;
+    width: 34px;
+    height: 34px;
+  }
+
+  .account-center-page .account-shell-identity__title h1 {
+    font-size: clamp(1.75rem, 2.1vw, 2.15rem);
+  }
+
+  .account-center-page .account-shell-identity > p {
+    margin-top: 5px;
+    font-size: 14px;
+  }
+
+  .account-center-page .account-shell-identity__meta {
+    margin-top: 10px;
+    gap: 7px;
+  }
+
+  .account-center-page .account-shell-identity__meta span {
+    min-height: 30px;
+    padding-inline: 11px;
+    font-size: 12.5px;
+  }
+
+  .account-center-page .account-shell-button {
+    min-height: 44px;
+    padding-inline: 16px;
+    border-radius: 10px;
+    font-size: 13.5px;
+  }
+
+  /* Wider two-column workspace. The left rail is intentionally roomier. */
+  .account-center-workspace {
+    grid-template-columns: 268px minmax(0, 1fr);
+    margin-top: 18px;
+    gap: 20px;
+  }
+
+  .account-center-page.is-overview .account-center-workspace {
+    margin-top: 18px;
+  }
+
+  .account-center-page .account-shell-sidebar {
+    border-color: var(--account-desktop-border);
+    border-radius: 16px;
+    background: var(--account-desktop-surface);
+    box-shadow: 0 7px 22px rgb(16 38 26 / 0.045);
+  }
+
+  .account-center-page.is-overview .account-shell-sidebar__intro {
+    display: none;
+  }
+
+  .account-center-page .account-shell-nav {
+    padding: 12px;
+    gap: 4px;
+  }
+
+  .account-center-page .account-shell-nav > a,
+  .account-center-page .account-shell-nav__more a,
+  .account-center-page .account-shell-nav__more summary {
+    min-height: 46px;
+    padding-inline: 13px;
+    gap: 11px;
+    border-radius: 10px;
+    color: var(--account-desktop-text);
+    font-size: 14px;
+    font-weight: 680;
+  }
+
+  .account-center-page .account-shell-nav > a.is-active,
+  .account-center-page .account-shell-nav__more a.is-active,
+  .account-center-page .account-shell-nav__more > summary.is-active,
+  .account-center-page .account-shell-nav__more.is-active > summary {
+    color: var(--account-desktop-green);
+    background: var(--account-desktop-green-soft);
+    box-shadow: inset 4px 0 0 var(--account-desktop-green);
+  }
+
+  .account-center-page .account-shell-nav > a:hover,
+  .account-center-page .account-shell-nav__more a:hover,
+  .account-center-page .account-shell-nav__more summary:hover {
+    color: var(--account-desktop-green);
+    background: var(--account-desktop-green-soft);
+  }
+
+  .account-center-page .account-shell-nav__more > div {
+    padding: 3px 0 2px 14px;
+  }
+
+  .account-center-page .account-shell-nav__more a {
+    min-height: 40px;
+    font-size: 13px;
+  }
+
+  /* Overview dashboard */
+  .account-center-page .account-overview-v2 {
+    gap: 16px;
+  }
+
+  .account-center-page .account-overview-v2__topline {
+    min-height: 66px;
+    padding: 2px 2px 4px;
+    align-items: flex-end;
+  }
+
+  .account-center-page .account-overview-v2__topline span {
+    margin-bottom: 5px;
+    color: var(--account-desktop-green);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+  }
+
+  .account-center-page .account-overview-v2__topline h2 {
+    color: var(--account-desktop-ink);
+    font-size: clamp(1.55rem, 2vw, 1.9rem);
+    letter-spacing: -0.03em;
+  }
+
+  .account-center-page .account-overview-v2__edit {
+    min-height: 40px;
+    padding-inline: 13px;
+    border-color: var(--account-desktop-border);
+    color: var(--account-desktop-green);
+    background: var(--account-desktop-surface);
+    font-size: 13px;
+  }
+
+  /* Desktop already has the full left rail, so avoid a second navigation strip. */
+  .account-center-page.is-overview .account-overview-v2__tabs {
+    display: none;
+  }
+
+  .account-center-page .account-overview-v2__section {
+    padding: 20px;
+    border-color: var(--account-desktop-border);
+    border-radius: 16px;
+    background: var(--account-desktop-surface);
+    box-shadow: 0 6px 20px rgb(16 38 26 / 0.035);
+  }
+
+  .account-center-page .account-overview-v2__section-heading {
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  .account-center-page .account-overview-v2__section-heading h3 {
+    color: var(--account-desktop-ink);
+    font-size: 19px;
+  }
+
+  .account-center-page .account-overview-v2__section-heading p {
+    margin-top: 4px;
+    color: var(--account-desktop-muted);
+    font-size: 13.5px;
+  }
+
+  .account-center-page .account-overview-v2__section-heading > a {
+    color: var(--account-desktop-green);
+    font-size: 13px;
+  }
+
+  .account-center-page .account-overview-v2__highlight-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .account-center-page .account-overview-v2__highlight-grid article {
+    grid-template-columns: 44px minmax(0, 1fr);
+    min-height: 132px;
+    padding: 15px;
+    gap: 11px;
+    border-color: color-mix(in srgb, var(--account-desktop-border) 86%, transparent);
+    border-radius: 13px;
+    background: var(--account-desktop-surface-2);
+  }
+
+  .account-center-page .account-overview-v2__highlight-grid article > span {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    color: var(--account-desktop-green);
+    background: var(--account-desktop-green-soft);
+  }
+
+  .account-center-page .account-overview-v2__highlight-grid small {
+    color: var(--account-desktop-muted);
+    font-size: 12.5px;
+  }
+
+  .account-center-page .account-overview-v2__highlight-grid strong {
+    margin-top: 4px;
+    color: var(--account-desktop-ink);
+    font-size: 17px;
+  }
+
+  .account-center-page .account-overview-v2__highlight-grid p {
+    margin-top: 7px;
+    color: var(--account-desktop-text);
+    font-size: 12.5px;
+    line-height: 1.45;
+  }
+
+  .account-center-page .account-overview-v2__completion {
+    margin-top: 9px;
+  }
+
+  .account-overview-v2__community-cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 82px;
+    margin-top: 14px;
+    padding: 14px 18px;
+    gap: 18px;
+    border: 1px solid color-mix(in srgb, var(--account-desktop-gold) 28%, var(--account-desktop-border));
+    border-radius: 13px;
+    background:
+      linear-gradient(110deg, color-mix(in srgb, var(--account-desktop-gold) 10%, transparent), transparent 58%),
+      var(--account-desktop-surface-2);
+  }
+
+  .account-overview-v2__community-cta strong,
+  .account-overview-v2__community-cta span {
+    display: block;
+  }
+
+  .account-overview-v2__community-cta strong {
+    color: var(--account-desktop-ink);
+    font-size: 14.5px;
+  }
+
+  .account-overview-v2__community-cta span {
+    margin-top: 4px;
+    color: var(--account-desktop-muted);
+    font-size: 12.5px;
+  }
+
+  .account-overview-v2__community-cta > a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0 16px;
+    gap: 6px;
+    flex: 0 0 auto;
+    border-radius: 10px;
+    color: #fff;
+    background: var(--account-desktop-green);
+    font-size: 13px;
+    font-weight: 750;
+  }
+
+  .account-center-page .account-overview-v2__info-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 12px;
+  }
+
+  .account-center-page .account-overview-v2__field {
+    grid-template-columns: 40px minmax(0, 1fr);
+    min-height: 78px;
+    padding: 11px 13px;
+    gap: 11px;
+    border-color: color-mix(in srgb, var(--account-desktop-border) 88%, transparent);
+    border-radius: 11px;
+    background: var(--account-desktop-surface-2);
+  }
+
+  .account-center-page .account-overview-v2__field-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    color: var(--account-desktop-green);
+    background: var(--account-desktop-surface);
+  }
+
+  .account-center-page .account-overview-v2__field small {
+    color: var(--account-desktop-muted);
+    font-size: 12px;
+  }
+
+  .account-center-page .account-overview-v2__field strong {
+    margin-top: 4px;
+    color: var(--account-desktop-ink);
+    font-size: 14px;
+  }
+
+  .account-overview-v2__quick-heading {
+    grid-column: 1 / -1;
+    margin-bottom: 1px;
+    padding: 2px 2px 4px;
+  }
+
+  .account-overview-v2__quick-heading h3 {
+    margin: 0;
+    color: var(--account-desktop-ink);
+    font-size: 19px;
+  }
+
+  .account-overview-v2__quick-heading p {
+    margin: 4px 0 0;
+    color: var(--account-desktop-muted);
+    font-size: 13px;
+  }
+
+  .account-center-page .account-overview-v2__quick {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    padding: 20px;
+    gap: 10px;
+    border: 1px solid var(--account-desktop-border);
+    border-radius: 16px;
+    background: var(--account-desktop-surface);
+  }
+
+  .account-center-page .account-overview-v2__quick > a {
+    min-height: 80px;
+    padding: 12px;
+    border-color: color-mix(in srgb, var(--account-desktop-border) 88%, transparent);
+    border-radius: 11px;
+    background: var(--account-desktop-surface-2);
+  }
+
+  .account-center-page .account-overview-v2__quick > a > svg {
+    color: var(--account-desktop-green);
+    background: var(--account-desktop-green-soft);
+  }
+
+  .account-center-page .account-overview-v2__quick strong {
+    color: var(--account-desktop-ink);
+    font-size: 13.5px;
+  }
+
+  .account-center-page .account-overview-v2__quick small {
+    margin-top: 3px;
+    color: var(--account-desktop-muted);
+    font-size: 12px;
+  }
+}
+
+@media (min-width: 901px) and (max-width: 1220px) {
+  .account-center-container {
+    width: min(calc(100% - 28px), 1180px);
+  }
+
+  .account-center-workspace {
+    grid-template-columns: 236px minmax(0, 1fr);
+    gap: 16px;
+  }
+
+  .account-center-page .account-overview-v2__highlight-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .account-center-page .account-overview-v2__quick {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+html[data-dthl-theme='dark'] .account-center-page .account-shell-profile,
+html[data-dthl-theme='dark'] .account-center-page .account-shell-profile__body,
+html[data-dthl-theme='dark'] .account-center-page .account-shell-sidebar,
+html[data-dthl-theme='dark'] .account-center-page .account-overview-v2__section,
+html[data-dthl-theme='dark'] .account-center-page .account-overview-v2__quick {
+  background: var(--dthl-mode-surface, #13221a);
+}
