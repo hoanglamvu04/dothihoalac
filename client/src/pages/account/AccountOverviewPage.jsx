@@ -146,8 +146,8 @@ export default function AccountOverviewPage() {
       <section className="account-overview-v2__section">
         <div className="account-overview-v2__section-heading">
           <div>
-            <h3>Tổng quan tài khoản</h3>
-            <p>Các trạng thái quan trọng nhất của tài khoản.</p>
+            <h3>Trạng thái tài khoản</h3>
+            <p>Các trạng thái quan trọng nhất của tài khoản và hồ sơ.</p>
           </div>
           <Link to="/tai-khoan/ho-so" className="account-overview-v2__details-link">
             Xem chi tiết
@@ -195,12 +195,23 @@ export default function AccountOverviewPage() {
             </div>
           </article>
         </div>
+
+        <div className="account-overview-v2__community-cta">
+          <div>
+            <strong>Chia sẻ câu chuyện, đặt câu hỏi, kết nối với cộng đồng!</strong>
+            <span>Mỗi bài viết của bạn giúp cộng đồng Hòa Lạc hữu ích và gần gũi hơn.</span>
+          </div>
+          <Link to="/cong-dong/create">
+            Viết bài ngay
+            <ChevronRight size={16} />
+          </Link>
+        </div>
       </section>
 
       <section className="account-overview-v2__section account-overview-v2__account-info">
         <div className="account-overview-v2__section-heading">
           <div>
-            <h3>Thông tin tài khoản</h3>
+            <h3>Thông tin cá nhân</h3>
             <p>Các trường chính đang được sử dụng trong hồ sơ của bạn.</p>
           </div>
           <Link to="/tai-khoan/ho-so">Cập nhật thông tin</Link>
@@ -217,6 +228,11 @@ export default function AccountOverviewPage() {
       </section>
 
       <section className="account-overview-v2__quick" aria-label="Truy cập nhanh">
+        <div className="account-overview-v2__quick-heading">
+          <h3>Tính năng nhanh</h3>
+          <p>Truy cập nhanh các khu vực quản lý tài khoản thường dùng.</p>
+        </div>
+
         <Link to="/tai-khoan/ho-so">
           <UserRound size={19} />
           <span>
