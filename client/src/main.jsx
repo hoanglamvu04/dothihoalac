@@ -35,6 +35,7 @@ import './pages/public/PropertyMarketplace.sidebar-full.css';
 import './pages/public/JobsPage.earth.css';
 import './pages/public/CommunityPageRailDisclosure.css';
 import './styles/public-earth-system.css';
+import './styles/public-white-canvas.css';
 import './features/communityRailDisclosure';
 import './features/propertySubmitReviewGuard';
 import './features/propertyMarketplacePaging';
