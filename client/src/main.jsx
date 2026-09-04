@@ -2,6 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './app/App';
 import { initializeSiteTheme } from './theme/siteTheme';
+import { initializeSitePalette } from './theme/sitePalette';
 import './styles/tokens.css';
 import './styles/reset.css';
 import './styles/global.css';
@@ -36,13 +37,17 @@ import './pages/public/JobsPage.earth.css';
 import './pages/public/CommunityPageRailDisclosure.css';
 import './styles/public-earth-system.css';
 import './styles/public-white-canvas.css';
+import './styles/site-palettes.css';
+import './styles/site-palette-picker.css';
 import './features/communityRailDisclosure';
 import './features/propertySubmitReviewGuard';
 import './features/propertyMarketplacePaging';
+import './features/sitePalettePicker';
 
-// Apply the saved appearance before React paints so reloads do not flash the
-// wrong theme. The default remains the light reference palette.
+// Apply saved appearance and palette before React paints so reloads do not
+// flash the wrong visual system. Earth is the default light palette.
 initializeSiteTheme();
+initializeSitePalette();
 
 const root = createRoot(document.getElementById('root'));
 const enableStrictMode = import.meta.env.VITE_REACT_STRICT_MODE === 'true';
