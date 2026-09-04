@@ -94,6 +94,27 @@ html[data-dthl-theme='light'] :is(
   background: #ffffff !important;
 }
 
+/*
+ * Homepage large shells are pure white as well. The smaller content cards
+ * inside them deliberately keep the warm earth-tinted surface so the visual
+ * hierarchy remains clear.
+ */
+html[data-dthl-theme='light'] .home-reference-v2 :is(
+  .home-reference-panel,
+  .home-reference-community,
+  .home-reference-properties,
+  .home-ref-state,
+  .home-mobile-shortcuts
+),
+html[data-dthl-theme='light'] .home-ref :is(
+  .home-ref-panel,
+  .home-ref-community-shell,
+  .home-ref-property-shell
+) {
+  background-color: #ffffff !important;
+  background-image: none !important;
+}
+
 /* Keep cards/surfaces and brand accents untouched so the hierarchy remains
  * visible against the white canvas. Dark mode is intentionally unchanged.
  */
