@@ -1,139 +1,197 @@
 /* =========================================================
-   EARTH PALETTE — PREMIUM WHITE HEADER
-   White is the field color. Earth is a deliberate accent only.
-   This file is intentionally scoped to light + earth so every other
-   selectable palette keeps its own header language.
+   EARTH PALETTE — PREMIUM LIGHT HEADER V2
+   Scope: light theme + earth palette only.
+   Design tokens follow the approved earth system:
+   #B59965 brand / #4A3D2C dark / #F7F4ED background /
+   #FFFDF9 card / #28251F text / #EFE8DC soft / #365443 green.
 ========================================================= */
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] {
-  --earth-header-white: #ffffff;
-  --earth-header-ink: #302d28;
-  --earth-header-text: #57534c;
-  --earth-header-muted: #7c776f;
-  --earth-header-border: #e8e5de;
-  --earth-header-border-strong: #dcd5ca;
-  --earth-header-accent: #b59965;
-  --earth-header-accent-hover: #957947;
-  --earth-header-accent-dark: #4a3d2c;
-  --earth-header-accent-soft: #f7f3ed;
-  --earth-header-neutral-soft: #f7f8f6;
-  --earth-header-logo-green: #164e35;
+  --earth-brand: #b59965;
+  --earth-brand-dark: #8e7347;
+  --earth-dark: #4a3d2c;
+  --earth-bg: #f7f4ed;
+  --earth-card: #fffdf9;
+  --earth-text: #28251f;
+  --earth-muted: #777169;
+  --earth-soft: #efe8dc;
+  --earth-green: #365443;
+  --earth-border: #e8e1d6;
+  --earth-border-strong: #d9cbb7;
 }
 
-/* ---------------------------------------------------------
-   SHELL
---------------------------------------------------------- */
+/* =========================================================
+   HEADER SHELL
+========================================================= */
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header {
-  color: var(--earth-header-ink) !important;
-  background: rgba(255, 255, 255, 0.985) !important;
+  color: var(--earth-text) !important;
+  background: rgba(255, 253, 249, 0.985) !important;
   box-shadow: none !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header.is-scrolled:not(.is-hidden) {
-  box-shadow: 0 10px 28px rgb(37 35 31 / 0.055) !important;
+  box-shadow: 0 10px 30px rgb(60 48 34 / 0.07) !important;
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
-  .dthl-header-main,
-  .dthl-header-nav,
-  .dthl-header-nav-upgrade
-) {
-  background: rgba(255, 255, 255, 0.985) !important;
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-main {
+  border-bottom: 1px solid var(--earth-border) !important;
+  background: rgba(255, 253, 249, 0.985) !important;
+  backdrop-filter: blur(18px) saturate(135%);
+  -webkit-backdrop-filter: blur(18px) saturate(135%);
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-main,
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-nav {
-  border-color: var(--earth-header-border) !important;
-}
-
-/* Keep the original green/gold logo untouched; it provides useful contrast. */
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-brand__mark {
-  background: transparent !important;
-  box-shadow: none !important;
-}
-
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-brand__content strong {
-  color: var(--earth-header-accent) !important;
-}
-
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-brand__content small {
-  color: var(--earth-header-logo-green) !important;
-}
-
-/* ---------------------------------------------------------
-   SEARCH — neutral field, one confident earth CTA
---------------------------------------------------------- */
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search {
-  border: 1px solid var(--earth-header-border) !important;
+  border-bottom: 1px solid var(--earth-border) !important;
   background: #ffffff !important;
-  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.7) !important;
+}
+
+/* =========================================================
+   BRAND — explicit restore of the approved horizontal logo.
+   IMPORTANT: do not use the background shorthand here because it clears
+   the background-image supplied by brand-logo-v3.css.
+========================================================= */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-brand {
+  display: inline-flex !important;
+  align-items: center !important;
+  min-width: 242px !important;
+  gap: 0 !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-brand__mark,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header.is-compact .dthl-brand__mark {
+  display: block !important;
+  flex: 0 0 242px !important;
+  width: 242px !important;
+  height: 52px !important;
+  overflow: visible !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background-color: transparent !important;
+  background-image: url('/Logo%20dothihoalac-09.png') !important;
+  background-position: left center !important;
+  background-repeat: no-repeat !important;
+  background-size: contain !important;
+  box-shadow: none !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-brand__mark > img {
+  opacity: 0 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-brand__content {
+  display: none !important;
+}
+
+/* =========================================================
+   MAIN ROW LAYOUT
+========================================================= */
+@media (min-width: 1021px) {
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-main__inner,
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header.is-compact .dthl-header-main__inner {
+    grid-template-columns: 270px minmax(360px, 1fr) auto !important;
+    min-height: 76px !important;
+    gap: 24px !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search {
+    width: min(100%, 780px) !important;
+    justify-self: center !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-nav__inner,
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header.is-compact .dthl-header-nav__inner {
+    min-height: 54px !important;
+  }
+}
+
+/* =========================================================
+   SEARCH — warm neutral field, dark earth CTA.
+========================================================= */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search {
+  height: 46px !important;
+  padding: 4px 5px 4px 15px !important;
+  gap: 10px !important;
+  border: 1px solid var(--earth-border) !important;
+  border-radius: 15px !important;
+  background: var(--earth-bg) !important;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.72) !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search:hover {
-  border-color: var(--earth-header-border-strong) !important;
-  background: #ffffff !important;
+  border-color: var(--earth-border-strong) !important;
+  background: #fbf9f4 !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search:focus-within {
-  border-color: color-mix(in srgb, var(--earth-header-accent) 62%, var(--earth-header-border)) !important;
+  border-color: var(--earth-brand) !important;
   background: #ffffff !important;
-  box-shadow:
-    0 0 0 3px rgb(181 153 101 / 0.10),
-    0 8px 22px rgb(74 61 44 / 0.045) !important;
+  box-shadow: 0 0 0 3px rgb(181 153 101 / 0.11) !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search__leading-icon {
-  color: var(--earth-header-accent-dark) !important;
+  color: var(--earth-dark) !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search input {
-  color: var(--earth-header-ink) !important;
+  color: var(--earth-text) !important;
+  font-size: 0.88rem !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search input::placeholder {
-  color: #96918a !important;
+  color: #918a80 !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search__clear {
-  color: var(--earth-header-muted) !important;
+  color: var(--earth-muted) !important;
   background: transparent !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search__clear:hover {
-  color: var(--earth-header-accent-dark) !important;
-  background: var(--earth-header-accent-soft) !important;
+  color: var(--earth-dark) !important;
+  background: var(--earth-soft) !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search__submit {
-  border-color: #a98b58 !important;
+  height: 36px !important;
+  padding: 0 15px !important;
+  border: 1px solid var(--earth-dark) !important;
+  border-radius: 10px !important;
   color: #ffffff !important;
-  background: #a98b58 !important;
-  box-shadow: 0 7px 16px rgb(74 61 44 / 0.10) !important;
+  background: var(--earth-dark) !important;
+  box-shadow: 0 6px 15px rgb(74 61 44 / 0.14) !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search__submit:hover:not(:disabled) {
-  border-color: var(--earth-header-accent-hover) !important;
-  background: var(--earth-header-accent-hover) !important;
-  box-shadow: 0 9px 20px rgb(74 61 44 / 0.14) !important;
+  border-color: #332a1f !important;
+  background: #332a1f !important;
+  box-shadow: 0 8px 18px rgb(74 61 44 / 0.18) !important;
   transform: translateY(-1px);
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search__submit:disabled {
-  border-color: #d8c9ae !important;
-  color: rgb(255 255 255 / 0.94) !important;
-  background: #d8c9ae !important;
+  border-color: #d8c8ad !important;
+  color: #ffffff !important;
+  background: #cdb992 !important;
   opacity: 1 !important;
+  box-shadow: none !important;
 }
 
-/* ---------------------------------------------------------
-   RIGHT-SIDE UTILITIES — neutral until interaction
---------------------------------------------------------- */
+/* =========================================================
+   HEADER UTILITIES
+========================================================= */
 html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
   .dthl-icon-button,
   .dthl-mobile-menu-button
 ) {
-  border: 1px solid var(--earth-header-border) !important;
-  color: #373832 !important;
+  width: 42px !important;
+  height: 42px !important;
+  border: 1px solid var(--earth-border) !important;
+  border-radius: 12px !important;
+  color: var(--earth-text) !important;
   background: #ffffff !important;
   box-shadow: none !important;
 }
@@ -143,35 +201,38 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
   .dthl-icon-button.is-active,
   .dthl-mobile-menu-button:hover
 ) {
-  border-color: color-mix(in srgb, var(--earth-header-accent) 42%, var(--earth-header-border)) !important;
-  color: var(--earth-header-accent-dark) !important;
-  background: var(--earth-header-accent-soft) !important;
-  box-shadow: none !important;
+  border-color: var(--earth-border-strong) !important;
+  color: var(--earth-dark) !important;
+  background: var(--earth-soft) !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-user-menu__trigger {
-  border: 1px solid var(--earth-header-border) !important;
-  color: var(--earth-header-ink) !important;
+  min-height: 44px !important;
+  padding: 4px 12px 4px 6px !important;
+  gap: 9px !important;
+  border: 1px solid var(--earth-border) !important;
+  border-radius: 14px !important;
+  color: var(--earth-text) !important;
   background: #ffffff !important;
   box-shadow: none !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-user-menu__trigger:hover,
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-user-menu__trigger[aria-expanded='true'] {
-  border-color: var(--earth-header-border-strong) !important;
-  background: #ffffff !important;
+  border-color: var(--earth-border-strong) !important;
+  background: #fffdf9 !important;
 }
 
-/* A green avatar echoes the logo and prevents the earth palette becoming monochrome. */
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-user-menu__trigger .avatar {
-  border-color: rgb(22 78 53 / 0.14) !important;
+  border-color: rgb(54 84 67 / 0.15) !important;
   color: #ffffff !important;
-  background: var(--earth-header-logo-green) !important;
+  background: var(--earth-green) !important;
   box-shadow: none !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-user-menu__name {
-  color: var(--earth-header-ink) !important;
+  color: var(--earth-text) !important;
+  font-weight: 730 !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-notification-badge {
@@ -180,227 +241,252 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-notification-badg
   background: #b7463f !important;
 }
 
-/* ---------------------------------------------------------
-   PRIMARY NAV — no beige pills. White tabs + earth context.
---------------------------------------------------------- */
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-nav__inner {
-  background: transparent !important;
+/* =========================================================
+   REAL DESKTOP PRIMARY NAVIGATION
+   PrimaryNavigation.jsx renders .dthl-primary-nav, not the old
+   .dthl-header-nav-upgrade component. This is the visible navigation.
+========================================================= */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav {
+  align-items: center !important;
+  align-self: stretch !important;
+  gap: 5px !important;
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
-  .dthl-header-nav__link,
-  .dthl-header-nav-upgrade__link
-) {
-  position: relative;
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__item {
+  align-self: stretch !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link {
+  position: relative !important;
+  min-height: 44px !important;
+  padding: 0 12px !important;
+  gap: 8px !important;
   border: 1px solid transparent !important;
-  color: #4f504a !important;
+  border-radius: 11px !important;
+  color: #5b554d !important;
   background: transparent !important;
   box-shadow: none !important;
+  font-size: 0.84rem !important;
+  font-weight: 690 !important;
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
-  .dthl-header-nav__link:hover,
-  .dthl-header-nav-upgrade__link:hover,
-  .dthl-header-nav-upgrade__item:focus-within > .dthl-header-nav-upgrade__link
-) {
-  border-color: var(--earth-header-border) !important;
-  color: var(--earth-header-accent-dark) !important;
-  background: #ffffff !important;
-  box-shadow: 0 3px 12px rgb(37 35 31 / 0.035) !important;
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__icon {
+  width: 30px !important;
+  height: 30px !important;
+  border: 1px solid #e8dfd2 !important;
+  border-radius: 9px !important;
+  color: var(--earth-dark) !important;
+  background: #f7f3ec !important;
+  transition: color 150ms ease, background-color 150ms ease, border-color 150ms ease, transform 150ms ease !important;
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
-  .dthl-header-nav__link.is-active,
-  .dthl-header-nav-upgrade__link.is-active
-) {
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link:hover {
+  border-color: #eee8de !important;
+  color: var(--earth-text) !important;
+  background: #fbfaf7 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link:hover .dthl-primary-nav__icon {
+  border-color: var(--earth-border-strong) !important;
+  color: var(--earth-dark) !important;
+  background: var(--earth-soft) !important;
+  transform: translateY(-1px);
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link.is-active {
   border-color: transparent !important;
-  color: var(--earth-header-accent-dark) !important;
+  color: var(--earth-text) !important;
+  background: transparent !important;
+  box-shadow: inset 0 -3px 0 var(--earth-brand) !important;
+  font-weight: 760 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link.is-active .dthl-primary-nav__icon {
+  border-color: var(--earth-brand) !important;
+  color: #ffffff !important;
+  background: var(--earth-brand) !important;
+  box-shadow: 0 5px 12px rgb(181 153 101 / 0.20) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__submenu {
+  width: 238px !important;
+  padding: 9px !important;
+  border: 1px solid var(--earth-border) !important;
+  border-radius: 14px !important;
+  background: #ffffff !important;
+  box-shadow: 0 18px 44px rgb(62 48 29 / 0.12) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__submenu strong {
+  border-bottom-color: var(--earth-border) !important;
+  color: var(--earth-dark) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__submenu a {
+  color: #625b52 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__submenu a:hover {
+  color: var(--earth-dark) !important;
+  background: var(--earth-soft) !important;
+}
+
+/* =========================================================
+   LIGHT / DARK TOGGLE IN THE REAL PRIMARY NAV
+========================================================= */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-theme-toggle {
+  min-height: 40px !important;
+  margin-left: 5px !important;
+  padding: 0 11px !important;
+  border: 1px solid var(--earth-border) !important;
+  border-radius: 11px !important;
+  color: #5e574e !important;
   background: #ffffff !important;
   box-shadow: none !important;
 }
 
-/* Thin underline gives context without painting the entire tab. */
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-nav__link.is-active::after {
-  right: 13px !important;
-  bottom: -1px !important;
-  left: 13px !important;
-  height: 3px !important;
-  border-radius: 999px 999px 0 0 !important;
-  background: var(--earth-header-accent) !important;
-  box-shadow: none !important;
-}
-
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-nav-upgrade__link.is-active {
-  box-shadow: inset 0 -3px 0 var(--earth-header-accent) !important;
-}
-
-/* If the active navigation implementation includes SVG icon tiles, make the
-   active icon the only filled earth element. Text-only navigation is unchanged. */
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-nav__link > svg {
-  box-sizing: content-box !important;
-  width: 18px !important;
-  height: 18px !important;
-  padding: 5px !important;
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-theme-toggle > span {
+  width: 25px !important;
+  height: 25px !important;
   border-radius: 8px !important;
-  color: #555851 !important;
-  background: var(--earth-header-neutral-soft) !important;
+  color: var(--earth-dark) !important;
+  background: var(--earth-soft) !important;
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-nav__link.is-active > svg {
-  color: #ffffff !important;
-  background: var(--earth-header-accent) !important;
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-theme-toggle:hover {
+  border-color: var(--earth-border-strong) !important;
+  color: var(--earth-dark) !important;
+  background: #fbfaf7 !important;
+  transform: translateY(-1px) !important;
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-nav-upgrade__chevron {
-  color: #969187 !important;
+/* =========================================================
+   QUICK LINKS
+========================================================= */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-nav__quick-links {
+  gap: 18px !important;
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-nav-upgrade__item:hover .dthl-header-nav-upgrade__chevron,
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-nav-upgrade__item:focus-within .dthl-header-nav-upgrade__chevron {
-  color: var(--earth-header-accent-dark) !important;
-}
-
-/* Quick links stay quiet so the primary nav reads first. */
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-nav__quick-links a {
-  color: #747a73 !important;
+  color: #7a766f !important;
   background: transparent !important;
+  font-weight: 620 !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-nav__quick-links a:hover {
-  color: var(--earth-header-accent-dark) !important;
+  color: var(--earth-dark) !important;
 }
 
-/* ---------------------------------------------------------
-   THEME / DISPLAY CONTROLS
-   Any dedicated toggle living in the nav should read neutral at rest.
---------------------------------------------------------- */
+/* =========================================================
+   DROPDOWNS / PANELS
+========================================================= */
 html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
-  .dthl-theme-toggle,
-  .dthl-theme-button,
-  .dthl-header-theme-toggle,
-  .dthl-header-nav__theme-toggle,
-  [data-dthl-theme-toggle]
-) {
-  border-color: var(--earth-header-border) !important;
-  color: #545149 !important;
-  background: #ffffff !important;
-  box-shadow: none !important;
-}
-
-html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
-  .dthl-theme-toggle,
-  .dthl-theme-button,
-  .dthl-header-theme-toggle,
-  .dthl-header-nav__theme-toggle,
-  [data-dthl-theme-toggle]
-) svg {
-  color: var(--earth-header-accent-hover) !important;
-}
-
-html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
-  .dthl-theme-toggle,
-  .dthl-theme-button,
-  .dthl-header-theme-toggle,
-  .dthl-header-nav__theme-toggle,
-  [data-dthl-theme-toggle]
-):hover {
-  border-color: color-mix(in srgb, var(--earth-header-accent) 40%, var(--earth-header-border)) !important;
-  color: var(--earth-header-accent-dark) !important;
-  background: var(--earth-header-accent-soft) !important;
-}
-
-/* ---------------------------------------------------------
-   DROPDOWNS — white editorial surfaces, subtle earth focus only.
---------------------------------------------------------- */
-html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
-  .dthl-header-submenu,
   .dthl-user-menu__panel,
   .dthl-notification-panel,
   .dthl-header-preferences__panel
 ) {
-  border-color: var(--earth-header-border) !important;
-  color: var(--earth-header-ink) !important;
+  border-color: var(--earth-border) !important;
+  color: var(--earth-text) !important;
   background: rgba(255, 255, 255, 0.995) !important;
-  box-shadow:
-    0 20px 48px rgb(37 35 31 / 0.10),
-    0 4px 14px rgb(37 35 31 / 0.035) !important;
+  box-shadow: 0 20px 50px rgb(54 43 28 / 0.11) !important;
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
-  .dthl-header-submenu__root:hover,
-  .dthl-header-submenu__root.is-active,
-  .dthl-header-submenu__child:hover,
-  .dthl-header-submenu__child.is-active
-) {
-  color: var(--earth-header-accent-dark) !important;
-  background: var(--earth-header-accent-soft) !important;
-}
-
-html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
-  .dthl-header-submenu__root.is-active,
-  .dthl-header-submenu__child.is-active
-) {
-  box-shadow: inset 3px 0 0 var(--earth-header-accent) !important;
-}
-
-/* ---------------------------------------------------------
+/* =========================================================
    AUTH ACTIONS
---------------------------------------------------------- */
+========================================================= */
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-login-link {
-  color: var(--earth-header-ink) !important;
+  color: var(--earth-text) !important;
   background: transparent !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-login-link:hover {
-  color: var(--earth-header-accent-dark) !important;
-  background: var(--earth-header-accent-soft) !important;
+  color: var(--earth-dark) !important;
+  background: var(--earth-soft) !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-register-button {
-  border-color: var(--earth-header-accent) !important;
+  border-color: var(--earth-dark) !important;
   color: #ffffff !important;
-  background: var(--earth-header-accent) !important;
-  box-shadow: 0 7px 16px rgb(74 61 44 / 0.10) !important;
+  background: var(--earth-dark) !important;
+  box-shadow: 0 7px 16px rgb(74 61 44 / 0.13) !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-register-button:hover {
-  border-color: var(--earth-header-accent-hover) !important;
-  background: var(--earth-header-accent-hover) !important;
+  border-color: #332a1f !important;
+  background: #332a1f !important;
 }
 
-/* Desktop-only refinements. */
-@media (min-width: 1021px) {
-  html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-main__inner {
-    min-height: 70px !important;
-  }
-
-  html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-nav__inner {
-    min-height: 50px !important;
-  }
-
-  html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-nav__link,
-  html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-nav-upgrade__link {
-    min-height: 40px !important;
-  }
-}
-
-/* Mobile retains the compact layout but follows the same white-first language. */
+/* =========================================================
+   MOBILE
+========================================================= */
 @media (max-width: 1020px) {
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-brand {
+    min-width: 205px !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-brand__mark,
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header.is-compact .dthl-brand__mark {
+    flex-basis: 205px !important;
+    width: 205px !important;
+    height: 44px !important;
+  }
+
   html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
     .dthl-mobile-nav__panel,
     .dthl-mobile-search
   ) {
-    border-color: var(--earth-header-border) !important;
+    border-color: var(--earth-border) !important;
     background: #ffffff !important;
   }
 
-  html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
-    .dthl-mobile-nav__link.is-active,
-    .dthl-mobile-nav-upgrade__link.is-active,
-    .dthl-mobile-nav-upgrade__category.is-active
-  ) {
-    color: var(--earth-header-accent-dark) !important;
-    background: var(--earth-header-accent-soft) !important;
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-mobile__item {
+    border-color: var(--earth-border) !important;
+    color: var(--earth-text) !important;
+    background: #ffffff !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-mobile__item:hover,
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-mobile__item.is-active {
+    border-color: var(--earth-border-strong) !important;
+    color: var(--earth-dark) !important;
+    background: var(--earth-bg) !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-mobile__icon {
+    color: var(--earth-dark) !important;
+    background: var(--earth-soft) !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-mobile__item.is-active .dthl-primary-mobile__icon {
+    color: #ffffff !important;
+    background: var(--earth-brand) !important;
+    box-shadow: 0 5px 13px rgb(181 153 101 / 0.20) !important;
+  }
+}
+
+@media (max-width: 560px) {
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-brand {
+    min-width: 170px !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-brand__mark,
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header.is-compact .dthl-brand__mark {
+    flex-basis: 170px !important;
+    width: 170px !important;
+    height: 37px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-brand {
+    min-width: 152px !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-brand__mark,
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header.is-compact .dthl-brand__mark {
+    flex-basis: 152px !important;
+    width: 152px !important;
+    height: 33px !important;
   }
 }
 
