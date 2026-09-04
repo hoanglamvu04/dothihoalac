@@ -33,6 +33,7 @@ import './pages/public/PropertiesPage.system.css';
 import './pages/public/CommunityPageRailDisclosure.css';
 import './features/communityRailDisclosure';
 import './features/propertySubmitReviewGuard';
+import './features/propertyMarketplacePaging';
 
 // Apply the saved appearance before React paints so reloads do not flash the
 // wrong theme. The default remains the light reference palette.
