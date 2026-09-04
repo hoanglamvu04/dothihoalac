@@ -29,6 +29,7 @@ import './styles/theme-modes.css';
 import './pages/public/HomeReferenceLayout.css';
 import './styles/typography.css';
 import './pages/public/HomeReferenceLayout.fix.css';
+import './pages/public/PropertiesPage.system.css';
 import './pages/public/CommunityPageRailDisclosure.css';
 import './features/communityRailDisclosure';
 import './features/propertySubmitReviewGuard';
