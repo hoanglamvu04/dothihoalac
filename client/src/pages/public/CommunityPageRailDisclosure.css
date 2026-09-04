@@ -76,6 +76,22 @@
   width: 100%;
 }
 
+/* The left discovery rail is intentionally wider on desktop so labels breathe
+   without shrinking the center feed or right activity column. */
+@media (min-width: 1421px) {
+  .community-reference-layout {
+    grid-template-columns: 300px minmax(0, 828px) 314px !important;
+    gap: 24px !important;
+  }
+}
+
+@media (min-width: 1181px) and (max-width: 1420px) {
+  .community-reference-layout {
+    grid-template-columns: 270px minmax(0, 760px) 290px !important;
+    gap: 18px !important;
+  }
+}
+
 html[data-dthl-theme='dark'] .community-reference-left .community-discovery-section--disclosure .community-discovery-more--disclosure {
   background: transparent;
   color: color-mix(in srgb, var(--community-green-soft, #eef6f1) 78%, #ffffff 22%);
