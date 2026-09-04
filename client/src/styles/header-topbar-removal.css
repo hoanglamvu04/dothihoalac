@@ -1,0 +1,4 @@
+/* The compact header no longer uses the legacy organization/link strip. */
+.dthl-header-top {
+  display: none !important;
+}
