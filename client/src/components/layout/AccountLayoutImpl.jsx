@@ -28,6 +28,7 @@ import { useAuth } from '../../context/AuthContext';
 
 import './AccountLayout.css';
 import './AccountMobile.css';
+import './AccountDesktopReference.css';
 
 const MOBILE_TITLES = [
   ['/tai-khoan/ho-so', 'Thông tin tài khoản'],
