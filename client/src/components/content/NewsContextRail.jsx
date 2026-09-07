@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
   ArrowRight,
+  BriefcaseBusiness,
   Building2,
   Cloud,
   CloudLightning,
@@ -9,16 +10,27 @@ import {
   CloudSun,
   Droplets,
   Eye,
+  House,
+  MapPin,
   MessageCircle,
   Newspaper,
+  Send,
   Snowflake,
   Sun,
+  Tags,
   TrendingUp,
   Wind,
 } from 'lucide-react';
 
-import { articleApi, communityApi, projectApi } from '../../api/content.api';
+import {
+  articleApi,
+  communityApi,
+  jobApi,
+  projectApi,
+  propertyApi,
+} from '../../api/content.api';
 import { getHoaLacForecast } from '../../api/weather.api';
+import { ARTICLE_CATEGORY_RAIL } from '../../utils/constants';
 import { contentPath } from '../../utils/content';
 import { mediaUrl } from '../../utils/media';
 import { projectStatusLabel } from '../../utils/projects';
@@ -107,8 +119,20 @@ function idOf(item) {
   return String(item?._id || item?.id || '');
 }
 
+function taxonomyValue(item) {
+  return String(item?.slug || item?._id || item?.id || '');
+}
+
 function filterExcluded(items, excluded) {
   return (items || []).filter((item) => !excluded.has(idOf(item)));
+}
+
+function newsFilterLink({ category = '', area = '' }) {
+  const params = new URLSearchParams();
+  if (category) params.set('category', category);
+  if (area) params.set('area', area);
+  const query = params.toString();
+  return query ? `/tin-tuc?${query}` : '/tin-tuc';
 }
 
 function weatherVisual(code) {
@@ -294,7 +318,118 @@ function DiscussionsCard({ items }) {
   );
 }
 
-export default function NewsContextRail({ category = '', excludeIds = [] }) {
+function TopicCard({ category }) {
+  return (
+    <section className="news-rail-card news-topics-card">
+      <header className="news-rail-card__head">
+        <div>
+          <span><Tags size={13} /> Điều hướng nhanh</span>
+          <h2>Chủ đề nổi bật</h2>
+        </div>
+      </header>
+
+      <div className="news-topic-chips">
+        {ARTICLE_CATEGORY_RAIL.slice(0, 10).map((item) => (
+          <Link
+            key={item.slug}
+            className={category === item.slug ? 'is-active' : ''}
+            to={newsFilterLink({ category: item.slug })}
+          >
+            {item.label}
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function AreaCard({ areas, category }) {
+  const visibleAreas = (areas || []).filter((item) => taxonomyValue(item)).slice(0, 8);
+  if (!visibleAreas.length) return null;
+
+  return (
+    <section className="news-rail-card news-areas-card">
+      <header className="news-rail-card__head">
+        <div>
+          <span><MapPin size={13} /> Tin theo địa bàn</span>
+          <h2>Khu vực đang có tin</h2>
+        </div>
+      </header>
+
+      <div className="news-area-links">
+        {visibleAreas.map((item) => (
+          <Link
+            key={item._id || taxonomyValue(item)}
+            to={newsFilterLink({
+              category,
+              area: taxonomyValue(item),
+            })}
+          >
+            <span>{item.name}</span>
+            <ArrowRight size={13} />
+          </Link>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function EcosystemCard({ jobs, properties }) {
+  const job = jobs?.[0];
+  const property = properties?.[0];
+
+  return (
+    <section className="news-rail-card news-ecosystem-card">
+      <header className="news-rail-card__head">
+        <div>
+          <span>Hệ sinh thái Hòa Lạc</span>
+          <h2>Việc làm & BĐS mới</h2>
+        </div>
+      </header>
+
+      <div className="news-ecosystem-links">
+        <Link to={job ? contentPath(job) : '/viec-lam'}>
+          <span className="news-ecosystem-links__icon"><BriefcaseBusiness size={18} /></span>
+          <span>
+            <small>Việc làm mới</small>
+            <strong>{job?.title || 'Khám phá việc làm tại Hòa Lạc'}</strong>
+            <em>{job?.job?.companyName || 'Xem danh sách tuyển dụng'}</em>
+          </span>
+          <ArrowRight size={15} />
+        </Link>
+
+        <Link to={property ? contentPath(property) : '/bat-dong-san'}>
+          <span className="news-ecosystem-links__icon"><House size={18} /></span>
+          <span>
+            <small>Bất động sản mới</small>
+            <strong>{property?.title || 'Khám phá bất động sản Hòa Lạc'}</strong>
+            <em>{property?.primaryAreaId?.name || property?.property?.addressText || 'Xem tin mới nhất'}</em>
+          </span>
+          <ArrowRight size={15} />
+        </Link>
+      </div>
+    </section>
+  );
+}
+
+function NewsTipCard() {
+  return (
+    <section className="news-tip-cta">
+      <span><Send size={18} /></span>
+      <div>
+        <small>Cộng tác cùng Đô Thị Hòa Lạc</small>
+        <strong>Có thông tin tại Hòa Lạc?</strong>
+        <p>Gửi sự kiện, thay đổi địa bàn hoặc thông tin đáng chú ý cho ban biên tập.</p>
+      </div>
+      <Link to="/gui-tin">
+        Gửi thông tin
+        <ArrowRight size={14} />
+      </Link>
+    </section>
+  );
+}
+
+export default function NewsContextRail({ category = '', excludeIds = [], areas = [] }) {
   const contextConfig = CONTEXT_BY_CATEGORY[category] || DEFAULT_CONTEXT;
   const excludeKey = excludeIds
     .filter(Boolean)
@@ -307,6 +442,8 @@ export default function NewsContextRail({ category = '', excludeIds = [] }) {
     related: [],
     contextItems: [],
     discussions: [],
+    jobs: [],
+    properties: [],
     forecast: null,
   });
 
@@ -328,7 +465,13 @@ export default function NewsContextRail({ category = '', excludeIds = [] }) {
             limit: 5,
           });
 
-      const [relatedResult, contextResult, discussionResult] = await Promise.allSettled([
+      const [
+        relatedResult,
+        contextResult,
+        discussionResult,
+        jobsResult,
+        propertiesResult,
+      ] = await Promise.allSettled([
         articleApi.list({
           sort: 'popular',
           limit: 7,
@@ -339,6 +482,8 @@ export default function NewsContextRail({ category = '', excludeIds = [] }) {
           sort: 'popular',
           limit: 5,
         }),
+        jobApi.list({ limit: 2 }),
+        propertyApi.list({ limit: 2 }),
       ]);
 
       if (!active) return;
@@ -358,6 +503,10 @@ export default function NewsContextRail({ category = '', excludeIds = [] }) {
           ? discussionResult.value?.items ?? []
           : [];
       const discussions = discussionItems.slice(0, 4);
+      const jobs = jobsResult.status === 'fulfilled' ? jobsResult.value?.items ?? [] : [];
+      const properties = propertiesResult.status === 'fulfilled'
+        ? propertiesResult.value?.items ?? []
+        : [];
 
       let forecast = null;
 
@@ -376,6 +525,8 @@ export default function NewsContextRail({ category = '', excludeIds = [] }) {
         related,
         contextItems,
         discussions,
+        jobs,
+        properties,
         forecast,
       });
     };
@@ -438,6 +589,13 @@ export default function NewsContextRail({ category = '', excludeIds = [] }) {
           <DiscussionsCard items={state.discussions} />
         </>
       ) : null}
+
+      <div className="news-context-rail__sticky">
+        <TopicCard category={category} />
+        <AreaCard areas={areas} category={category} />
+        <EcosystemCard jobs={state.jobs} properties={state.properties} />
+        <NewsTipCard />
+      </div>
     </aside>
   );
 }
