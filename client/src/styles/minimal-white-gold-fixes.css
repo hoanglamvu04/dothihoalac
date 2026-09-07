@@ -208,3 +208,33 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
 ) {
   background: #f7f5f0 !important;
 }
+
+/* Jobs cards: salary may carry the brand accent; functional metadata should
+   stay neutral so the interface does not become visually saturated with gold. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card__icon {
+  color: #242724 !important;
+  background: #f3f3f0 !important;
+  border-color: #e6e6e1 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card__icon svg {
+  color: #242724 !important;
+  stroke: currentColor !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card__body > div:last-child {
+  color: #737873 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card__body > div:last-child span {
+  color: #737873 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card__body > div:last-child svg {
+  color: #565b56 !important;
+  stroke: currentColor !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card__salary {
+  color: #9c7d4e !important;
+}
