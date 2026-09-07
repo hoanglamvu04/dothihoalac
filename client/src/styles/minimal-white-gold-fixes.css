@@ -1,0 +1,210 @@
+/* =========================================================
+   MINIMAL WHITE / BLACK / GOLD — FINAL VISUAL FIXES
+   Loaded after minimal-white-gold.css. Light earth palette only.
+========================================================= */
+
+/* Hidden-header activator: neutral black control, gold only on interaction. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-activator,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-activator.is-manual {
+  border-color: #2b2e2b !important;
+  color: #ffffff !important;
+  background: rgb(25 27 25 / 0.96) !important;
+  box-shadow: 0 8px 24px rgb(16 18 16 / 0.14) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-activator:hover,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-activator.is-manual:hover {
+  border-color: #b59965 !important;
+  color: #171917 !important;
+  background: #b59965 !important;
+  box-shadow: 0 8px 24px rgb(181 153 101 / 0.16) !important;
+}
+
+/* Public mobile bottom navigation: white shell + gold active indicator. */
+@media (max-width: 760px) {
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .mobile-bottom-nav {
+    border-top-color: #e6e6e1 !important;
+    background: rgb(255 255 255 / 0.98) !important;
+    box-shadow: 0 -8px 24px rgb(18 20 18 / 0.06) !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .mobile-bottom-nav__item {
+    color: #505550 !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .mobile-bottom-nav__item.is-active {
+    color: #9c7d4e !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .mobile-bottom-nav__item.is-active::before {
+    background: #b59965 !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .mobile-bottom-nav__item.is-active .mobile-bottom-nav__icon {
+    color: #9c7d4e !important;
+    background: #f7f5f0 !important;
+  }
+
+  /* Home shortcut rail: create real breathing room at both ends, especially
+     for the first item, and separate it clearly from the hero. */
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .home-mobile-shortcuts {
+    grid-template-columns: repeat(6, minmax(76px, 1fr)) !important;
+    margin-top: 14px !important;
+    padding: 12px 14px !important;
+    gap: 8px !important;
+    scroll-padding-inline: 14px !important;
+    border-color: #e6e6e1 !important;
+    background: #ffffff !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .home-mobile-shortcuts a {
+    min-width: 76px !important;
+    padding-inline: 3px !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .home-mobile-shortcuts a:first-child {
+    margin-left: 2px !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .home-mobile-shortcuts a > span {
+    color: #2b2e2b !important;
+    background: #f6f6f3 !important;
+  }
+
+  /* Account mobile palette. The old green token powered the dock, icons,
+     status actions and sub-page accents, so replace it at the source. */
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .account-center-page {
+    --account-mobile-green: #b59965 !important;
+    --account-mobile-green-dark: #9c7d4e !important;
+    --account-mobile-soft: #f7f5f0 !important;
+    --account-mobile-border: #e6e6e1 !important;
+    --account-mobile-muted: #7b807b !important;
+    background: #ffffff !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .account-mobile-dock {
+    border-top-color: #e6e6e1 !important;
+    background: rgb(255 255 255 / 0.98) !important;
+    box-shadow: 0 -8px 24px rgb(18 20 18 / 0.055) !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .account-mobile-dock > a {
+    color: #666b66 !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .account-mobile-dock > a.is-active {
+    color: #9c7d4e !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .account-mobile-header {
+    border-color: #e6e6e1 !important;
+    background: #ffffff !important;
+    box-shadow: 0 5px 16px rgb(18 20 18 / 0.035) !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .account-mobile-header > a,
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .account-mobile-header > strong {
+    color: #202320 !important;
+  }
+}
+
+/* Account profile hero: remove the large green block on desktop and mobile. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .account-center-page {
+  --account-green: #b59965 !important;
+  --account-green-dark: #9c7d4e !important;
+  --account-green-soft: #f7f5f0 !important;
+  --account-border: #e6e6e1 !important;
+  --account-ink: #181a18 !important;
+  --account-muted: #7b807b !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .account-shell-cover {
+  background: #202320 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .account-shell-cover__fallback {
+  background:
+    radial-gradient(circle at 78% 22%, rgb(181 153 101 / 0.22), transparent 26%),
+    radial-gradient(circle at 20% 82%, rgb(255 255 255 / 0.06), transparent 28%),
+    linear-gradient(125deg, #171917 0%, #292c29 58%, #343732 100%) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .account-shell-cover__fallback span {
+  background: rgb(181 153 101 / 0.07) !important;
+  border: 1px solid rgb(181 153 101 / 0.08) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .account-shell-cover::after {
+  background: linear-gradient(180deg, rgb(0 0 0 / 0.01), rgb(0 0 0 / 0.20)) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .account-shell-avatar,
+  .account-shell-sidebar__mini-avatar
+) {
+  background: linear-gradient(135deg, #1c1f1c, #383b37) !important;
+  box-shadow: 0 7px 18px rgb(18 20 18 / 0.14) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .account-shell-identity__title > span {
+  color: #171917 !important;
+  background: #b59965 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .account-shell-avatar__camera {
+  color: #262926 !important;
+  background: #f6f6f3 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .account-shell-button--primary,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .account-overview-v2__community-cta > a {
+  color: #ffffff !important;
+  background: #1b1d1b !important;
+  border-color: #1b1d1b !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .account-shell-button--primary:hover,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .account-overview-v2__community-cta > a:hover {
+  color: #171917 !important;
+  background: #b59965 !important;
+  border-color: #b59965 !important;
+}
+
+/* Remaining account UI accents become gold or neutral instead of green. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .account-shell-nav > a.is-active,
+  .account-shell-nav__more a.is-active,
+  .account-shell-nav__more > summary.is-active,
+  .account-shell-nav__more.is-active > summary
+) {
+  color: #8f7144 !important;
+  background: #f7f5f0 !important;
+  box-shadow: inset 3px 0 0 #b59965 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .account-shell-nav > a:hover,
+  .account-shell-nav__more a:hover,
+  .account-shell-nav__more summary:hover
+) {
+  color: #8f7144 !important;
+  background: #f8f7f4 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .account-overview-v2__section-heading > a,
+  .account-overview-v2__edit,
+  .account-overview-v2__highlight-grid article > span,
+  .account-overview-v2__field-icon,
+  .account-overview-v2__quick > a > svg
+) {
+  color: #9c7d4e !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .account-overview-v2__highlight-grid article > span,
+  .account-overview-v2__quick > a > svg
+) {
+  background: #f7f5f0 !important;
+}
