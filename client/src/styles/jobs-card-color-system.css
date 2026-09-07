@@ -11,18 +11,24 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .jobs-result
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .jobs-results__main .job-card__icon {
   align-self: center;
   justify-self: center;
-  color: #242724 !important;
-  background: #f3f3f0 !important;
-  border: 1px solid #e6e6e1 !important;
+  color: #2d4938 !important;
+  background: #f1f5f2 !important;
+  border: 1px solid #e1e8e3 !important;
 }
 
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card__icon svg {
+  color: #2d4938 !important;
+}
+
+/* Main job titles use the same deep green family as the detail page.
+   Avoid blue as a primary visual accent in the jobs product. */
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card h3 a {
-  color: #245f7a !important;
+  color: #315f45 !important;
   transition: color 150ms ease;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card h3 a:hover {
-  color: #17485f !important;
+  color: #214532 !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card__body > strong {
@@ -47,7 +53,7 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card--f
   border-color: #d7e9de !important;
 }
 
-/* Part-time — muted blue. */
+/* Part-time — category colour only; blue is not used for titles or hierarchy. */
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card--part_time .job-card__type-badge {
   color: #416f86 !important;
   background: #edf5f8 !important;
@@ -102,6 +108,6 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card--o
   }
 
   html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card h3 a {
-    color: #245f7a !important;
+    color: #315f45 !important;
   }
 }
