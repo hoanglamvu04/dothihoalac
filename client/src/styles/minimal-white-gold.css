@@ -1,0 +1,464 @@
+/* =========================================================
+   DTHL MINIMAL WHITE / BLACK / GOLD
+   Reference direction: predominantly white canvas, dark typography and
+   controls, with the brand gold used only as a restrained accent.
+   Scope: default light "earth" palette only. Dark mode is untouched.
+========================================================= */
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] {
+  /* Core palette */
+  --dthl-palette-canvas: #ffffff !important;
+  --dthl-palette-surface: #ffffff !important;
+  --dthl-palette-surface-2: #f8f8f6 !important;
+  --dthl-palette-surface-3: #f2f2ef !important;
+  --dthl-palette-border: #e7e7e2 !important;
+  --dthl-palette-border-strong: #d4d4cd !important;
+  --dthl-palette-ink: #161816 !important;
+  --dthl-palette-text: #454945 !important;
+  --dthl-palette-muted: #7d827d !important;
+  --dthl-palette-brand: #b59965 !important;
+  --dthl-palette-brand-hover: #9c7d4e !important;
+  --dthl-palette-brand-dark: #1b1d1b !important;
+  --dthl-palette-brand-soft: #f6f6f3 !important;
+  --dthl-palette-support: #222522 !important;
+  --dthl-palette-support-soft: #f5f6f5 !important;
+  --dthl-palette-shadow: 0 8px 24px rgb(20 23 20 / 0.045) !important;
+
+  /* Legacy earth variables used by the final header layer. */
+  --earth-brand: #b59965 !important;
+  --earth-brand-dark: #9c7d4e !important;
+  --earth-dark: #191b19 !important;
+  --earth-bg: #f7f7f5 !important;
+  --earth-card: #ffffff !important;
+  --earth-text: #1b1e1b !important;
+  --earth-muted: #737873 !important;
+  --earth-soft: #f4f4f1 !important;
+  --earth-green: #242724 !important;
+  --earth-border: #e7e7e2 !important;
+  --earth-border-strong: #d3d3cb !important;
+}
+
+/* White is the canvas. No beige, mint or yellow page backgrounds. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  body,
+  #root,
+  .app-shell,
+  .main-content,
+  .dth-home.home-ref,
+  .home-reference-v2,
+  .news-hub,
+  .article-view-page,
+  .properties-page,
+  .property-detail-page,
+  .jobs-page,
+  .job-detail-page,
+  .community-social-page,
+  .community-detail-page,
+  .area-page,
+  .search-page,
+  .static-page-view,
+  .contact-page,
+  .lead-page,
+  .public-member-page,
+  .create-hub-page,
+  .job-editor-page,
+  .property-editor-page,
+  .news-tip-page,
+  .account-center-page,
+  .dthl-login-page,
+  .dthl-register-page,
+  .dthl-forgot-page,
+  .dthl-reset-page
+) {
+  color: var(--dthl-palette-ink) !important;
+  background: #ffffff !important;
+}
+
+/* Neutral secondary planes. These may separate sections but never read as
+   a second brand colour. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .home-ref-state,
+  .home-mobile-shortcuts,
+  .news-filter-panel,
+  .properties-toolbar,
+  .properties-filter-modal__header,
+  .jobs-market-search,
+  .community-reference-feed-tabs,
+  .search-start
+) {
+  background: #f8f8f6 !important;
+  border-color: var(--dthl-palette-border) !important;
+}
+
+/* =========================================================
+   HEADER — white shell, dark controls, gold underline/focus.
+========================================================= */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .dthl-header,
+  .dthl-header-main,
+  .dthl-header-nav
+) {
+  color: var(--dthl-palette-ink) !important;
+  background: rgb(255 255 255 / 0.985) !important;
+  border-color: var(--dthl-palette-border) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-main {
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header.is-scrolled:not(.is-hidden) {
+  box-shadow: 0 10px 30px rgb(18 21 18 / 0.055) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search {
+  border-color: var(--dthl-palette-border) !important;
+  background: #f7f7f5 !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search:hover {
+  border-color: var(--dthl-palette-border-strong) !important;
+  background: #f5f5f2 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search:focus-within {
+  border-color: var(--dthl-palette-brand) !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 3px rgb(181 153 101 / 0.10) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search__leading-icon,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search input {
+  color: var(--dthl-palette-ink) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search input::placeholder {
+  color: #8a8f8a !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search__submit {
+  border-color: #1b1d1b !important;
+  color: #ffffff !important;
+  background: #1b1d1b !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search__submit:hover:not(:disabled) {
+  border-color: var(--dthl-palette-brand) !important;
+  color: #171917 !important;
+  background: var(--dthl-palette-brand) !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .dthl-icon-button,
+  .dthl-mobile-menu-button,
+  .dthl-user-menu__trigger,
+  .dthl-theme-toggle
+) {
+  color: var(--dthl-palette-ink) !important;
+  background: #ffffff !important;
+  border-color: var(--dthl-palette-border) !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .dthl-icon-button:hover,
+  .dthl-icon-button.is-active,
+  .dthl-mobile-menu-button:hover,
+  .dthl-user-menu__trigger:hover,
+  .dthl-user-menu__trigger[aria-expanded='true'],
+  .dthl-theme-toggle:hover
+) {
+  color: #171917 !important;
+  background: #f7f7f5 !important;
+  border-color: var(--dthl-palette-brand) !important;
+}
+
+/* Primary navigation follows the MULTI logic: no large coloured pill;
+   the brand colour appears as a fine active indicator. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link {
+  color: #4e534e !important;
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__icon {
+  color: #343834 !important;
+  background: #ffffff !important;
+  border-color: #ecece7 !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link:hover {
+  color: #171917 !important;
+  background: #f8f8f6 !important;
+  border-color: transparent !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link:hover .dthl-primary-nav__icon {
+  color: #171917 !important;
+  background: #ffffff !important;
+  border-color: #d8d8d1 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link.is-active {
+  color: #171917 !important;
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: inset 0 -3px 0 var(--dthl-palette-brand) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link.is-active .dthl-primary-nav__icon {
+  color: var(--dthl-palette-brand) !important;
+  background: #ffffff !important;
+  border-color: var(--dthl-palette-brand) !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__submenu {
+  color: var(--dthl-palette-ink) !important;
+  background: #ffffff !important;
+  border-color: var(--dthl-palette-border) !important;
+  box-shadow: 0 18px 44px rgb(20 23 20 / 0.10) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__submenu a:hover {
+  color: #171917 !important;
+  background: #f7f7f5 !important;
+}
+
+/* =========================================================
+   COMMON SURFACES — cards stay white with subtle neutral borders.
+========================================================= */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .home-reference-panel,
+  .home-reference-community,
+  .home-reference-properties,
+  .news-masthead,
+  .news-category-bar,
+  .news-content-layout__main,
+  .news-content-layout__rail,
+  .news-stream,
+  .news-story,
+  .article-view-main,
+  .article-view-header,
+  .article-view-cover,
+  .article-view-content,
+  .article-view-reactions,
+  .article-view-comments,
+  .article-sidebar-card,
+  .properties-page__container,
+  .properties-market-shell,
+  .properties-results,
+  .properties-sidebar-card,
+  .property-detail-header__content,
+  .property-detail-price-box,
+  .property-gallery,
+  .property-detail-main > section,
+  .property-contact-card,
+  .property-sidebar-card,
+  .jobs-employers-panel,
+  .jobs-featured-panel,
+  .jobs-results__main,
+  .jobs-page .job-card,
+  .job-detail-header,
+  .job-detail-main > section,
+  .job-apply-card,
+  .job-sidebar-card,
+  .community-reference-card,
+  .community-reference-composer,
+  .search-results,
+  .public-member-header,
+  .account-shell-profile,
+  .account-shell-sidebar
+) {
+  background: #ffffff !important;
+  border-color: var(--dthl-palette-border) !important;
+}
+
+/* Gold is a text/icon/accent colour first, not a page fill. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .properties-hero__eyebrow,
+  .properties-featured-areas > header > div > span,
+  .news-masthead__eyebrow,
+  .article-view-eyebrow,
+  .jobs-page__eyebrow,
+  .job-detail-eyebrow,
+  .community-reference-eyebrow,
+  .account-overview-v2__topline > div > span
+) {
+  color: var(--dthl-palette-brand) !important;
+}
+
+/* =========================================================
+   PROPERTY MARKETPLACE — remove green/yellow planes.
+========================================================= */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-page {
+  --property-green: #202320 !important;
+  --property-green-strong: #151715 !important;
+  --property-green-soft: #f5f6f5 !important;
+  --property-gold: var(--dthl-palette-brand) !important;
+  --property-ink: #171917 !important;
+  --property-text: #4c514c !important;
+  --property-muted: #7b807b !important;
+  --property-border: var(--dthl-palette-border) !important;
+  --property-surface: #ffffff !important;
+  --property-surface-2: #f8f8f6 !important;
+  --property-canvas: #ffffff !important;
+  --property-warm: #f7f7f5 !important;
+  background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-hero {
+  background:
+    radial-gradient(circle at 78% 18%, rgb(181 153 101 / 0.08), transparent 29%),
+    linear-gradient(115deg, #ffffff 0 50%, #f7f7f5 100%) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-hero__shade {
+  background: linear-gradient(90deg, #ffffff 0 43%, rgb(255 255 255 / 0.92) 60%, rgb(255 255 255 / 0.30) 100%) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-hero h1,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-featured-areas h2,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-sidebar-card h3 {
+  color: #171917 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-type-rail button.is-active,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-toolbar__views button.is-active {
+  color: #ffffff !important;
+  background: #1c1f1c !important;
+  border-color: #1c1f1c !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-hero__finder > button,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-filter-modal__apply {
+  color: #ffffff !important;
+  background: #1b1d1b !important;
+  border-color: #1b1d1b !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-hero__finder > button:hover,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-filter-modal__apply:hover {
+  color: #171917 !important;
+  background: var(--dthl-palette-brand) !important;
+  border-color: var(--dthl-palette-brand) !important;
+}
+
+/* =========================================================
+   NEWS / ARTICLE — editorial white with gold markers.
+========================================================= */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-hub {
+  --news-background: #ffffff !important;
+  --news-canvas: #ffffff !important;
+  --news-surface: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-category-bar nav button.is-active {
+  color: #171917 !important;
+  background: #ffffff !important;
+  border-color: var(--dthl-palette-border) !important;
+  box-shadow: inset 0 -2px 0 var(--dthl-palette-brand) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-masthead__search button,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .article-sidebar-cta {
+  color: #ffffff !important;
+  background: #1b1d1b !important;
+  border-color: #1b1d1b !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .article-sidebar-cta > span {
+  color: var(--dthl-palette-brand) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .article-sidebar-cta a {
+  color: #171917 !important;
+  background: var(--dthl-palette-brand) !important;
+}
+
+/* =========================================================
+   JOBS / COMMUNITY / ACCOUNT — neutral structure, gold detail.
+========================================================= */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page {
+  --jobs-brand: var(--dthl-palette-brand) !important;
+  --jobs-brand-dark: #1b1d1b !important;
+  --jobs-bg: #ffffff !important;
+  --jobs-background: #ffffff !important;
+  --jobs-surface: #ffffff !important;
+  --jobs-text: #171917 !important;
+  --jobs-muted: #7b807b !important;
+  --jobs-soft-brand: #f6f6f3 !important;
+  --jobs-line: var(--dthl-palette-border) !important;
+  --jobs-border: var(--dthl-palette-border) !important;
+  --jobs-green: #242724 !important;
+  --jobs-green-dark: #171917 !important;
+  --jobs-green-soft: #f5f6f5 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .account-center-page {
+  --account-desktop-canvas: #ffffff !important;
+  --account-desktop-surface: #ffffff !important;
+  --account-desktop-surface-2: #f8f8f6 !important;
+  --account-desktop-border: var(--dthl-palette-border) !important;
+  --account-desktop-ink: #171917 !important;
+  --account-desktop-text: #4b504b !important;
+  --account-desktop-muted: #7b807b !important;
+  --account-desktop-green: #252825 !important;
+  --account-desktop-green-soft: #f5f6f5 !important;
+  --account-desktop-gold: var(--dthl-palette-brand) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .account-shell-nav > a.is-active,
+  .account-shell-nav__more a.is-active,
+  .account-shell-nav__more > summary.is-active,
+  .account-shell-nav__more.is-active > summary
+) {
+  color: #171917 !important;
+  background: #f7f7f5 !important;
+  box-shadow: inset 3px 0 0 var(--dthl-palette-brand) !important;
+}
+
+/* =========================================================
+   FOOTER — black rather than green. Gold remains the small brand accent.
+========================================================= */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .site-footer {
+  --footer-green: #c7aa72 !important;
+  --footer-bg: #171917 !important;
+  --footer-bg-deep: #0f110f !important;
+  --footer-text: rgb(248 248 244 / 0.80) !important;
+  --footer-muted: rgb(232 232 226 / 0.58) !important;
+  --footer-border: rgb(181 153 101 / 0.18) !important;
+  color: #f8f8f4 !important;
+  background: linear-gradient(180deg, #171917 0%, #0f110f 100%) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .site-footer__operator-icon,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .site-footer .site-footer__social > a {
+  background: rgb(181 153 101 / 0.06) !important;
+}
+
+/* Keep mobile equally clean. */
+@media (max-width: 760px) {
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+    .jobs-page,
+    .job-detail-page,
+    .article-view-page,
+    .news-hub,
+    .properties-page,
+    .property-detail-page,
+    .community-social-page,
+    .community-detail-page,
+    .account-center-page
+  ) {
+    background: #ffffff !important;
+  }
+}
