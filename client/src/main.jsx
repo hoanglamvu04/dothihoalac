@@ -47,10 +47,12 @@ import './styles/earth-premium-header.css';
 import './styles/minimal-white-gold.css';
 import './styles/minimal-white-gold-fixes.css';
 import './styles/article-flat-editorial-fix.css';
+import './styles/property-marketplace-controls.css';
 import './features/communityRailDisclosure';
 import './features/propertySubmitReviewGuard';
 import './features/propertyMarketplacePaging';
 import './features/sitePalettePicker';
+import './features/propertySearchableFilters';
 
 // Apply saved appearance and palette before React paints so reloads do not
 // flash the wrong visual system. Earth is the default light palette.
