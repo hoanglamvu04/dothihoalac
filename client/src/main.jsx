@@ -44,6 +44,7 @@ import './styles/header-topbar-removal.css';
 import './styles/earth-white-reference.css';
 import './styles/earth-mint-canvas.css';
 import './styles/earth-premium-header.css';
+import './styles/minimal-white-gold.css';
 import './features/communityRailDisclosure';
 import './features/propertySubmitReviewGuard';
 import './features/propertyMarketplacePaging';
