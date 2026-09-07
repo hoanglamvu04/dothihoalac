@@ -48,6 +48,7 @@ import './styles/minimal-white-gold.css';
 import './styles/minimal-white-gold-fixes.css';
 import './styles/article-flat-editorial-fix.css';
 import './styles/property-marketplace-controls.css';
+import './styles/property-marketplace-dropdown-overflow.css';
 import './features/communityRailDisclosure';
 import './features/propertySubmitReviewGuard';
 import './features/propertyMarketplacePaging';
