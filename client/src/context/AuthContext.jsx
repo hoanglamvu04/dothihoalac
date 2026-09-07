@@ -13,6 +13,25 @@ import { userApi } from '../api/user.api';
 const AuthContext = createContext(null);
 const USER_SYNC_STORAGE_KEY = 'dthl:user-updated';
 const PASSIVE_REFRESH_TTL_MS = 30_000;
+const MEDIA_OBJECT_ID_PATTERN = /^[a-f0-9]{24}$/i;
+
+function profileNeedsHydration(profile) {
+  if (!profile || typeof profile !== 'object') return true;
+
+  if (!Object.prototype.hasOwnProperty.call(profile, 'avatarMediaId')) {
+    return true;
+  }
+
+  const avatar = profile.avatarMediaId;
+
+  // /auth/me on some server versions returns only the raw media ObjectId.
+  // Avatar/mediaUrl needs the populated media object (url/secureUrl/storagePath)
+  // in order to render the actual image in the global header.
+  return (
+    typeof avatar === 'string' &&
+    MEDIA_OBJECT_ID_PATTERN.test(avatar.trim())
+  );
+}
 
 export function AuthProvider({ children }) {
   const [user, setUserState] = useState(null);
@@ -54,15 +73,24 @@ export function AuthProvider({ children }) {
         const current = await authApi.me();
         let profile = current?.profile ?? null;
 
-        // Backend hiện trả profile trực tiếp từ /auth/me. Chỉ gọi endpoint hồ
-        // sơ riêng khi làm việc với backend cũ không có trường profile, tránh
-        // một request tuần tự thừa ở mọi lần mở/reload ứng dụng đã đăng nhập.
-        if (!Object.prototype.hasOwnProperty.call(current || {}, 'profile')) {
+        // Hydrate when /auth/me omits the profile OR only exposes an unresolved
+        // avatar media ObjectId. This keeps the header avatar in sync with the
+        // full account profile without adding an extra request when the profile
+        // is already populated.
+        if (
+          !Object.prototype.hasOwnProperty.call(current || {}, 'profile') ||
+          profileNeedsHydration(profile)
+        ) {
           try {
             const hydratedProfile = await userApi.myProfile();
-            if (hydratedProfile) profile = hydratedProfile;
+            if (hydratedProfile) {
+              profile = {
+                ...(profile || {}),
+                ...hydratedProfile,
+              };
+            }
           } catch {
-            /* Backend cũ có thể không có hồ sơ; giữ profile rỗng. */
+            /* Backend cũ có thể không có hồ sơ; giữ dữ liệu hiện có. */
           }
         }
 
