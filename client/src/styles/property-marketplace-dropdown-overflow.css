@@ -1,0 +1,17 @@
+/* Keep custom property filter menus visible outside the hero while preserving
+   the hero's bounded background media. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-hero {
+  overflow: visible !important;
+  z-index: 20;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-hero__background,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-hero__shade {
+  pointer-events: none;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-type-rail,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-featured-areas {
+  position: relative;
+  z-index: 1;
+}
