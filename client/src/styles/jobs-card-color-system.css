@@ -1,0 +1,107 @@
+/* =========================================================
+   JOB CARD SEMANTIC COLOR SYSTEM
+   Keep the page predominantly white/neutral while giving job types a
+   consistent visual identity that matches the discovery cards above.
+========================================================= */
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .jobs-results__main .job-card {
+  align-items: center;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .jobs-results__main .job-card__icon {
+  align-self: center;
+  justify-self: center;
+  color: #242724 !important;
+  background: #f3f3f0 !important;
+  border: 1px solid #e6e6e1 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card h3 a {
+  color: #245f7a !important;
+  transition: color 150ms ease;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card h3 a:hover {
+  color: #17485f !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card__body > strong {
+  color: #68645d !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card__type-badge {
+  display: inline-flex;
+  align-items: center;
+  min-height: 25px;
+  padding: 4px 10px !important;
+  border: 1px solid transparent !important;
+  border-radius: 999px !important;
+  font-weight: 780 !important;
+  line-height: 1 !important;
+}
+
+/* Full-time — same green family as the discovery icon. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card--full_time .job-card__type-badge {
+  color: #2f6747 !important;
+  background: #eaf4ee !important;
+  border-color: #d7e9de !important;
+}
+
+/* Part-time — muted blue. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card--part_time .job-card__type-badge {
+  color: #416f86 !important;
+  background: #edf5f8 !important;
+  border-color: #d9e8ee !important;
+}
+
+/* Internship — teal/cyan. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card--internship .job-card__type-badge {
+  color: #39756f !important;
+  background: #eaf6f4 !important;
+  border-color: #d6ebe7 !important;
+}
+
+/* Construction — brand-adjacent amber. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card--construction .job-card__type-badge {
+  color: #8a6729 !important;
+  background: #faf3e6 !important;
+  border-color: #eadbbc !important;
+}
+
+/* Service — restrained rose. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card--service .job-card__type-badge {
+  color: #955962 !important;
+  background: #f9edef !important;
+  border-color: #ecdadd !important;
+}
+
+/* Student jobs — muted violet. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card--student .job-card__type-badge {
+  color: #6d6079 !important;
+  background: #f0edf4 !important;
+  border-color: #e2dce8 !important;
+}
+
+/* Temporary — soft orange. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card--temporary .job-card__type-badge {
+  color: #9a623b !important;
+  background: #fbf0e8 !important;
+  border-color: #eedccf !important;
+}
+
+/* Any future/unknown type stays neutral rather than inheriting a random tone. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card--other .job-card__type-badge {
+  color: #5e625e !important;
+  background: #f1f2f0 !important;
+  border-color: #e2e3df !important;
+}
+
+@media (max-width: 760px) {
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .jobs-results__main .job-card {
+    align-items: center;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card h3 a {
+    color: #245f7a !important;
+  }
+}
