@@ -8,6 +8,10 @@ import { contentPath } from '../../utils/content';
 export default function JobCard({ item }) {
   const job = item.job || {};
   const href = contentPath(item);
+  const jobType = String(job.jobType || 'other')
+    .trim()
+    .toLowerCase()
+    .replace(/[^a-z0-9_-]+/g, '-');
   const salary =
     job.salaryUnit === 'negotiable' || (!job.salaryMin && !job.salaryMax)
       ? 'Lương thỏa thuận'
@@ -16,10 +20,12 @@ export default function JobCard({ item }) {
         )}`;
 
   return (
-    <article className="job-card">
+    <article className={`job-card job-card--${jobType}`}>
       <div className="job-card__icon"><BriefcaseBusiness size={25} /></div>
       <div className="job-card__body">
-        <Badge tone="soft">{JOB_TYPES[job.jobType] || 'Việc làm'}</Badge>
+        <Badge tone="soft" className="job-card__type-badge">
+          {JOB_TYPES[job.jobType] || 'Việc làm'}
+        </Badge>
         <h3><Link to={href}>{item.title}</Link></h3>
         <strong>{job.companyName || 'Nhà tuyển dụng'}</strong>
         <p className="job-card__salary">{salary}</p>
