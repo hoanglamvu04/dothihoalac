@@ -1,0 +1,35 @@
+/* Article detail: flat editorial treatment for the light earth palette.
+   Keep white canvas and fine rules; remove card-like elevation around the story. */
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .article-view-page .article-view-main {
+  overflow: visible !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .article-view-page .article-view-header {
+  border-radius: 0 !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .article-view-page .article-view-header::after {
+  display: none !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .article-view-page :is(
+  .article-view-cover,
+  .article-view-content,
+  .article-view-reactions,
+  .article-view-comments
+) {
+  background: #ffffff !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .article-view-page .article-view-cover img {
+  box-shadow: none !important;
+}
