@@ -47,6 +47,7 @@ import './styles/earth-premium-header.css';
 import './styles/minimal-white-gold.css';
 import './styles/minimal-white-gold-fixes.css';
 import './styles/jobs-card-color-system.css';
+import './styles/job-detail-green-system.css';
 import './styles/article-flat-editorial-fix.css';
 import './styles/property-marketplace-controls.css';
 import './features/communityRailDisclosure';
