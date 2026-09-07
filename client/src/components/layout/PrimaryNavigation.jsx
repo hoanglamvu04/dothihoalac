@@ -60,14 +60,6 @@ const PRIMARY_ITEMS = [
     ],
   },
   {
-    key: 'account',
-    to: '/tai-khoan',
-    label: 'Tài khoản',
-    icon: UserRound,
-    match: (pathname) => pathname === '/tai-khoan' || pathname.startsWith('/tai-khoan/'),
-    prefetch: () => import('../../pages/account/AccountOverviewPage'),
-  },
-  {
     key: 'property',
     to: '/bat-dong-san',
     label: 'Bất động sản',
@@ -78,6 +70,14 @@ const PRIMARY_ITEMS = [
       pathname === '/nha-dat' ||
       pathname.startsWith('/nha-dat/'),
     prefetch: () => import('../../pages/public/PropertiesPage'),
+  },
+  {
+    key: 'account',
+    to: '/tai-khoan',
+    label: 'Tài khoản',
+    icon: UserRound,
+    match: (pathname) => pathname === '/tai-khoan' || pathname.startsWith('/tai-khoan/'),
+    prefetch: () => import('../../pages/account/AccountOverviewPage'),
   },
 ];
 
