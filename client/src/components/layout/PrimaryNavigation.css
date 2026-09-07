@@ -76,7 +76,7 @@
   opacity: 0;
   pointer-events: none;
   transform: translateY(-5px);
-  transition: opacity 150ms ease, transform 150ms ease;
+  transition: opacity 120ms ease, transform 120ms ease;
 }
 
 .dthl-primary-nav__submenu::before {
@@ -88,8 +88,10 @@
   content: '';
 }
 
+/* Mouse users: submenu follows hover and closes as soon as the pointer leaves.
+   Keyboard users still keep it open while an element has visible focus. */
 .dthl-primary-nav__item:hover .dthl-primary-nav__submenu,
-.dthl-primary-nav__item:focus-within .dthl-primary-nav__submenu {
+.dthl-primary-nav__item:has(:focus-visible) .dthl-primary-nav__submenu {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0);
