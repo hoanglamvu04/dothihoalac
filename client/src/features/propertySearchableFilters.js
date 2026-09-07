@@ -1,7 +1,6 @@
 const PROPERTY_FILTER_SELECTORS = [
   '.properties-hero__finder select',
   '.properties-toolbar__filters select',
-  '.properties-filter-modal select',
 ].join(', ');
 
 const normalizeSearchText = (value) =>
@@ -27,7 +26,9 @@ function closeSmartSelect(root) {
   if (!root) return;
   root.classList.remove('is-open');
   const menu = root.querySelector('.property-smart-select__menu');
+  const trigger = root.querySelector('.property-smart-select__trigger');
   if (menu) menu.hidden = true;
+  if (trigger) trigger.setAttribute('aria-expanded', 'false');
 }
 
 function closeAllSmartSelects(except = null) {
@@ -107,9 +108,11 @@ function openSmartSelect(root, select) {
 
   const menu = root.querySelector('.property-smart-select__menu');
   const search = root.querySelector('.property-smart-select__search-input');
+  const trigger = root.querySelector('.property-smart-select__trigger');
   if (!menu || !search) return;
 
   menu.hidden = false;
+  if (trigger) trigger.setAttribute('aria-expanded', 'true');
   search.value = '';
   renderOptions(root, select, '');
 
@@ -185,11 +188,9 @@ function enhancePropertySelect(select) {
   trigger.addEventListener('click', () => {
     if (root.classList.contains('is-open')) closeSmartSelect(root);
     else openSmartSelect(root, select);
-    trigger.setAttribute('aria-expanded', String(root.classList.contains('is-open')));
   });
 
   search.addEventListener('input', () => renderOptions(root, select, search.value));
-
   select.addEventListener('change', () => syncSmartSelect(root, select));
 
   renderOptions(root, select);
