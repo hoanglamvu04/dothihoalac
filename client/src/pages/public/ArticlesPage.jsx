@@ -41,6 +41,7 @@ import {
 
 import './ArticlesPageV3.css';
 import './NewsPortalEnhancements.css';
+import './NewsEditorialSidebar.css';
 
 const PAGE_SIZE = 12;
 
@@ -463,7 +464,11 @@ export default function ArticlesPage() {
               ) : null}
             </main>
 
-            <NewsContextRail category={category} excludeIds={railExcludeIds} />
+            <NewsContextRail
+              category={category}
+              excludeIds={railExcludeIds}
+              areas={areas}
+            />
           </div>
         ) : (
           <div className="news-hub__empty">
