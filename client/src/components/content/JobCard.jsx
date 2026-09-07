@@ -1,10 +1,5 @@
 import { Link } from 'react-router-dom';
-import {
-  ArrowRight,
-  BriefcaseBusiness,
-  CalendarDays,
-  MapPin,
-} from 'lucide-react';
+import { BriefcaseBusiness, CalendarDays, MapPin } from 'lucide-react';
 import Badge from '../common/Badge';
 import ContentImage from './ContentImage';
 import { formatCurrency, formatDate } from '../../utils/formatters';
@@ -30,11 +25,7 @@ export default function JobCard({ item }) {
 
   return (
     <article className={`job-card job-card--${jobType}`}>
-      <Link
-        to={href}
-        className={`job-card__icon${item.thumbnailMediaId ? ' has-media' : ''}`}
-        aria-label={`Xem ${item.title}`}
-      >
+      <div className={`job-card__icon${item.thumbnailMediaId ? ' has-media' : ''}`}>
         <ContentImage
           media={item.thumbnailMediaId}
           alt={`${companyName} - hình ảnh nhà tuyển dụng`}
@@ -43,37 +34,18 @@ export default function JobCard({ item }) {
           height={72}
           fallback={companyFallback}
         />
-      </Link>
-
+      </div>
       <div className="job-card__body">
-        <div className="job-card__topline">
-          <Badge tone="soft" className="job-card__type-badge">
-            {JOB_TYPES[job.jobType] || 'Việc làm'}
-          </Badge>
-          <p className="job-card__salary">{salary}</p>
-        </div>
-
-        <h3>
-          <Link to={href}>{item.title}</Link>
-        </h3>
-
+        <Badge tone="soft" className="job-card__type-badge">
+          {JOB_TYPES[job.jobType] || 'Việc làm'}
+        </Badge>
+        <h3><Link to={href}>{item.title}</Link></h3>
         <strong>{companyName}</strong>
-
-        <div className="job-card__meta">
-          <span>
-            <MapPin size={15} />
-            {job.workLocation || 'Hòa Lạc'}
-          </span>
-          <span>
-            <CalendarDays size={15} />
-            Hạn {formatDate(job.deadline)}
-          </span>
+        <p className="job-card__salary">{salary}</p>
+        <div>
+          <span><MapPin size={15} /> {job.workLocation || 'Hòa Lạc'}</span>
+          <span><CalendarDays size={15} /> Hạn {formatDate(job.deadline)}</span>
         </div>
-
-        <Link className="job-card__detail-link" to={href}>
-          Xem chi tiết
-          <ArrowRight size={14} />
-        </Link>
       </div>
     </article>
   );
