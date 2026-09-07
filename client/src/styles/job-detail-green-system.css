@@ -1,0 +1,210 @@
+/* =========================================================
+   JOB DETAIL — DEEP GREEN / WHITE / GOLD
+   Align the detail experience with the jobs listing while keeping the page
+   editorial, calm and easy to scan. Loaded after the legacy detail styles.
+========================================================= */
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-detail-page {
+  --job-green: #315f45 !important;
+  --job-green-hover: #244a35 !important;
+  --job-green-dark: #2d573f !important;
+  --job-green-soft: #eef5f0 !important;
+  --job-green-border: #d8e5dc !important;
+  --job-ink: #1b211d !important;
+  --job-text: #48524b !important;
+  --job-muted: #7a827c !important;
+  --job-border: #e3e7e3 !important;
+  --job-background: #ffffff !important;
+  --job-surface: #ffffff !important;
+  --job-gold: #b59965;
+  --job-gold-dark: #927443;
+  --job-gold-soft: #f8f4ec;
+
+  background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-reading-progress span {
+  background: linear-gradient(90deg, #315f45, #b59965) !important;
+}
+
+/* Header becomes a cleaner, stronger identity block. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-detail-header {
+  border-color: #e1e7e2 !important;
+  background: #ffffff !important;
+  box-shadow: 0 10px 30px rgb(31 55 40 / 0.045) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-detail-company-logo {
+  color: #315f45 !important;
+  background: #eef5f0 !important;
+  border-color: #d7e4db !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-detail-labels .badge {
+  color: #315f45 !important;
+  background: #edf5f0 !important;
+  border: 1px solid #d7e4db !important;
+  font-weight: 780 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-deadline-badge:not(.is-expired) {
+  color: #7d6338 !important;
+  background: #f8f4ec !important;
+  border-color: #e7dac2 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-detail-header h1 {
+  color: #2d573f !important;
+  font-weight: 840 !important;
+  letter-spacing: -0.04em !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-detail-company {
+  color: #315f45 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-detail-company strong {
+  color: #315f45 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-detail-header-meta svg {
+  color: #315f45 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-detail-header__actions button {
+  border-color: #e1e5e1 !important;
+  color: #343a35 !important;
+  background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-detail-header__actions button:hover {
+  border-color: #b59965 !important;
+  color: #2a332c !important;
+  background: #f8f4ec !important;
+}
+
+/* Content cards stay white; use green for hierarchy and gold only for value. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-detail-main > section,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-sidebar-card {
+  border-color: #e3e7e3 !important;
+  background: #ffffff !important;
+  box-shadow: 0 7px 24px rgb(31 55 40 / 0.035) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-section-heading > span,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-facts-grid article > span {
+  color: #315f45 !important;
+  background: #eef5f0 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-section-heading h2,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-description-body .article-body > section > h2,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-description-body .article-body > h2,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card__contacts h2 {
+  color: #2d573f !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-description-body .article-body > section > h2::before,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-description-body .article-body > h2::before {
+  background: #b59965 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-facts-grid article {
+  border-color: #e3e7e3 !important;
+  background: #fafbf9 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-description-lead {
+  color: #445048 !important;
+  background: #f6f8f6 !important;
+  border-left: 3px solid #d8e5dc !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-description-body,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-description-body .article-body {
+  color: #303a33 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-description-body .article-body a {
+  color: #315f45 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-description-body .article-body blockquote {
+  border-left-color: #b59965 !important;
+  background: #f8f4ec !important;
+}
+
+/* Salary is the commercial/value highlight and therefore uses brand gold,
+   matching the list page instead of introducing another green block. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card {
+  border-color: #e4e2da !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card__salary {
+  border-color: #e6dac4 !important;
+  background: #f8f4ec !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card__salary strong {
+  color: #927443 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card__company > span {
+  color: #315f45 !important;
+  background: #eef5f0 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card__contacts a:first-of-type {
+  border-color: #315f45 !important;
+  color: #ffffff !important;
+  background: #315f45 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card__contacts a:first-of-type:hover {
+  border-color: #244a35 !important;
+  background: #244a35 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card__contacts a + a {
+  border-color: #dbe4dd !important;
+  color: #315f45 !important;
+  background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card__contacts a + a:hover {
+  border-color: #b59965 !important;
+  color: #2a332c !important;
+  background: #f8f4ec !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-application-method__content {
+  border-color: #d8e5dc !important;
+  color: #315f45 !important;
+  background: #f2f7f3 !important;
+}
+
+/* Breadcrumb and small interaction details. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-detail-breadcrumb a:hover {
+  color: #315f45 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-detail-page :focus-visible {
+  outline-color: #b59965 !important;
+}
+
+@media (max-width: 760px) {
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-detail-header h1 {
+    color: #2d573f !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-detail-header {
+    box-shadow: none !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-detail-main > section,
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card,
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-sidebar-card {
+    box-shadow: none !important;
+  }
+}
