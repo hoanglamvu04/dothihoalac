@@ -11,7 +11,8 @@ import Media from '../media/media.model.js';
 
 const HOME_CACHE_FRESH_MS = 60_000;
 const HOME_CACHE_STALE_MS = 10 * 60_000;
-const ARTICLE_LIMIT = 10;
+const ARTICLE_PRIMARY_LIMIT = 8;
+const ARTICLE_SPOTLIGHT_LIMIT = 4;
 const COMMUNITY_LIMIT = 4;
 const PROPERTY_LIMIT = 4;
 const JOB_LIMIT = 3;
@@ -191,15 +192,35 @@ async function loadJobCards(now) {
 async function buildHomeFeed() {
   const now = new Date();
 
-  const [articles, community, properties, jobs] = await Promise.all([
+  const planningCategory = await Category.findOne({
+    slug: 'quy-hoach',
+    contentScope: { $in: ['article', 'all'] },
+    isActive: true,
+  })
+    .select('_id')
+    .lean();
+
+  const [primaryArticles, spotlightArticles, community, properties, jobs] = await Promise.all([
     Content.find({
       ...PUBLIC_CONTENT_FILTER,
       contentType: 'article',
     })
       .select(CARD_FIELDS)
       .sort({ publishedAt: -1, _id: -1 })
-      .limit(ARTICLE_LIMIT)
+      .limit(ARTICLE_PRIMARY_LIMIT)
       .lean(),
+
+    planningCategory
+      ? Content.find({
+          ...PUBLIC_CONTENT_FILTER,
+          contentType: 'article',
+          primaryCategoryId: planningCategory._id,
+        })
+          .select(CARD_FIELDS)
+          .sort({ publishedAt: -1, _id: -1 })
+          .limit(ARTICLE_SPOTLIGHT_LIMIT)
+          .lean()
+      : [],
 
     Content.find({
       ...PUBLIC_CONTENT_FILTER,
@@ -213,6 +234,11 @@ async function buildHomeFeed() {
     loadPropertyCards(now),
     loadJobCards(now),
   ]);
+
+  // HomePage hiện chia data.articles theo slot: 0–7 cho luồng tin chính và
+  // 8–11 cho “Tiêu điểm phát triển đô thị”. Giữ contract này nhưng đảm bảo
+  // bốn slot cuối thực sự là bài thuộc chuyên mục Quy hoạch.
+  const articles = [...primaryArticles, ...spotlightArticles];
 
   const communityIds = community.map((item) => item._id);
   const authorIds = uniqueIds(community.map((item) => item.authorId));
