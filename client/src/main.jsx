@@ -50,6 +50,7 @@ import './styles/jobs-card-color-system.css';
 import './styles/job-detail-green-system.css';
 import './styles/jobs-reference-gold.css';
 import './styles/article-flat-editorial-fix.css';
+import './styles/news-listing-readable-polish.css';
 import './styles/property-marketplace-controls.css';
 import './styles/property-reference-20260908.css';
 import './styles/property-sidebar-sticky-top-fix.css';
