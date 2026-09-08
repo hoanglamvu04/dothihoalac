@@ -1,6 +1,9 @@
 const STORAGE_KEY = 'dthl-site-theme-v1';
 const THEME_EVENT = 'dthl:theme-change';
-const SUPPORTED_THEMES = new Set(['light', 'dark']);
+
+// The public site now uses one fixed visual mode. Keep the small compatibility
+// API so existing callers remain safe, but every request resolves to light.
+const SUPPORTED_THEMES = new Set(['light']);
 
 function normalizeTheme(value) {
   return SUPPORTED_THEMES.has(value) ? value : 'light';
@@ -12,17 +15,12 @@ export function readSiteTheme() {
   const fromDocument = document.documentElement.dataset.dthlTheme;
   if (SUPPORTED_THEMES.has(fromDocument)) return fromDocument;
 
-  try {
-    return normalizeTheme(window.localStorage.getItem(STORAGE_KEY));
-  } catch {
-    return 'light';
-  }
+  return 'light';
 }
 
-function syncThemeMeta(theme) {
+function syncThemeMeta() {
   if (typeof document === 'undefined') return;
 
-  const themeColor = theme === 'dark' ? '#07111a' : '#fbfaf7';
   let meta = document.querySelector('meta[name="theme-color"]');
 
   if (!meta) {
@@ -31,7 +29,7 @@ function syncThemeMeta(theme) {
     document.head.appendChild(meta);
   }
 
-  meta.setAttribute('content', themeColor);
+  meta.setAttribute('content', '#fbfaf7');
 }
 
 export function applySiteTheme(value, { persist = false, notify = false } = {}) {
@@ -39,16 +37,16 @@ export function applySiteTheme(value, { persist = false, notify = false } = {}) 
 
   if (typeof document !== 'undefined') {
     document.documentElement.dataset.dthlTheme = theme;
-    document.documentElement.style.colorScheme = theme;
-    syncThemeMeta(theme);
+    document.documentElement.style.colorScheme = 'light';
+    syncThemeMeta();
   }
 
   if (persist && typeof window !== 'undefined') {
     try {
       window.localStorage.setItem(STORAGE_KEY, theme);
     } catch {
-      // Private/restricted browsing can block localStorage. Theme still works
-      // for the active session through the document data attribute.
+      // Private/restricted browsing can block localStorage. The fixed light
+      // mode still applies through the document data attribute.
     }
   }
 
@@ -60,34 +58,33 @@ export function applySiteTheme(value, { persist = false, notify = false } = {}) 
 }
 
 export function initializeSiteTheme() {
-  let storedTheme = 'light';
-
   if (typeof window !== 'undefined') {
     try {
-      storedTheme = normalizeTheme(window.localStorage.getItem(STORAGE_KEY));
+      // Clear any old dark-mode choice left by previous releases.
+      window.localStorage.removeItem(STORAGE_KEY);
     } catch {
-      storedTheme = 'light';
+      // Ignore restricted storage; the document is still forced to light.
     }
   }
 
-  return applySiteTheme(storedTheme);
+  return applySiteTheme('light');
 }
 
-export function setSiteTheme(theme) {
-  return applySiteTheme(theme, { persist: true, notify: true });
+export function setSiteTheme() {
+  return applySiteTheme('light', { persist: true, notify: true });
 }
 
 export function subscribeSiteTheme(listener) {
   if (typeof window === 'undefined') return () => {};
 
-  const handleThemeChange = (event) => {
-    listener(normalizeTheme(event?.detail?.theme));
+  const handleThemeChange = () => {
+    listener('light');
   };
 
   const handleStorage = (event) => {
     if (event.key !== STORAGE_KEY) return;
-    const theme = applySiteTheme(event.newValue);
-    listener(theme);
+    applySiteTheme('light');
+    listener('light');
   };
 
   window.addEventListener(THEME_EVENT, handleThemeChange);
