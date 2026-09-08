@@ -51,7 +51,11 @@ function SimilarProperty({ item }) {
 
   return (
     <article className="property-reference-similar-item">
-      <Link to={href} className="property-reference-similar-item__media" aria-label={`Xem ${item.title}`}>
+      <Link
+        to={href}
+        className="property-reference-similar-item__media"
+        aria-label={`Xem ${item.title}`}
+      >
         <ContentImage media={item.thumbnailMediaId} alt={item.title} ratio="property" />
       </Link>
       <div>
@@ -99,25 +103,58 @@ export default function PropertyDetailReferenceRail({
     if (!item?._id) return undefined;
 
     let active = true;
-    const params = { limit: 6 };
+    const currentId = String(item._id);
 
-    if (areaValue) params.area = areaValue;
-    if (property?.propertyType) params.propertyType = property.propertyType;
+    const loadSimilar = async () => {
+      const requestPlan = [];
 
-    propertyApi
-      .list(params)
-      .then((result) => {
-        if (!active) return;
-        const source = Array.isArray(result?.items) ? result.items : [];
-        setSimilarItems(
-          source
-            .filter((candidate) => String(candidate?._id || '') !== String(item._id))
-            .slice(0, 3),
-        );
-      })
-      .catch(() => {
-        if (active) setSimilarItems([]);
-      });
+      if (areaValue && property?.propertyType) {
+        requestPlan.push({
+          limit: 8,
+          area: areaValue,
+          propertyType: property.propertyType,
+        });
+      }
+
+      if (areaValue) {
+        requestPlan.push({ limit: 8, area: areaValue });
+      }
+
+      if (property?.propertyType) {
+        requestPlan.push({ limit: 8, propertyType: property.propertyType });
+      }
+
+      requestPlan.push({ limit: 10 });
+
+      const collected = [];
+      const seen = new Set([currentId]);
+
+      for (const params of requestPlan) {
+        if (collected.length >= 4) break;
+
+        try {
+          const result = await propertyApi.list(params);
+          const source = Array.isArray(result?.items) ? result.items : [];
+
+          source.forEach((candidate) => {
+            const candidateId = String(candidate?._id || candidate?.id || '');
+            if (!candidateId || seen.has(candidateId)) return;
+
+            seen.add(candidateId);
+            collected.push(candidate);
+          });
+        } catch {
+          // Similar listings are supplementary. Continue with the broader
+          // fallback query when a narrower request is unavailable.
+        }
+      }
+
+      if (active) {
+        setSimilarItems(collected.slice(0, 4));
+      }
+    };
+
+    loadSimilar();
 
     return () => {
       active = false;
