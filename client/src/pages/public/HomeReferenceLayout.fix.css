@@ -314,3 +314,327 @@
     height: 188px;
   }
 }
+
+/* =========================================================
+   HOME TYPOGRAPHY SYNC
+   Keep the approved dashboard composition while bringing Home to the same
+   readable scale as News, Community, Jobs and Property marketplace pages.
+========================================================= */
+
+.home-reference-v2 {
+  font-size: 15px;
+}
+
+.home-reference-v2 .home-pill {
+  min-height: 25px;
+  padding-inline: 9px;
+  font-size: 11.5px;
+}
+
+.home-reference-v2 .home-card-meta {
+  gap: 5px 11px;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.home-reference-v2 .home-ref-section-header h2,
+.home-reference-v2 .home-reference-wide-heading h2 {
+  font-size: 18px;
+  line-height: 1.25;
+}
+
+.home-reference-v2 .home-ref-section-header > a,
+.home-reference-v2 .home-reference-heading-link {
+  font-size: 12.5px;
+}
+
+.home-reference-v2 .home-reference-wide-heading nav a {
+  font-size: 12.5px;
+}
+
+.home-reference-v2 .home-reference-heading-action {
+  min-height: 34px;
+  padding-inline: 11px;
+  font-size: 12.5px;
+}
+
+/* Hero */
+.home-reference-v2 .home-hero-card__content h1 {
+  font-size: clamp(32px, 2.65vw, 43px);
+  line-height: 1.1;
+}
+
+.home-reference-v2 .home-hero-card__content p {
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.home-reference-v2 .home-hero-card__more {
+  min-height: 40px;
+  font-size: 12.5px;
+}
+
+.home-reference-v2 .home-side-story__body h3 {
+  font-size: 15px;
+  line-height: 1.34;
+}
+
+.home-reference-v2 .home-side-story__body .home-card-meta {
+  font-size: 11.5px;
+}
+
+/* Dashboard */
+.home-reference-v2 .home-reference-panel {
+  min-height: 400px;
+}
+
+.home-reference-v2 .home-latest-story {
+  min-height: 80px;
+}
+
+.home-reference-v2 .home-latest-story h3 {
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.home-reference-v2 .home-latest-story .home-card-meta {
+  margin-top: 7px;
+  font-size: 11.5px;
+}
+
+.home-reference-v2 .home-spotlight-story h3 {
+  min-height: 2.7em;
+  font-size: 14.5px;
+  line-height: 1.35;
+}
+
+.home-reference-v2 .home-spotlight-story .home-card-meta {
+  font-size: 11.5px;
+}
+
+.home-reference-v2 .home-job-story {
+  min-height: 82px;
+}
+
+.home-reference-v2 .home-job-story__type {
+  font-size: 11px;
+}
+
+.home-reference-v2 .home-job-story h3 {
+  font-size: 14px;
+  line-height: 1.3;
+}
+
+.home-reference-v2 .home-job-story p {
+  font-size: 12.5px;
+}
+
+.home-reference-v2 .home-job-story__meta {
+  font-size: 11.5px;
+}
+
+.home-reference-v2 .home-job-story__salary {
+  max-width: 112px;
+  font-size: 13px;
+}
+
+/* Community */
+.home-reference-v2 .home-community-story {
+  min-height: 326px;
+  grid-template-rows: auto 56px 176px 40px;
+}
+
+.home-reference-v2 .home-community-story__head strong {
+  font-size: 12.5px;
+}
+
+.home-reference-v2 .home-community-story__head > div > span {
+  font-size: 11px;
+}
+
+.home-reference-v2 .home-community-story__type {
+  max-width: 92px;
+  font-size: 10.5px;
+}
+
+.home-reference-v2 .home-community-story > p {
+  height: 56px;
+  font-size: 13.5px;
+  line-height: 1.4;
+}
+
+.home-reference-v2 .home-community-story__placeholder {
+  font-size: 12px;
+}
+
+.home-reference-v2 .home-community-story__stats {
+  font-size: 12px;
+}
+
+/* Property */
+.home-reference-v2 .home-property-story {
+  min-height: 304px;
+}
+
+.home-reference-v2 .home-property-story__type {
+  font-size: 10.5px;
+}
+
+.home-reference-v2 .home-property-story h3 {
+  font-size: 14.5px;
+  line-height: 1.35;
+}
+
+.home-reference-v2 .home-property-story__row > span {
+  font-size: 11.5px;
+}
+
+.home-reference-v2 .home-property-story__row > strong {
+  font-size: 14px;
+}
+
+.home-reference-v2 .home-property-story__facts {
+  font-size: 11.5px;
+  line-height: 1.4;
+}
+
+/* Bottom CTAs and states */
+.home-reference-v2 .home-reference-cta {
+  min-height: 132px;
+}
+
+.home-reference-v2 .home-reference-cta small {
+  font-size: 11px;
+}
+
+.home-reference-v2 .home-reference-cta h2 {
+  font-size: 20px;
+  line-height: 1.25;
+}
+
+.home-reference-v2 .home-reference-cta p {
+  font-size: 13.5px;
+  line-height: 1.5;
+}
+
+.home-reference-v2 .home-reference-cta > a {
+  min-height: 38px;
+  font-size: 12.5px;
+}
+
+.home-reference-v2 .home-ref-state,
+.home-reference-v2 .home-ref-warning,
+.home-reference-v2 .home-ref-empty-note {
+  font-size: 14px;
+}
+
+@media (max-width: 1180px) and (min-width: 761px) {
+  .home-reference-v2 .home-reference-panel {
+    min-height: 0;
+  }
+
+  .home-reference-v2 .home-community-story {
+    min-height: 330px;
+  }
+
+  .home-reference-v2 .home-property-story {
+    min-height: 308px;
+  }
+}
+
+@media (max-width: 760px) {
+  .home-reference-v2 {
+    font-size: 14px;
+  }
+
+  .home-reference-v2 .home-hero-card__content h1 {
+    font-size: clamp(26px, 7.6vw, 32px);
+  }
+
+  .home-reference-v2 .home-hero-card__content .home-card-meta {
+    font-size: 11.5px;
+  }
+
+  .home-reference-v2 .home-mobile-shortcuts a strong {
+    font-size: 12px;
+  }
+
+  .home-reference-v2 .home-ref-section-header h2,
+  .home-reference-v2 .home-reference-wide-heading h2 {
+    font-size: 17px;
+  }
+
+  .home-reference-v2 .home-ref-section-header > a,
+  .home-reference-v2 .home-reference-heading-link,
+  .home-reference-v2 .home-reference-wide-heading nav a,
+  .home-reference-v2 .home-reference-heading-action {
+    font-size: 12px;
+  }
+
+  .home-reference-v2 .home-latest-story h3,
+  .home-reference-v2 .home-spotlight-story h3,
+  .home-reference-v2 .home-job-story h3 {
+    font-size: 14px;
+  }
+
+  .home-reference-v2 .home-latest-story .home-card-meta,
+  .home-reference-v2 .home-spotlight-story .home-card-meta,
+  .home-reference-v2 .home-job-story__meta {
+    font-size: 11px;
+  }
+
+  .home-reference-v2 .home-community-story {
+    min-height: 342px;
+    grid-template-rows: auto 58px 194px 42px;
+  }
+
+  .home-reference-v2 .home-community-story > p {
+    height: 58px;
+    font-size: 13.5px;
+  }
+
+  .home-reference-v2 .home-community-story__stats {
+    min-height: 42px;
+    font-size: 11.5px;
+  }
+
+  .home-reference-v2 .home-property-story {
+    min-height: 314px;
+  }
+
+  .home-reference-v2 .home-property-story h3 {
+    font-size: 14px;
+  }
+
+  .home-reference-v2 .home-property-story__row > span,
+  .home-reference-v2 .home-property-story__facts {
+    font-size: 11px;
+  }
+
+  .home-reference-v2 .home-property-story__row > strong {
+    font-size: 13.5px;
+  }
+
+  .home-reference-v2 .home-reference-cta {
+    min-height: 126px;
+  }
+
+  .home-reference-v2 .home-reference-cta h2 {
+    font-size: 18px;
+  }
+
+  .home-reference-v2 .home-reference-cta p {
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 390px) {
+  .home-reference-v2 .home-community-story {
+    min-height: 336px;
+    grid-template-rows: auto 56px 188px 42px;
+  }
+
+  .home-reference-v2 .home-community-story > p {
+    height: 56px;
+  }
+}
