@@ -55,6 +55,7 @@ import './styles/property-reference-20260908.css';
 import './styles/property-sidebar-sticky-top-fix.css';
 import './styles/property-detail-reference-20260908.css';
 import './styles/property-detail-reference-v2.css';
+import './styles/property-detail-readable-polish.css';
 import './features/communityRailDisclosure';
 import './features/propertySubmitReviewGuard';
 import './features/propertyMarketplacePaging';
