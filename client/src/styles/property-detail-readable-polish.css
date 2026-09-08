@@ -46,10 +46,27 @@
     font-size: 13.5px !important;
   }
 
-  /* Main fact row */
+  /* Main fact grid: 6 facts as two relaxed rows of three. */
+  .app-shell .property-detail-page--reference-v2 .property-facts-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 12px !important;
+  }
+
   .app-shell .property-detail-page--reference-v2 .property-facts-grid article {
-    min-height: 84px !important;
-    padding: 11px 12px !important;
+    min-height: 92px !important;
+    padding: 14px 16px !important;
+    gap: 12px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-facts-grid article > span {
+    width: 38px !important;
+    height: 38px !important;
+    flex: 0 0 38px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-facts-grid article > div {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
   }
 
   .app-shell .property-detail-page--reference-v2 .property-facts-grid small {
