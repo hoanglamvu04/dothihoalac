@@ -1,0 +1,27 @@
+/* Property listing sidebar sticky offset fix.
+   The previous 96px offset left a large blank strip above the first rail card
+   whenever the site header was collapsed. Keep the rail close to the viewport
+   top while preserving normal document flow on tablet/mobile. */
+
+@media (min-width: 1101px) {
+  .app-shell .properties-page .properties-results-layout {
+    align-items: start !important;
+    overflow: visible !important;
+  }
+
+  .app-shell .properties-page .properties-sidebar {
+    position: sticky !important;
+    top: 10px !important;
+    align-self: start !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    height: max-content !important;
+    max-height: none !important;
+    overflow: visible !important;
+    transform: none !important;
+  }
+
+  .app-shell .properties-page .properties-sidebar > :first-child {
+    margin-top: 0 !important;
+  }
+}
