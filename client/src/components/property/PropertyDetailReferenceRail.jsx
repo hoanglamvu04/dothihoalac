@@ -99,7 +99,7 @@ export default function PropertyDetailReferenceRail({
     if (!item?._id) return undefined;
 
     let active = true;
-    const params = { limit: 6, sort: 'newest' };
+    const params = { limit: 6 };
 
     if (areaValue) params.area = areaValue;
     if (property?.propertyType) params.propertyType = property.propertyType;
