@@ -1,0 +1,306 @@
+/* =========================================================
+   PROPERTY LISTING — READABILITY / TYPOGRAPHY POLISH
+   Scope: /bat-dong-san only. Keep the current warm layout and
+   spacing intact; only normalize type sizes and reading rhythm.
+========================================================= */
+
+.app-shell .properties-page {
+  font-size: 15px;
+}
+
+/* Hero copy + finder */
+.app-shell .properties-page .properties-hero__eyebrow {
+  font-size: 12.5px !important;
+  line-height: 1.35 !important;
+}
+
+.app-shell .properties-page .properties-hero__content p {
+  font-size: 15px !important;
+  line-height: 1.65 !important;
+}
+
+.app-shell .properties-page .properties-hero__content p::after {
+  font-size: 12px !important;
+  line-height: 1.55 !important;
+}
+
+.app-shell .properties-page .properties-hero__finder > label > span {
+  font-size: 12px !important;
+  line-height: 1.35 !important;
+}
+
+.app-shell .properties-page .properties-hero__finder select {
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+}
+
+.app-shell .properties-page .properties-hero__finder > button {
+  font-size: 14px !important;
+  line-height: 1.2 !important;
+}
+
+/* Property type rail */
+.app-shell .properties-page .properties-type-rail button {
+  font-size: 13px !important;
+  line-height: 1.25 !important;
+}
+
+/* Featured areas */
+.app-shell .properties-page .properties-featured-areas > header > div > span {
+  font-size: 12px !important;
+  line-height: 1.3 !important;
+}
+
+.app-shell .properties-page .properties-featured-areas h2 {
+  font-size: 22px !important;
+  line-height: 1.25 !important;
+}
+
+.app-shell .properties-page .properties-featured-areas > header > button {
+  font-size: 13px !important;
+  line-height: 1.3 !important;
+}
+
+.app-shell .properties-page .properties-featured-areas__grid strong {
+  font-size: 14px !important;
+  line-height: 1.35 !important;
+}
+
+.app-shell .properties-page .properties-featured-areas__grid small {
+  font-size: 12.5px !important;
+  line-height: 1.4 !important;
+}
+
+/* Quick filters / view controls */
+.app-shell .properties-page .properties-toolbar__filters > label,
+.app-shell .properties-page .properties-toolbar__advanced,
+.app-shell .properties-page .properties-toolbar__views button {
+  font-size: 13px !important;
+  line-height: 1.25 !important;
+}
+
+.app-shell .properties-page .properties-toolbar__advanced b {
+  font-size: 11px !important;
+  line-height: 1 !important;
+}
+
+/* Results header + search */
+.app-shell .properties-page .properties-results__eyebrow {
+  font-size: 12.5px !important;
+  line-height: 1.35 !important;
+}
+
+.app-shell .properties-page .properties-results__header h2 {
+  font-size: 22px !important;
+  line-height: 1.25 !important;
+}
+
+.app-shell .properties-page .properties-results__search input {
+  font-size: 13.5px !important;
+  line-height: 1.4 !important;
+}
+
+.app-shell .properties-page .properties-results__sort,
+.app-shell .properties-page .properties-results__sort select {
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+}
+
+.app-shell .properties-page .properties-active-filters > span,
+.app-shell .properties-page .properties-active-filters button {
+  font-size: 12.5px !important;
+  line-height: 1.3 !important;
+}
+
+/* Listing cards */
+.app-shell .properties-page .property-card__badges .badge {
+  font-size: 11.5px !important;
+  line-height: 1.2 !important;
+}
+
+.app-shell .properties-page .property-card__heading h3 {
+  font-size: 15.5px !important;
+  line-height: 1.4 !important;
+}
+
+.app-shell .properties-page .property-card__price {
+  font-size: 17px !important;
+  line-height: 1.25 !important;
+}
+
+.app-shell .properties-page .property-card__facts,
+.app-shell .properties-page .property-card__location,
+.app-shell .properties-page .property-card__footer {
+  font-size: 13px !important;
+  line-height: 1.45 !important;
+}
+
+.app-shell .properties-page .property-card__summary {
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+}
+
+.app-shell .properties-page .property-card__footer > a {
+  font-size: 12.5px !important;
+  line-height: 1.2 !important;
+}
+
+/* Pagination / empty state */
+.app-shell .properties-page .properties-pagination > p,
+.app-shell .properties-page .properties-pagination > small {
+  font-size: 12.5px !important;
+  line-height: 1.45 !important;
+}
+
+.app-shell .properties-page .properties-pagination .pagination button,
+.app-shell .properties-page .properties-pagination .pagination a {
+  font-size: 13px !important;
+}
+
+.app-shell .properties-page .properties-empty-state h3 {
+  font-size: 18px !important;
+  line-height: 1.3 !important;
+}
+
+.app-shell .properties-page .properties-empty-state p {
+  font-size: 14px !important;
+  line-height: 1.55 !important;
+}
+
+.app-shell .properties-page .properties-empty-state button,
+.app-shell .properties-page .properties-empty-state a {
+  font-size: 13.5px !important;
+}
+
+/* Sidebar */
+.app-shell .properties-page .properties-sidebar-card h3 {
+  font-size: 14.5px !important;
+  line-height: 1.3 !important;
+}
+
+.app-shell .properties-page .properties-sidebar-map__areas button {
+  font-size: 12.5px !important;
+  line-height: 1.35 !important;
+}
+
+.app-shell .properties-page .properties-market-card dt {
+  font-size: 11.5px !important;
+  line-height: 1.3 !important;
+}
+
+.app-shell .properties-page .properties-market-card dd {
+  font-size: 13.5px !important;
+  line-height: 1.3 !important;
+}
+
+.app-shell .properties-page .properties-market-card > button {
+  font-size: 12.5px !important;
+  line-height: 1.25 !important;
+}
+
+.app-shell .properties-page .properties-post-card h3 {
+  font-size: 16px !important;
+  line-height: 1.3 !important;
+}
+
+.app-shell .properties-page .properties-post-card p {
+  font-size: 13.5px !important;
+  line-height: 1.55 !important;
+}
+
+.app-shell .properties-page .properties-post-card a {
+  font-size: 13px !important;
+  line-height: 1.25 !important;
+}
+
+/* Advanced filter modal */
+.app-shell .properties-page .properties-filter-modal__header small {
+  font-size: 12.5px !important;
+  line-height: 1.3 !important;
+}
+
+.app-shell .properties-page .properties-filter-modal__header strong {
+  font-size: 18px !important;
+  line-height: 1.3 !important;
+}
+
+.app-shell .properties-page .properties-filter-modal__section h3,
+.app-shell .properties-page .properties-filter-modal__section-heading h3 {
+  font-size: 15px !important;
+  line-height: 1.35 !important;
+}
+
+.app-shell .properties-page .properties-filter-choice-grid label > span,
+.app-shell .properties-page .properties-modal-range-inputs label > span {
+  font-size: 12.5px !important;
+  line-height: 1.3 !important;
+}
+
+.app-shell .properties-page .properties-filter-choice-grid select,
+.app-shell .properties-page .properties-modal-range-inputs input {
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+}
+
+.app-shell .properties-page .properties-modal-range-inputs small {
+  font-size: 11.5px !important;
+}
+
+.app-shell .properties-page .properties-filter-modal__section-heading > span,
+.app-shell .properties-page .properties-modal-preset-grid button {
+  font-size: 12.5px !important;
+  line-height: 1.3 !important;
+}
+
+.app-shell .properties-page .properties-range-error {
+  font-size: 13px !important;
+  line-height: 1.45 !important;
+}
+
+.app-shell .properties-page .properties-filter-modal__footer button {
+  font-size: 14px !important;
+  line-height: 1.25 !important;
+}
+
+/* Tablet / mobile keep the same hierarchy, just a touch more compact. */
+@media (max-width: 760px) {
+  .app-shell .properties-page .properties-hero__eyebrow {
+    font-size: 12px !important;
+  }
+
+  .app-shell .properties-page .properties-hero__content p {
+    font-size: 14.5px !important;
+  }
+
+  .app-shell .properties-page .properties-hero__finder > label > span {
+    font-size: 11.5px !important;
+  }
+
+  .app-shell .properties-page .properties-hero__finder select,
+  .app-shell .properties-page .properties-hero__finder > button,
+  .app-shell .properties-page .properties-toolbar__filters > label,
+  .app-shell .properties-page .properties-toolbar__advanced,
+  .app-shell .properties-page .properties-toolbar__views button {
+    font-size: 13px !important;
+  }
+
+  .app-shell .properties-page .property-card__heading h3 {
+    font-size: 15px !important;
+  }
+
+  .app-shell .properties-page .property-card__price {
+    font-size: 16px !important;
+  }
+
+  .app-shell .properties-page .property-card__facts,
+  .app-shell .properties-page .property-card__location,
+  .app-shell .properties-page .property-card__footer,
+  .app-shell .properties-page .property-card__summary {
+    font-size: 12.5px !important;
+  }
+
+  .app-shell .properties-page .properties-featured-areas h2,
+  .app-shell .properties-page .properties-results__header h2 {
+    font-size: 20px !important;
+  }
+}
