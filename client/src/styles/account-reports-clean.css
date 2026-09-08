@@ -1,0 +1,195 @@
+/* =========================================================
+   ACCOUNT REPORTS — CLEAN WHITE / INK / GOLD
+   Scope: /tai-khoan/bao-cao in light mode.
+========================================================= */
+
+html[data-dthl-theme='light'] .account-center-content .account-reports-page {
+  --ap-green: #b59965;
+  --ap-green-hover: #9f8252;
+  --ap-green-dark: #353935;
+  --ap-green-soft: #f8f6f1;
+  --ap-green-border: #e6dfd3;
+  --ap-ink: #202320;
+  --ap-text: #505550;
+  --ap-muted: #7d827d;
+  --ap-border: #e5e4df;
+  --ap-danger: #b84a43;
+  width: 100%;
+  max-width: none;
+  gap: 16px;
+  color: var(--ap-ink);
+  font-size: 15px;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-reports-page .account-page-heading {
+  min-height: 96px;
+  padding: 4px 2px 18px;
+  border-bottom: 1px solid #e7e6e1;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-reports-page .account-page-heading__eyebrow {
+  margin-bottom: 7px;
+  color: #9c7e4c;
+  font-size: 12.5px;
+  letter-spacing: 0.07em;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-reports-page .account-page-heading h2 {
+  margin: 0;
+  color: #202320;
+  font-size: clamp(24px, 2.2vw, 30px);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-reports-page .account-page-heading p {
+  max-width: 760px;
+  margin-top: 7px;
+  color: #747a74;
+  font-size: 14.5px;
+  line-height: 1.55;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-reports-page .account-page-card {
+  width: 100%;
+  min-height: 180px;
+  padding: 22px;
+  border: 1px solid #e5e4df;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 5px 18px rgb(20 23 20 / 0.035);
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-reports-page .account-report-list {
+  display: grid;
+  gap: 11px;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-reports-page .account-report-item {
+  display: grid;
+  min-width: 0;
+  padding: 16px 18px;
+  gap: 0;
+  border: 1px solid #e3e3de;
+  border-radius: 12px;
+  background: #fbfbfa;
+  box-shadow: none;
+  transition: border-color 150ms ease, background 150ms ease, transform 150ms ease;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-reports-page .account-report-item:hover {
+  border-color: #d8cfbf;
+  background: #fff;
+  transform: translateY(-1px);
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-reports-page .account-report-item__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-reports-page .account-report-item__top .badge {
+  min-height: 29px;
+  padding-inline: 10px;
+  font-size: 12px;
+  font-weight: 760;
+}
+
+/* The date is metadata, not a success state: keep it neutral-warm. */
+html[data-dthl-theme='light'] .account-center-content .account-reports-page .account-report-item__date {
+  min-height: 30px;
+  padding-inline: 10px;
+  gap: 5px;
+  border: 1px solid #e7e1d7;
+  color: #716349;
+  background: #faf8f4;
+  font-size: 12.5px;
+  font-weight: 700;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-reports-page .account-report-item > strong {
+  display: block;
+  margin-top: 13px;
+  color: #242724;
+  font-size: 15.5px;
+  font-weight: 780;
+  line-height: 1.4;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-reports-page .account-report-item > p {
+  margin: 6px 0 0;
+  color: #5f655f;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-reports-page .account-report-item blockquote {
+  margin: 12px 0 0;
+  padding: 11px 13px;
+  border: 1px solid #e9e3d8;
+  border-left: 3px solid #b59965;
+  border-radius: 0 9px 9px 0;
+  color: #555b55;
+  background: #faf8f4;
+  font-size: 13.5px;
+  line-height: 1.6;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-reports-page .empty-state,
+html[data-dthl-theme='light'] .account-center-content .account-reports-page .loading-block {
+  color: #636963;
+}
+
+/* Pagination follows the account white / ink / gold hierarchy. */
+html[data-dthl-theme='light'] .account-center-content .account-reports-page .pagination button {
+  border-color: #dfdfda;
+  color: #363a36;
+  background: #fff;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-reports-page .pagination button:hover:not(:disabled) {
+  border-color: #cdbd9f;
+  background: #faf8f4;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-reports-page .pagination button.is-active {
+  border-color: #b59965;
+  color: #1f221f;
+  background: #b59965;
+}
+
+@media (max-width: 720px) {
+  html[data-dthl-theme='light'] .account-center-content .account-reports-page {
+    gap: 14px;
+  }
+
+  html[data-dthl-theme='light'] .account-center-content .account-reports-page .account-page-heading {
+    min-height: 0;
+    padding-bottom: 14px;
+  }
+
+  html[data-dthl-theme='light'] .account-center-content .account-reports-page .account-page-heading h2 {
+    font-size: 24px;
+  }
+
+  html[data-dthl-theme='light'] .account-center-content .account-reports-page .account-page-card {
+    padding: 16px;
+  }
+
+  html[data-dthl-theme='light'] .account-center-content .account-reports-page .account-report-item {
+    padding: 14px;
+  }
+
+  html[data-dthl-theme='light'] .account-center-content .account-reports-page .account-report-item__top {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  html[data-dthl-theme='light'] .account-center-content .account-reports-page .account-report-item__date {
+    width: fit-content;
+  }
+}
