@@ -45,7 +45,7 @@ export default function ReportsPage() {
   }, [page, toast]);
 
   return (
-    <div className="account-page-view">
+    <div className="account-page-view account-reports-page">
       <Seo title="Báo cáo đã gửi" />
 
       <div className="account-page-heading">
@@ -70,7 +70,7 @@ export default function ReportsPage() {
                   <Badge tone={item.status === 'resolved' ? 'success' : 'soft'}>
                     {item.status}
                   </Badge>
-                  <span className="account-verification-status is-verified">
+                  <span className="account-verification-status is-verified account-report-item__date">
                     <ShieldCheck size={13} /> {formatDateTime(item.createdAt)}
                   </span>
                 </div>
