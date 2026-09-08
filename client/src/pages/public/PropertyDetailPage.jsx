@@ -45,6 +45,7 @@ import CommentsSection from '../../components/content/CommentsSection';
 import ErrorState from '../../components/common/ErrorState';
 import { PageLoading } from '../../components/common/Loading';
 import LeadForm from '../../components/forms/LeadForm';
+import PropertyDetailReferenceRail from '../../components/property/PropertyDetailReferenceRail';
 import {
   PropertyGalleryLightbox,
   PropertyUtilityActions,
@@ -364,7 +365,7 @@ export default function PropertyDetailPage() {
   }
 
   return (
-    <section ref={pageRef} className="property-detail-page">
+    <section ref={pageRef} className="property-detail-page property-detail-page--reference-v2">
       <Seo title={item.title} description={item.summary} />
 
       <div className="property-reading-progress" aria-hidden="true">
@@ -376,14 +377,14 @@ export default function PropertyDetailPage() {
           className="property-detail-breadcrumb"
           aria-label="Điều hướng bất động sản"
         >
-          <Link to="/nha-dat">
+          <Link to="/bat-dong-san">
             <ArrowLeft size={16} />
             Bất động sản
           </Link>
           <span>/</span>
           {property.propertyType ? (
             <Link
-              to={`/nha-dat?propertyType=${encodeURIComponent(
+              to={`/bat-dong-san?propertyType=${encodeURIComponent(
                 property.propertyType,
               )}`}
             >
@@ -413,7 +414,7 @@ export default function PropertyDetailPage() {
               <MapPin size={18} />
               {areaValue ? (
                 <Link
-                  to={`/nha-dat?area=${encodeURIComponent(areaValue)}`}
+                  to={`/bat-dong-san?area=${encodeURIComponent(areaValue)}`}
                 >
                   {address}
                 </Link>
@@ -436,6 +437,15 @@ export default function PropertyDetailPage() {
                 {commentCount.toLocaleString('vi-VN')} bình luận
               </span>
             </div>
+          </div>
+
+          <div className="property-detail-header-actions">
+            <PropertyUtilityActions
+              contentId={item._id}
+              address={address}
+              onShare={handleShare}
+              initialBookmarked={initialBookmarked}
+            />
           </div>
 
           <div className="property-detail-price-box">
@@ -529,6 +539,20 @@ export default function PropertyDetailPage() {
           ) : null}
         </section>
 
+        <PropertyDetailReferenceRail
+          item={item}
+          property={property}
+          priceLabel={priceLabel}
+          address={address}
+          contactName={contactName}
+          ownerLabel={ownerLabel}
+          phoneVisible={phoneVisible}
+          phoneLoading={phoneLoading}
+          revealPhone={revealPhone}
+          copied={copied}
+          onCopyLink={handleCopyLink}
+        />
+
         <div className="property-detail-layout">
           <main className="property-detail-main">
             <section className="property-facts-section">
@@ -612,6 +636,27 @@ export default function PropertyDetailPage() {
               </div>
             </section>
 
+            {features.length ? (
+              <section className="property-features-section">
+                <div className="property-section-heading">
+                  <span><Sparkles size={20} /></span>
+                  <div>
+                    <h2>Thông tin nổi bật</h2>
+                    <p>Các điểm nổi bật được người đăng lựa chọn.</p>
+                  </div>
+                </div>
+
+                <div className="property-feature-list">
+                  {features.map((feature) => (
+                    <span key={feature.id}>
+                      <Check size={15} />
+                      {feature.name}
+                    </span>
+                  ))}
+                </div>
+              </section>
+            ) : null}
+
             <section className="property-specification-section">
               <div className="property-section-heading">
                 <span><Building2 size={20} /></span>
@@ -656,31 +701,10 @@ export default function PropertyDetailPage() {
               </dl>
             </section>
 
-            {features.length ? (
-              <section className="property-features-section">
-                <div className="property-section-heading">
-                  <span><Sparkles size={20} /></span>
-                  <div>
-                    <h2>Đặc điểm và tiện ích</h2>
-                    <p>Các điểm nổi bật được người đăng lựa chọn.</p>
-                  </div>
-                </div>
-
-                <div className="property-feature-list">
-                  {features.map((feature) => (
-                    <span key={feature.id}>
-                      <Check size={15} />
-                      {feature.name}
-                    </span>
-                  ))}
-                </div>
-              </section>
-            ) : null}
-
             <section className="property-safety-notice">
               <span><ShieldAlert size={23} /></span>
               <div>
-                <strong>Lưu ý an toàn khi giao dịch</strong>
+                <strong>Lưu ý khi giao dịch</strong>
                 <p>
                   Hãy kiểm tra giấy tờ pháp lý, xác minh người đăng, khảo sát
                   thực tế và không chuyển tiền đặt cọc khi chưa có thỏa thuận
@@ -689,12 +713,14 @@ export default function PropertyDetailPage() {
               </div>
             </section>
 
-            <PropertyUtilityActions
-              contentId={item._id}
-              address={address}
-              onShare={handleShare}
-              initialBookmarked={initialBookmarked}
-            />
+            <div className="property-detail-mobile-utility">
+              <PropertyUtilityActions
+                contentId={item._id}
+                address={address}
+                onShare={handleShare}
+                initialBookmarked={initialBookmarked}
+              />
+            </div>
 
             <section
               id="property-comments"
@@ -715,7 +741,7 @@ export default function PropertyDetailPage() {
             </section>
           </main>
 
-          <aside className="property-detail-sidebar">
+          <aside className="property-detail-sidebar property-detail-sidebar--legacy">
             <div className="property-detail-sidebar__content">
               <section className="property-contact-card">
                 <div className="property-contact-card__heading">
