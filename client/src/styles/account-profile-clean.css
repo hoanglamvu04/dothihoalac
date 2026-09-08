@@ -1,0 +1,377 @@
+/* =========================================================
+   ACCOUNT PROFILE — CLEAN WHITE / INK / GOLD
+   Scope: /tai-khoan/ho-so in light mode.
+   Fixes the hidden-sidebar column reservation and keeps gold as an accent,
+   not a fill colour.
+========================================================= */
+
+html[data-dthl-theme='light'] .account-center-page.is-subpage {
+  --account-desktop-green: #b59965 !important;
+  --account-desktop-green-soft: #f8f6f1 !important;
+  --account-desktop-gold: #b59965 !important;
+  --account-desktop-ink: #202320 !important;
+  --account-desktop-text: #505550 !important;
+  --account-desktop-muted: #7d827d !important;
+  --account-desktop-border: #e5e4df !important;
+  --account-desktop-surface: #ffffff !important;
+  --account-desktop-surface-2: #fafaf8 !important;
+  --account-desktop-canvas: #ffffff !important;
+  background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'] .account-center-page.is-subpage .account-shell-sidebar {
+  border-color: #e5e4df !important;
+  background: #ffffff !important;
+  box-shadow: 0 6px 20px rgb(20 23 20 / 0.035) !important;
+}
+
+html[data-dthl-theme='light'] .account-center-page.is-subpage :is(
+  .account-shell-nav > a.is-active,
+  .account-shell-nav__more a.is-active,
+  .account-shell-nav__more > summary.is-active,
+  .account-shell-nav__more.is-active > summary
+) {
+  color: #242724 !important;
+  background: #f8f6f1 !important;
+  box-shadow: inset 4px 0 0 #b59965 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-page.is-subpage :is(
+  .account-shell-nav > a:hover,
+  .account-shell-nav__more a:hover,
+  .account-shell-nav__more summary:hover
+) {
+  color: #242724 !important;
+  background: #f7f7f4 !important;
+}
+
+/* ---------------------------------------------------------
+   Critical layout correction
+   AccountLayout hides .profile-settings-sidebar. Therefore the profile form
+   must not reserve a hidden 280–340px first column.
+--------------------------------------------------------- */
+html[data-dthl-theme='light'] .account-center-content .profile-settings-layout {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  width: 100% !important;
+  max-width: none !important;
+  gap: 16px !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-sidebar {
+  display: none !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-main,
+html[data-dthl-theme='light'] .account-center-content .profile-settings-form-card,
+html[data-dthl-theme='light'] .account-center-content .profile-settings-page {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-page {
+  --profile-green: #b59965 !important;
+  --profile-green-hover: #9d8152 !important;
+  --profile-green-dark: #3b3f3b !important;
+  --profile-green-soft: #f8f6f1 !important;
+  --profile-green-border: #e6dfd3 !important;
+  --profile-ink: #202320 !important;
+  --profile-text: #505550 !important;
+  --profile-muted: #7d827d !important;
+  --profile-border: #e5e4df !important;
+  --profile-danger: #b84a43 !important;
+  gap: 16px !important;
+  color: var(--profile-ink) !important;
+  font-size: 15px !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-card {
+  width: 100% !important;
+  padding: 24px !important;
+  border: 1px solid #e5e4df !important;
+  border-radius: 14px !important;
+  background: #ffffff !important;
+  box-shadow: 0 5px 18px rgb(20 23 20 / 0.035) !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-card__heading {
+  align-items: center !important;
+  padding-bottom: 18px !important;
+  margin-bottom: 20px !important;
+  gap: 13px !important;
+  border-bottom-color: #e7e6e1 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-card__heading-icon {
+  width: 46px !important;
+  height: 46px !important;
+  border: 1px solid #e7e1d7 !important;
+  color: #8f7548 !important;
+  background: #faf8f4 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-card__heading h2 {
+  margin: 0 !important;
+  color: #1f221f !important;
+  font-size: 22px !important;
+  font-weight: 800 !important;
+  letter-spacing: -0.02em !important;
+  line-height: 1.25 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-card__heading p {
+  margin-top: 5px !important;
+  color: #747a74 !important;
+  font-size: 14.5px !important;
+  line-height: 1.55 !important;
+}
+
+/* Two useful form columns inside the full-width content panel. */
+html[data-dthl-theme='light'] .account-center-content .profile-settings-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 18px 20px !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-field {
+  gap: 8px !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-field--wide {
+  margin-top: 20px !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-field label {
+  color: #252825 !important;
+  font-size: 14.5px !important;
+  font-weight: 750 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-field label em {
+  color: #9f8150 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-field__label-row > span {
+  color: #858a85 !important;
+  font-size: 13px !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-input {
+  min-height: 52px !important;
+  padding: 0 14px !important;
+  gap: 10px !important;
+  border: 1px solid #deded9 !important;
+  border-radius: 10px !important;
+  background: #fbfbfa !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-input > svg {
+  color: #676d67 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-input:focus-within {
+  border-color: #b59965 !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 3px rgb(181 153 101 / 0.11) !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content :is(
+  .profile-settings-input input,
+  .profile-settings-input select
+) {
+  height: 50px !important;
+  color: #262926 !important;
+  background: transparent !important;
+  font-size: 15px !important;
+  line-height: 1.35 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-field textarea {
+  min-height: 145px !important;
+  padding: 14px !important;
+  border: 1px solid #deded9 !important;
+  border-radius: 10px !important;
+  color: #262926 !important;
+  background: #fbfbfa !important;
+  font-size: 15px !important;
+  line-height: 1.65 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-field textarea:focus {
+  border-color: #b59965 !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 3px rgb(181 153 101 / 0.11) !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content :is(
+  .profile-settings-input input::placeholder,
+  .profile-settings-field textarea::placeholder
+) {
+  color: #989d98 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-field__hint,
+html[data-dthl-theme='light'] .account-center-content .profile-settings-field__error {
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-field__hint {
+  color: #858a85 !important;
+}
+
+/* Keep information notes neutral with one restrained gold marker. */
+html[data-dthl-theme='light'] .account-center-content .profile-settings-note {
+  padding: 14px 15px !important;
+  margin-top: 20px !important;
+  gap: 11px !important;
+  border: 1px solid #e7e1d7 !important;
+  border-radius: 10px !important;
+  color: #343834 !important;
+  background: #faf9f6 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-note > svg {
+  color: #a18451 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-note strong {
+  color: #262926 !important;
+  font-size: 14px !important;
+  font-weight: 760 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-note span {
+  margin-top: 4px !important;
+  color: #676c67 !important;
+  font-size: 13px !important;
+  line-height: 1.55 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-savebar {
+  min-height: 74px !important;
+  padding: 12px 14px 12px 17px !important;
+  margin-top: 20px !important;
+  border: 1px solid #e3e2dd !important;
+  border-radius: 12px !important;
+  background: rgb(255 255 255 / 0.98) !important;
+  box-shadow: 0 8px 24px rgb(20 23 20 / 0.055) !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-savebar__status > span.is-changed {
+  color: #8f7548 !important;
+  background: #f7f2e8 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-savebar__status > span.is-saved {
+  color: #525752 !important;
+  background: #f2f3f1 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-savebar__status strong {
+  color: #242724 !important;
+  font-size: 14px !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-savebar__status small {
+  color: #828782 !important;
+  font-size: 12.5px !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-button {
+  min-height: 44px !important;
+  padding-inline: 16px !important;
+  border-radius: 9px !important;
+  font-size: 14px !important;
+  font-weight: 760 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-button--secondary {
+  border: 1px solid #e0dfda !important;
+  color: #343834 !important;
+  background: #f7f7f5 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-button--secondary:hover:not(:disabled) {
+  border-color: #cfcfc8 !important;
+  background: #f1f1ee !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-button--primary {
+  border: 1px solid #232623 !important;
+  color: #ffffff !important;
+  background: #232623 !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .profile-settings-button--primary:hover:not(:disabled) {
+  border-color: #b59965 !important;
+  color: #1d201d !important;
+  background: #b59965 !important;
+}
+
+/* Error states remain semantic red. */
+html[data-dthl-theme='light'] .account-center-content .profile-settings-alert {
+  border-color: #efd2d0 !important;
+  color: #9c3f3a !important;
+  background: #fff7f6 !important;
+  box-shadow: none !important;
+}
+
+/* Unsaved changes modal follows the same neutral visual system. */
+html[data-dthl-theme='light'] .profile-unsaved-dialog {
+  background: rgb(20 22 20 / 0.54) !important;
+}
+
+html[data-dthl-theme='light'] .profile-unsaved-dialog__panel {
+  border-color: #e5e3de !important;
+  border-radius: 16px !important;
+  box-shadow: 0 24px 68px rgb(20 22 20 / 0.22) !important;
+}
+
+html[data-dthl-theme='light'] .profile-unsaved-dialog__icon {
+  color: #967a4a !important;
+  background: #f8f3e9 !important;
+}
+
+html[data-dthl-theme='light'] .profile-unsaved-dialog__content h2 {
+  color: #202320 !important;
+  font-size: 21px !important;
+}
+
+html[data-dthl-theme='light'] .profile-unsaved-dialog__content p {
+  color: #6f746f !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+}
+
+/* ---------------------------------------------------------
+   Responsive safeguards
+--------------------------------------------------------- */
+@media (max-width: 900px) {
+  html[data-dthl-theme='light'] .account-center-content .profile-settings-card {
+    padding: 18px !important;
+  }
+
+  html[data-dthl-theme='light'] .account-center-content .profile-settings-grid {
+    grid-template-columns: 1fr !important;
+    gap: 16px !important;
+  }
+
+  html[data-dthl-theme='light'] .account-center-content .profile-settings-card__heading h2 {
+    font-size: 20px !important;
+  }
+}
+
+@media (max-width: 600px) {
+  html[data-dthl-theme='light'] .account-center-content .profile-settings-card {
+    padding: 16px !important;
+    border-radius: 12px !important;
+  }
+
+  html[data-dthl-theme='light'] .account-center-content .profile-settings-savebar {
+    align-items: stretch !important;
+    flex-direction: column !important;
+  }
+}
