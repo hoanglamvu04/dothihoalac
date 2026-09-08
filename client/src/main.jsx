@@ -60,6 +60,7 @@ import './styles/account-profile-clean.css';
 import './styles/account-security-clean.css';
 import './styles/account-sessions-clean.css';
 import './styles/account-notifications-clean.css';
+import './styles/account-reports-clean.css';
 import './features/communityRailDisclosure';
 import './features/propertySubmitReviewGuard';
 import './features/propertyMarketplacePaging';
