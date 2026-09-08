@@ -112,7 +112,7 @@ export default function SessionsPage() {
   };
 
   return (
-    <div className="account-page-view">
+    <div className="account-page-view account-sessions-page">
       <Seo title="Phiên đăng nhập" />
 
       <div className="account-page-heading">
