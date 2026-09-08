@@ -1,0 +1,275 @@
+/* =========================================================
+   COMMUNITY HUB — READABILITY POLISH
+   Typography-only pass for /cong-dong. Keeps the current social dashboard,
+   sticky rails, media sizes, filters and interaction behavior unchanged.
+========================================================= */
+
+.app-shell .community-social-page {
+  font-size: 16px !important;
+}
+
+/* Left discovery rail */
+.app-shell .community-social-page .community-left-primary :is(a, button) {
+  font-size: 14.5px !important;
+  line-height: 1.4 !important;
+}
+
+.app-shell .community-social-page :is(
+  .community-discovery-card > h2,
+  .community-discovery-section h3
+) {
+  font-size: 12.5px !important;
+  line-height: 1.35 !important;
+}
+
+.app-shell .community-social-page .community-discovery-list__copy strong {
+  font-size: 14px !important;
+  line-height: 1.35 !important;
+}
+
+.app-shell .community-social-page .community-discovery-list__copy small {
+  font-size: 12px !important;
+  line-height: 1.35 !important;
+}
+
+.app-shell .community-social-page .community-discovery-more {
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+}
+
+/* Composer */
+.app-shell .community-social-page .community-reference-composer__prompt {
+  font-size: 14.5px !important;
+  line-height: 1.45 !important;
+}
+
+.app-shell .community-social-page .community-reference-composer__actions > a {
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+}
+
+/* Feed navigation + active filters */
+.app-shell .community-social-page .community-reference-feed-tabs nav :is(button, a) {
+  min-height: 36px !important;
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+}
+
+.app-shell .community-social-page .community-reference-filter-trigger {
+  min-height: 36px !important;
+}
+
+.app-shell .community-social-page .community-reference-filter-trigger strong {
+  font-size: 10.5px !important;
+}
+
+.app-shell .community-social-page .community-reference-active-filters button {
+  font-size: 12.5px !important;
+  line-height: 1.35 !important;
+}
+
+/* Main feed cards */
+.app-shell .community-social-page .community-feed-card__author > a {
+  font-size: 14.5px !important;
+  line-height: 1.4 !important;
+}
+
+.app-shell .community-social-page .community-feed-card__author > a::after {
+  font-size: 11px !important;
+}
+
+.app-shell .community-social-page .community-feed-card__author > div {
+  font-size: 12.5px !important;
+  line-height: 1.4 !important;
+}
+
+.app-shell .community-social-page .community-feed-card__type {
+  font-size: 11.5px !important;
+  line-height: 1.35 !important;
+}
+
+.app-shell .community-social-page .community-feed-card__text {
+  font-size: 16px !important;
+  line-height: 1.58 !important;
+}
+
+.app-shell .community-social-page .community-feed-card__text button {
+  font-size: 13px !important;
+}
+
+.app-shell .community-social-page .community-feed-action {
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+}
+
+.app-shell .community-social-page .community-feed-action__count {
+  font-size: 12.5px !important;
+}
+
+/* Right information rail */
+.app-shell .community-social-page .community-reference-card h2 {
+  font-size: 13.5px !important;
+  line-height: 1.35 !important;
+}
+
+.app-shell .community-social-page .community-popular-item__copy strong {
+  font-size: 13.5px !important;
+  line-height: 1.4 !important;
+}
+
+.app-shell .community-social-page .community-popular-item__copy small {
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+}
+
+.app-shell .community-social-page .community-popular-item__time {
+  font-size: 11.5px !important;
+  line-height: 1.35 !important;
+}
+
+.app-shell .community-social-page .community-join-card p {
+  font-size: 13.5px !important;
+  line-height: 1.55 !important;
+}
+
+.app-shell .community-social-page .community-join-card__actions a {
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+}
+
+.app-shell .community-social-page .community-member-item__copy strong {
+  font-size: 13.5px !important;
+  line-height: 1.4 !important;
+}
+
+.app-shell .community-social-page .community-member-item__copy small {
+  font-size: 12px !important;
+  line-height: 1.4 !important;
+}
+
+.app-shell .community-social-page .community-member-item__action {
+  font-size: 12px !important;
+  line-height: 1.35 !important;
+}
+
+.app-shell .community-social-page .community-popular-loading {
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+}
+
+/* Empty state + pagination */
+.app-shell .community-social-page .community-social-empty h3 {
+  font-size: 18px !important;
+  line-height: 1.35 !important;
+}
+
+.app-shell .community-social-page .community-social-empty p {
+  font-size: 14px !important;
+  line-height: 1.58 !important;
+}
+
+.app-shell .community-social-page .community-social-empty > :is(a, button) {
+  font-size: 13px !important;
+}
+
+.app-shell .community-social-page :is(
+  .community-social-pagination__direction,
+  .community-social-pagination__numbers button
+) {
+  min-height: 38px !important;
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+}
+
+.app-shell .community-social-page .community-social-pagination__meta {
+  font-size: 12.5px !important;
+  line-height: 1.4 !important;
+}
+
+/* Filter drawer */
+.app-shell .community-social-page .community-social-filter-drawer__header h2 {
+  font-size: 20px !important;
+  line-height: 1.35 !important;
+}
+
+.app-shell .community-social-page .community-social-filter-drawer__header p {
+  font-size: 14px !important;
+  line-height: 1.55 !important;
+}
+
+.app-shell .community-social-page .community-social-filter-search input {
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+}
+
+.app-shell .community-social-page .community-social-filter-search button {
+  font-size: 13.5px !important;
+}
+
+.app-shell .community-social-page .community-social-filter-field > span {
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+}
+
+.app-shell .community-social-page .community-social-filter-field select {
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+}
+
+.app-shell .community-social-page .community-social-filter-drawer__actions button {
+  font-size: 13.5px !important;
+  line-height: 1.4 !important;
+}
+
+@media (max-width: 680px) {
+  .app-shell .community-social-page .community-reference-composer__prompt {
+    font-size: 14px !important;
+  }
+
+  .app-shell .community-social-page .community-reference-composer__actions > a {
+    font-size: 12.5px !important;
+  }
+
+  .app-shell .community-social-page .community-reference-feed-tabs nav :is(button, a) {
+    font-size: 12.5px !important;
+  }
+
+  .app-shell .community-social-page .community-feed-card__author > a {
+    font-size: 14px !important;
+  }
+
+  .app-shell .community-social-page .community-feed-card__author > div {
+    font-size: 12px !important;
+  }
+
+  .app-shell .community-social-page .community-feed-card__type {
+    font-size: 11px !important;
+  }
+
+  .app-shell .community-social-page .community-feed-card__text {
+    font-size: 15.5px !important;
+    line-height: 1.56 !important;
+  }
+
+  .app-shell .community-social-page .community-feed-action {
+    font-size: 12.5px !important;
+  }
+
+  .app-shell .community-social-page .community-social-pagination__mobile-status {
+    font-size: 12.5px !important;
+  }
+
+  .app-shell .community-social-page .community-social-pagination__meta {
+    font-size: 12px !important;
+  }
+
+  .app-shell .community-social-page .community-social-filter-drawer__header h2 {
+    font-size: 19px !important;
+  }
+
+  .app-shell .community-social-page .community-social-filter-drawer__header p,
+  .app-shell .community-social-page .community-social-filter-search input,
+  .app-shell .community-social-page .community-social-filter-field select {
+    font-size: 13.5px !important;
+  }
+}
