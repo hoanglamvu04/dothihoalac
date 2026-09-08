@@ -1,0 +1,913 @@
+/* =========================================================
+   PROPERTY MARKETPLACE — WARM EDITORIAL REFERENCE 08/09/2026
+   Scoped to the listing page only. This deliberately reuses the existing
+   React structure/API and only recomposes its visual hierarchy.
+========================================================= */
+
+.app-shell .properties-page {
+  --property-green: #9a6b35 !important;
+  --property-green-strong: #6f4823 !important;
+  --property-green-soft: #f7f0e7 !important;
+  --property-gold: #b58b55 !important;
+  --property-ink: #17201c !important;
+  --property-text: #525d56 !important;
+  --property-muted: #858b86 !important;
+  --property-border: #e9e5df !important;
+  --property-surface: #ffffff !important;
+  --property-surface-2: #faf8f4 !important;
+  --property-canvas: #ffffff !important;
+  --property-warm: #f8f2e9 !important;
+  padding: 0 0 58px !important;
+  background: #fff !important;
+}
+
+.app-shell .properties-page__container {
+  width: min(100%, 1480px) !important;
+  max-width: 1480px !important;
+  margin-inline: auto !important;
+  background: #fff !important;
+  box-shadow: none !important;
+}
+
+/* ---------------------------------------------------------
+   HERO
+--------------------------------------------------------- */
+.app-shell .properties-page .properties-hero {
+  min-height: 355px !important;
+  padding: 46px 48px 108px !important;
+  overflow: hidden !important;
+  border: 0 !important;
+  background:
+    radial-gradient(circle at 18% 12%, rgb(181 139 85 / 0.10), transparent 30%),
+    linear-gradient(106deg, #fff 0 48%, #f6efe5 48% 100%) !important;
+}
+
+.app-shell .properties-page .properties-hero__background {
+  width: 58% !important;
+  opacity: 0.92 !important;
+  object-position: center 48% !important;
+  filter: saturate(0.82) contrast(0.94) brightness(1.04) !important;
+}
+
+.app-shell .properties-page .properties-hero__shade {
+  background:
+    linear-gradient(90deg,
+      #fff 0%,
+      rgb(255 255 255 / 0.98) 38%,
+      rgb(255 255 255 / 0.76) 53%,
+      rgb(255 255 255 / 0.20) 75%,
+      rgb(255 255 255 / 0.05) 100%),
+    linear-gradient(0deg, rgb(117 77 37 / 0.06), transparent 46%) !important;
+}
+
+.app-shell .properties-page .properties-hero__content {
+  width: min(620px, 50%) !important;
+  padding: 0 !important;
+}
+
+.app-shell .properties-page .properties-hero__eyebrow {
+  margin-bottom: 10px !important;
+  color: #a87942 !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.08em !important;
+}
+
+.app-shell .properties-page .properties-hero h1 {
+  color: #13201b !important;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  font-size: clamp(35px, 4vw, 52px) !important;
+  font-weight: 850 !important;
+  letter-spacing: -0.05em !important;
+  line-height: 1.02 !important;
+}
+
+.app-shell .properties-page .properties-hero__content p {
+  max-width: 500px !important;
+  margin-top: 15px !important;
+  color: #5a635d !important;
+  font-size: 14px !important;
+  line-height: 1.65 !important;
+}
+
+.app-shell .properties-page .properties-hero__content p::after {
+  display: block;
+  margin-top: 20px;
+  color: #7d6a54;
+  content: '✓ Thông tin minh bạch   ·   ✓ Cập nhật liên tục   ·   ✓ Hỗ trợ tận tâm';
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+}
+
+.app-shell .properties-page .properties-hero__finder {
+  position: absolute !important;
+  z-index: 5 !important;
+  right: 48px !important;
+  bottom: 20px !important;
+  left: 48px !important;
+  width: auto !important;
+  min-height: 72px !important;
+  padding: 7px !important;
+  grid-template-columns: 1fr 1.08fr 0.9fr 0.9fr 190px !important;
+  border: 1px solid #e4ded5 !important;
+  border-radius: 13px !important;
+  background: rgb(255 255 255 / 0.97) !important;
+  box-shadow: 0 14px 36px rgb(61 43 24 / 0.12) !important;
+  backdrop-filter: blur(12px);
+}
+
+.app-shell .properties-page .properties-hero__finder > label {
+  min-height: 56px !important;
+  padding: 6px 16px !important;
+  border-right-color: #ebe6df !important;
+}
+
+.app-shell .properties-page .properties-hero__finder > label > span {
+  margin-bottom: 2px !important;
+  color: #7d837e !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+}
+
+.app-shell .properties-page .properties-hero__finder > label > div {
+  color: #9a6b35 !important;
+}
+
+.app-shell .properties-page .properties-hero__finder select {
+  color: #29312d !important;
+  font-size: 12px !important;
+  font-weight: 720 !important;
+}
+
+.app-shell .properties-page .properties-hero__finder > button {
+  min-height: 54px !important;
+  margin: 2px !important;
+  border: 1px solid #8c5c2e !important;
+  border-radius: 9px !important;
+  color: #fff !important;
+  background: linear-gradient(135deg, #a8753c, #805225) !important;
+  box-shadow: 0 8px 18px rgb(126 82 37 / 0.18) !important;
+  font-size: 12px !important;
+}
+
+.app-shell .properties-page .properties-hero__finder > button:hover {
+  background: #75491f !important;
+  box-shadow: 0 10px 22px rgb(126 82 37 / 0.22) !important;
+}
+
+/* ---------------------------------------------------------
+   PROPERTY TYPE RAIL
+--------------------------------------------------------- */
+.app-shell .properties-page .properties-type-rail {
+  gap: 8px !important;
+  padding: 16px 48px 14px !important;
+  border-bottom: 1px solid #f0ede8 !important;
+  background: #fff !important;
+}
+
+.app-shell .properties-page .properties-type-rail button {
+  min-height: 38px !important;
+  padding-inline: 13px !important;
+  border-color: #e9e5df !important;
+  border-radius: 9px !important;
+  color: #59635d !important;
+  background: #fff !important;
+  box-shadow: 0 2px 8px rgb(34 28 22 / 0.025) !important;
+  font-size: 11px !important;
+  font-weight: 730 !important;
+}
+
+.app-shell .properties-page .properties-type-rail button svg {
+  color: #a77842 !important;
+}
+
+.app-shell .properties-page .properties-type-rail button:hover {
+  border-color: #c9ae8a !important;
+  color: #6d4724 !important;
+  background: #fbf7f1 !important;
+}
+
+.app-shell .properties-page .properties-type-rail button.is-active {
+  border-color: #936335 !important;
+  color: #fff !important;
+  background: #936335 !important;
+  box-shadow: 0 6px 14px rgb(126 82 37 / 0.16) !important;
+}
+
+.app-shell .properties-page .properties-type-rail button.is-active svg {
+  color: #fff !important;
+}
+
+/* ---------------------------------------------------------
+   FEATURED AREAS
+--------------------------------------------------------- */
+.app-shell .properties-page .properties-featured-areas {
+  padding: 16px 48px 26px !important;
+}
+
+.app-shell .properties-page .properties-featured-areas > header {
+  align-items: center !important;
+  margin-bottom: 12px !important;
+}
+
+.app-shell .properties-page .properties-featured-areas > header > div > span {
+  color: #b18958 !important;
+  font-size: 10px !important;
+}
+
+.app-shell .properties-page .properties-featured-areas h2 {
+  color: #17201c !important;
+  font-size: 20px !important;
+  font-weight: 830 !important;
+}
+
+.app-shell .properties-page .properties-featured-areas > header > button {
+  color: #8b5c2d !important;
+  font-size: 11px !important;
+}
+
+.app-shell .properties-page .properties-featured-areas__grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+  gap: 12px !important;
+}
+
+.app-shell .properties-page .properties-featured-areas__grid > button {
+  padding: 6px 6px 10px !important;
+  border-color: #e8e4de !important;
+  border-radius: 11px !important;
+  box-shadow: 0 5px 14px rgb(46 37 27 / 0.035) !important;
+}
+
+.app-shell .properties-page .properties-featured-areas__grid > button:hover,
+.app-shell .properties-page .properties-featured-areas__grid > button.is-active {
+  border-color: #c7a77f !important;
+  box-shadow: 0 10px 24px rgb(78 55 32 / 0.08) !important;
+}
+
+.app-shell .properties-page .properties-featured-areas__media {
+  height: 132px !important;
+  border-radius: 8px !important;
+  background: #f2eee7 !important;
+}
+
+.app-shell .properties-page .properties-featured-areas__placeholder {
+  color: #a77b49 !important;
+  background:
+    linear-gradient(135deg, #f7f2ea, #ece4d8),
+    repeating-linear-gradient(45deg, transparent 0 14px, rgb(255 255 255 / 0.45) 14px 15px) !important;
+}
+
+.app-shell .properties-page .properties-featured-areas__grid strong {
+  margin-top: 8px !important;
+  color: #222a26 !important;
+  font-size: 12px !important;
+}
+
+.app-shell .properties-page .properties-featured-areas__grid small {
+  color: #898e8a !important;
+  font-size: 10px !important;
+}
+
+/* ---------------------------------------------------------
+   MARKETPLACE SHELL
+--------------------------------------------------------- */
+.app-shell .properties-page .properties-market-shell {
+  margin: 0 48px 36px !important;
+  overflow: visible !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.app-shell .properties-page .properties-toolbar {
+  min-height: 56px !important;
+  margin-bottom: 12px !important;
+  padding: 7px 0 10px !important;
+  border: 0 !important;
+  border-bottom: 1px solid #ece8e2 !important;
+  border-radius: 0 !important;
+  background: #fff !important;
+}
+
+.app-shell .properties-page .properties-toolbar__filters,
+.app-shell .properties-page .properties-toolbar__views {
+  gap: 6px !important;
+}
+
+.app-shell .properties-page .properties-toolbar__filters > label,
+.app-shell .properties-page .properties-toolbar__advanced,
+.app-shell .properties-page .properties-toolbar__views button {
+  min-height: 36px !important;
+  border-color: #e6e1da !important;
+  border-radius: 8px !important;
+  color: #5b625e !important;
+  background: #fff !important;
+  font-size: 10.5px !important;
+}
+
+.app-shell .properties-page .properties-toolbar__filters > label > svg:first-child,
+.app-shell .properties-page .properties-toolbar__advanced > svg {
+  color: #a77944 !important;
+}
+
+.app-shell .properties-page .properties-toolbar__advanced b {
+  color: #fff !important;
+  background: #9a6b35 !important;
+}
+
+.app-shell .properties-page .properties-toolbar__filters > label:hover,
+.app-shell .properties-page .properties-toolbar__advanced:hover {
+  border-color: #c7aa87 !important;
+  color: #6f4823 !important;
+  background: #fbf7f1 !important;
+}
+
+.app-shell .properties-page .properties-toolbar__views {
+  border-left-color: #ece8e2 !important;
+}
+
+.app-shell .properties-page .properties-toolbar__views button:hover,
+.app-shell .properties-page .properties-toolbar__views button.is-active {
+  border-color: #966638 !important;
+  color: #fff !important;
+  background: #966638 !important;
+}
+
+/* ---------------------------------------------------------
+   RESULT HEADER + 70/30 COMPOSITION
+--------------------------------------------------------- */
+.app-shell .properties-page .properties-results {
+  padding: 0 !important;
+  background: transparent !important;
+}
+
+.app-shell .properties-page .properties-results__header {
+  min-height: 66px !important;
+  padding: 0 0 10px !important;
+  border-bottom-color: #ece8e2 !important;
+}
+
+.app-shell .properties-page .properties-results__eyebrow {
+  color: #a67741 !important;
+  font-size: 10px !important;
+  font-weight: 760 !important;
+}
+
+.app-shell .properties-page .properties-results__header h2 {
+  margin-top: 4px !important;
+  color: #17201c !important;
+  font-size: 20px !important;
+  font-weight: 840 !important;
+}
+
+.app-shell .properties-page .properties-results__search {
+  width: min(260px, 25vw) !important;
+  min-height: 36px !important;
+  border-color: #e5e1db !important;
+  border-radius: 8px !important;
+}
+
+.app-shell .properties-page .properties-results__search > svg {
+  color: #9b6b37 !important;
+}
+
+.app-shell .properties-page .properties-results__sort {
+  color: #7f8581 !important;
+}
+
+.app-shell .properties-page .properties-results__sort > svg:not(:last-child),
+.app-shell .properties-page .properties-results__sort select {
+  color: #895b2f !important;
+}
+
+.app-shell .properties-page .properties-active-filters {
+  padding: 8px 0 4px !important;
+}
+
+.app-shell .properties-page .properties-active-filters button {
+  border-color: #e3d3bf !important;
+  color: #7d532b !important;
+  background: #faf5ed !important;
+}
+
+.app-shell .properties-page .properties-results-layout {
+  grid-template-columns: minmax(0, 1fr) 320px !important;
+  gap: 20px !important;
+  padding-top: 10px !important;
+  align-items: start !important;
+}
+
+/* ---------------------------------------------------------
+   LISTING CARDS
+--------------------------------------------------------- */
+.app-shell .properties-page .properties-grid.is-list {
+  gap: 9px !important;
+}
+
+.app-shell .properties-page .property-card {
+  border-color: #e8e4de !important;
+  border-radius: 11px !important;
+  background: #fff !important;
+  box-shadow: 0 3px 12px rgb(36 30 23 / 0.025) !important;
+}
+
+.app-shell .properties-page .property-card:hover {
+  border-color: #ccb18f !important;
+  box-shadow: 0 9px 24px rgb(73 52 30 / 0.07) !important;
+}
+
+.app-shell .properties-page .properties-grid.is-list .property-card {
+  grid-template-columns: 255px minmax(0, 1fr) !important;
+  min-height: 174px !important;
+}
+
+.app-shell .properties-page .properties-grid.is-list .property-card__image {
+  min-height: 174px !important;
+}
+
+.app-shell .properties-page .property-card__body {
+  padding: 14px 15px 12px !important;
+}
+
+.app-shell .properties-page .property-card__heading {
+  gap: 16px !important;
+}
+
+.app-shell .properties-page .property-card__heading h3 {
+  color: #1d2722 !important;
+  font-size: 13px !important;
+  line-height: 1.38 !important;
+}
+
+.app-shell .properties-page .property-card__heading h3 a:hover {
+  color: #805326 !important;
+}
+
+.app-shell .properties-page .property-card__price {
+  color: #a16d35 !important;
+  font-size: 15px !important;
+}
+
+.app-shell .properties-page .property-card__facts,
+.app-shell .properties-page .property-card__location,
+.app-shell .properties-page .property-card__footer {
+  color: #747c77 !important;
+}
+
+.app-shell .properties-page .property-card__facts svg,
+.app-shell .properties-page .property-card__location svg,
+.app-shell .properties-page .property-card__footer svg {
+  color: #a67b4b !important;
+}
+
+.app-shell .properties-page .property-card__summary {
+  color: #747b77 !important;
+  font-size: 10.5px !important;
+  -webkit-line-clamp: 1 !important;
+}
+
+.app-shell .properties-page .property-card__footer > a {
+  min-height: 32px !important;
+  padding: 0 11px !important;
+  border: 1px solid #eadfce !important;
+  border-radius: 7px !important;
+  color: #744a24 !important;
+  background: #fbf6ef !important;
+}
+
+.app-shell .properties-page .property-card__footer > a:hover {
+  border-color: #b99161 !important;
+  background: #f5eadc !important;
+}
+
+/* ---------------------------------------------------------
+   SIDEBAR — MAP / MARKET / CTA
+--------------------------------------------------------- */
+@media (min-width: 1101px) {
+  .app-shell .properties-page .properties-sidebar {
+    position: sticky !important;
+    top: 96px !important;
+    display: grid !important;
+    align-self: start !important;
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+    gap: 12px !important;
+    z-index: 2 !important;
+    scrollbar-width: auto !important;
+  }
+}
+
+.app-shell .properties-page .properties-sidebar-card {
+  border-color: #e7e2db !important;
+  border-radius: 11px !important;
+  background: #fff !important;
+  box-shadow: 0 6px 20px rgb(53 42 30 / 0.045) !important;
+}
+
+.app-shell .properties-page .properties-sidebar-card > header {
+  min-height: 48px !important;
+  padding-inline: 13px !important;
+  border-bottom-color: #ece8e2 !important;
+}
+
+.app-shell .properties-page .properties-sidebar-card > header > div,
+.app-shell .properties-page .properties-sidebar-card > header svg {
+  color: #9d6f3a !important;
+}
+
+.app-shell .properties-page .properties-sidebar-card h3 {
+  color: #222a26 !important;
+  font-size: 12px !important;
+}
+
+.app-shell .properties-page .properties-sidebar-map__visual {
+  height: 178px !important;
+  background:
+    linear-gradient(28deg, transparent 0 40%, rgb(255 255 255 / 0.95) 40% 43%, transparent 43% 100%),
+    linear-gradient(105deg, transparent 0 44%, rgb(255 255 255 / 0.85) 44% 47%, transparent 47% 100%),
+    repeating-linear-gradient(0deg, rgb(190 203 196 / 0.14) 0 1px, transparent 1px 27px),
+    repeating-linear-gradient(90deg, rgb(190 203 196 / 0.14) 0 1px, transparent 1px 31px),
+    linear-gradient(135deg, #eef4f0, #e9f0ec 48%, #f4f0e8) !important;
+}
+
+.app-shell .properties-page .properties-sidebar-map__visual .route {
+  background: #caa26f !important;
+}
+
+.app-shell .properties-page .properties-sidebar-map__visual .map-dot {
+  border-color: #fff !important;
+  color: #fff !important;
+  background: #9b6a34 !important;
+  box-shadow: 0 4px 10px rgb(112 75 37 / 0.20) !important;
+}
+
+.app-shell .properties-page .properties-sidebar-map__areas button {
+  color: #656d68 !important;
+}
+
+.app-shell .properties-page .properties-sidebar-map__areas button svg {
+  color: #a37440 !important;
+}
+
+.app-shell .properties-page .properties-sidebar-map__areas button:hover {
+  color: #714821 !important;
+  background: #faf5ee !important;
+}
+
+.app-shell .properties-page .properties-market-card dl {
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  padding: 10px 10px 4px !important;
+  gap: 7px !important;
+}
+
+.app-shell .properties-page .properties-market-card dl > div {
+  display: grid !important;
+  min-height: 64px !important;
+  place-items: center !important;
+  align-content: center !important;
+  padding: 6px !important;
+  border: 1px solid #eee8e0 !important;
+  border-radius: 8px !important;
+  background: #fbf8f3 !important;
+  text-align: center !important;
+}
+
+.app-shell .properties-page .properties-market-card dt {
+  color: #8b8f8c !important;
+  font-size: 9px !important;
+}
+
+.app-shell .properties-page .properties-market-card dd {
+  color: #86582c !important;
+  font-size: 12px !important;
+}
+
+.app-shell .properties-page .properties-market-card > button {
+  border-color: #decdb7 !important;
+  color: #79502a !important;
+  background: #fff !important;
+}
+
+.app-shell .properties-page .properties-post-card {
+  min-height: 174px !important;
+  padding: 18px !important;
+  border-color: #eadac5 !important;
+  color: #2e2a25 !important;
+  background:
+    radial-gradient(circle at 96% 92%, rgb(186 137 76 / 0.18), transparent 34%),
+    linear-gradient(145deg, #fbf7f0, #f3e8d9) !important;
+}
+
+.app-shell .properties-page .properties-post-card > svg {
+  color: #9c692f !important;
+}
+
+.app-shell .properties-page .properties-post-card h3 {
+  color: #2e2924 !important;
+}
+
+.app-shell .properties-page .properties-post-card p {
+  color: #746a5e !important;
+}
+
+.app-shell .properties-page .properties-post-card a {
+  color: #fff !important;
+  background: linear-gradient(135deg, #a8753c, #805225) !important;
+}
+
+/* ---------------------------------------------------------
+   PAGINATION / MODAL
+--------------------------------------------------------- */
+.app-shell .properties-page .properties-pagination {
+  padding-top: 17px !important;
+}
+
+.app-shell .properties-page .properties-pagination .pagination button,
+.app-shell .properties-page .properties-pagination .pagination a {
+  border-color: #e6dfd5 !important;
+  color: #565c58 !important;
+  background: #fff !important;
+  box-shadow: none !important;
+}
+
+.app-shell .properties-page .properties-pagination .pagination :is(button, a).is-active,
+.app-shell .properties-page .properties-pagination .pagination :is(button, a)[aria-current='page'] {
+  border-color: #8c5c2e !important;
+  color: #fff !important;
+  background: #8c5c2e !important;
+}
+
+.app-shell .properties-page .properties-pagination .pagination :is(button, a):hover:not(:disabled) {
+  border-color: #bb9567 !important;
+  color: #70451f !important;
+  background: #faf4eb !important;
+}
+
+.app-shell .properties-page .properties-filter-modal__header {
+  background: #faf5ee !important;
+}
+
+.app-shell .properties-page .properties-filter-modal__header > div,
+.app-shell .properties-page .properties-filter-modal__section-heading > div,
+.app-shell .properties-page .properties-filter-choice-grid svg {
+  color: #9a6b35 !important;
+}
+
+.app-shell .properties-page .properties-filter-modal__apply {
+  border-color: #8c5c2e !important;
+  color: #fff !important;
+  background: #8c5c2e !important;
+}
+
+.app-shell .properties-page .properties-filter-modal__apply span {
+  color: #7a4d24 !important;
+}
+
+.app-shell .properties-page .properties-modal-preset-grid button:hover,
+.app-shell .properties-page .properties-modal-preset-grid button.is-active {
+  border-color: #c9aa82 !important;
+  color: #74491f !important;
+  background: #faf4eb !important;
+}
+
+/* ---------------------------------------------------------
+   RESPONSIVE
+--------------------------------------------------------- */
+@media (max-width: 1180px) {
+  .app-shell .properties-page .properties-hero {
+    padding-inline: 30px !important;
+  }
+
+  .app-shell .properties-page .properties-hero__finder {
+    right: 30px !important;
+    left: 30px !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  .app-shell .properties-page .properties-hero__finder > button {
+    grid-column: 1 / -1 !important;
+    min-height: 42px !important;
+  }
+
+  .app-shell .properties-page .properties-type-rail,
+  .app-shell .properties-page .properties-featured-areas {
+    padding-inline: 30px !important;
+  }
+
+  .app-shell .properties-page .properties-market-shell {
+    margin-inline: 30px !important;
+  }
+
+  .app-shell .properties-page .properties-results-layout {
+    grid-template-columns: minmax(0, 1fr) 292px !important;
+  }
+}
+
+@media (max-width: 960px) {
+  .app-shell .properties-page .properties-hero {
+    min-height: 390px !important;
+    padding: 38px 22px 176px !important;
+  }
+
+  .app-shell .properties-page .properties-hero__background {
+    width: 72% !important;
+    opacity: 0.34 !important;
+  }
+
+  .app-shell .properties-page .properties-hero__content {
+    width: min(620px, 82%) !important;
+  }
+
+  .app-shell .properties-page .properties-hero__finder {
+    right: 22px !important;
+    bottom: 18px !important;
+    left: 22px !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .app-shell .properties-page .properties-hero__finder > label:nth-of-type(2),
+  .app-shell .properties-page .properties-hero__finder > label:nth-of-type(4) {
+    border-right: 0 !important;
+  }
+
+  .app-shell .properties-page .properties-featured-areas__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  }
+
+  .app-shell .properties-page .properties-featured-areas__grid > button:nth-child(n + 4) {
+    display: none !important;
+  }
+
+  .app-shell .properties-page .properties-results-layout {
+    grid-template-columns: 1fr !important;
+  }
+
+  .app-shell .properties-page .properties-sidebar {
+    position: static !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    margin-top: 10px !important;
+  }
+
+  .app-shell .properties-page .properties-post-card {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+@media (max-width: 720px) {
+  .app-shell .properties-page {
+    padding-bottom: 36px !important;
+  }
+
+  .app-shell .properties-page .properties-hero {
+    min-height: 500px !important;
+    padding: 30px 16px 330px !important;
+  }
+
+  .app-shell .properties-page .properties-hero__background {
+    width: 100% !important;
+    opacity: 0.22 !important;
+  }
+
+  .app-shell .properties-page .properties-hero__content {
+    width: 100% !important;
+  }
+
+  .app-shell .properties-page .properties-hero h1 {
+    font-size: clamp(34px, 11vw, 46px) !important;
+  }
+
+  .app-shell .properties-page .properties-hero__content p {
+    font-size: 12px !important;
+  }
+
+  .app-shell .properties-page .properties-hero__content p::after {
+    content: '✓ Minh bạch   ·   ✓ Cập nhật liên tục';
+    font-size: 9px;
+  }
+
+  .app-shell .properties-page .properties-hero__finder {
+    right: 12px !important;
+    bottom: 12px !important;
+    left: 12px !important;
+    grid-template-columns: 1fr !important;
+    padding: 7px !important;
+  }
+
+  .app-shell .properties-page .properties-hero__finder > label,
+  .app-shell .properties-page .properties-hero__finder > label:nth-of-type(n) {
+    min-height: 51px !important;
+    padding: 4px 10px !important;
+    border-right: 0 !important;
+    border-bottom: 1px solid #eee8e0 !important;
+  }
+
+  .app-shell .properties-page .properties-hero__finder > label:nth-of-type(4) {
+    border-bottom: 0 !important;
+  }
+
+  .app-shell .properties-page .properties-hero__finder > button {
+    grid-column: auto !important;
+    min-height: 43px !important;
+    margin-top: 5px !important;
+  }
+
+  .app-shell .properties-page .properties-type-rail {
+    padding: 12px 16px 10px !important;
+  }
+
+  .app-shell .properties-page .properties-type-rail button {
+    min-height: 36px !important;
+    padding-inline: 11px !important;
+  }
+
+  .app-shell .properties-page .properties-featured-areas {
+    padding: 12px 16px 20px !important;
+  }
+
+  .app-shell .properties-page .properties-featured-areas__grid {
+    display: flex !important;
+    margin-right: -16px !important;
+    padding-right: 16px !important;
+    overflow-x: auto !important;
+    gap: 9px !important;
+    scrollbar-width: none;
+  }
+
+  .app-shell .properties-page .properties-featured-areas__grid > button,
+  .app-shell .properties-page .properties-featured-areas__grid > button:nth-child(n) {
+    display: block !important;
+    flex: 0 0 190px !important;
+  }
+
+  .app-shell .properties-page .properties-market-shell {
+    margin-inline: 10px !important;
+  }
+
+  .app-shell .properties-page .properties-toolbar {
+    align-items: stretch !important;
+    flex-direction: column !important;
+  }
+
+  .app-shell .properties-page .properties-toolbar__filters {
+    width: 100% !important;
+  }
+
+  .app-shell .properties-page .properties-toolbar__views {
+    width: 100% !important;
+    padding: 0 !important;
+    border-left: 0 !important;
+  }
+
+  .app-shell .properties-page .properties-toolbar__views button {
+    flex: 1 1 0 !important;
+  }
+
+  .app-shell .properties-page .properties-results__header {
+    align-items: flex-start !important;
+    flex-direction: column !important;
+    gap: 9px !important;
+  }
+
+  .app-shell .properties-page .properties-results__controls {
+    width: 100% !important;
+    align-items: stretch !important;
+    flex-direction: column !important;
+  }
+
+  .app-shell .properties-page .properties-results__search {
+    width: 100% !important;
+  }
+
+  .app-shell .properties-page .properties-results__sort {
+    width: 100% !important;
+    justify-content: flex-end !important;
+  }
+
+  .app-shell .properties-page .properties-grid.is-list,
+  .app-shell .properties-page .properties-grid.is-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .app-shell .properties-page .properties-grid.is-list .property-card,
+  .app-shell .properties-page .properties-grid.is-grid .property-card {
+    display: flex !important;
+    flex-direction: column !important;
+  }
+
+  .app-shell .properties-page .properties-grid.is-list .property-card__image,
+  .app-shell .properties-page .properties-grid.is-grid .property-card__image {
+    height: 205px !important;
+    min-height: 0 !important;
+  }
+
+  .app-shell .properties-page .properties-sidebar {
+    grid-template-columns: 1fr !important;
+  }
+
+  .app-shell .properties-page .properties-post-card {
+    grid-column: auto !important;
+  }
+}
