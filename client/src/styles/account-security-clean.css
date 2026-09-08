@@ -1,0 +1,356 @@
+/* =========================================================
+   ACCOUNT SECURITY — CLEAN WHITE / INK / GOLD
+   Scope: /tai-khoan/bao-mat in light mode only.
+   Matches the corrected profile settings page without turning gold into a
+   dominant fill colour. Verification green remains semantic and restrained.
+========================================================= */
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page {
+  --ap-green: #b59965 !important;
+  --ap-green-hover: #9d8152 !important;
+  --ap-green-dark: #3c403c !important;
+  --ap-green-soft: #f8f6f1 !important;
+  --ap-green-border: #e6dfd3 !important;
+  --ap-ink: #202320 !important;
+  --ap-text: #505550 !important;
+  --ap-muted: #7d827d !important;
+  --ap-border: #e5e4df !important;
+  --ap-danger: #b84a43 !important;
+
+  width: 100% !important;
+  max-width: none !important;
+  gap: 18px !important;
+  color: var(--ap-ink) !important;
+  font-size: 15px !important;
+}
+
+/* ---------------------------------------------------------
+   Page heading
+--------------------------------------------------------- */
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-page-heading {
+  align-items: flex-end !important;
+  min-height: 92px !important;
+  padding: 4px 2px 16px !important;
+  border-bottom: 1px solid #e7e6e1 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-page-heading__eyebrow {
+  margin-bottom: 7px !important;
+  gap: 7px !important;
+  color: #967a4a !important;
+  font-size: 12.5px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.075em !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-page-heading h2 {
+  color: #1f221f !important;
+  font-size: clamp(24px, 2vw, 30px) !important;
+  font-weight: 820 !important;
+  letter-spacing: -0.03em !important;
+  line-height: 1.2 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-page-heading p {
+  max-width: 720px !important;
+  margin-top: 7px !important;
+  color: #747a74 !important;
+  font-size: 14.5px !important;
+  line-height: 1.55 !important;
+}
+
+/* ---------------------------------------------------------
+   Main cards
+--------------------------------------------------------- */
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-page-card {
+  width: 100% !important;
+  padding: 24px !important;
+  border: 1px solid #e5e4df !important;
+  border-radius: 14px !important;
+  background: #ffffff !important;
+  box-shadow: 0 5px 18px rgb(20 23 20 / 0.035) !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-page-card__header {
+  padding-bottom: 17px !important;
+  margin-bottom: 18px !important;
+  border-bottom-color: #e7e6e1 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-page-card__header h3 {
+  color: #222522 !important;
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  line-height: 1.3 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-page-card__header p {
+  margin-top: 5px !important;
+  color: #7a807a !important;
+  font-size: 14px !important;
+  line-height: 1.55 !important;
+}
+
+/* ---------------------------------------------------------
+   Verification cards
+--------------------------------------------------------- */
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-verification-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-verification-card {
+  grid-template-columns: 48px minmax(0, 1fr) auto !important;
+  min-height: 112px !important;
+  padding: 16px !important;
+  gap: 13px !important;
+  border: 1px solid #e4e3de !important;
+  border-radius: 12px !important;
+  background: #fbfbfa !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-verification-card__icon {
+  width: 48px !important;
+  height: 48px !important;
+  border: 1px solid #e8e2d8 !important;
+  border-radius: 12px !important;
+  color: #8f7548 !important;
+  background: #faf8f4 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-verification-card strong {
+  color: #262926 !important;
+  font-size: 14.5px !important;
+  font-weight: 780 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-verification-card small {
+  margin-top: 4px !important;
+  color: #818681 !important;
+  font-size: 13px !important;
+  line-height: 1.45 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-verification-status {
+  min-height: 30px !important;
+  padding-inline: 10px !important;
+  gap: 5px !important;
+  border-radius: 999px !important;
+  font-size: 12.5px !important;
+  font-weight: 750 !important;
+}
+
+/* Verified is semantic green, but deliberately pale and limited to status. */
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-verification-status.is-verified {
+  color: #356849 !important;
+  background: #edf6f0 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-verification-status.is-pending {
+  color: #806734 !important;
+  background: #f8f3e8 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-verification-card__note {
+  color: #666c66 !important;
+  font-size: 12.5px !important;
+  line-height: 1.5 !important;
+}
+
+/* ---------------------------------------------------------
+   Password form
+--------------------------------------------------------- */
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-form-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 18px 20px !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-field {
+  gap: 8px !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-field label {
+  color: #252825 !important;
+  font-size: 14.5px !important;
+  font-weight: 750 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-field label em {
+  color: #9f8150 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-input {
+  min-height: 52px !important;
+  padding-inline: 14px !important;
+  gap: 10px !important;
+  border: 1px solid #deded9 !important;
+  border-radius: 10px !important;
+  background: #fbfbfa !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-input > svg {
+  color: #676d67 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-input:focus-within {
+  border-color: #b59965 !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 3px rgb(181 153 101 / 0.11) !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page :is(
+  .account-input input,
+  .account-input select
+) {
+  height: 50px !important;
+  color: #262926 !important;
+  background: transparent !important;
+  font-size: 15px !important;
+  line-height: 1.35 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-input input::placeholder {
+  color: #989d98 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-password-toggle {
+  width: 36px !important;
+  height: 36px !important;
+  color: #777c77 !important;
+  background: transparent !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-password-toggle:hover {
+  color: #272a27 !important;
+  background: #f1f1ee !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page :is(
+  .account-field__hint,
+  .account-field__error
+) {
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-field__hint {
+  color: #858a85 !important;
+}
+
+/* Keep successful password-strength feedback semantic but restrained. */
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-field__hint.is-valid {
+  color: #477156 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-form-actions {
+  margin-top: 20px !important;
+  gap: 10px !important;
+}
+
+/* ---------------------------------------------------------
+   Buttons and alerts
+--------------------------------------------------------- */
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-page-button {
+  min-height: 44px !important;
+  padding-inline: 16px !important;
+  border-radius: 9px !important;
+  font-size: 14px !important;
+  font-weight: 760 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-page-button--primary {
+  border: 1px solid #232623 !important;
+  color: #ffffff !important;
+  background: #232623 !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-page-button--primary:hover:not(:disabled) {
+  border-color: #b59965 !important;
+  color: #1d201d !important;
+  background: #b59965 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-page-button--soft {
+  border: 1px solid #e4dfd6 !important;
+  color: #343834 !important;
+  background: #faf8f4 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-page-button--soft:hover:not(:disabled) {
+  border-color: #cdbb9d !important;
+  color: #242724 !important;
+  background: #f5f0e7 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-inline-alert {
+  padding: 13px 14px !important;
+  gap: 10px !important;
+  border-radius: 10px !important;
+  font-size: 13.5px !important;
+  line-height: 1.5 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-inline-alert.is-info {
+  color: #4d514d !important;
+  background: #faf8f4 !important;
+  border: 1px solid #e6dfd3 !important;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-security-page .account-inline-alert.is-danger {
+  color: #9c3f3a !important;
+  background: #fff7f6 !important;
+  border: 1px solid #efd2d0 !important;
+}
+
+/* ---------------------------------------------------------
+   Responsive safeguards
+--------------------------------------------------------- */
+@media (max-width: 900px) {
+  html[data-dthl-theme='light'] .account-center-content .account-security-page .account-page-card {
+    padding: 18px !important;
+  }
+
+  html[data-dthl-theme='light'] .account-center-content .account-security-page .account-page-heading {
+    min-height: auto !important;
+    padding-bottom: 13px !important;
+  }
+}
+
+@media (max-width: 720px) {
+  html[data-dthl-theme='light'] .account-center-content .account-security-page :is(
+    .account-verification-grid,
+    .account-form-grid
+  ) {
+    grid-template-columns: 1fr !important;
+  }
+
+  html[data-dthl-theme='light'] .account-center-content .account-security-page .account-field--wide {
+    grid-column: auto !important;
+  }
+
+  html[data-dthl-theme='light'] .account-center-content .account-security-page .account-page-heading h2 {
+    font-size: 23px !important;
+  }
+}
+
+@media (max-width: 520px) {
+  html[data-dthl-theme='light'] .account-center-content .account-security-page .account-page-card {
+    padding: 16px !important;
+    border-radius: 12px !important;
+  }
+
+  html[data-dthl-theme='light'] .account-center-content .account-security-page .account-verification-card {
+    grid-template-columns: 44px minmax(0, 1fr) !important;
+  }
+
+  html[data-dthl-theme='light'] .account-center-content .account-security-page .account-verification-card > :is(
+    .account-verification-status,
+    .account-page-button
+  ) {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+  }
+}
