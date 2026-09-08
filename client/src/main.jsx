@@ -49,6 +49,7 @@ import './styles/minimal-white-gold-fixes.css';
 import './styles/jobs-card-color-system.css';
 import './styles/job-detail-green-system.css';
 import './styles/jobs-reference-gold.css';
+import './styles/jobs-listing-readable-polish.css';
 import './styles/article-flat-editorial-fix.css';
 import './styles/news-listing-readable-polish.css';
 import './pages/public/ArticleDetailReadablePolish.css';
