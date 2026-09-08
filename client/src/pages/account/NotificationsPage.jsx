@@ -149,7 +149,7 @@ export default function NotificationsPage() {
   };
 
   return (
-    <div className="account-page-view">
+    <div className="account-page-view account-notifications-page">
       <Seo title="Thông báo" />
 
       <div className="account-page-heading">
