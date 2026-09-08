@@ -1,0 +1,276 @@
+/* =========================================================
+   ACCOUNT NOTIFICATIONS — CLEAN WHITE / INK / GOLD
+   Scope: /tai-khoan/thong-bao in light mode only.
+========================================================= */
+
+html[data-dthl-theme='light'] .account-notifications-page {
+  --ap-green: #b59965 !important;
+  --ap-green-hover: #9d8152 !important;
+  --ap-green-dark: #343834 !important;
+  --ap-green-soft: #f8f6f1 !important;
+  --ap-green-border: #e6dfd3 !important;
+  --ap-ink: #202320 !important;
+  --ap-text: #505550 !important;
+  --ap-muted: #7d827d !important;
+  --ap-border: #e5e4df !important;
+  width: 100% !important;
+  max-width: none !important;
+  gap: 16px !important;
+  color: var(--ap-ink) !important;
+}
+
+html[data-dthl-theme='light'] .account-notifications-page .account-page-heading {
+  align-items: flex-end !important;
+  min-height: 94px !important;
+  padding: 8px 2px 18px !important;
+  gap: 22px !important;
+  border-bottom: 1px solid #e7e6e1 !important;
+}
+
+html[data-dthl-theme='light'] .account-notifications-page .account-page-heading__eyebrow {
+  margin-bottom: 7px !important;
+  gap: 7px !important;
+  color: #927746 !important;
+  font-size: 12.5px !important;
+  font-weight: 780 !important;
+  letter-spacing: 0.075em !important;
+}
+
+html[data-dthl-theme='light'] .account-notifications-page .account-page-heading h2 {
+  color: #1f221f !important;
+  font-size: clamp(1.55rem, 2.1vw, 2rem) !important;
+  font-weight: 820 !important;
+  letter-spacing: -0.03em !important;
+  line-height: 1.2 !important;
+}
+
+html[data-dthl-theme='light'] .account-notifications-page .account-page-heading p {
+  max-width: 760px !important;
+  margin-top: 7px !important;
+  color: #747a74 !important;
+  font-size: 14.5px !important;
+  line-height: 1.55 !important;
+}
+
+html[data-dthl-theme='light'] .account-notifications-page .account-form-actions {
+  margin-top: 0 !important;
+  gap: 9px !important;
+}
+
+html[data-dthl-theme='light'] .account-notifications-page .account-page-button {
+  min-height: 42px !important;
+  padding-inline: 14px !important;
+  border-radius: 9px !important;
+  font-size: 13.5px !important;
+  font-weight: 760 !important;
+}
+
+html[data-dthl-theme='light'] .account-notifications-page .account-page-button--neutral {
+  border: 1px solid #dfded9 !important;
+  color: #343834 !important;
+  background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'] .account-notifications-page .account-page-button--neutral:hover:not(:disabled) {
+  border-color: #cfcfc8 !important;
+  background: #f7f7f4 !important;
+}
+
+html[data-dthl-theme='light'] .account-notifications-page .account-page-button--soft {
+  border: 1px solid #e4deD3 !important;
+  color: #6e5935 !important;
+  background: #faf7f1 !important;
+}
+
+html[data-dthl-theme='light'] .account-notifications-page .account-page-button--soft:hover:not(:disabled) {
+  border-color: #cdbb9d !important;
+  color: #292c29 !important;
+  background: #f4eee4 !important;
+}
+
+/* Filter tabs behave like a compact segmented control. */
+html[data-dthl-theme='light'] .account-notifications-page .account-filter-tabs {
+  width: fit-content !important;
+  max-width: 100% !important;
+  padding: 5px !important;
+  gap: 5px !important;
+  border: 1px solid #e2e1dc !important;
+  border-radius: 11px !important;
+  background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'] .account-notifications-page .account-filter-tabs button {
+  min-height: 37px !important;
+  padding-inline: 14px !important;
+  border-radius: 8px !important;
+  color: #666c66 !important;
+  background: transparent !important;
+  font-size: 13.5px !important;
+  font-weight: 740 !important;
+}
+
+html[data-dthl-theme='light'] .account-notifications-page .account-filter-tabs button:hover {
+  color: #252825 !important;
+  background: #f7f7f4 !important;
+}
+
+html[data-dthl-theme='light'] .account-notifications-page .account-filter-tabs button.is-active {
+  color: #242724 !important;
+  background: #f3eee4 !important;
+  box-shadow: inset 0 -2px 0 #b59965 !important;
+}
+
+html[data-dthl-theme='light'] .account-notifications-page .account-page-card {
+  width: 100% !important;
+  padding: 16px !important;
+  border: 1px solid #e5e4df !important;
+  border-radius: 14px !important;
+  background: #ffffff !important;
+  box-shadow: 0 5px 18px rgb(20 23 20 / 0.035) !important;
+}
+
+html[data-dthl-theme='light'] .account-notifications-page .account-notification-list {
+  gap: 8px !important;
+}
+
+html[data-dthl-theme='light'] .account-notifications-page .account-notification-item {
+  grid-template-columns: 48px minmax(0, 1fr) 38px !important;
+  min-height: 88px !important;
+  padding: 13px 14px !important;
+  gap: 12px !important;
+  border: 1px solid #e7e6e1 !important;
+  border-radius: 11px !important;
+  color: #292c29 !important;
+  background: #ffffff !important;
+  transition: border-color 150ms ease, background 150ms ease, transform 150ms ease !important;
+}
+
+html[data-dthl-theme='light'] .account-notifications-page .account-notification-item:hover {
+  border-color: #d8d2c8 !important;
+  background: #fbfbf9 !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Unread is intentionally warm and restrained instead of bright green. */
+html[data-dthl-theme='light'] .account-notifications-page .account-notification-item.is-unread {
+  border-color: #e2d4bd !important;
+  background: linear-gradient(90deg, #fbf7ef 0, #fff 28%) !important;
+  box-shadow: inset 3px 0 0 #b59965 !important;
+}
+
+html[data-dthl-theme='light'] .account-notifications-page .account-notification-item__icon {
+  width: 46px !important;
+  height: 46px !important;
+  border: 1px solid #e6e3dc !important;
+  border-radius: 12px !important;
+  color: #626862 !important;
+  background: #f7f7f5 !important;
+}
+
+html[data-dthl-theme='light'] .account-notifications-page .account-notification-item.is-unread .account-notification-item__icon {
+  border-color: #e4d8c5 !important;
+  color: #8b7041 !important;
+  background: #faf5ec !important;
+}
+
+html[data-dthl-theme='light'] .account-notifications-page .account-notification-item strong {
+  color: #252825 !important;
+  font-size: 15px !important;
+  font-weight: 780 !important;
+  line-height: 1.35 !important;
+}
+
+html[data-dthl-theme='light'] .account-notifications-page .account-notification-item p {
+  margin-top: 5px !important;
+  color: #5f655f !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+}
+
+html[data-dthl-theme='light'] .account-notifications-page .account-notification-item time {
+  margin-top: 7px !important;
+  color: #8a8f8a !important;
+  font-size: 12.5px !important;
+}
+
+html[data-dthl-theme='light'] .account-notifications-page .account-notification-item__delete {
+  width: 36px !important;
+  height: 36px !important;
+  color: #8a8e8a !important;
+  background: transparent !important;
+}
+
+html[data-dthl-theme='light'] .account-notifications-page .account-notification-item__delete:hover {
+  color: #a6433f !important;
+  background: #fff2f1 !important;
+}
+
+/* Pagination follows the shared neutral + gold account system. */
+html[data-dthl-theme='light'] .account-notifications-page + .pagination,
+html[data-dthl-theme='light'] .account-notifications-page .pagination {
+  --pagination-accent: #b59965;
+}
+
+html[data-dthl-theme='light'] .account-notifications-page .pagination button,
+html[data-dthl-theme='light'] .account-notifications-page .pagination a {
+  border-color: #e1e0db !important;
+  color: #343834 !important;
+  background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'] .account-notifications-page .pagination .is-active,
+html[data-dthl-theme='light'] .account-notifications-page .pagination [aria-current='page'] {
+  border-color: #b59965 !important;
+  color: #202320 !important;
+  background: #b59965 !important;
+}
+
+@media (max-width: 720px) {
+  html[data-dthl-theme='light'] .account-notifications-page .account-page-heading {
+    align-items: flex-start !important;
+    min-height: auto !important;
+    padding-bottom: 14px !important;
+  }
+
+  html[data-dthl-theme='light'] .account-notifications-page .account-form-actions {
+    width: 100% !important;
+  }
+
+  html[data-dthl-theme='light'] .account-notifications-page .account-form-actions .account-page-button {
+    flex: 1 !important;
+  }
+
+  html[data-dthl-theme='light'] .account-notifications-page .account-page-card {
+    padding: 12px !important;
+  }
+
+  html[data-dthl-theme='light'] .account-notifications-page .account-notification-item {
+    grid-template-columns: 44px minmax(0, 1fr) 34px !important;
+    padding: 12px !important;
+  }
+
+  html[data-dthl-theme='light'] .account-notifications-page .account-notification-item__icon {
+    width: 42px !important;
+    height: 42px !important;
+  }
+}
+
+@media (max-width: 520px) {
+  html[data-dthl-theme='light'] .account-notifications-page .account-page-heading h2 {
+    font-size: 1.55rem !important;
+  }
+
+  html[data-dthl-theme='light'] .account-notifications-page .account-notification-item {
+    grid-template-columns: 40px minmax(0, 1fr) 32px !important;
+    gap: 10px !important;
+  }
+
+  html[data-dthl-theme='light'] .account-notifications-page .account-notification-item__icon {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  html[data-dthl-theme='light'] .account-notifications-page .account-notification-item p {
+    font-size: 13.5px !important;
+  }
+}
