@@ -1,0 +1,219 @@
+/* =========================================================
+   ACCOUNT SESSIONS — CLEAN WHITE / INK / GOLD
+   Scope: /tai-khoan/phien-dang-nhap in light mode.
+========================================================= */
+
+html[data-dthl-theme='light'] .account-center-content .account-sessions-page {
+  --ap-green: #b59965;
+  --ap-green-hover: #9f8252;
+  --ap-green-dark: #353935;
+  --ap-green-soft: #f8f6f1;
+  --ap-green-border: #e6dfd3;
+  --ap-ink: #202320;
+  --ap-text: #505550;
+  --ap-muted: #7d827d;
+  --ap-border: #e5e4df;
+  --ap-danger: #b84a43;
+  width: 100%;
+  max-width: none;
+  gap: 16px;
+  color: var(--ap-ink);
+  font-size: 15px;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-sessions-page .account-page-heading {
+  min-height: 96px;
+  padding: 4px 2px 18px;
+  border-bottom: 1px solid #e7e6e1;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-sessions-page .account-page-heading__eyebrow {
+  margin-bottom: 7px;
+  color: #9c7e4c;
+  font-size: 12.5px;
+  letter-spacing: 0.07em;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-sessions-page .account-page-heading h2 {
+  color: #202320;
+  font-size: clamp(24px, 2.2vw, 30px);
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-sessions-page .account-page-heading p {
+  max-width: 760px;
+  margin-top: 7px;
+  color: #747a74;
+  font-size: 14.5px;
+  line-height: 1.55;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-sessions-page .account-page-heading .account-page-button--soft {
+  min-height: 42px;
+  padding-inline: 14px;
+  border: 1px solid #deded9;
+  color: #343834;
+  background: #fff;
+  font-size: 14px;
+  box-shadow: none;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-sessions-page .account-page-heading .account-page-button--soft:hover:not(:disabled) {
+  border-color: #cdbd9f;
+  background: #faf8f4;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-sessions-page .account-page-card {
+  width: 100%;
+  padding: 22px;
+  border: 1px solid #e5e4df;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: 0 5px 18px rgb(20 23 20 / 0.035);
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-sessions-page .account-page-card__header {
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  border-bottom-color: #e7e6e1;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-sessions-page .account-page-card__header h3 {
+  color: #222522;
+  font-size: 19px;
+  font-weight: 800;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-sessions-page .account-page-card__header p {
+  margin-top: 5px;
+  color: #777c77;
+  font-size: 13.5px;
+  line-height: 1.55;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-sessions-page .account-session-list {
+  gap: 10px;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-sessions-page .account-session-item {
+  grid-template-columns: 52px minmax(0, 1fr) auto;
+  min-height: 92px;
+  padding: 14px 15px;
+  gap: 13px;
+  border: 1px solid #e3e3de;
+  border-radius: 12px;
+  background: #fbfbfa;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-sessions-page .account-session-item__icon {
+  width: 48px;
+  height: 48px;
+  border: 1px solid #e5e0d7;
+  border-radius: 12px;
+  color: #666c66;
+  background: #fff;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-sessions-page .account-session-item strong {
+  color: #242724;
+  font-size: 15px;
+  font-weight: 780;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-sessions-page .account-session-item span:not(.account-session-item__current):not(.account-verification-status) {
+  margin-top: 4px;
+  color: #5f655f;
+  font-size: 13.5px;
+  line-height: 1.45;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-sessions-page .account-session-item small {
+  margin-top: 4px;
+  color: #858a85;
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-sessions-page .account-session-item__current {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin-top: 7px;
+  gap: 5px;
+  color: #7e6840;
+  font-size: 12.5px;
+  font-weight: 750;
+}
+
+/* Current device is a status, so keep it calm rather than turning the whole UI green. */
+html[data-dthl-theme='light'] .account-center-content .account-sessions-page .account-verification-status.is-verified {
+  min-height: 30px;
+  padding-inline: 10px;
+  border: 1px solid #dce9df;
+  color: #3f694a;
+  background: #f2f8f3;
+  font-size: 12.5px;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-sessions-page .account-page-button--danger {
+  min-height: 39px;
+  padding-inline: 12px;
+  border: 1px solid #efd6d4;
+  color: #a84a44;
+  background: #fff8f7;
+  font-size: 13px;
+  box-shadow: none;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-sessions-page .account-page-button--danger:hover:not(:disabled) {
+  border-color: #dfb8b4;
+  background: #fff0ee;
+}
+
+/* Pagination follows the same black/white/gold hierarchy. */
+html[data-dthl-theme='light'] .account-center-content .account-sessions-page + .pagination,
+html[data-dthl-theme='light'] .account-center-content .account-sessions-page .pagination {
+  margin-top: 4px;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-sessions-page ~ .pagination button,
+html[data-dthl-theme='light'] .account-center-content .account-sessions-page ~ .pagination a {
+  border-color: #dfdfda;
+  color: #363a36;
+  background: #fff;
+}
+
+html[data-dthl-theme='light'] .account-center-content .account-sessions-page ~ .pagination :is(.is-active, [aria-current='page']) {
+  border-color: #b59965;
+  color: #1f221f;
+  background: #b59965;
+}
+
+@media (max-width: 720px) {
+  html[data-dthl-theme='light'] .account-center-content .account-sessions-page .account-page-heading {
+    min-height: 0;
+    padding-bottom: 14px;
+  }
+
+  html[data-dthl-theme='light'] .account-center-content .account-sessions-page .account-page-card {
+    padding: 16px;
+  }
+
+  html[data-dthl-theme='light'] .account-center-content .account-sessions-page .account-session-item {
+    grid-template-columns: 46px minmax(0, 1fr);
+    min-height: 0;
+    padding: 13px;
+  }
+
+  html[data-dthl-theme='light'] .account-center-content .account-sessions-page .account-session-item__icon {
+    width: 44px;
+    height: 44px;
+  }
+
+  html[data-dthl-theme='light'] .account-center-content .account-sessions-page .account-session-item > :last-child {
+    grid-column: 2;
+    justify-self: start;
+  }
+}
