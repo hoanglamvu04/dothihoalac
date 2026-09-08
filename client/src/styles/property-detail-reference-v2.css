@@ -1,0 +1,962 @@
+/* =========================================================
+   PROPERTY DETAIL REFERENCE V2
+   Compact warm white/gold layout matching the supplied reference.
+   Desktop receives the full composition. Tablet/mobile keep the existing
+   responsive structure and only inherit the warm palette.
+========================================================= */
+
+.app-shell .property-detail-page--reference-v2 {
+  --pdv2-brown: #8d6033;
+  --pdv2-brown-dark: #6d4725;
+  --pdv2-gold: #b68b55;
+  --pdv2-cream: #faf6ef;
+  --pdv2-cream-2: #f5ede2;
+  --pdv2-ink: #171b18;
+  --pdv2-text: #525955;
+  --pdv2-muted: #8a8f8b;
+  --pdv2-line: #e9e4dd;
+  --pdv2-line-strong: #decfbd;
+  background: #fff !important;
+}
+
+.app-shell .property-detail-page--reference-v2 .property-reading-progress span {
+  background: linear-gradient(90deg, #8d6033, #c4a170) !important;
+  box-shadow: 0 0 10px rgb(141 96 51 / 0.22) !important;
+}
+
+/* New desktop-only reference rail is hidden by default so legacy mobile CSS
+   remains authoritative below the desktop breakpoint. */
+.property-detail-reference-rail {
+  display: none;
+}
+
+.property-detail-mobile-utility {
+  display: block;
+}
+
+@media (min-width: 1101px) {
+  .app-shell .property-detail-page--reference-v2 {
+    padding: 4px 0 50px !important;
+    color: var(--pdv2-ink) !important;
+    background: #fff !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-container {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 356px !important;
+    grid-template-rows: auto auto auto auto !important;
+    align-items: start !important;
+    width: min(calc(100% - 52px), 1480px) !important;
+    max-width: 1480px !important;
+    margin-inline: auto !important;
+    gap: 14px 20px !important;
+  }
+
+  /* -------------------------------------------------------
+     BREADCRUMB + TITLE AREA
+  ------------------------------------------------------- */
+  .app-shell .property-detail-page--reference-v2 .property-detail-breadcrumb {
+    grid-column: 1 / -1 !important;
+    grid-row: 1 !important;
+    min-height: 34px !important;
+    padding: 0 !important;
+    gap: 7px !important;
+    color: #92958f !important;
+    font-size: 11px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-breadcrumb a {
+    color: #7b807c !important;
+    font-weight: 630 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-breadcrumb a:hover {
+    color: var(--pdv2-brown) !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-header {
+    grid-column: 1 / -1 !important;
+    grid-row: 2 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    align-items: start !important;
+    min-width: 0 !important;
+    padding: 0 0 8px !important;
+    gap: 18px !important;
+    overflow: visible !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-header::after {
+    display: none !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-header__content {
+    position: relative !important;
+    z-index: 1 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+    gap: 0 22px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-labels,
+  .app-shell .property-detail-page--reference-v2 .property-detail-header h1,
+  .app-shell .property-detail-page--reference-v2 .property-detail-location {
+    grid-column: 1 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-labels {
+    gap: 5px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-labels .badge,
+  .app-shell .property-detail-page--reference-v2 .property-legal-badge {
+    min-height: 23px !important;
+    padding: 0 7px !important;
+    border: 1px solid #eadcc8 !important;
+    border-radius: 6px !important;
+    color: #7f542b !important;
+    background: #faf4ea !important;
+    font-size: 9.5px !important;
+    font-weight: 760 !important;
+    box-shadow: none !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-labels .badge.badge--dark {
+    color: #555955 !important;
+    background: #f5f5f2 !important;
+    border-color: #e6e6e1 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-header h1 {
+    max-width: 980px !important;
+    margin: 9px 0 0 !important;
+    color: var(--pdv2-ink) !important;
+    font-size: clamp(27px, 2.35vw, 38px) !important;
+    font-weight: 860 !important;
+    letter-spacing: -0.045em !important;
+    line-height: 1.1 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-location {
+    margin-top: 9px !important;
+    gap: 6px !important;
+    color: #5f6661 !important;
+    font-size: 12px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-location svg {
+    width: 15px !important;
+    height: 15px !important;
+    color: #a47440 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-meta {
+    grid-column: 2 !important;
+    grid-row: 1 / span 3 !important;
+    position: static !important;
+    align-self: end !important;
+    justify-self: end !important;
+    display: flex !important;
+    margin: 0 0 1px !important;
+    gap: 9px 13px !important;
+    white-space: nowrap !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-meta span {
+    gap: 4px !important;
+    color: #8d918d !important;
+    font-size: 10.5px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-meta svg {
+    width: 13px !important;
+    height: 13px !important;
+    color: #ae8351 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-header-actions {
+    align-self: start !important;
+    justify-self: end !important;
+    min-width: 0 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-header-actions .property-utility-actions {
+    display: flex !important;
+    align-items: center !important;
+    padding: 0 !important;
+    gap: 7px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-header-actions .property-utility-actions > :first-child,
+  .app-shell .property-detail-page--reference-v2 .property-detail-header-actions .property-utility-actions > :last-child {
+    display: none !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-header-actions .property-utility-actions > button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 96px !important;
+    min-height: 37px !important;
+    padding: 0 12px !important;
+    gap: 6px !important;
+    border: 1px solid #e5ded5 !important;
+    border-radius: 9px !important;
+    color: #3e433f !important;
+    background: #fff !important;
+    box-shadow: 0 3px 12px rgb(42 34 25 / 0.035) !important;
+    font-size: 11px !important;
+    font-weight: 720 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-header-actions .property-utility-actions > button:hover,
+  .app-shell .property-detail-page--reference-v2 .property-detail-header-actions .property-utility-actions > button.is-active {
+    border-color: #c9a77e !important;
+    color: #744a25 !important;
+    background: #fbf6ef !important;
+  }
+
+  /* Legacy desktop price/sidebar are replaced by the reference rail. */
+  .app-shell .property-detail-page--reference-v2 .property-detail-header > .property-detail-price-box,
+  .app-shell .property-detail-page--reference-v2 .property-detail-sidebar--legacy,
+  .app-shell .property-detail-page--reference-v2 .property-detail-mobile-utility {
+    display: none !important;
+  }
+
+  /* -------------------------------------------------------
+     GALLERY
+  ------------------------------------------------------- */
+  .app-shell .property-detail-page--reference-v2 .property-gallery {
+    grid-column: 1 !important;
+    grid-row: 3 !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 118px !important;
+    align-items: stretch !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 9px !important;
+    overflow: visible !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-gallery__main {
+    width: 100% !important;
+    aspect-ratio: 16 / 8.9 !important;
+    overflow: hidden !important;
+    border: 1px solid #e4dfd7 !important;
+    border-radius: 13px !important;
+    background: #f2f0ec !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-gallery__main img,
+  .app-shell .property-detail-page--reference-v2 .property-gallery__placeholder {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    border-radius: 13px !important;
+    object-fit: cover !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-gallery__thumbnails {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    grid-template-rows: repeat(5, minmax(0, 1fr)) !important;
+    max-height: none !important;
+    padding: 0 !important;
+    gap: 7px !important;
+    overflow: hidden !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-gallery__thumbnails button {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 2px !important;
+    overflow: hidden !important;
+    border: 1px solid #e4dfd7 !important;
+    border-radius: 9px !important;
+    background: #fff !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-gallery__thumbnails button:nth-child(n + 6) {
+    display: none !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-gallery__thumbnails button.is-active {
+    border-color: #aa7c47 !important;
+    box-shadow: 0 0 0 2px rgb(170 124 71 / 0.11) !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-gallery__thumbnails img {
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 7px !important;
+    object-fit: cover !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-gallery__previous,
+  .app-shell .property-detail-page--reference-v2 .property-gallery__next {
+    width: 36px !important;
+    height: 36px !important;
+    border-color: rgb(255 255 255 / 0.7) !important;
+    color: #fff !important;
+    background: rgb(51 42 33 / 0.52) !important;
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.1) !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-gallery__counter {
+    right: 11px !important;
+    bottom: 11px !important;
+    min-height: 27px !important;
+    padding-inline: 9px !important;
+    border-radius: 999px !important;
+    color: #fff !important;
+    background: rgb(42 35 29 / 0.66) !important;
+    font-size: 10px !important;
+  }
+
+  /* -------------------------------------------------------
+     NEW RIGHT RAIL
+  ------------------------------------------------------- */
+  .app-shell .property-detail-page--reference-v2 .property-detail-reference-rail {
+    grid-column: 2 !important;
+    grid-row: 3 / span 2 !important;
+    display: block !important;
+    min-width: 0 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-reference-rail__inner {
+    display: grid !important;
+    gap: 12px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 :is(
+    .property-reference-price-card,
+    .property-reference-contact-card,
+    .property-reference-loan-card,
+    .property-reference-map-card,
+    .property-reference-similar-card
+  ) {
+    overflow: hidden !important;
+    border: 1px solid #e8e2da !important;
+    border-radius: 12px !important;
+    background: #fff !important;
+    box-shadow: 0 6px 20px rgb(52 40 28 / 0.045) !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-price-card {
+    padding: 17px 16px 15px !important;
+    border-color: #eadcc8 !important;
+    background: linear-gradient(145deg, #fffaf3, #f6eee3) !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-price-card > span,
+  .app-shell .property-detail-page--reference-v2 .property-reference-price-card > strong,
+  .app-shell .property-detail-page--reference-v2 .property-reference-price-card > small {
+    display: block !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-price-card > span {
+    color: #7e786f !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-price-card > strong {
+    margin-top: 3px !important;
+    color: #121612 !important;
+    font-size: 27px !important;
+    font-weight: 860 !important;
+    letter-spacing: -0.04em !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-price-card > small {
+    margin-top: 4px !important;
+    color: #8c8e89 !important;
+    font-size: 10px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-price-card__actions {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    margin-top: 14px !important;
+    gap: 7px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-price-card__actions > * {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-height: 40px !important;
+    padding: 0 9px !important;
+    gap: 5px !important;
+    border: 1px solid #c9aa86 !important;
+    border-radius: 8px !important;
+    color: #714923 !important;
+    background: #fff !important;
+    font-size: 10.5px !important;
+    font-weight: 760 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-price-card__actions > .is-primary {
+    border-color: #85572c !important;
+    color: #fff !important;
+    background: linear-gradient(135deg, #9b6a37, #774b25) !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-contact-card {
+    padding: 14px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-contact-card__profile {
+    display: flex !important;
+    align-items: center !important;
+    gap: 9px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-contact-card__avatar {
+    display: grid !important;
+    flex: 0 0 38px !important;
+    width: 38px !important;
+    height: 38px !important;
+    place-items: center !important;
+    overflow: hidden !important;
+    border-radius: 50% !important;
+    color: #8f6337 !important;
+    background: #f1ece4 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-contact-card__avatar img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-contact-card__profile strong {
+    display: block !important;
+    color: #1c211e !important;
+    font-size: 12px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-contact-card__profile small {
+    display: block !important;
+    margin-top: 2px !important;
+    color: #8a8e8a !important;
+    font-size: 9.5px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-contact-card__row {
+    display: grid !important;
+    grid-template-columns: 18px minmax(0, 1fr) !important;
+    align-items: center !important;
+    min-height: 38px !important;
+    margin-top: 8px !important;
+    padding: 0 9px !important;
+    gap: 6px !important;
+    border: 1px solid #ece7e0 !important;
+    border-radius: 8px !important;
+    color: #675b50 !important;
+    background: #fff !important;
+    font-size: 10px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-contact-card__row svg {
+    color: #a47745 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-contact-card__row a,
+  .app-shell .property-detail-page--reference-v2 .property-reference-contact-card__row button {
+    min-width: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    border: 0 !important;
+    color: #684522 !important;
+    background: transparent !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    text-align: left !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 :is(
+    .property-reference-loan-card,
+    .property-reference-map-card,
+    .property-reference-similar-card
+  ) > header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    min-height: 46px !important;
+    padding: 0 13px !important;
+    gap: 8px !important;
+    border-bottom: 1px solid #ede8e1 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 :is(
+    .property-reference-loan-card,
+    .property-reference-map-card,
+    .property-reference-similar-card
+  ) > header > div {
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    color: #9d6d39 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 :is(
+    .property-reference-loan-card,
+    .property-reference-map-card,
+    .property-reference-similar-card
+  ) h2 {
+    margin: 0 !important;
+    color: #232825 !important;
+    font-size: 11.5px !important;
+    font-weight: 800 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 :is(
+    .property-reference-loan-card,
+    .property-reference-map-card,
+    .property-reference-similar-card
+  ) > header > span,
+  .app-shell .property-detail-page--reference-v2 :is(
+    .property-reference-map-card,
+    .property-reference-similar-card
+  ) > header > a {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    color: #85562d !important;
+    font-size: 9.5px !important;
+    font-weight: 700 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-loan-card__grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    padding: 12px !important;
+    gap: 9px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-loan-card__grid label {
+    min-width: 0 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-loan-card__grid label > span {
+    display: block !important;
+    margin-bottom: 5px !important;
+    color: #858984 !important;
+    font-size: 9px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-loan-card__grid :is(input, select, strong) {
+    display: flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    height: 36px !important;
+    min-width: 0 !important;
+    padding: 0 9px !important;
+    border: 1px solid #e9e4dc !important;
+    border-radius: 7px !important;
+    outline: 0 !important;
+    color: #262b28 !important;
+    background: #fff !important;
+    font-size: 10px !important;
+    font-weight: 690 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-loan-card__grid :is(input, select):focus {
+    border-color: #bb9568 !important;
+    box-shadow: 0 0 0 3px rgb(187 149 104 / 0.1) !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-loan-card__result {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    min-height: 46px !important;
+    margin: 0 12px 12px !important;
+    padding: 0 10px !important;
+    gap: 10px !important;
+    border-radius: 8px !important;
+    color: #75695c !important;
+    background: #faf5ed !important;
+    font-size: 9.5px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-loan-card__result strong {
+    color: #7f5229 !important;
+    font-size: 11px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-map-card__map {
+    height: 205px !important;
+    overflow: hidden !important;
+    background: #f2f1ed !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-map-card__map iframe {
+    width: 100% !important;
+    height: 100% !important;
+    border: 0 !important;
+    filter: saturate(0.75) contrast(0.95) brightness(1.04) !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-map-card__address {
+    display: flex !important;
+    align-items: center !important;
+    min-height: 40px !important;
+    padding: 0 12px !important;
+    gap: 6px !important;
+    color: #625f5a !important;
+    font-size: 9.5px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-map-card__address svg {
+    color: #9b6b37 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-similar-card__list {
+    display: grid !important;
+    padding: 5px 11px 9px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-similar-item {
+    display: grid !important;
+    grid-template-columns: 86px minmax(0, 1fr) !important;
+    align-items: center !important;
+    min-width: 0 !important;
+    padding: 8px 0 !important;
+    gap: 9px !important;
+    border-bottom: 1px solid #eee9e2 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-similar-item:last-child {
+    border-bottom: 0 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-similar-item__media {
+    display: block !important;
+    height: 58px !important;
+    overflow: hidden !important;
+    border-radius: 7px !important;
+    background: #f1efeb !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-similar-item__media img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-similar-item > div {
+    min-width: 0 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-similar-item h3 {
+    margin: 0 !important;
+    overflow: hidden !important;
+    color: #252a27 !important;
+    font-size: 10.5px !important;
+    font-weight: 760 !important;
+    line-height: 1.35 !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-similar-item strong {
+    display: block !important;
+    margin-top: 3px !important;
+    color: #8c5e30 !important;
+    font-size: 10.5px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-similar-item span {
+    display: flex !important;
+    align-items: center !important;
+    min-width: 0 !important;
+    margin-top: 3px !important;
+    gap: 4px !important;
+    overflow: hidden !important;
+    color: #929590 !important;
+    font-size: 9px !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-similar-item span svg {
+    flex: 0 0 auto !important;
+    color: #a67541 !important;
+  }
+
+  /* -------------------------------------------------------
+     MAIN CONTENT BELOW GALLERY
+  ------------------------------------------------------- */
+  .app-shell .property-detail-page--reference-v2 .property-detail-layout {
+    display: contents !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-main {
+    grid-column: 1 !important;
+    grid-row: 4 !important;
+    display: grid !important;
+    min-width: 0 !important;
+    gap: 11px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-main > section {
+    min-width: 0 !important;
+    padding: 16px 17px !important;
+    border: 1px solid #ebe6df !important;
+    border-radius: 11px !important;
+    background: #fff !important;
+    box-shadow: 0 3px 14px rgb(45 36 27 / 0.025) !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-main > .property-facts-section {
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-facts-section .property-section-heading {
+    display: none !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-facts-grid {
+    grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+    gap: 7px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-facts-grid article {
+    min-height: 68px !important;
+    padding: 8px 9px !important;
+    gap: 7px !important;
+    border: 1px solid #ece7e0 !important;
+    border-radius: 9px !important;
+    background: linear-gradient(145deg, #fff, #fbf8f3) !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-facts-grid article > span {
+    width: 31px !important;
+    height: 31px !important;
+    border-radius: 8px !important;
+    color: #986734 !important;
+    background: #f8f0e5 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-facts-grid article > span svg {
+    width: 15px !important;
+    height: 15px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-facts-grid small {
+    color: #8d918c !important;
+    font-size: 9px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-facts-grid strong {
+    margin-top: 1px !important;
+    color: #252b27 !important;
+    font-size: 11px !important;
+    font-weight: 780 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-section-heading {
+    margin: 0 0 9px !important;
+    padding: 0 !important;
+    gap: 7px !important;
+    border: 0 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-section-heading > span {
+    width: 29px !important;
+    height: 29px !important;
+    border-radius: 7px !important;
+    color: #956333 !important;
+    background: #f8f0e5 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-section-heading > span svg {
+    width: 15px !important;
+    height: 15px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-section-heading h2 {
+    color: #202622 !important;
+    font-size: 15px !important;
+    font-weight: 820 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-section-heading p {
+    display: none !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-description-lead,
+  .app-shell .property-detail-page--reference-v2 .property-description-body {
+    color: #555c57 !important;
+    font-size: 11px !important;
+    line-height: 1.65 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-description-lead {
+    margin: 0 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-feature-list {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 7px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-feature-list > span {
+    min-height: 38px !important;
+    padding: 0 10px !important;
+    gap: 6px !important;
+    border: 1px solid #ece7df !important;
+    border-radius: 8px !important;
+    color: #545a56 !important;
+    background: #fbf8f3 !important;
+    font-size: 10px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-feature-list > span svg {
+    color: #9b6b38 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-spec-table {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0 !important;
+    overflow: hidden !important;
+    border: 1px solid #ece7e0 !important;
+    border-radius: 8px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-spec-table > div {
+    min-height: 36px !important;
+    padding: 0 10px !important;
+    border: 0 !important;
+    border-bottom: 1px solid #eee9e2 !important;
+    background: #fff !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-spec-table > div:nth-child(odd) {
+    border-right: 1px solid #eee9e2 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-spec-table dt {
+    color: #8c908b !important;
+    font-size: 9px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-spec-table dd {
+    color: #2c312e !important;
+    font-size: 9.5px !important;
+    font-weight: 700 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-safety-notice {
+    display: flex !important;
+    align-items: flex-start !important;
+    padding: 12px 14px !important;
+    gap: 9px !important;
+    border-color: #eadbc6 !important;
+    background: linear-gradient(90deg, #fff9ef, #fbf5eb) !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-safety-notice > span {
+    color: #a06e37 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-safety-notice strong {
+    color: #4d402f !important;
+    font-size: 11px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-safety-notice p {
+    margin-top: 2px !important;
+    color: #8a7d6e !important;
+    font-size: 9.5px !important;
+    line-height: 1.5 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-comments-section {
+    padding-bottom: 14px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-scroll-top {
+    color: #fff !important;
+    background: #8a5a2e !important;
+    box-shadow: 0 8px 22px rgb(82 55 31 / 0.2) !important;
+  }
+}
+
+/* ---------------------------------------------------------
+   TABLET / MOBILE
+--------------------------------------------------------- */
+@media (max-width: 1100px) {
+  .app-shell .property-detail-page--reference-v2 {
+    --property-detail-green: #956535 !important;
+    --property-detail-green-hover: #774c26 !important;
+    --property-detail-green-dark: #774c26 !important;
+    --property-detail-green-deep: #56351c !important;
+    --property-detail-green-soft: #faf5ee !important;
+    --property-detail-green-border: #eadbc7 !important;
+    --property-detail-background: #fff !important;
+    background: #fff !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-reference-rail,
+  .app-shell .property-detail-page--reference-v2 .property-detail-header-actions {
+    display: none !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-mobile-utility {
+    display: block !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 :is(
+    .property-detail-price-box,
+    .property-contact-card,
+    .property-sidebar-card,
+    .property-detail-main > section
+  ) {
+    border-color: #e9e4dd !important;
+    background: #fff !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 :is(
+    .property-detail-location svg,
+    .property-detail-meta svg,
+    .property-section-heading > span,
+    .property-facts-grid article > span
+  ) {
+    color: #956535 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-price-box {
+    background: linear-gradient(145deg, #fffaf3, #f7efe4) !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-price-box > strong,
+  .app-shell .property-detail-page--reference-v2 .property-contact-price strong {
+    color: #774c26 !important;
+  }
+}
