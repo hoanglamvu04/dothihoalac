@@ -95,8 +95,8 @@ img[src*='logo-mark'] {
 
 .site-footer__logo {
   display: block !important;
-  width: min(100%, 340px) !important;
-  height: 72px !important;
+  width: min(100%, 285px) !important;
+  height: 58px !important;
   margin: 0 !important;
   background-color: transparent !important;
   background-image: var(--dthl-public-footer-logo) !important;
@@ -129,8 +129,8 @@ img[src*='logo-mark'] {
 
 @media (max-width: 1320px) {
   .site-footer__logo {
-    width: min(100%, 310px) !important;
-    height: 66px !important;
+    width: min(100%, 270px) !important;
+    height: 54px !important;
   }
 }
 
@@ -145,8 +145,8 @@ img[src*='logo-mark'] {
 
 @media (max-width: 720px) {
   .site-footer__logo {
-    width: min(100%, 286px) !important;
-    height: 61px !important;
+    width: min(100%, 240px) !important;
+    height: 50px !important;
   }
 }
 
@@ -159,8 +159,8 @@ img[src*='logo-mark'] {
   }
 
   .site-footer__logo {
-    width: min(100%, 250px) !important;
-    height: 54px !important;
+    width: min(100%, 220px) !important;
+    height: 46px !important;
   }
 }
 
