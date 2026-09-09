@@ -30,6 +30,7 @@ import './styles/theme-modes.css';
 import './pages/public/HomeReferenceLayout.css';
 import './styles/typography.css';
 import './pages/public/HomeReferenceLayout.fix.css';
+import './styles/home-community-card-clamp.css';
 import './pages/public/PropertiesPage.system.css';
 import './pages/public/PropertyMarketplace.reference.css';
 import './pages/public/PropertyMarketplace.sidebar-full.css';
