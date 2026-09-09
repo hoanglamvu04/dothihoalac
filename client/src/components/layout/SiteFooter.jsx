@@ -80,7 +80,7 @@ export default function SiteFooter() {
 
           <nav className="site-footer__column" aria-label="Chuyên mục footer">
             <h3>Chuyên mục</h3>
-            <div className="site-footer__links">
+            <div className="site-footer__links site-footer__links--categories">
               {categoryLinks.map((item) => (
                 <Link key={`${item.to}-${item.label}`} to={item.to}>
                   {item.label}
