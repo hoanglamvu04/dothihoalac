@@ -1,0 +1,85 @@
+/* Homepage community-card overflow regression fix.
+ * Keep the author row, excerpt, media and footer in separate fixed tracks so
+ * larger public typography cannot push the excerpt underneath the image.
+ */
+
+.home-reference-v2 .home-community-story {
+  min-height: 326px;
+  grid-template-rows: 46px 64px 176px 40px;
+}
+
+.home-reference-v2 .home-community-story__head {
+  min-width: 0;
+  min-height: 46px;
+  overflow: hidden;
+}
+
+.home-reference-v2 .home-community-story > p {
+  display: block;
+  height: 64px;
+  min-height: 64px;
+  margin: 0;
+  padding: 5px 10px 9px;
+  overflow: hidden;
+}
+
+.home-reference-v2 .home-community-story > p > a {
+  display: -webkit-box;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.home-reference-v2 .home-community-story__media,
+.home-reference-v2 .home-community-story__media .content-image,
+.home-reference-v2 .home-community-story__placeholder {
+  height: 176px;
+  min-height: 176px;
+}
+
+.home-reference-v2 .home-community-story__stats {
+  min-height: 40px;
+}
+
+@media (max-width: 760px) {
+  .home-reference-v2 .home-community-story {
+    min-height: 348px;
+    grid-template-rows: 48px 64px 194px 42px;
+  }
+
+  .home-reference-v2 .home-community-story__head {
+    min-height: 48px;
+  }
+
+  .home-reference-v2 .home-community-story > p {
+    height: 64px;
+    min-height: 64px;
+    padding: 5px 9px 8px;
+  }
+
+  .home-reference-v2 .home-community-story__media,
+  .home-reference-v2 .home-community-story__media .content-image,
+  .home-reference-v2 .home-community-story__placeholder {
+    height: 194px;
+    min-height: 194px;
+  }
+}
+
+@media (max-width: 390px) {
+  .home-reference-v2 .home-community-story {
+    min-height: 342px;
+    grid-template-rows: 48px 64px 188px 42px;
+  }
+
+  .home-reference-v2 .home-community-story__media,
+  .home-reference-v2 .home-community-story__media .content-image,
+  .home-reference-v2 .home-community-story__placeholder {
+    height: 188px;
+    min-height: 188px;
+  }
+}
