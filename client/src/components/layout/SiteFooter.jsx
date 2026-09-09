@@ -2,11 +2,7 @@ import { Link } from 'react-router-dom';
 
 import {
   ArrowUp,
-  Building2,
   Facebook,
-  Mail,
-  MapPin,
-  Phone,
   UsersRound,
   Youtube,
 } from 'lucide-react';
@@ -56,61 +52,9 @@ export default function SiteFooter() {
               sống, làm việc và đầu tư tại Hòa Lạc.
             </p>
 
-            <div className="site-footer__operator">
-              <span className="site-footer__operator-icon" aria-hidden="true">
-                <Building2 size={16} />
-              </span>
-              <p>
-                <small>Đơn vị vận hành</small>
-                <strong>Công ty Cổ phần XSpace Việt Nam</strong>
-              </p>
-            </div>
-          </section>
-
-          <nav className="site-footer__column" aria-label="Điều hướng footer">
-            <h3>Điều hướng</h3>
-            <div className="site-footer__links site-footer__links--primary">
-              {navigationLinks.map((item) => (
-                <Link key={item.to} to={item.to}>
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          </nav>
-
-          <nav className="site-footer__column" aria-label="Chuyên mục footer">
-            <h3>Chuyên mục</h3>
-            <div className="site-footer__links site-footer__links--categories">
-              {categoryLinks.map((item) => (
-                <Link key={`${item.to}-${item.label}`} to={item.to}>
-                  {item.label}
-                </Link>
-              ))}
-            </div>
-          </nav>
-
-          <section className="site-footer__column site-footer__contact-column">
-            <h3>Liên hệ</h3>
-
-            <div className="site-footer__contact">
-              <div className="site-footer__contact-row">
-                <MapPin size={17} aria-hidden="true" />
-                <span>Hòa Lạc, Hà Nội</span>
-              </div>
-
-              <a className="site-footer__contact-row" href="tel:0966709790">
-                <Phone size={17} aria-hidden="true" />
-                <span>0966 709 790</span>
-              </a>
-
-              <a
-                className="site-footer__contact-row"
-                href="mailto:dothihoalac@xspace.vn"
-              >
-                <Mail size={17} aria-hidden="true" />
-                <span>dothihoalac@xspace.vn</span>
-              </a>
-            </div>
+            <p className="site-footer__operator">
+              Vận hành bởi <strong>Công ty Cổ phần XSpace Việt Nam</strong>
+            </p>
 
             <div className="site-footer__social" aria-label="Kênh cộng đồng">
               <a
@@ -120,7 +64,7 @@ export default function SiteFooter() {
                 aria-label="Facebook Đô Thị Hòa Lạc"
                 title="Facebook"
               >
-                <Facebook size={17} />
+                <Facebook size={18} />
               </a>
 
               <a
@@ -130,7 +74,7 @@ export default function SiteFooter() {
                 aria-label="YouTube Đô Thị Hòa Lạc"
                 title="YouTube"
               >
-                <Youtube size={17} />
+                <Youtube size={18} />
               </a>
 
               <Link
@@ -138,24 +82,70 @@ export default function SiteFooter() {
                 aria-label="Cộng đồng Đô Thị Hòa Lạc"
                 title="Cộng đồng"
               >
-                <UsersRound size={17} />
+                <UsersRound size={18} />
               </Link>
             </div>
           </section>
+
+          <section className="site-footer__column site-footer__contact-column">
+            <h3>Thông tin liên hệ</h3>
+            <span className="site-footer__heading-rule" aria-hidden="true" />
+
+            <div className="site-footer__contact-list">
+              <p>
+                <strong>Khu vực:</strong>
+                <span>Hòa Lạc, Hà Nội</span>
+              </p>
+
+              <p>
+                <strong>Hotline:</strong>
+                <a href="tel:0966709790">0966 709 790</a>
+              </p>
+
+              <p>
+                <strong>Email:</strong>
+                <a href="mailto:dothihoalac@xspace.vn">dothihoalac@xspace.vn</a>
+              </p>
+
+              <div className="site-footer__category-line">
+                <strong>Chuyên mục:</strong>
+                <span>
+                  {categoryLinks.map((item) => (
+                    <Link key={`${item.to}-${item.label}`} to={item.to}>
+                      {item.label}
+                    </Link>
+                  ))}
+                </span>
+              </div>
+            </div>
+          </section>
+
+          <nav className="site-footer__column site-footer__navigation" aria-label="Điều hướng footer">
+            <h3>Điều hướng</h3>
+            <span className="site-footer__heading-rule" aria-hidden="true" />
+
+            <div className="site-footer__links site-footer__links--primary">
+              {navigationLinks.map((item) => (
+                <Link key={item.to} to={item.to}>
+                  {item.label}
+                </Link>
+              ))}
+            </div>
+          </nav>
         </div>
       </div>
 
       <div className="site-footer__bottom">
         <div className="container site-footer__bottom-inner">
-          <p>
-            © {currentYear} Đô Thị Hòa Lạc · Công ty Cổ phần XSpace Việt Nam
-          </p>
-
           <nav className="site-footer__bottom-links" aria-label="Chính sách footer">
             <Link to="/dieu-khoan">Điều khoản</Link>
             <Link to="/chinh-sach-quyen-rieng">Quyền riêng tư</Link>
             <Link to="/quy-dinh-dang-bai">Quy định đăng bài</Link>
           </nav>
+
+          <p>
+            © {currentYear} Đô Thị Hòa Lạc · Công ty Cổ phần XSpace Việt Nam
+          </p>
 
           <button
             type="button"
