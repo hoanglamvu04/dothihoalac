@@ -3,6 +3,44 @@
    whenever the site header was collapsed. Keep the rail close to the viewport
    top while preserving normal document flow on tablet/mobile. */
 
+/* Flatten the marketplace canvas. Some older property layers still add very
+   soft outer shadows; against the white listing background those shadows read
+   as long grey seams around the results and beside the right rail. Keep borders
+   on the actual cards, but remove shadows from the page/shell/card surfaces so
+   each column sits cleanly on the same white canvas. */
+.app-shell .properties-page .properties-page__container,
+.app-shell .properties-page .properties-market-shell,
+.app-shell .properties-page .properties-results,
+.app-shell .properties-page .properties-results-layout,
+.app-shell .properties-page .properties-results__body,
+.app-shell .properties-page .properties-sidebar {
+  box-shadow: none !important;
+}
+
+.app-shell .properties-page .properties-market-shell,
+.app-shell .properties-page .properties-results,
+.app-shell .properties-page .properties-results-layout,
+.app-shell .properties-page .properties-results__body,
+.app-shell .properties-page .properties-sidebar {
+  border: 0 !important;
+  background: transparent !important;
+}
+
+.app-shell .properties-page .properties-results__header,
+.app-shell .properties-page .properties-toolbar {
+  box-shadow: none !important;
+}
+
+.app-shell .properties-page .properties-results__body .property-card,
+.app-shell .properties-page .properties-sidebar .properties-sidebar-card {
+  box-shadow: none !important;
+}
+
+.app-shell .properties-page .properties-results__body .property-card:hover,
+.app-shell .properties-page .properties-sidebar .properties-sidebar-card:hover {
+  box-shadow: none !important;
+}
+
 @media (min-width: 1101px) {
   .app-shell .properties-page .properties-results-layout {
     align-items: start !important;
