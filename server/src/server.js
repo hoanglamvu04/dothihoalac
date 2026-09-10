@@ -7,6 +7,7 @@ import { logger } from './config/logger.js';
 import { connectDatabase, disconnectDatabase } from './config/database.js';
 import { ensureStorageDirectories } from './config/storage.js';
 import { startJobs, stopJobs } from './jobs/index.js';
+import { neutralizeUnsafeProductionDemoAccounts } from './seeds/seedSafety.js';
 
 let server = null;
 let activePort = null;
@@ -110,6 +111,11 @@ async function startHttpServer(startPort) {
 async function bootstrap() {
   await ensureStorageDirectories();
   await connectDatabase();
+
+  // Production may have inherited demo accounts from an earlier seed run.
+  // Suspend only known seed accounts that still use a seed password and revoke
+  // their active sessions before accepting traffic.
+  await neutralizeUnsafeProductionDemoAccounts();
 
   const result = await startHttpServer(env.PORT);
   server = result.server;
