@@ -112,8 +112,8 @@
 }
 
 .app-shell .community-social-page .community-feed-card__text {
-  font-size: 17.5px !important;
-  line-height: 1.6 !important;
+  font-size: 18.5px !important;
+  line-height: 1.62 !important;
   font-weight: 430 !important;
 }
 
@@ -288,6 +288,38 @@
   line-height: 1.42 !important;
 }
 
+/* Windows display scaling can keep a 1920px screen below the previous 2000px
+   CSS breakpoint. Around 90% browser zoom the effective viewport commonly
+   crosses ~1600px instead, so compensate the FEED text here without inflating
+   the surrounding dashboard. */
+@media (min-width: 1600px) {
+  .app-shell .community-social-page .community-feed-card__text {
+    font-size: 20.5px !important;
+    line-height: 1.64 !important;
+  }
+
+  .app-shell .community-social-page .community-feed-card__author > a {
+    font-size: 17.5px !important;
+  }
+
+  .app-shell .community-social-page .community-feed-card__author > div {
+    font-size: 14.5px !important;
+  }
+
+  .app-shell .community-social-page .community-feed-card__type {
+    font-size: 13.5px !important;
+  }
+
+  .app-shell .community-social-page .community-feed-card__text button,
+  .app-shell .community-social-page .community-feed-action {
+    font-size: 15px !important;
+  }
+
+  .app-shell .community-social-page .community-feed-action__count {
+    font-size: 14.5px !important;
+  }
+}
+
 /* Zoom-out compensation. Browser zoom-out increases the CSS viewport width,
    while each CSS pixel becomes physically smaller. Around 90% zoom we need
    roughly +11% type to preserve the perceived 100% reading size. */
@@ -353,8 +385,8 @@
   }
 
   .app-shell .community-social-page .community-feed-card__text {
-    font-size: 19.5px !important;
-    line-height: 1.62 !important;
+    font-size: 21px !important;
+    line-height: 1.64 !important;
   }
 
   .app-shell .community-social-page .community-feed-card__text button {
@@ -393,7 +425,8 @@
   }
 
   .app-shell .community-social-page .community-feed-card__text {
-    font-size: 21.5px !important;
+    font-size: 22px !important;
+    line-height: 1.64 !important;
   }
 
   .app-shell .community-social-page .community-reference-feed-tabs nav :is(button, a),
