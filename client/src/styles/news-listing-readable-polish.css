@@ -158,136 +158,137 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .news-hub .n
 
 /* =========================================================
    RIGHT RAIL HIERARCHY
-   Section titles must always read above the items they contain. The former
-   scale let some card items look as large/heavy as their section heading.
+   Section titles stay clearly above their child items, while the whole rail
+   now uses a larger reading scale so it remains comfortable on desktop,
+   laptop and compact viewports.
 ========================================================= */
 
 .app-shell .news-hub .news-rail-card__head span {
-  font-size: 11.5px !important;
+  font-size: 12.5px !important;
   line-height: 1.4 !important;
   font-weight: 680 !important;
   letter-spacing: 0.055em !important;
 }
 
 .app-shell .news-hub .news-rail-card__head h2 {
-  font-size: 19px !important;
+  font-size: 21px !important;
   line-height: 1.28 !important;
   font-weight: 680 !important;
   letter-spacing: -0.015em !important;
 }
 
 .app-shell .news-hub .news-rail-card__head > a {
-  font-size: 12.5px !important;
+  font-size: 13.5px !important;
   font-weight: 620 !important;
 }
 
 .app-shell .news-hub .news-rail-article__copy strong {
-  font-size: 14.25px !important;
+  font-size: 15.5px !important;
   line-height: 1.42 !important;
   font-weight: 600 !important;
 }
 
 .app-shell .news-hub .news-rail-article__copy small,
 .app-shell .news-hub .news-rail-empty {
-  font-size: 12.5px !important;
+  font-size: 13.25px !important;
   line-height: 1.45 !important;
 }
 
 .app-shell .news-hub .news-topic-chips a {
-  font-size: 12.5px !important;
-  font-weight: 600 !important;
-}
-
-.app-shell .news-hub .news-area-links a {
   font-size: 13.5px !important;
   font-weight: 600 !important;
 }
 
+.app-shell .news-hub .news-area-links a {
+  font-size: 14.5px !important;
+  font-weight: 600 !important;
+}
+
 .app-shell .news-hub .news-ecosystem-links small {
-  font-size: 11.5px !important;
+  font-size: 12.25px !important;
   font-weight: 680 !important;
 }
 
 .app-shell .news-hub .news-ecosystem-links strong {
-  font-size: 14.25px !important;
+  font-size: 15.25px !important;
   line-height: 1.42 !important;
   font-weight: 600 !important;
 }
 
 .app-shell .news-hub .news-ecosystem-links em {
-  font-size: 12px !important;
+  font-size: 12.75px !important;
 }
 
 .app-shell .news-hub .news-tip-cta small {
-  font-size: 11.5px !important;
+  font-size: 12.25px !important;
   font-weight: 680 !important;
 }
 
 .app-shell .news-hub .news-tip-cta strong {
-  font-size: 16px !important;
+  font-size: 17px !important;
   line-height: 1.42 !important;
   font-weight: 650 !important;
 }
 
 .app-shell .news-hub .news-tip-cta p {
-  font-size: 13.5px !important;
+  font-size: 14.25px !important;
   line-height: 1.58 !important;
 }
 
 .app-shell .news-hub .news-tip-cta > a {
-  font-size: 13.5px !important;
+  font-size: 14px !important;
   font-weight: 650 !important;
 }
 
 /* Project/context rail */
 .app-shell .news-hub .news-project-item__top {
-  font-size: 11.5px !important;
+  font-size: 12.5px !important;
   font-weight: 650 !important;
 }
 
 .app-shell .news-hub .news-project-item > strong {
-  font-size: 14.25px !important;
+  font-size: 15.25px !important;
   line-height: 1.42 !important;
   font-weight: 600 !important;
 }
 
 .app-shell .news-hub .news-project-item > small,
 .app-shell .news-hub .news-project-item small span {
-  font-size: 12px !important;
+  font-size: 13px !important;
   line-height: 1.4 !important;
 }
 
 /* Weather + discussions */
 .app-shell .news-hub .news-weather-current > div strong {
-  font-size: 28px !important;
+  font-size: 29px !important;
   font-weight: 680 !important;
 }
 
 .app-shell .news-hub .news-weather-current > div span {
-  font-size: 13px !important;
+  font-size: 13.5px !important;
 }
 
 .app-shell .news-hub .news-weather-current :is(dt, dd) {
-  font-size: 12px !important;
+  font-size: 12.75px !important;
 }
 
 .app-shell .news-hub .news-weather-days span {
-  font-size: 11px !important;
+  font-size: 12px !important;
 }
 
 .app-shell .news-hub .news-weather-days strong {
-  font-size: 12px !important;
+  font-size: 13px !important;
   font-weight: 620 !important;
 }
 
 .app-shell .news-hub .news-discussion-list a > span {
-  font-size: 13.5px !important;
+  font-size: 14.5px !important;
   line-height: 1.42 !important;
   font-weight: 580 !important;
 }
 
 .app-shell .news-hub .news-discussion-list b {
-  font-size: 12px !important;
+  font-size: 12.75px !important;
 }
 
 /* Pagination: neutral ink + restrained gold, no legacy green. */
@@ -341,12 +342,17 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .news-hub .n
   }
 
   .app-shell .news-hub .news-rail-card__head h2 {
-    font-size: 18.5px !important;
+    font-size: 20.5px !important;
   }
 
   .app-shell .news-hub .news-rail-article__copy strong,
   .app-shell .news-hub .news-ecosystem-links strong,
   .app-shell .news-hub .news-project-item > strong {
+    font-size: 15px !important;
+  }
+
+  .app-shell .news-hub .news-topic-chips a,
+  .app-shell .news-hub .news-area-links a {
     font-size: 14px !important;
   }
 }
@@ -438,11 +444,11 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .news-hub .n
   }
 
   .app-shell .news-hub .news-rail-card__head span {
-    font-size: 11.5px !important;
+    font-size: 12px !important;
   }
 
   .app-shell .news-hub .news-rail-card__head h2 {
-    font-size: 18px !important;
+    font-size: 19.5px !important;
     line-height: 1.3 !important;
   }
 
@@ -450,13 +456,22 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .news-hub .n
   .app-shell .news-hub .news-discussion-list a > span,
   .app-shell .news-hub .news-ecosystem-links strong,
   .app-shell .news-hub .news-project-item > strong {
-    font-size: 14.5px !important;
+    font-size: 15.25px !important;
     font-weight: 600 !important;
   }
 
   .app-shell .news-hub .news-topic-chips a,
   .app-shell .news-hub .news-area-links a,
   .app-shell .news-hub .news-tip-cta > a {
-    font-size: 13.5px !important;
+    font-size: 14.5px !important;
+  }
+
+  .app-shell .news-hub :is(
+    .news-rail-article__copy small,
+    .news-project-item > small,
+    .news-project-item small span,
+    .news-ecosystem-links em
+  ) {
+    font-size: 13px !important;
   }
 }
