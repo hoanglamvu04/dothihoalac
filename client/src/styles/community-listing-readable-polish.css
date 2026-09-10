@@ -177,11 +177,42 @@
   .community-social-pagination__numbers button
 ) {
   min-height: 38px !important;
+  border-color: #e1ded6 !important;
+  color: #343834 !important;
+  background: #fff !important;
+  box-shadow: none !important;
   font-size: 13px !important;
   line-height: 1.35 !important;
 }
 
+.app-shell .community-social-page .community-social-pagination__direction:hover:not(:disabled),
+.app-shell .community-social-page .community-social-pagination__numbers button:hover:not(.is-active) {
+  border-color: #cdbb96 !important;
+  color: #8f7040 !important;
+  background: #faf7f0 !important;
+}
+
+.app-shell .community-social-page .community-social-pagination__numbers button.is-active {
+  border-color: #242724 !important;
+  color: #fff !important;
+  background: #242724 !important;
+  box-shadow: 0 6px 15px rgb(36 39 36 / 0.14) !important;
+}
+
+.app-shell .community-social-page .community-social-pagination__direction:disabled {
+  border-color: #e7e5df !important;
+  color: #a0a49f !important;
+  background: #f8f8f6 !important;
+}
+
+.app-shell .community-social-page .community-social-pagination__mobile-status {
+  border-color: #e1ded6 !important;
+  color: #555b55 !important;
+  background: #fff !important;
+}
+
 .app-shell .community-social-page .community-social-pagination__meta {
+  color: #7d827d !important;
   font-size: 12.5px !important;
   line-height: 1.4 !important;
 }
