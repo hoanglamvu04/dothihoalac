@@ -4,6 +4,18 @@ const SITE_ORIGIN = 'https://dothihoalac.vn';
 const SITE_NAME = 'Đô Thị Hòa Lạc';
 const DEFAULT_DESCRIPTION =
   'Thông tin, cộng đồng, bất động sản và việc làm tại khu vực Hòa Lạc.';
+const PRIVATE_PATH_PREFIXES = [
+  '/tai-khoan',
+  '/admin',
+  '/studio',
+  '/dang-bai',
+  '/dang-nhap',
+  '/dang-ky',
+  '/quen-mat-khau',
+  '/dat-lai-mat-khau',
+  '/xac-thuc-email',
+  '/xac-thuc-so-dien-thoai',
+];
 
 function absoluteUrl(value = '') {
   const input = String(value || '').trim();
@@ -14,6 +26,32 @@ function absoluteUrl(value = '') {
   } catch {
     return '';
   }
+}
+
+function normalizeCanonicalPath(pathname = '/') {
+  let path = String(pathname || '/').replace(/\/{2,}/g, '/');
+  if (!path.startsWith('/')) path = `/${path}`;
+
+  if (path === '/nha-dat' || path.startsWith('/nha-dat/')) {
+    path = `/bat-dong-san${path.slice('/nha-dat'.length)}`;
+  }
+
+  const articleAlias = path.match(/^\/tin-tuc\/[^/]+\/([^/]+)\/?$/);
+  if (articleAlias?.[1]) {
+    path = `/tin-tuc/${articleAlias[1]}`;
+  }
+
+  if (path.length > 1) path = path.replace(/\/+$/, '');
+  return path || '/';
+}
+
+function shouldNoindexPath(pathname = '') {
+  const normalized = String(pathname || '');
+  if (normalized === '/tim-kiem' || normalized.startsWith('/tim-kiem/')) return true;
+
+  return PRIVATE_PATH_PREFIXES.some(
+    (prefix) => normalized === prefix || normalized.startsWith(`${prefix}/`),
+  );
 }
 
 function ensureMeta(selector, attributes) {
@@ -109,17 +147,19 @@ export function useDocumentTitle(
       ? SITE_NAME
       : `${plainTitle} | ${SITE_NAME}`;
     const resolvedDescription = String(description || DEFAULT_DESCRIPTION).trim();
-    const pathCanonical = typeof window !== 'undefined'
-      ? `${window.location.pathname || '/'}${window.location.pathname === '/' ? '' : ''}`
+    const currentPath = typeof window !== 'undefined'
+      ? window.location.pathname || '/'
       : '/';
-    const canonicalUrl = absoluteUrl(canonical || pathCanonical) || SITE_ORIGIN;
+    const canonicalPath = normalizeCanonicalPath(currentPath);
+    const canonicalUrl = absoluteUrl(canonical || canonicalPath) || SITE_ORIGIN;
     const imageUrl = absoluteUrl(image);
+    const effectiveNoindex = Boolean(noindex || shouldNoindexPath(currentPath));
 
     document.title = fullTitle;
     setNamedMeta('description', resolvedDescription);
     setNamedMeta(
       'robots',
-      noindex
+      effectiveNoindex
         ? 'noindex,nofollow'
         : 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1',
     );
