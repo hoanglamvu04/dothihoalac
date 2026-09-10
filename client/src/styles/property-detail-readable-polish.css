@@ -372,3 +372,312 @@
     line-height: 1.58 !important;
   }
 }
+
+/* =========================================================
+   10/09/2026 — PROPERTY DETAIL TYPE SCALE
+   The reference layer was still visually compact at 90–100% desktop zoom.
+   Enlarge reading text without changing the two-column composition.
+========================================================= */
+.app-shell .property-detail-page--reference-v2 {
+  font-size: 17px !important;
+}
+
+@media (min-width: 1101px) {
+  .app-shell .property-detail-page--reference-v2 .property-detail-breadcrumb {
+    font-size: 14.5px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 :is(
+    .property-detail-labels .badge,
+    .property-legal-badge
+  ) {
+    font-size: 13px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-header h1 {
+    font-size: clamp(38px, 2.8vw, 48px) !important;
+    font-weight: 720 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-location {
+    font-size: 16px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-meta span {
+    font-size: 14px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-header-actions .property-utility-actions > button {
+    font-size: 14.5px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-facts-grid small {
+    font-size: 14px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-facts-grid strong {
+    font-size: 17px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-section-heading h2,
+  .app-shell .property-detail-page--reference-v2 .comments-section > h2 {
+    font-size: 24px !important;
+    font-weight: 700 !important;
+    line-height: 1.3 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-section-heading p {
+    font-size: 16px !important;
+    line-height: 1.6 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-description-lead,
+  .app-shell .property-detail-page--reference-v2 .property-description-body,
+  .app-shell .property-detail-page--reference-v2 .property-description-body :is(p, li, blockquote, td, th) {
+    font-size: 18px !important;
+    line-height: 1.72 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-description-body h2 {
+    font-size: 26px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-description-body h3 {
+    font-size: 22px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-description-body h4 {
+    font-size: 19px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-spec-table dt {
+    font-size: 15px !important;
+    line-height: 1.5 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-spec-table dd {
+    font-size: 16.5px !important;
+    font-weight: 700 !important;
+    line-height: 1.5 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-feature-list span {
+    min-height: 42px !important;
+    font-size: 16px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-safety-notice strong {
+    font-size: 17px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-safety-notice p {
+    font-size: 15.5px !important;
+    line-height: 1.62 !important;
+  }
+
+  /* Right rail */
+  .app-shell .property-detail-page--reference-v2 .property-reference-price-card > span {
+    font-size: 14.5px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-price-card > strong {
+    font-size: 36px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-price-card > small {
+    font-size: 14px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-price-card__actions :is(a, button) {
+    min-height: 46px !important;
+    font-size: 15px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-contact-card__profile strong {
+    font-size: 17px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-contact-card__profile small {
+    font-size: 14px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-contact-card__row {
+    font-size: 15px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 :is(
+    .property-reference-loan-card,
+    .property-reference-map-card,
+    .property-reference-similar-card
+  ) header h2 {
+    font-size: 19px !important;
+    font-weight: 700 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 :is(
+    .property-reference-loan-card,
+    .property-reference-map-card,
+    .property-reference-similar-card
+  ) header > span,
+  .app-shell .property-detail-page--reference-v2 :is(
+    .property-reference-map-card,
+    .property-reference-similar-card
+  ) header > a {
+    font-size: 13.5px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-loan-card__grid label > span,
+  .app-shell .property-detail-page--reference-v2 .property-reference-loan-card__result > span {
+    font-size: 14.5px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-loan-card__grid :is(strong, input, select) {
+    font-size: 15.5px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-loan-card__result > strong {
+    font-size: 17px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-map-card__address {
+    font-size: 14.5px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-similar-item h3,
+  .app-shell .property-detail-page--reference-v2 .property-reference-similar-item strong {
+    font-size: 15.5px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-similar-item span {
+    font-size: 13.5px !important;
+  }
+
+  /* Comments inherit their own component stylesheet, so set a readable floor
+     inside property detail only. */
+  .app-shell .property-detail-page--reference-v2 .comments-section :is(
+    p,
+    textarea,
+    input,
+    button,
+    a,
+    label,
+    span
+  ) {
+    font-size: max(14px, 0.88rem);
+  }
+}
+
+/* Browser zoom-out / wide effective viewport compensation. */
+@media (min-width: 1600px) {
+  .app-shell .property-detail-page--reference-v2 {
+    font-size: 18px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-location,
+  .app-shell .property-detail-page--reference-v2 .property-section-heading p {
+    font-size: 17px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-meta span {
+    font-size: 15px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-facts-grid small {
+    font-size: 15px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-facts-grid strong {
+    font-size: 18px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-description-lead,
+  .app-shell .property-detail-page--reference-v2 .property-description-body,
+  .app-shell .property-detail-page--reference-v2 .property-description-body :is(p, li, blockquote, td, th) {
+    font-size: 19px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-spec-table dt {
+    font-size: 16px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-spec-table dd,
+  .app-shell .property-detail-page--reference-v2 .property-feature-list span {
+    font-size: 17px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-price-card > span,
+  .app-shell .property-detail-page--reference-v2 .property-reference-price-card > small,
+  .app-shell .property-detail-page--reference-v2 .property-reference-contact-card__profile small,
+  .app-shell .property-detail-page--reference-v2 .property-reference-loan-card__grid label > span,
+  .app-shell .property-detail-page--reference-v2 .property-reference-loan-card__result > span,
+  .app-shell .property-detail-page--reference-v2 .property-reference-map-card__address {
+    font-size: 15px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-reference-contact-card__profile strong,
+  .app-shell .property-detail-page--reference-v2 .property-reference-contact-card__row,
+  .app-shell .property-detail-page--reference-v2 .property-reference-loan-card__grid :is(strong, input, select) {
+    font-size: 16.5px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 :is(
+    .property-reference-loan-card,
+    .property-reference-map-card,
+    .property-reference-similar-card
+  ) header h2 {
+    font-size: 20px !important;
+  }
+}
+
+@media (max-width: 1100px) {
+  .app-shell .property-detail-page--reference-v2 {
+    font-size: 17px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-detail-location,
+  .app-shell .property-detail-page--reference-v2 .property-detail-meta span {
+    font-size: 16px !important;
+    line-height: 1.6 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-description-lead,
+  .app-shell .property-detail-page--reference-v2 .property-description-body,
+  .app-shell .property-detail-page--reference-v2 .property-description-body :is(p, li, blockquote, td, th) {
+    font-size: 17px !important;
+    line-height: 1.7 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-section-heading h2,
+  .app-shell .property-detail-page--reference-v2 .comments-section > h2 {
+    font-size: 22px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-section-heading p {
+    font-size: 15.5px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-facts-grid small {
+    font-size: 13.5px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-facts-grid strong {
+    font-size: 15.5px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-spec-table dt {
+    font-size: 14.5px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-spec-table dd,
+  .app-shell .property-detail-page--reference-v2 .property-feature-list span {
+    font-size: 15.5px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-safety-notice strong {
+    font-size: 16px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-safety-notice p {
+    font-size: 15px !important;
+  }
+}
