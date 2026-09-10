@@ -4,6 +4,7 @@ const SITE_ORIGIN = 'https://dothihoalac.vn';
 const SITE_NAME = 'Đô Thị Hòa Lạc';
 const DEFAULT_DESCRIPTION =
   'Thông tin, cộng đồng, bất động sản và việc làm tại khu vực Hòa Lạc.';
+const DEFAULT_SOCIAL_IMAGE = `${SITE_ORIGIN}/Logo2.png`;
 const PRIVATE_PATH_PREFIXES = [
   '/tai-khoan',
   '/admin',
@@ -52,6 +53,11 @@ function shouldNoindexPath(pathname = '') {
   return PRIVATE_PATH_PREFIXES.some(
     (prefix) => normalized === prefix || normalized.startsWith(`${prefix}/`),
   );
+}
+
+function inferOpenGraphType(pathname, requestedType) {
+  if (requestedType && requestedType !== 'website') return requestedType;
+  return /^\/tin-tuc\/[^/]+/.test(String(pathname || '')) ? 'article' : 'website';
 }
 
 function ensureMeta(selector, attributes) {
@@ -106,13 +112,17 @@ function compactJsonLd(value) {
   );
 }
 
-function defaultStructuredData({ title, description, canonicalUrl }) {
-  return {
+function defaultStructuredData({ title, description, canonicalUrl, currentPath }) {
+  const base = {
     '@context': 'https://schema.org',
-    '@type': 'WebPage',
+    '@type': /^\/tin-tuc\/[^/]+/.test(currentPath) ? 'Article' : 'WebPage',
     name: title,
+    headline: /^\/tin-tuc\/[^/]+/.test(currentPath) ? title : undefined,
     description,
     url: canonicalUrl,
+    mainEntityOfPage: /^\/tin-tuc\/[^/]+/.test(currentPath)
+      ? { '@type': 'WebPage', '@id': canonicalUrl }
+      : undefined,
     isPartOf: {
       '@type': 'WebSite',
       name: SITE_NAME,
@@ -124,10 +134,12 @@ function defaultStructuredData({ title, description, canonicalUrl }) {
       url: SITE_ORIGIN,
       logo: {
         '@type': 'ImageObject',
-        url: `${SITE_ORIGIN}/Logo2.png`,
+        url: DEFAULT_SOCIAL_IMAGE,
       },
     },
   };
+
+  return base;
 }
 
 export function useDocumentTitle(
@@ -152,8 +164,10 @@ export function useDocumentTitle(
       : '/';
     const canonicalPath = normalizeCanonicalPath(currentPath);
     const canonicalUrl = absoluteUrl(canonical || canonicalPath) || SITE_ORIGIN;
-    const imageUrl = absoluteUrl(image);
+    const customImageUrl = absoluteUrl(image);
+    const imageUrl = customImageUrl || DEFAULT_SOCIAL_IMAGE;
     const effectiveNoindex = Boolean(noindex || shouldNoindexPath(currentPath));
+    const openGraphType = inferOpenGraphType(currentPath, type);
 
     document.title = fullTitle;
     setNamedMeta('description', resolvedDescription);
@@ -168,22 +182,16 @@ export function useDocumentTitle(
 
     setPropertyMeta('og:locale', 'vi_VN');
     setPropertyMeta('og:site_name', SITE_NAME);
-    setPropertyMeta('og:type', type || 'website');
+    setPropertyMeta('og:type', openGraphType);
     setPropertyMeta('og:title', fullTitle);
     setPropertyMeta('og:description', resolvedDescription);
     setPropertyMeta('og:url', canonicalUrl);
+    setPropertyMeta('og:image', imageUrl);
 
-    setNamedMeta('twitter:card', imageUrl ? 'summary_large_image' : 'summary');
+    setNamedMeta('twitter:card', customImageUrl ? 'summary_large_image' : 'summary');
     setNamedMeta('twitter:title', fullTitle);
     setNamedMeta('twitter:description', resolvedDescription);
-
-    if (imageUrl) {
-      setPropertyMeta('og:image', imageUrl);
-      setNamedMeta('twitter:image', imageUrl);
-    } else {
-      document.head.querySelector('meta[property="og:image"]')?.remove();
-      document.head.querySelector('meta[name="twitter:image"]')?.remove();
-    }
+    setNamedMeta('twitter:image', imageUrl);
 
     const structuredData = compactJsonLd(
       jsonLd ||
@@ -191,6 +199,7 @@ export function useDocumentTitle(
           title: plainTitle,
           description: resolvedDescription,
           canonicalUrl,
+          currentPath,
         }),
     );
 
