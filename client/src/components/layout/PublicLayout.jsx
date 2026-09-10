@@ -26,9 +26,9 @@ function pageTopAdSlot(pathname) {
   return '';
 }
 
-function loadRouteStyles(pathname) {
+function loadRouteEnhancements(pathname) {
   if (pathname.startsWith('/tin-tuc')) {
-    const styles = [
+    const modules = [
       import('../../styles/newsroom-mobile-v2.css'),
       import('../../styles/articles-modern-v2.css'),
       import('../../styles/articles-newsroom-v3.css'),
@@ -36,27 +36,30 @@ function loadRouteStyles(pathname) {
       import('../../styles/news-project-tracker-rail.css'),
     ];
 
-    styles.push(
+    modules.push(
       pathname === '/tin-tuc'
         ? import('../../styles/news-listing-readable-polish.css')
         : import('../../pages/public/ArticleDetailReadablePolish.css'),
     );
 
-    return Promise.all(styles);
+    return Promise.all(modules);
   }
 
   if (pathname.startsWith('/cong-dong')) {
-    const styles = [
+    const modules = [
       import('../../styles/community-social-v2.css'),
       import('../../styles/community-social-v3.css'),
       import('../../styles/community-interaction-v4.css'),
     ];
 
     if (pathname === '/cong-dong') {
-      styles.push(import('../../styles/community-listing-readable-polish.css'));
+      modules.push(
+        import('../../styles/community-listing-readable-polish.css'),
+        import('../../features/communityRailDisclosure'),
+      );
     }
 
-    return Promise.all(styles);
+    return Promise.all(modules);
   }
 
   if (pathname === '/viec-lam') {
@@ -76,6 +79,10 @@ function loadRouteStyles(pathname) {
 
   if (pathname.startsWith('/bat-dong-san/') || pathname.startsWith('/nha-dat/')) {
     return import('../../styles/property-detail-readable-polish.css');
+  }
+
+  if (pathname.startsWith('/studio/bat-dong-san')) {
+    return import('../../features/propertySubmitReviewGuard');
   }
 
   return Promise.resolve();
@@ -161,7 +168,7 @@ export default function PublicLayout() {
   const topSlot = pageTopAdSlot(normalizedPath);
 
   useEffect(() => {
-    void loadRouteStyles(normalizedPath).catch(() => {});
+    void loadRouteEnhancements(normalizedPath).catch(() => {});
   }, [normalizedPath]);
 
   return (
