@@ -472,7 +472,10 @@ export default function HomePage() {
   );
   const [reloadKey, setReloadKey] = useState(0);
   const dataRef = useRef(data);
-  dataRef.current = data;
+
+  useEffect(() => {
+    dataRef.current = data;
+  }, [data]);
 
   useEffect(() => {
     let active = true;
