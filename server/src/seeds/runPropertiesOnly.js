@@ -15,8 +15,11 @@ import { seedAdmin } from './seedAdmin.js';
 import { seedUsers } from './seedUsers.js';
 import { seedMedia } from './seedMedia.js';
 import { seedProperties } from './seedProperties.js';
+import { assertDemoSeedAllowed } from './seedSafety.js';
 
 async function run() {
+  assertDemoSeedAllowed('the property demo seed');
+
   const dnsServers = configureDnsServers();
   logger.info({ dnsServers }, 'DNS configured for property seed runner');
 
