@@ -1,7 +1,6 @@
 import {
   useCallback,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -39,11 +38,23 @@ import './SearchPage.css';
 
 const PAGE_LIMIT = 12;
 
+const EMPTY_FACETS = {
+  all: 0,
+  article: 0,
+  property: 0,
+  job: 0,
+  community: 0,
+  user: 0,
+  area: 0,
+};
+
 const EMPTY_RESULT = {
   data: {
     contents: [],
     users: [],
     areas: [],
+    facets: EMPTY_FACETS,
+    sort: 'relevance',
   },
   meta: {},
 };
@@ -58,7 +69,10 @@ const SEARCH_TYPES = [
   { value: 'area', label: 'Khu vực', icon: MapPin },
 ];
 
-const CONTENT_TYPES = ['article', 'property', 'job', 'community'];
+const SORT_OPTIONS = [
+  { value: 'relevance', label: 'Liên quan' },
+  { value: 'newest', label: 'Mới nhất' },
+];
 
 const SUGGESTED_SEARCHES = [
   'Tin tức Hòa Lạc',
@@ -86,12 +100,18 @@ const KEYWORD_SEARCHES = [
 
 function normalizeResult(value) {
   const data = value?.data && typeof value.data === 'object' ? value.data : {};
+  const rawFacets = data.facets && typeof data.facets === 'object' ? data.facets : {};
 
   return {
     data: {
       contents: Array.isArray(data.contents) ? data.contents : [],
       users: Array.isArray(data.users) ? data.users : [],
       areas: Array.isArray(data.areas) ? data.areas : [],
+      facets: {
+        ...EMPTY_FACETS,
+        ...rawFacets,
+      },
+      sort: data.sort === 'newest' ? 'newest' : 'relevance',
     },
     meta: value?.meta && typeof value.meta === 'object' ? value.meta : {},
   };
@@ -233,6 +253,10 @@ export default function SearchPage() {
   const type = SEARCH_TYPES.some((item) => item.value === requestedType)
     ? requestedType
     : 'all';
+  const requestedSort = searchParams.get('sort') || 'relevance';
+  const sort = SORT_OPTIONS.some((item) => item.value === requestedSort)
+    ? requestedSort
+    : 'relevance';
   const page = Math.max(Number(searchParams.get('page')) || 1, 1);
 
   const [query, setQuery] = useState(q);
@@ -266,7 +290,7 @@ export default function SearchPage() {
     }
 
     searchApi
-      .run({ q, type, page, limit: PAGE_LIMIT })
+      .run({ q, type, sort, page, limit: PAGE_LIMIT })
       .then((response) => {
         if (active) setResult(normalizeResult(response));
       })
@@ -282,33 +306,39 @@ export default function SearchPage() {
     return () => {
       active = false;
     };
-  }, [page, q, reloadKey, type]);
+  }, [page, q, reloadKey, sort, type]);
 
   const contents = result.data.contents || [];
   const users = result.data.users || [];
   const areas = result.data.areas || [];
+  const facets = result.data.facets || EMPTY_FACETS;
   const visibleCount = contents.length + users.length + areas.length;
-  const total = getTotal(result.meta, visibleCount);
+  const pageTotal = getTotal(result.meta, visibleCount);
+  const displayTotal = Number(facets[type] ?? pageTotal) || 0;
   const totalPages = getTotalPages(result.meta);
   const selectedType =
     SEARCH_TYPES.find((item) => item.value === type) || SEARCH_TYPES[0];
+  const contentSortEnabled = type !== 'user' && type !== 'area';
 
-  const contentCounts = useMemo(() => {
-    const counts = {
-      article: 0,
-      property: 0,
-      job: 0,
-      community: 0,
-    };
+  const buildParams = useCallback(
+    ({ nextQuery = q, nextType = type, nextSort = sort, nextPage = 1 } = {}) => {
+      const params = {
+        q: nextQuery,
+        type: nextType,
+        page: String(nextPage),
+      };
 
-    contents.forEach((item) => {
-      if (Object.prototype.hasOwnProperty.call(counts, item?.contentType)) {
-        counts[item.contentType] += 1;
-      }
-    });
+      if (nextSort !== 'relevance') params.sort = nextSort;
+      return params;
+    },
+    [q, sort, type],
+  );
 
-    return counts;
-  }, [contents]);
+  const scrollToResults = useCallback(() => {
+    window.setTimeout(() => {
+      resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 20);
+  }, []);
 
   const submit = useCallback(
     (event) => {
@@ -320,9 +350,9 @@ export default function SearchPage() {
         return;
       }
 
-      setSearchParams({ q: normalizedQuery, type, page: '1' });
+      setSearchParams(buildParams({ nextQuery: normalizedQuery, nextPage: 1 }));
     },
-    [query, setSearchParams, type],
+    [buildParams, query, setSearchParams],
   );
 
   const searchTerm = useCallback(
@@ -331,33 +361,43 @@ export default function SearchPage() {
       if (!normalizedTerm) return;
 
       setQuery(normalizedTerm);
-      setSearchParams({ q: normalizedTerm, type: nextType, page: '1' });
+      setSearchParams(
+        buildParams({
+          nextQuery: normalizedTerm,
+          nextType,
+          nextPage: 1,
+        }),
+      );
     },
-    [setSearchParams],
+    [buildParams, setSearchParams],
   );
 
   const changeType = useCallback(
     (value) => {
       if (!q) return;
-      setSearchParams({ q, type: value, page: '1' });
-
-      window.setTimeout(() => {
-        resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 20);
+      setSearchParams(buildParams({ nextType: value, nextPage: 1 }));
+      scrollToResults();
     },
-    [q, setSearchParams],
+    [buildParams, q, scrollToResults, setSearchParams],
+  );
+
+  const changeSort = useCallback(
+    (event) => {
+      if (!q) return;
+      const nextSort = event.target.value === 'newest' ? 'newest' : 'relevance';
+      setSearchParams(buildParams({ nextSort, nextPage: 1 }));
+      scrollToResults();
+    },
+    [buildParams, q, scrollToResults, setSearchParams],
   );
 
   const changePage = useCallback(
     (value) => {
       const nextPage = Math.max(Number(value) || 1, 1);
-      setSearchParams({ q, type, page: String(nextPage) });
-
-      window.setTimeout(() => {
-        resultsRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }, 20);
+      setSearchParams(buildParams({ nextPage }));
+      scrollToResults();
     },
-    [q, setSearchParams, type],
+    [buildParams, scrollToResults, setSearchParams],
   );
 
   const clearSearch = useCallback(() => {
@@ -369,17 +409,10 @@ export default function SearchPage() {
   }, [setSearchParams]);
 
   const hasResults = visibleCount > 0;
-  const contentTypeSelected = CONTENT_TYPES.includes(type);
 
   const countForType = useCallback(
-    (value) => {
-      if (value === 'all') return total;
-      if (value === type && type !== 'all') return total;
-      if (value === 'user') return users.length;
-      if (value === 'area') return areas.length;
-      return contentCounts[value] || 0;
-    },
-    [areas.length, contentCounts, total, type, users.length],
+    (value) => Number(facets[value] || 0),
+    [facets],
   );
 
   return (
@@ -387,6 +420,7 @@ export default function SearchPage() {
       <Seo
         title={q ? `Tìm kiếm: ${q}` : 'Tìm kiếm'}
         description="Tìm tin tức, bất động sản, việc làm, cộng đồng, thành viên và khu vực trên Đô Thị Hòa Lạc."
+        noindex
       />
 
       <section className="search-hero">
@@ -470,6 +504,8 @@ export default function SearchPage() {
             <nav className="search-tabs" aria-label="Nhóm kết quả tìm kiếm">
               {SEARCH_TYPES.map((item) => {
                 const Icon = item.icon;
+                const count = countForType(item.value);
+
                 return (
                   <button
                     type="button"
@@ -479,6 +515,7 @@ export default function SearchPage() {
                   >
                     <Icon size={16} />
                     {item.label}
+                    {count > 0 ? <small>{count.toLocaleString('vi-VN')}</small> : null}
                   </button>
                 );
               })}
@@ -493,11 +530,21 @@ export default function SearchPage() {
                       : error
                         ? 'Không thể tải kết quả.'
                         : hasResults
-                          ? <><strong>{total.toLocaleString('vi-VN')}</strong> kết quả cho <b>“{q}”</b></>
+                          ? <><strong>{displayTotal.toLocaleString('vi-VN')}</strong> kết quả cho <b>“{q}”</b></>
                           : <>Không tìm thấy kết quả cho <b>“{q}”</b>.</>}
                   </p>
                   <div>
                     <span>{selectedType.label}</span>
+                    {contentSortEnabled ? (
+                      <label className="search-sort-control">
+                        <span>Sắp xếp</span>
+                        <select value={sort} onChange={changeSort} aria-label="Sắp xếp kết quả">
+                          {SORT_OPTIONS.map((item) => (
+                            <option key={item.value} value={item.value}>{item.label}</option>
+                          ))}
+                        </select>
+                      </label>
+                    ) : null}
                     <button type="button" onClick={clearSearch}>
                       <X size={14} /> Xóa tìm kiếm
                     </button>
@@ -529,7 +576,7 @@ export default function SearchPage() {
                           <div>
                             <UsersRound size={18} />
                             <h2>Thành viên</h2>
-                            <span>{users.length}</span>
+                            <span>{countForType('user').toLocaleString('vi-VN')}</span>
                           </div>
                         </header>
                         <div className="search-people-list">
@@ -546,7 +593,7 @@ export default function SearchPage() {
                           <div>
                             <MapPin size={18} />
                             <h2>Khu vực</h2>
-                            <span>{areas.length}</span>
+                            <span>{countForType('area').toLocaleString('vi-VN')}</span>
                           </div>
                         </header>
                         <div className="search-area-list">
@@ -576,18 +623,14 @@ export default function SearchPage() {
                   </div>
                 )}
 
-                {!loading &&
-                !error &&
-                hasResults &&
-                (type === 'all' || contentTypeSelected) &&
-                totalPages > 1 ? (
+                {!loading && !error && hasResults && totalPages > 1 ? (
                   <div className="search-pagination">
                     <Pagination
                       meta={{
                         ...result.meta,
                         page,
                         currentPage: page,
-                        total,
+                        total: pageTotal,
                         totalPages,
                         limit: PAGE_LIMIT,
                       }}
@@ -612,7 +655,7 @@ export default function SearchPage() {
                           onClick={() => changeType(item.value)}
                         >
                           <span><Icon size={16} /> {item.label}</span>
-                          {count > 0 ? <small>{count.toLocaleString('vi-VN')}</small> : null}
+                          <small>{count.toLocaleString('vi-VN')}</small>
                         </button>
                       );
                     })}
