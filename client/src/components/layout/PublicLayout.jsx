@@ -11,13 +11,6 @@ import './PublicInteractionFixes.css';
 const PrimaryNavigation = lazy(() => import('./PrimaryNavigation'));
 const CommunityAdRails = lazy(() => import('../community/CommunityAdRails'));
 
-const CORE_PUBLIC_ROUTE_IMPORTS = [
-  () => import('../../pages/public/ArticlesPage'),
-  () => import('../../pages/public/CommunityPage'),
-  () => import('../../pages/public/PropertiesPage'),
-  () => import('../../pages/public/JobsPage'),
-];
-
 function pageTopAdSlot(pathname) {
   if (pathname === '/tin-tuc') return 'news_top';
   if (pathname.startsWith('/tin-tuc/')) return 'article_top';
@@ -93,20 +86,6 @@ function showMobileBottomNavigation(pathname) {
   );
 }
 
-function shouldSkipBackgroundPrefetch() {
-  if (typeof navigator === 'undefined') return false;
-
-  const connection =
-    navigator.connection ||
-    navigator.mozConnection ||
-    navigator.webkitConnection;
-
-  if (!connection) return false;
-  if (connection.saveData) return true;
-
-  return ['slow-2g', '2g'].includes(connection.effectiveType);
-}
-
 function DeferredHeaderNavigation() {
   const [ready, setReady] = useState(false);
 
@@ -155,64 +134,6 @@ export default function PublicLayout() {
   useEffect(() => {
     void loadRouteStyles(normalizedPath).catch(() => {});
   }, [normalizedPath]);
-
-  useEffect(() => {
-    if (authRoute || shouldSkipBackgroundPrefetch()) return undefined;
-
-    let idleId = null;
-    let delayId = null;
-    let canceled = false;
-
-    const warmCoreTabs = () => {
-      if (canceled) return;
-
-      // Warm route chunks + page CSS so React.lazy/Suspense does not flash
-      // PageLoading when the user taps another primary public tab.
-      CORE_PUBLIC_ROUTE_IMPORTS.forEach((loadModule) => {
-        void loadModule().catch(() => {});
-      });
-      void loadRouteStyles('/tin-tuc').catch(() => {});
-      void loadRouteStyles('/cong-dong').catch(() => {});
-
-      // Keep the data-prefetch implementation itself outside the critical
-      // PublicLayout bundle. It is only downloaded once the browser is idle.
-      void Promise.all([
-        import('../../api/content.api'),
-        import('../../hooks/useListPage'),
-      ])
-        .then(([contentApi, listPage]) =>
-          Promise.allSettled([
-            listPage.prefetchListPage(contentApi.articleApi.list, { limit: 12 }),
-            listPage.prefetchListPage(contentApi.communityApi.list, {}),
-            listPage.prefetchListPage(contentApi.communityApi.list, {
-              sort: 'popular',
-              limit: 5,
-            }),
-            listPage.prefetchListPage(contentApi.propertyApi.list, {}),
-            listPage.prefetchListPage(contentApi.jobApi.list, {}),
-          ]),
-        )
-        .catch(() => {});
-    };
-
-    delayId = window.setTimeout(() => {
-      delayId = null;
-
-      if ('requestIdleCallback' in window) {
-        idleId = window.requestIdleCallback(warmCoreTabs, { timeout: 1200 });
-      } else {
-        warmCoreTabs();
-      }
-    }, 250);
-
-    return () => {
-      canceled = true;
-      if (delayId !== null) window.clearTimeout(delayId);
-      if (idleId !== null && 'cancelIdleCallback' in window) {
-        window.cancelIdleCallback(idleId);
-      }
-    };
-  }, [authRoute]);
 
   return (
     <div
