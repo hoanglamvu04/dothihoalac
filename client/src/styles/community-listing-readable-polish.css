@@ -1,7 +1,7 @@
 /* =========================================================
    COMMUNITY HUB — READABILITY POLISH
-   Typography-only pass for /cong-dong. Keeps the current social dashboard,
-   sticky rails, media sizes, filters and interaction behavior unchanged.
+   Typography and interaction polish for /cong-dong. Keeps the current social
+   dashboard, sticky rails, media sizes, filters and behavior unchanged.
 ========================================================= */
 
 .app-shell .community-social-page {
@@ -53,6 +53,22 @@
   min-height: 36px !important;
   font-size: 13px !important;
   line-height: 1.35 !important;
+}
+
+/* Legacy community layers still contain green hover/active colors. Keep this
+   route on the current ink + warm-gold visual system. */
+.app-shell .community-social-page .community-reference-feed-tabs nav button:hover:not(.is-active),
+.app-shell .community-social-page .community-reference-feed-tabs nav a:hover {
+  border-color: #cdbb96 !important;
+  color: #8f7040 !important;
+  background: #faf7f0 !important;
+}
+
+.app-shell .community-social-page .community-reference-feed-tabs nav button.is-active {
+  border-color: #b59965 !important;
+  color: #fff !important;
+  background: #b59965 !important;
+  box-shadow: none !important;
 }
 
 .app-shell .community-social-page .community-reference-filter-trigger {
@@ -115,6 +131,14 @@
 .app-shell .community-social-page .community-popular-item__copy strong {
   font-size: 13.5px !important;
   line-height: 1.4 !important;
+}
+
+.app-shell .community-social-page .community-popular-item:hover {
+  background: #faf9f5 !important;
+}
+
+.app-shell .community-social-page .community-popular-item:hover .community-popular-item__copy strong {
+  color: #8f7040 !important;
 }
 
 .app-shell .community-social-page .community-popular-item__copy small {
