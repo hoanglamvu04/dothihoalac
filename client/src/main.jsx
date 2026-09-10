@@ -66,6 +66,7 @@ import './styles/account-security-clean.css';
 import './styles/account-sessions-clean.css';
 import './styles/account-notifications-clean.css';
 import './styles/account-reports-clean.css';
+import './styles/p1-legacy-page-normalization.css';
 import './styles/search-page-sidebar-polish.css';
 import './components/layout/SiteFooter.css';
 import './components/layout/SiteFooter.mobile.css';
