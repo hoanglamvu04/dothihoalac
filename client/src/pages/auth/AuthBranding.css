@@ -281,6 +281,17 @@ html[data-dthl-theme='light'] :is(.dthl-register-page, .dthl-forgot-page, .dthl-
   background: var(--dthl-auth-earth-soft) !important;
 }
 
+/* Keep paired registration fields aligned from the top. The username field
+   carries a helper line, so stretching both grid children makes the display
+   name input drift downward inside the taller row. */
+.dthl-register-page .dthl-register-grid {
+  align-items: start !important;
+}
+
+.dthl-register-page .dthl-register-field {
+  align-content: start !important;
+}
+
 /* Compact verification pages still use the legacy generic auth shell. Give
    them the same neutral + green + earth-gold hierarchy as the modern flows. */
 html[data-dthl-theme='light'] .auth-page {
