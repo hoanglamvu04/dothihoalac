@@ -62,8 +62,6 @@ import './styles/service-pages-clean.css';
 import './styles/site-palette-picker.css';
 import './components/layout/SiteFooter.css';
 import './components/layout/SiteFooter.mobile.css';
-import './features/communityRailDisclosure';
-import './features/propertySubmitReviewGuard';
 import './features/propertyMarketplacePaging';
 import './features/sitePalettePicker';
 
