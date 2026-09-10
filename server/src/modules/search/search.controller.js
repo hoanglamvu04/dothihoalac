@@ -10,7 +10,13 @@ export async function run(req, res) {
   }
 
   return sendSuccess(res, {
-    data: { contents: r.items, users: r.users, areas: r.areas },
+    data: {
+      contents: r.items,
+      users: r.users,
+      areas: r.areas,
+      facets: r.facets,
+      sort: r.sort,
+    },
     meta: r.meta,
   });
 }
