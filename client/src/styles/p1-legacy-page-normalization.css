@@ -1,0 +1,772 @@
+/* P1 legacy-page normalization.
+   One final scoped layer for the remaining legacy surfaces so they share the
+   current white / ink / earth-gold visual system without adding one override
+   file per route. */
+
+:root {
+  --p1-ink: #202320;
+  --p1-text: #505550;
+  --p1-muted: #7d827d;
+  --p1-border: #e5e4df;
+  --p1-border-warm: #e6dfd3;
+  --p1-surface: #ffffff;
+  --p1-surface-soft: #fafaf8;
+  --p1-gold: #b59965;
+  --p1-gold-dark: #806642;
+  --p1-gold-soft: #f8f6f1;
+  --p1-shadow: 0 8px 26px rgb(48 43 34 / 0.055);
+}
+
+/* =========================================================
+   ACCOUNT OVERVIEW
+========================================================= */
+
+html[data-dthl-theme='light'] .account-overview-v2 {
+  --aov-green: var(--p1-gold);
+  --aov-green-dark: var(--p1-gold-dark);
+  --aov-green-soft: var(--p1-gold-soft);
+  --aov-ink: var(--p1-ink);
+  --aov-text: var(--p1-text);
+  --aov-muted: var(--p1-muted);
+  --aov-border: var(--p1-border);
+  width: 100%;
+  gap: 16px;
+  color: var(--p1-ink);
+  font-size: 15px;
+}
+
+html[data-dthl-theme='light'] .account-center-page.is-overview {
+  background: #fff !important;
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__topline {
+  min-height: 70px;
+  align-items: center;
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__topline span {
+  margin-bottom: 6px;
+  color: var(--p1-gold-dark);
+  font-size: 12.5px;
+  letter-spacing: 0.08em;
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__topline h2 {
+  font-size: clamp(24px, 2.1vw, 30px);
+  line-height: 1.16;
+  letter-spacing: -0.035em;
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__edit {
+  min-height: 42px;
+  padding: 0 14px;
+  border-color: var(--p1-border);
+  color: var(--p1-ink);
+  background: #fff;
+  font-size: 13.5px;
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__edit:hover {
+  border-color: var(--p1-gold);
+  color: var(--p1-gold-dark);
+  background: var(--p1-gold-soft);
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__tabs {
+  border-color: var(--p1-border);
+  background: #fff;
+  box-shadow: var(--p1-shadow);
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__tabs a {
+  min-height: 46px;
+  color: var(--p1-text);
+  background: #fff;
+  font-size: 13px;
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__tabs a + a {
+  border-left-color: var(--p1-border);
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__tabs a:hover {
+  color: var(--p1-gold-dark);
+  background: var(--p1-gold-soft);
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__section,
+html[data-dthl-theme='light'] .account-overview-v2__quick {
+  border-color: var(--p1-border);
+  background: #fff;
+  box-shadow: var(--p1-shadow);
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__section {
+  padding: 22px;
+  border-radius: 14px;
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__section-heading {
+  margin-bottom: 16px;
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__section-heading h3,
+html[data-dthl-theme='light'] .account-overview-v2__quick-heading h3 {
+  margin: 0;
+  color: var(--p1-ink);
+  font-size: 19px;
+  line-height: 1.25;
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__section-heading p,
+html[data-dthl-theme='light'] .account-overview-v2__quick-heading p {
+  margin-top: 5px;
+  color: var(--p1-muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__section-heading > a,
+html[data-dthl-theme='light'] .account-overview-v2__details-link {
+  color: var(--p1-gold-dark);
+  font-size: 13px;
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__highlight-grid {
+  gap: 12px;
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__highlight-grid article {
+  min-height: 138px;
+  padding: 16px;
+  border-color: var(--p1-border);
+  background: var(--p1-surface-soft);
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__highlight-grid article > span,
+html[data-dthl-theme='light'] .account-overview-v2__field-icon {
+  color: var(--p1-gold-dark);
+  background: var(--p1-gold-soft);
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__highlight-grid small,
+html[data-dthl-theme='light'] .account-overview-v2__field small {
+  color: var(--p1-muted);
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__highlight-grid strong {
+  margin-top: 5px;
+  color: var(--p1-ink);
+  font-size: 15px;
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__highlight-grid p {
+  margin-top: 7px;
+  color: var(--p1-text);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__completion {
+  background: #ece9e2;
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__completion > span {
+  background: var(--p1-gold);
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__community-cta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 14px;
+  padding: 17px 18px;
+  gap: 18px;
+  border: 1px solid var(--p1-border-warm);
+  border-radius: 12px;
+  color: var(--p1-ink);
+  background: var(--p1-gold-soft);
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__community-cta strong,
+html[data-dthl-theme='light'] .account-overview-v2__community-cta span {
+  display: block;
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__community-cta strong {
+  font-size: 14.5px;
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__community-cta span {
+  margin-top: 4px;
+  color: var(--p1-text);
+  font-size: 13px;
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__community-cta > a {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  min-height: 39px;
+  padding: 0 13px;
+  gap: 5px;
+  border-radius: 9px;
+  color: #fff;
+  background: #242724;
+  font-size: 13px;
+  font-weight: 750;
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__community-cta > a:hover {
+  background: var(--p1-gold);
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__info-grid {
+  gap: 12px;
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__field {
+  min-height: 76px;
+  padding: 12px 14px;
+  border-color: var(--p1-border);
+  background: var(--p1-surface-soft);
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__field strong {
+  margin-top: 4px;
+  color: var(--p1-ink);
+  font-size: 14px;
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__quick {
+  padding: 18px;
+  gap: 10px;
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__quick-heading {
+  grid-column: 1 / -1;
+  margin-bottom: 3px;
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__quick > a {
+  min-height: 88px;
+  padding: 13px;
+  border-color: var(--p1-border);
+  color: var(--p1-text);
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__quick > a > svg {
+  color: var(--p1-gold-dark);
+  background: var(--p1-gold-soft);
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__quick strong {
+  font-size: 14px;
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__quick small {
+  margin-top: 4px;
+  color: var(--p1-muted);
+  font-size: 12.5px;
+  line-height: 1.45;
+}
+
+html[data-dthl-theme='light'] .account-overview-v2__quick > a:hover {
+  border-color: var(--p1-border-warm);
+  background: var(--p1-gold-soft);
+}
+
+/* =========================================================
+   AREA / CONTACT / LEAD SHARED TOKENS
+========================================================= */
+
+html[data-dthl-theme='light'] .area-page {
+  --area-green: var(--p1-gold);
+  --area-green-hover: #9f8252;
+  --area-green-dark: var(--p1-gold-dark);
+  --area-green-deep: var(--p1-ink);
+  --area-green-soft: var(--p1-gold-soft);
+  --area-green-border: var(--p1-border-warm);
+  --area-ink: var(--p1-ink);
+  --area-text: var(--p1-text);
+  --area-muted: var(--p1-muted);
+  --area-border: var(--p1-border);
+  --area-background: #fbfaf7;
+  --area-surface: #fff;
+}
+
+html[data-dthl-theme='light'] .contact-page {
+  --contact-green: var(--p1-gold);
+  --contact-green-hover: #9f8252;
+  --contact-green-dark: var(--p1-gold-dark);
+  --contact-green-deep: var(--p1-ink);
+  --contact-green-soft: var(--p1-gold-soft);
+  --contact-green-border: var(--p1-border-warm);
+  --contact-ink: var(--p1-ink);
+  --contact-text: var(--p1-text);
+  --contact-muted: var(--p1-muted);
+  --contact-border: var(--p1-border);
+  --contact-background: #fbfaf7;
+  --contact-surface: #fff;
+}
+
+html[data-dthl-theme='light'] .lead-page {
+  --lead-primary: var(--p1-gold);
+  --lead-primary-hover: #9f8252;
+  --lead-primary-dark: var(--p1-gold-dark);
+  --lead-primary-deep: var(--p1-ink);
+  --lead-primary-soft: var(--p1-gold-soft);
+  --lead-primary-border: var(--p1-border-warm);
+  --lead-ink: var(--p1-ink);
+  --lead-text: var(--p1-text);
+  --lead-muted: var(--p1-muted);
+  --lead-border: var(--p1-border);
+  --lead-background: #fbfaf7;
+  --lead-surface: #fff;
+}
+
+html[data-dthl-theme='light'] :is(.area-page, .contact-page, .lead-page) {
+  color: var(--p1-ink);
+  background:
+    radial-gradient(circle at 8% 2%, rgb(181 153 101 / 0.07), transparent 24%),
+    #fbfaf7;
+  font-size: 15px;
+}
+
+html[data-dthl-theme='light'] :is(.area-page, .contact-page, .lead-page) :is(p, a, button, label, input, select, textarea, li) {
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+html[data-dthl-theme='light'] :is(.area-page, .contact-page, .lead-page) small {
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+
+html[data-dthl-theme='light'] :is(.area-page, .contact-page, .lead-page) h1 {
+  font-size: clamp(34px, 4vw, 50px);
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+}
+
+html[data-dthl-theme='light'] :is(.area-page, .contact-page, .lead-page) h2 {
+  font-size: clamp(20px, 2vw, 26px);
+  line-height: 1.22;
+  letter-spacing: -0.025em;
+}
+
+html[data-dthl-theme='light'] :is(.area-page, .contact-page, .lead-page) h3 {
+  font-size: 16.5px;
+  line-height: 1.32;
+}
+
+html[data-dthl-theme='light'] :is(.area-breadcrumb, .lead-page-breadcrumb) {
+  min-height: 48px;
+  color: var(--p1-muted);
+  font-size: 13px;
+}
+
+html[data-dthl-theme='light'] :is(.area-breadcrumb, .lead-page-breadcrumb) :is(a, button) {
+  color: var(--p1-muted);
+  font-size: 13px;
+}
+
+html[data-dthl-theme='light'] :is(.area-breadcrumb, .lead-page-breadcrumb) :is(a, button):hover {
+  color: var(--p1-gold-dark);
+}
+
+html[data-dthl-theme='light'] :is(.area-hero, .contact-hero, .lead-page-hero) {
+  border: 1px solid rgb(181 153 101 / 0.16);
+  color: #fff;
+  background:
+    radial-gradient(circle at 86% 14%, rgb(214 187 133 / 0.22), transparent 30%),
+    linear-gradient(135deg, #202320 0%, #30322e 58%, #51432f 100%);
+  box-shadow: 0 18px 48px rgb(31 31 27 / 0.14);
+}
+
+html[data-dthl-theme='light'] :is(.area-hero__eyebrow, .contact-hero__eyebrow, .lead-page-hero__eyebrow) {
+  color: #e3cfa3;
+  font-size: 12.5px;
+}
+
+html[data-dthl-theme='light'] :is(.area-hero__content, .contact-hero__content, .lead-page-hero__content) > p {
+  color: rgb(255 255 255 / 0.78);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+html[data-dthl-theme='light'] :is(.area-primary-action, .contact-primary-button, .lead-page-primary-action) {
+  color: var(--p1-ink) !important;
+  background: #fff;
+  font-size: 13.5px;
+}
+
+html[data-dthl-theme='light'] :is(.area-primary-action, .contact-primary-button, .lead-page-primary-action):hover {
+  color: #fff !important;
+  background: var(--p1-gold);
+}
+
+html[data-dthl-theme='light'] :is(.area-secondary-action, .contact-secondary-button, .lead-page-secondary-action) {
+  color: #fff !important;
+  border-color: rgb(255 255 255 / 0.22);
+  background: rgb(255 255 255 / 0.08);
+  font-size: 13.5px;
+}
+
+html[data-dthl-theme='light'] :is(.area-hero__summary, .contact-hero__summary, .lead-page-hero__summary) {
+  border-color: rgb(255 255 255 / 0.16);
+  background: rgb(255 255 255 / 0.08);
+  box-shadow: none;
+}
+
+html[data-dthl-theme='light'] :is(.area-hero__summary-heading, .contact-hero__summary-heading, .lead-page-hero__summary-heading) strong {
+  color: #fff;
+  font-size: 14.5px;
+}
+
+html[data-dthl-theme='light'] :is(.area-hero__summary-heading, .contact-hero__summary-heading, .lead-page-hero__summary-heading) small {
+  color: rgb(255 255 255 / 0.66);
+  font-size: 12.5px;
+}
+
+html[data-dthl-theme='light'] :is(.area-hero__summary-list, .contact-hero__summary-list, .lead-page-hero__summary-list) > div {
+  color: rgb(255 255 255 / 0.8);
+  font-size: 13px;
+}
+
+html[data-dthl-theme='light'] :is(.area-hero__summary-list, .contact-hero__summary-list, .lead-page-hero__summary-list) svg {
+  color: #dfc58f;
+}
+
+html[data-dthl-theme='light'] :is(
+  .area-overview-grid article,
+  .area-content-section,
+  .area-contribution-card,
+  .contact-quick-info article,
+  .contact-topics-grid article,
+  .contact-form-card,
+  .contact-sidebar-card,
+  .lead-page-features article,
+  .lead-page-form-card,
+  .lead-page-sidebar-card
+) {
+  border-color: var(--p1-border);
+  background: #fff;
+  box-shadow: var(--p1-shadow);
+}
+
+html[data-dthl-theme='light'] :is(
+  .area-overview-grid article > span,
+  .area-content-section__heading > div:first-child > span,
+  .area-contribution-card > div:first-child > span,
+  .contact-quick-info article > span,
+  .contact-section-heading > span,
+  .contact-form-card__heading > span,
+  .lead-page-features article > span,
+  .lead-page-form-card__heading > span
+) {
+  color: var(--p1-gold-dark);
+  background: var(--p1-gold-soft);
+}
+
+html[data-dthl-theme='light'] .area-overview-grid small,
+html[data-dthl-theme='light'] .contact-quick-info small,
+html[data-dthl-theme='light'] .lead-page-features p {
+  color: var(--p1-muted);
+  font-size: 12.5px;
+}
+
+html[data-dthl-theme='light'] .area-overview-grid strong,
+html[data-dthl-theme='light'] .contact-quick-info strong {
+  color: var(--p1-ink);
+  font-size: 16px;
+}
+
+html[data-dthl-theme='light'] .area-content-section__heading {
+  border-bottom-color: var(--p1-border);
+  background: #fff;
+}
+
+html[data-dthl-theme='light'] .area-content-section__heading small,
+html[data-dthl-theme='light'] .area-contribution-card small,
+html[data-dthl-theme='light'] .contact-section-heading > div > span,
+html[data-dthl-theme='light'] .contact-form-card__heading > div > span,
+html[data-dthl-theme='light'] .lead-page-form-card__heading small {
+  color: var(--p1-gold-dark);
+  font-size: 12px;
+}
+
+html[data-dthl-theme='light'] .area-content-section__heading p,
+html[data-dthl-theme='light'] .area-contribution-card p,
+html[data-dthl-theme='light'] .contact-section-heading p,
+html[data-dthl-theme='light'] .contact-topics-grid p,
+html[data-dthl-theme='light'] .contact-form-card__heading p,
+html[data-dthl-theme='light'] .lead-page-form-card__heading p {
+  color: var(--p1-muted);
+  font-size: 14px;
+}
+
+html[data-dthl-theme='light'] :is(.area-contribution-card, .area-new-content-note, .contact-form-card__notice, .lead-page-form-card__notice, .lead-page-source-notice) {
+  border-color: var(--p1-border-warm);
+  color: var(--p1-text);
+  background: var(--p1-gold-soft);
+}
+
+/* =========================================================
+   PUBLIC MEMBER PROFILE
+========================================================= */
+
+html[data-dthl-theme='light'] .public-member-page {
+  --member-green: var(--p1-gold);
+  --member-green-dark: var(--p1-gold-dark);
+  --member-green-soft: var(--p1-gold-soft);
+  --member-border: var(--p1-border);
+  --member-ink: var(--p1-ink);
+  --member-text: var(--p1-text);
+  --member-muted: var(--p1-muted);
+  padding-top: 24px;
+  color: var(--p1-ink);
+  background:
+    radial-gradient(circle at 7% 2%, rgb(181 153 101 / 0.07), transparent 24%),
+    #fbfaf7;
+  font-size: 15px;
+}
+
+html[data-dthl-theme='light'] .public-member-header,
+html[data-dthl-theme='light'] .public-member-card {
+  border-color: var(--p1-border);
+  background: #fff;
+  box-shadow: var(--p1-shadow);
+}
+
+html[data-dthl-theme='light'] .public-member-cover__fallback {
+  background:
+    radial-gradient(circle at 76% 24%, rgb(181 153 101 / 0.22), transparent 32%),
+    linear-gradient(135deg, #efe9dd, #fbfaf7 46%, #ddd1b8);
+}
+
+html[data-dthl-theme='light'] .public-member-cover__fallback::before,
+html[data-dthl-theme='light'] .public-member-cover__fallback span:nth-child(3) {
+  background: rgb(128 102 66 / 0.08);
+}
+
+html[data-dthl-theme='light'] .public-member-name h1 {
+  color: var(--p1-ink);
+  font-size: clamp(28px, 3.2vw, 42px);
+}
+
+html[data-dthl-theme='light'] .public-member-name > div:first-child > span {
+  color: #fff;
+  background: var(--p1-gold);
+}
+
+html[data-dthl-theme='light'] .public-member-name > p {
+  color: var(--p1-muted);
+  font-size: 14px;
+}
+
+html[data-dthl-theme='light'] .public-member-meta span {
+  min-height: 32px;
+  color: var(--p1-text);
+  background: var(--p1-gold-soft);
+  font-size: 12.5px;
+}
+
+html[data-dthl-theme='light'] .public-member-tabs {
+  border-top-color: var(--p1-border);
+}
+
+html[data-dthl-theme='light'] .public-member-tabs span {
+  color: var(--p1-muted);
+  font-size: 13.5px;
+}
+
+html[data-dthl-theme='light'] .public-member-tabs span.is-active {
+  color: var(--p1-gold-dark);
+}
+
+html[data-dthl-theme='light'] .public-member-tabs span.is-active::after {
+  background: var(--p1-gold);
+}
+
+html[data-dthl-theme='light'] .public-member-card h2,
+html[data-dthl-theme='light'] .public-member-activity h2 {
+  color: var(--p1-ink);
+  font-size: 19px;
+}
+
+html[data-dthl-theme='light'] .public-member-bio {
+  color: var(--p1-text);
+  background: var(--p1-surface-soft);
+  font-size: 14px;
+  line-height: 1.6;
+  text-align: left;
+}
+
+html[data-dthl-theme='light'] .public-member-detail-list > div > span,
+html[data-dthl-theme='light'] .public-member-activity__icon {
+  color: var(--p1-gold-dark);
+  background: var(--p1-gold-soft);
+}
+
+html[data-dthl-theme='light'] .public-member-detail-list strong,
+html[data-dthl-theme='light'] .public-member-detail-list a {
+  color: var(--p1-text);
+  font-size: 13.5px;
+}
+
+html[data-dthl-theme='light'] .public-member-detail-list small {
+  color: var(--p1-muted);
+  font-size: 12px;
+}
+
+html[data-dthl-theme='light'] .public-member-counts strong {
+  color: var(--p1-gold-dark);
+  font-size: 22px;
+}
+
+html[data-dthl-theme='light'] .public-member-counts span {
+  color: var(--p1-muted);
+  font-size: 12px;
+}
+
+html[data-dthl-theme='light'] .public-member-activity p {
+  color: var(--p1-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* =========================================================
+   MOBILE ACCOUNT OVERRIDES
+========================================================= */
+
+@media (max-width: 760px) {
+  html[data-dthl-theme='light'] .account-center-page.is-overview .account-overview-v2__tabs {
+    border-color: var(--p1-border) !important;
+    background: #fff !important;
+    box-shadow: var(--p1-shadow) !important;
+  }
+
+  html[data-dthl-theme='light'] .account-center-page.is-overview .account-overview-v2__tabs > a {
+    color: var(--p1-text) !important;
+    font-size: 11px !important;
+  }
+
+  html[data-dthl-theme='light'] .account-center-page.is-overview .account-overview-v2__tabs > a > svg {
+    color: var(--p1-gold-dark) !important;
+  }
+
+  html[data-dthl-theme='light'] .account-center-page.is-overview .account-overview-v2__tabs > a:first-child > svg {
+    color: #fff !important;
+    background: var(--p1-gold) !important;
+    box-shadow: 0 6px 16px rgb(128 102 66 / 0.2) !important;
+  }
+
+  html[data-dthl-theme='light'] .account-center-page.is-overview .account-overview-v2__section,
+  html[data-dthl-theme='light'] .account-center-page.is-overview .account-overview-v2__quick {
+    border-color: var(--p1-border) !important;
+    background: #fff !important;
+    box-shadow: var(--p1-shadow) !important;
+  }
+
+  html[data-dthl-theme='light'] .account-center-page.is-overview .account-overview-v2__section-heading h3 {
+    color: var(--p1-ink) !important;
+    font-size: 17px !important;
+  }
+
+  html[data-dthl-theme='light'] .account-center-page.is-overview .account-overview-v2__details-link {
+    color: var(--p1-gold-dark) !important;
+    font-size: 12.5px !important;
+  }
+
+  html[data-dthl-theme='light'] .account-center-page.is-overview .account-overview-v2__highlight-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 8px !important;
+  }
+
+  html[data-dthl-theme='light'] .account-center-page.is-overview .account-overview-v2__highlight-grid > article,
+  html[data-dthl-theme='light'] .account-center-page.is-overview .account-overview-v2__membership {
+    min-height: 126px !important;
+    padding: 12px 8px !important;
+    border-color: var(--p1-border) !important;
+    background: var(--p1-surface-soft) !important;
+  }
+
+  html[data-dthl-theme='light'] .account-center-page.is-overview .account-overview-v2__highlight-grid > article > span {
+    color: var(--p1-gold-dark) !important;
+    background: var(--p1-gold-soft) !important;
+  }
+
+  html[data-dthl-theme='light'] .account-center-page.is-overview .account-overview-v2__highlight-grid small {
+    color: var(--p1-muted) !important;
+    font-size: 10.5px !important;
+  }
+
+  html[data-dthl-theme='light'] .account-center-page.is-overview .account-overview-v2__highlight-grid strong {
+    color: var(--p1-ink) !important;
+    font-size: 12.5px !important;
+  }
+
+  html[data-dthl-theme='light'] .account-center-page.is-overview .account-overview-v2__membership p {
+    color: var(--p1-muted) !important;
+    font-size: 10.5px !important;
+  }
+
+  html[data-dthl-theme='light'] .account-center-page.is-overview .account-overview-v2__completion > span {
+    background: var(--p1-gold) !important;
+  }
+
+  html[data-dthl-theme='light'] .account-center-page.is-overview .account-overview-v2__quick > a {
+    color: var(--p1-text) !important;
+    border-bottom-color: var(--p1-border) !important;
+  }
+
+  html[data-dthl-theme='light'] .account-center-page.is-overview .account-overview-v2__quick > a > svg {
+    color: var(--p1-gold-dark) !important;
+    background: var(--p1-gold-soft) !important;
+  }
+
+  html[data-dthl-theme='light'] .account-center-page.is-overview .account-overview-v2__quick strong {
+    color: var(--p1-ink) !important;
+    font-size: 14px !important;
+  }
+
+  html[data-dthl-theme='light'] .account-center-page.is-overview .account-overview-v2__quick small {
+    color: var(--p1-muted) !important;
+    font-size: 12px !important;
+  }
+
+  html[data-dthl-theme='light'] .account-overview-v2__community-cta {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  html[data-dthl-theme='light'] .account-overview-v2__community-cta > a {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 620px) {
+  html[data-dthl-theme='light'] :is(.area-page, .contact-page, .lead-page) h1 {
+    font-size: clamp(28px, 8vw, 36px);
+  }
+
+  html[data-dthl-theme='light'] :is(.area-page, .contact-page, .lead-page) h2 {
+    font-size: 20px;
+  }
+
+  html[data-dthl-theme='light'] :is(.area-page, .contact-page, .lead-page) :is(p, a, button, label, input, select, textarea, li) {
+    font-size: 13.5px;
+  }
+
+  html[data-dthl-theme='light'] .public-member-page {
+    padding-top: 12px;
+  }
+
+  html[data-dthl-theme='light'] .public-member-name h1 {
+    font-size: 28px;
+  }
+}
