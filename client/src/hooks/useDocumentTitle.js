@@ -211,7 +211,7 @@ export function useDocumentTitle(
     if (!script) {
       script = document.createElement('script');
       script.type = 'application/ld+json';
-      script.dataset.dthlSeoJsonLd = 'true';
+      script.dataset.dthlSeoJsonld = 'true';
       document.head.appendChild(script);
     }
     script.textContent = JSON.stringify(structuredData);
