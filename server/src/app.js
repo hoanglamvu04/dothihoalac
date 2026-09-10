@@ -26,6 +26,19 @@ export function createApp() {
    */
   app.set('trust proxy', 1);
 
+  /*
+   * Endpoint cực nhẹ dành riêng cho Render/uptime monitor.
+   * Đặt trước request logging, rate limiter và API middleware để mỗi lần ping
+   * chỉ kiểm tra tiến trình Node còn phục vụ HTTP, không truy cập database.
+   */
+  app.get('/health', (_req, res) => {
+    res.status(200).json({
+      status: 'ok',
+      service: 'dothihoalac-api',
+      uptimeSeconds: Math.round(process.uptime()),
+    });
+  });
+
   app.use(requestIdMiddleware);
 
   app.use(
