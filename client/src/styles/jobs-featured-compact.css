@@ -1,0 +1,68 @@
+/* =========================================================
+   JOBS FEATURED CARDS — COMPACT HEADER ROW
+   Keep the shared JobCard markup untouched. On desktop/tablet, place the
+   recruiter/briefcase icon and job-type badge on one compact row so the
+   featured cards do not waste vertical space.
+========================================================= */
+
+@media (min-width: 761px) {
+  .app-shell .jobs-page .jobs-featured-panel__grid {
+    align-content: start !important;
+    align-items: start !important;
+  }
+
+  .app-shell .jobs-page .jobs-featured-card .job-card {
+    position: relative !important;
+    min-height: 0 !important;
+    height: auto !important;
+    padding: 11px 12px 12px !important;
+  }
+
+  .app-shell .jobs-page .jobs-featured-card .job-card__icon {
+    position: absolute !important;
+    top: 11px !important;
+    left: 12px !important;
+    width: 30px !important;
+    height: 30px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    align-self: auto !important;
+    justify-self: auto !important;
+    border-radius: 8px !important;
+  }
+
+  .app-shell .jobs-page .jobs-featured-card .job-card__icon.has-media {
+    padding: 3px !important;
+  }
+
+  .app-shell .jobs-page .jobs-featured-card .job-card__icon svg {
+    width: 16px !important;
+    height: 16px !important;
+  }
+
+  .app-shell .jobs-page .jobs-featured-card .job-card__company-image {
+    border-radius: 5px !important;
+  }
+
+  .app-shell .jobs-page .jobs-featured-card .job-card__type-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    min-height: 30px !important;
+    margin: 0 0 0 38px !important;
+    padding: 3px 9px !important;
+    line-height: 1 !important;
+  }
+
+  .app-shell .jobs-page .jobs-featured-card .job-card h3 {
+    margin-top: 6px !important;
+  }
+
+  .app-shell .jobs-page .jobs-featured-card .job-card__body > strong {
+    margin-top: 3px !important;
+  }
+
+  .app-shell .jobs-page .jobs-featured-card .job-card__salary,
+  .app-shell .jobs-page .jobs-featured-card .job-card__body > div:last-child {
+    margin-top: 6px !important;
+  }
+}
