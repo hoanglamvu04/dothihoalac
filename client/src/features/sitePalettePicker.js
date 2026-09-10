@@ -6,6 +6,7 @@ import {
 } from '../theme/sitePalette';
 
 const PICKER_CLASS = 'dthl-site-palette-picker';
+const TRIGGER_SELECTOR = '.dthl-header-preferences__trigger';
 
 function createOption(palette, currentPalette) {
   const button = document.createElement('button');
@@ -68,7 +69,7 @@ function mountPicker() {
   const headingTitle = document.createElement('strong');
   headingTitle.textContent = 'Màu giao diện';
   const headingDescription = document.createElement('span');
-  headingDescription.textContent = 'Đổi toàn bộ bảng màu của website. Lựa chọn được lưu trên trình duyệt này.';
+  headingDescription.textContent = 'Chọn bảng màu dùng cho website.';
   headingCopy.append(headingTitle, headingDescription);
 
   const badge = document.createElement('span');
@@ -99,22 +100,27 @@ function mountPicker() {
   }
 }
 
-let scheduled = false;
+let frame = null;
 function scheduleMount() {
-  if (scheduled) return;
-  scheduled = true;
+  if (frame !== null) return;
 
-  window.requestAnimationFrame(() => {
-    scheduled = false;
+  frame = window.requestAnimationFrame(() => {
+    frame = null;
     mountPicker();
   });
 }
 
 if (typeof document !== 'undefined') {
-  scheduleMount();
+  // The panel only exists while the React preferences dialog is open. Mount on
+  // the trigger click instead of watching every DOM mutation on the page.
+  const handleTriggerClick = (event) => {
+    if (event.target.closest(TRIGGER_SELECTOR)) {
+      scheduleMount();
+    }
+  };
 
-  const observer = new MutationObserver(scheduleMount);
-  observer.observe(document.body, { childList: true, subtree: true });
+  document.addEventListener('click', handleTriggerClick);
+  scheduleMount();
 
   subscribeSitePalette((palette) => {
     document.querySelectorAll(`.${PICKER_CLASS}`).forEach((root) => {
