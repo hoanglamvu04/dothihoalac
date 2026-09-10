@@ -1,6 +1,10 @@
 import { useEffect } from 'react';
 
-const SITE_ORIGIN = 'https://dothihoalac.vn';
+const SITE_ORIGIN = String(
+  import.meta.env.VITE_SITE_URL || 'https://dothihoalac.vn',
+)
+  .trim()
+  .replace(/\/+$/, '');
 const SITE_NAME = 'Đô Thị Hòa Lạc';
 const DEFAULT_DESCRIPTION =
   'Thông tin, cộng đồng, bất động sản và việc làm tại khu vực Hòa Lạc.';
@@ -113,14 +117,16 @@ function compactJsonLd(value) {
 }
 
 function defaultStructuredData({ title, description, canonicalUrl, currentPath }) {
-  const base = {
+  const isArticle = /^\/tin-tuc\/[^/]+/.test(currentPath);
+
+  return {
     '@context': 'https://schema.org',
-    '@type': /^\/tin-tuc\/[^/]+/.test(currentPath) ? 'Article' : 'WebPage',
+    '@type': isArticle ? 'Article' : 'WebPage',
     name: title,
-    headline: /^\/tin-tuc\/[^/]+/.test(currentPath) ? title : undefined,
+    headline: isArticle ? title : undefined,
     description,
     url: canonicalUrl,
-    mainEntityOfPage: /^\/tin-tuc\/[^/]+/.test(currentPath)
+    mainEntityOfPage: isArticle
       ? { '@type': 'WebPage', '@id': canonicalUrl }
       : undefined,
     isPartOf: {
@@ -138,8 +144,6 @@ function defaultStructuredData({ title, description, canonicalUrl, currentPath }
       },
     },
   };
-
-  return base;
 }
 
 export function useDocumentTitle(
