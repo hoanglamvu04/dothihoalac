@@ -4,6 +4,137 @@
    content before they miniaturize important text.
 ========================================================= */
 
+/* Wide/effective-wide viewport compensation.
+   Browser zoom-out increases the CSS viewport width (for example a 1920px
+   screen at 90% is roughly 2133 CSS px wide). Keep the 1500px content cap,
+   but restore a small amount of reading size instead of letting text become
+   physically tiny. Native 2K/4K displays benefit from the same reading floor. */
+@media (min-width: 1600px) {
+  html {
+    font-size: clamp(16px, 0.8vw, 17px) !important;
+  }
+}
+
+@media (min-width: 2000px) {
+  html body .app-shell .main-content {
+    font-size: 17px;
+    line-height: 1.6;
+  }
+
+  html body .app-shell :is(
+    .content-meta,
+    .content-meta span,
+    .result-summary,
+    .pagination button,
+    .pagination > span
+  ) {
+    font-size: 14px !important;
+    line-height: 1.46 !important;
+  }
+
+  /* News: explicit px values need their own compensation because changing the
+     rem root alone does not affect them. Keep the rail hierarchy intact. */
+  html body .app-shell .news-hub .news-story--lead h2 {
+    font-size: 42px !important;
+  }
+
+  html body .app-shell .news-hub .news-story--side h3 {
+    font-size: 18px !important;
+  }
+
+  html body .app-shell .news-hub .news-story--feed h3,
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] body .app-shell .news-hub .news-content-layout .news-story--feed h3 {
+    font-size: 20px !important;
+    line-height: 1.42 !important;
+  }
+
+  html body .app-shell .news-hub .news-story--feed p,
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] body .app-shell .news-hub .news-content-layout .news-story--feed p {
+    font-size: 16px !important;
+  }
+
+  html body .app-shell .news-hub .news-story .content-meta {
+    font-size: 14px !important;
+  }
+
+  html body .app-shell .news-hub .news-stream__heading h2 {
+    font-size: 28px !important;
+  }
+
+  html body .app-shell .news-hub .news-stream__heading > p {
+    font-size: 14px !important;
+  }
+
+  html body .app-shell .news-hub .news-rail-card__head h2 {
+    font-size: 20px !important;
+  }
+
+  html body .app-shell .news-hub .news-rail-card__head span {
+    font-size: 12px !important;
+  }
+
+  html body .app-shell .news-hub .news-rail-article__copy strong,
+  html body .app-shell .news-hub .news-ecosystem-links strong,
+  html body .app-shell .news-hub .news-project-item > strong {
+    font-size: 15px !important;
+    line-height: 1.42 !important;
+  }
+
+  html body .app-shell .news-hub :is(
+    .news-rail-article__copy small,
+    .news-rail-empty,
+    .news-project-item > small,
+    .news-project-item small span
+  ) {
+    font-size: 13px !important;
+  }
+
+  html body .app-shell .news-hub .news-area-links a {
+    font-size: 14px !important;
+  }
+
+  /* Shared public cards. These are the main fixed-pixel titles that otherwise
+     still look noticeably smaller at 90% browser zoom. */
+  html body .app-shell .home-reference-v2 :is(
+    .home-side-story h3,
+    .home-latest-story h3,
+    .home-spotlight-story h3,
+    .home-job-story h3,
+    .home-community-story > p,
+    .home-property-story h3
+  ) {
+    font-size: 17px !important;
+    line-height: 1.42 !important;
+  }
+
+  html body .app-shell .jobs-page .jobs-results__main .job-card h3,
+  html body .app-shell .jobs-featured-card .job-card h3 {
+    font-size: 17.5px !important;
+    line-height: 1.42 !important;
+  }
+
+  html body .app-shell .community-social-page .community-reference-center .community-feed-card__content .community-feed-card__text {
+    font-size: 17px !important;
+    line-height: 1.55 !important;
+  }
+
+  html body .app-shell :is(.property-card h3, .content-card h3, .community-card h3) {
+    font-size: 17px !important;
+    line-height: 1.42 !important;
+  }
+
+  html body .app-shell .search-page .search-result-item h3 {
+    font-size: 17.5px !important;
+    line-height: 1.42 !important;
+    font-weight: 650 !important;
+  }
+
+  html body .app-shell .search-page .search-result-item__body > p {
+    font-size: 15.5px !important;
+    line-height: 1.58 !important;
+  }
+}
+
 /* Laptop / tablet landscape.
    Many route styles were originally tuned with tiny rem values. Keep a stable
    floor here so 1024-1440px windows do not look like a scaled-down desktop. */
