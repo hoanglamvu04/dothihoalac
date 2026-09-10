@@ -1,5 +1,22 @@
-/* Account overview responsive rules now live with AccountOverviewV2.css.
-   Keep only layout integration that belongs to the account shell. */
+/* Account overview responsive integration and shell-token bridge. */
+
+.account-center-page.is-overview {
+  --account-green: #b59965;
+  --account-green-dark: #806642;
+  --account-green-soft: #f8f6f1;
+  --account-border: #e5e4df;
+  --account-ink: #202320;
+  --account-muted: #7d827d;
+  --account-desktop-canvas: #ffffff;
+  --account-desktop-border: #e5e4df;
+  --account-desktop-ink: #202320;
+  --account-desktop-text: #505550;
+  --account-desktop-muted: #7d827d;
+  --account-desktop-green: #b59965;
+  --account-desktop-green-soft: #f8f6f1;
+
+  background: #fff;
+}
 
 @media (max-width: 760px) {
   .account-center-page.is-overview .account-center-workspace {
