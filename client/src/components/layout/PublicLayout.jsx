@@ -28,25 +28,54 @@ function pageTopAdSlot(pathname) {
 
 function loadRouteStyles(pathname) {
   if (pathname.startsWith('/tin-tuc')) {
-    return Promise.all([
+    const styles = [
       import('../../styles/newsroom-mobile-v2.css'),
       import('../../styles/articles-modern-v2.css'),
       import('../../styles/articles-newsroom-v3.css'),
       import('../../styles/articles-newsroom-v4.css'),
       import('../../styles/news-project-tracker-rail.css'),
-    ]);
+    ];
+
+    styles.push(
+      pathname === '/tin-tuc'
+        ? import('../../styles/news-listing-readable-polish.css')
+        : import('../../pages/public/ArticleDetailReadablePolish.css'),
+    );
+
+    return Promise.all(styles);
   }
 
   if (pathname.startsWith('/cong-dong')) {
-    return Promise.all([
+    const styles = [
       import('../../styles/community-social-v2.css'),
       import('../../styles/community-social-v3.css'),
       import('../../styles/community-interaction-v4.css'),
-    ]);
+    ];
+
+    if (pathname === '/cong-dong') {
+      styles.push(import('../../styles/community-listing-readable-polish.css'));
+    }
+
+    return Promise.all(styles);
+  }
+
+  if (pathname === '/viec-lam') {
+    return import('../../styles/jobs-listing-readable-polish.css');
   }
 
   if (pathname.startsWith('/viec-lam/')) {
-    return import('../../styles/job-detail-readable-v2.css');
+    return Promise.all([
+      import('../../styles/job-detail-readable-polish.css'),
+      import('../../styles/job-detail-readable-v2.css'),
+    ]);
+  }
+
+  if (pathname === '/bat-dong-san' || pathname === '/nha-dat') {
+    return import('../../styles/property-listing-readable-polish.css');
+  }
+
+  if (pathname.startsWith('/bat-dong-san/') || pathname.startsWith('/nha-dat/')) {
+    return import('../../styles/property-detail-readable-polish.css');
   }
 
   return Promise.resolve();
