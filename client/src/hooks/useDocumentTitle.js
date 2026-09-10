@@ -159,8 +159,8 @@ export function useDocumentTitle(
 ) {
   useEffect(() => {
     const plainTitle = String(title || SITE_NAME).trim() || SITE_NAME;
-    const fullTitle = plainTitle === SITE_NAME
-      ? SITE_NAME
+    const fullTitle = plainTitle.includes(SITE_NAME)
+      ? plainTitle
       : `${plainTitle} | ${SITE_NAME}`;
     const resolvedDescription = String(description || DEFAULT_DESCRIPTION).trim();
     const currentPath = typeof window !== 'undefined'
@@ -211,7 +211,7 @@ export function useDocumentTitle(
     if (!script) {
       script = document.createElement('script');
       script.type = 'application/ld+json';
-      script.dataset.dthlSeoJsonld = 'true';
+      script.dataset.dthlSeoJsonLd = 'true';
       document.head.appendChild(script);
     }
     script.textContent = JSON.stringify(structuredData);
