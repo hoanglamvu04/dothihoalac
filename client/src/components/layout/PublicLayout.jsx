@@ -54,6 +54,7 @@ function loadRouteEnhancements(pathname) {
 
     if (pathname === '/cong-dong') {
       modules.push(
+        import('../../pages/public/CommunityPageRailDisclosure.css'),
         import('../../styles/community-listing-readable-polish.css'),
         import('../../features/communityRailDisclosure'),
       );
