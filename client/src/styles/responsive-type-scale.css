@@ -1,0 +1,130 @@
+/* =========================================================
+   RESPONSIVE READING SCALE
+   A single mobile readability policy for the public product. Narrow screens
+   should reflow content, not make important text harder to read.
+========================================================= */
+
+@media (max-width: 760px) {
+  html body .app-shell .main-content {
+    font-size: 1rem;
+    line-height: 1.6;
+  }
+
+  /* Shared metadata and controls */
+  html body .app-shell :is(
+    .content-meta,
+    .content-meta span,
+    .result-summary,
+    .pagination button,
+    .pagination > span
+  ) {
+    font-size: 13px !important;
+    line-height: 1.45 !important;
+  }
+
+  html body .app-shell :is(input, select, textarea) {
+    font-size: 16px !important;
+  }
+
+  /* Home */
+  html body .app-shell .home-reference-v2 :is(
+    .home-side-story h3,
+    .home-latest-story h3,
+    .home-spotlight-story h3,
+    .home-job-story h3,
+    .home-community-story > p,
+    .home-property-story h3
+  ) {
+    font-size: 16px !important;
+    line-height: 1.42 !important;
+  }
+
+  html body .app-shell .home-reference-v2 :is(
+    .home-job-story__body > p,
+    .home-community-story__head span,
+    .home-property-story__row,
+    .home-property-story__facts,
+    .home-job-story__meta,
+    .home-card-meta,
+    .home-card-meta span
+  ) {
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+  }
+
+  /* Jobs */
+  html body .app-shell .jobs-page .jobs-results__main .job-card h3,
+  html body .app-shell .jobs-featured-card .job-card h3 {
+    font-size: 16.5px !important;
+    line-height: 1.42 !important;
+  }
+
+  html body .app-shell .jobs-page .jobs-results__main :is(
+    .job-card__body > strong,
+    .job-card__body > div:last-child
+  ),
+  html body .app-shell .jobs-safety-card :is(p, li),
+  html body .app-shell .jobs-results__header p {
+    font-size: 13.5px !important;
+    line-height: 1.52 !important;
+  }
+
+  html body .app-shell .jobs-page .jobs-results__main .job-card__salary {
+    font-size: 15px !important;
+  }
+
+  /* Community */
+  html body .app-shell .community-social-page .community-reference-center .community-feed-card__author > a {
+    font-size: 15px !important;
+  }
+
+  html body .app-shell .community-social-page .community-reference-center .community-feed-card__author > div,
+  html body .app-shell .community-social-page .community-reference-center .community-feed-action__count {
+    font-size: 13px !important;
+  }
+
+  html body .app-shell .community-social-page .community-reference-center .community-feed-card__type {
+    font-size: 12.5px !important;
+  }
+
+  html body .app-shell .community-social-page .community-reference-center .community-feed-card__content .community-feed-card__text {
+    font-size: 16px !important;
+    line-height: 1.55 !important;
+  }
+
+  /* Property/content cards */
+  html body .app-shell :is(.property-card h3, .content-card h3, .community-card h3) {
+    font-size: 16px !important;
+    line-height: 1.42 !important;
+  }
+
+  html body .app-shell :is(.property-card__facts, .content-card p, .community-card > p) {
+    font-size: 14px !important;
+    line-height: 1.55 !important;
+  }
+
+  html body .app-shell .property-card__price {
+    font-size: 18px !important;
+  }
+
+  /* Search */
+  html body .app-shell .search-page .search-result-item h3 {
+    font-size: 16.5px !important;
+    line-height: 1.42 !important;
+    font-weight: 650 !important;
+  }
+
+  html body .app-shell .search-page .search-result-item__body > p {
+    font-size: 14.5px !important;
+    line-height: 1.58 !important;
+  }
+
+  html body .app-shell .search-page :is(
+    .search-tabs button,
+    .search-results-summary p,
+    .search-sidebar a,
+    .search-sidebar button
+  ) {
+    font-size: 13.5px !important;
+  }
+}
