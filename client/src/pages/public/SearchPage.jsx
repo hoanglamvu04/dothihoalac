@@ -35,6 +35,7 @@ import {
 } from '../../utils/storage';
 
 import './SearchPage.css';
+import '../../styles/search-page-sidebar-polish.css';
 
 const PAGE_LIMIT = 12;
 
