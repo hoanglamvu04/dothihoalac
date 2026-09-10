@@ -7,8 +7,11 @@ import { seedAdmin } from './seedAdmin.js';
 import { seedUsers } from './seedUsers.js';
 import { seedMedia } from './seedMedia.js';
 import { seedCommunityPosts } from './seedCommunityPosts.js';
+import { assertDemoSeedAllowed } from './seedSafety.js';
 
 async function run() {
+  assertDemoSeedAllowed('the community demo seed');
+
   await connectDatabase();
   await seedRoles();
   const [areas, categories, tags] = await Promise.all([seedAreas(), seedCategories(), seedTags()]);
