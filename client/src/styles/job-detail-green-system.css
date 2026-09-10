@@ -184,6 +184,106 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-application-method
   background: #f2f7f3 !important;
 }
 
+/* Right rail typography: the legacy detail sheet used 10-12px for most labels,
+   which becomes difficult to read on 90% browser zoom. Keep the hierarchy
+   explicit: section heading > value/title > label/meta. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-detail-sidebar {
+  font-size: 14px !important;
+  line-height: 1.5;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card__salary span,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card__company small,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-deadline small,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card__contacts a small,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card__note {
+  font-size: 12.5px !important;
+  line-height: 1.45 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card__salary strong {
+  font-size: 23px !important;
+  line-height: 1.25 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card__company strong,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-deadline strong,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-expired strong,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card__contacts a strong {
+  font-size: 14px !important;
+  line-height: 1.4 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-expired p,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-contact-empty {
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card__contacts h2,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-sidebar-heading h2 {
+  font-size: 16.5px !important;
+  line-height: 1.35 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-sidebar-heading p {
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-sidebar-summary dt,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-sidebar-summary dd {
+  font-size: 13.5px !important;
+  line-height: 1.42 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-sidebar-safety ul {
+  font-size: 13px !important;
+  line-height: 1.58 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-sidebar-share__actions button,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card__contacts > button {
+  font-size: 13px !important;
+  line-height: 1.35 !important;
+}
+
+/* Effective-wide viewport compensation, matching the site's 90% zoom reading
+   policy without widening the rail or changing the page layout. */
+@media (min-width: 1600px) {
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-detail-sidebar {
+    font-size: 15px !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card__salary span,
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card__company small,
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-deadline small,
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card__contacts a small,
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card__note {
+    font-size: 13.25px !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card__company strong,
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-deadline strong,
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-expired strong,
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card__contacts a strong {
+    font-size: 15px !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card__contacts h2,
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-sidebar-heading h2 {
+    font-size: 17px !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-sidebar-summary dt,
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-sidebar-summary dd,
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-sidebar-safety ul,
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-sidebar-share__actions button,
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card__contacts > button {
+    font-size: 14px !important;
+  }
+}
+
 /* Breadcrumb and small interaction details. */
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-detail-breadcrumb a:hover {
   color: #315f45 !important;
@@ -206,5 +306,21 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-detail-page :focus
   html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card,
   html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-sidebar-card {
     box-shadow: none !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-detail-sidebar {
+    font-size: 15px !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card__contacts h2,
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-sidebar-heading h2 {
+    font-size: 17px !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-sidebar-summary dt,
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-sidebar-summary dd,
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-sidebar-safety ul,
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-sidebar-share__actions button {
+    font-size: 14px !important;
   }
 }
