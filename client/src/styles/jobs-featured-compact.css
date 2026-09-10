@@ -1,8 +1,9 @@
 /* =========================================================
    JOBS FEATURED CARDS — COMPACT HEADER ROW
-   Keep the shared JobCard markup untouched. On desktop/tablet, place the
-   recruiter/briefcase icon and job-type badge on one compact row so the
-   featured cards do not waste vertical space.
+   Keep the shared JobCard markup untouched. On desktop/tablet, the recruiter
+   icon and job-type badge share one reserved header row, while the title and
+   remaining content always start below it. This prevents any overlap without
+   restoring the old tall card layout.
 ========================================================= */
 
 @media (min-width: 761px) {
@@ -13,19 +14,36 @@
 
   .app-shell .jobs-page .jobs-featured-card .job-card {
     position: relative !important;
+    display: block !important;
     min-height: 0 !important;
     height: auto !important;
     padding: 11px 12px 12px !important;
+  }
+
+  /* Reserve one explicit row for icon + type badge. */
+  .app-shell .jobs-page .jobs-featured-card .job-card__body {
+    position: relative !important;
+    display: block !important;
+    min-width: 0 !important;
+    padding-top: 38px !important;
   }
 
   .app-shell .jobs-page .jobs-featured-card .job-card__icon {
     position: absolute !important;
     top: 11px !important;
     left: 12px !important;
+    z-index: 2 !important;
+    display: grid !important;
+    place-items: center !important;
     width: 30px !important;
+    min-width: 30px !important;
+    max-width: 30px !important;
     height: 30px !important;
+    min-height: 30px !important;
+    max-height: 30px !important;
     margin: 0 !important;
     padding: 0 !important;
+    overflow: hidden !important;
     align-self: auto !important;
     justify-self: auto !important;
     border-radius: 8px !important;
@@ -41,24 +59,39 @@
   }
 
   .app-shell .jobs-page .jobs-featured-card .job-card__company-image {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
     border-radius: 5px !important;
   }
 
   .app-shell .jobs-page .jobs-featured-card .job-card__type-badge {
+    position: absolute !important;
+    top: 0 !important;
+    left: 38px !important;
+    z-index: 2 !important;
     display: inline-flex !important;
     align-items: center !important;
+    width: max-content !important;
+    max-width: calc(100% - 38px) !important;
     min-height: 30px !important;
-    margin: 0 0 0 38px !important;
+    margin: 0 !important;
     padding: 3px 9px !important;
+    overflow: hidden !important;
     line-height: 1 !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
   }
 
   .app-shell .jobs-page .jobs-featured-card .job-card h3 {
-    margin-top: 6px !important;
+    position: relative !important;
+    z-index: 1 !important;
+    margin: 0 !important;
   }
 
   .app-shell .jobs-page .jobs-featured-card .job-card__body > strong {
-    margin-top: 3px !important;
+    margin-top: 4px !important;
   }
 
   .app-shell .jobs-page .jobs-featured-card .job-card__salary,
