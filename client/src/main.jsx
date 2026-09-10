@@ -58,12 +58,11 @@ import './styles/account-sessions-clean.css';
 import './styles/account-notifications-clean.css';
 import './styles/account-reports-clean.css';
 import './styles/service-pages-clean.css';
-import './styles/site-palette-picker.css';
+import './styles/header-preferences-layout.css';
 import './features/propertyMarketplacePaging';
-import './features/sitePalettePicker';
 
-// Apply saved appearance and palette before React paints so reloads do not
-// flash the wrong visual system. Earth is the default light palette.
+// Apply the saved light/dark appearance before React paints. The brand palette
+// is intentionally fixed to Earth so the site stays visually consistent.
 initializeSiteTheme();
 initializeSitePalette();
 
