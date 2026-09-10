@@ -1,3 +1,17 @@
+/* Header preferences + palette picker share one compact desktop workspace.
+   The preferences panel lives inside .dthl-header-main, which uses backdrop-filter
+   and therefore creates a stacking context. Lift that layer while the dialog is
+   open so the primary navigation can never paint over the panel. */
+
+.dthl-header-main:has(.dthl-header-preferences__panel) {
+  z-index: 30;
+}
+
+.dthl-header:has(.dthl-header-preferences__panel) .dthl-header-nav {
+  position: relative;
+  z-index: 1;
+}
+
 .dthl-site-palette-picker {
   padding: 14px 0 2px;
   margin-top: 12px;
@@ -162,8 +176,251 @@
   background: var(--dthl-mode-brand, #b59965);
 }
 
+@media (min-width: 1021px) {
+  .dthl-header-preferences__panel {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      'heading heading'
+      'modes palette'
+      'compact palette'
+      'footer footer';
+    align-items: start;
+    width: min(760px, calc(100vw - 44px)) !important;
+    max-height: min(520px, calc(100vh - 92px));
+    padding: 14px !important;
+    gap: 10px 14px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border-radius: 18px !important;
+    background: #fff !important;
+    box-shadow: 0 22px 54px rgb(42 35 24 / 0.16) !important;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+
+  .dthl-header-preferences__heading {
+    grid-area: heading;
+    padding: 2px 3px 10px !important;
+    border-bottom: 1px solid var(--dthl-mode-border, #e5e4df);
+  }
+
+  .dthl-header-preferences__heading strong {
+    font-size: 16px !important;
+    line-height: 1.25;
+  }
+
+  .dthl-header-preferences__heading span {
+    max-width: 560px;
+    margin-top: 3px !important;
+    font-size: 12.5px !important;
+    line-height: 1.4 !important;
+  }
+
+  .dthl-header-preferences__modes {
+    grid-area: modes;
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    align-content: start;
+    gap: 7px !important;
+  }
+
+  .dthl-header-preferences__modes > button {
+    grid-template-columns: 36px minmax(0, 1fr) 22px !important;
+    min-height: 72px !important;
+    padding: 8px !important;
+    gap: 8px !important;
+    border: 1px solid var(--dthl-mode-border, #e5e4df) !important;
+    border-radius: 12px !important;
+    background: #fff !important;
+  }
+
+  .dthl-header-preferences__modes > button:hover {
+    border-color: color-mix(in srgb, var(--dthl-mode-brand, #b59965) 42%, var(--dthl-mode-border, #e5e4df)) !important;
+    background: var(--dthl-mode-brand-soft, #f8f6f1) !important;
+    transform: none !important;
+  }
+
+  .dthl-header-preferences__modes > button.is-active {
+    border-color: var(--dthl-mode-brand, #b59965) !important;
+    background: color-mix(in srgb, var(--dthl-mode-brand-soft, #f8f6f1) 74%, #fff) !important;
+  }
+
+  .dthl-header-preferences__mode-icon {
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 10px !important;
+    color: var(--dthl-mode-brand-dark, #806642) !important;
+    background: var(--dthl-mode-brand-soft, #f8f6f1) !important;
+    box-shadow: none !important;
+  }
+
+  .dthl-header-preferences__modes > button.is-active .dthl-header-preferences__mode-icon {
+    color: #fff !important;
+    background: var(--dthl-mode-brand, #b59965) !important;
+  }
+
+  .dthl-header-preferences__mode-copy strong {
+    color: var(--dthl-mode-ink, #202320) !important;
+    font-size: 12.5px !important;
+    line-height: 1.25 !important;
+  }
+
+  .dthl-header-preferences__mode-copy small {
+    display: -webkit-box !important;
+    margin-top: 3px !important;
+    overflow: hidden;
+    color: var(--dthl-mode-muted, #7d827d) !important;
+    font-size: 10.5px !important;
+    line-height: 1.35 !important;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .dthl-header-preferences__check {
+    width: 22px !important;
+    height: 22px !important;
+  }
+
+  .dthl-header-preferences__modes > button.is-active .dthl-header-preferences__check {
+    background: var(--dthl-mode-brand, #b59965) !important;
+  }
+
+  .dthl-site-palette-picker {
+    grid-area: palette;
+    align-self: stretch;
+    min-width: 0;
+    padding: 0 0 0 14px !important;
+    margin: 0 !important;
+    border-top: 0 !important;
+    border-left: 1px solid var(--dthl-mode-border, #e5e4df);
+  }
+
+  .dthl-site-palette-picker__heading {
+    min-height: 34px;
+    margin-bottom: 8px;
+    gap: 8px;
+  }
+
+  .dthl-site-palette-picker__heading strong {
+    font-size: 13px;
+  }
+
+  .dthl-site-palette-picker__heading span {
+    margin-top: 2px;
+    font-size: 10.5px;
+    line-height: 1.35;
+  }
+
+  .dthl-site-palette-picker__badge {
+    min-height: 22px;
+    padding-inline: 7px;
+    font-size: 9.5px;
+    line-height: 20px;
+  }
+
+  .dthl-site-palette-picker__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .dthl-site-palette-picker__option {
+    grid-template-columns: 38px minmax(0, 1fr) 18px;
+    min-height: 61px;
+    padding: 7px 8px;
+    gap: 7px;
+    border-radius: 11px;
+  }
+
+  .dthl-site-palette-picker__swatches {
+    width: 38px;
+    height: 30px;
+  }
+
+  .dthl-site-palette-picker__swatches i {
+    width: 24px;
+    height: 24px;
+  }
+
+  .dthl-site-palette-picker__swatches i:nth-child(2) {
+    left: 8px;
+  }
+
+  .dthl-site-palette-picker__swatches i:nth-child(3) {
+    left: 16px;
+  }
+
+  .dthl-site-palette-picker__copy strong {
+    font-size: 11.5px;
+  }
+
+  .dthl-site-palette-picker__copy small {
+    font-size: 9px;
+    line-height: 1.3;
+  }
+
+  .dthl-site-palette-picker__check {
+    width: 18px;
+    height: 18px;
+    font-size: 11px;
+  }
+
+  .dthl-header-preferences__compact {
+    grid-area: compact;
+    grid-template-columns: 34px minmax(0, 1fr) auto !important;
+    min-height: 58px !important;
+    padding: 8px !important;
+    margin: 0 !important;
+    gap: 8px !important;
+    border-radius: 12px !important;
+  }
+
+  .dthl-header-preferences__compact > span:first-child {
+    width: 34px !important;
+    height: 34px !important;
+    border-radius: 9px !important;
+  }
+
+  .dthl-header-preferences__compact strong {
+    font-size: 12px !important;
+  }
+
+  .dthl-header-preferences__compact small {
+    margin-top: 2px !important;
+    font-size: 10px !important;
+    line-height: 1.32 !important;
+  }
+
+  .dthl-header-preferences__footer {
+    grid-area: footer;
+    min-height: 38px;
+    padding: 9px 2px 0 !important;
+    margin: 0 !important;
+  }
+
+  .dthl-header-preferences__footer > span {
+    font-size: 10.5px !important;
+  }
+
+  .dthl-header-preferences__footer > button {
+    min-height: 30px !important;
+    color: var(--dthl-mode-brand-dark, #806642) !important;
+    background: var(--dthl-mode-brand-soft, #f8f6f1) !important;
+    font-size: 11px !important;
+  }
+}
+
 @media (max-width: 620px) {
   .dthl-site-palette-picker__grid {
     grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dthl-header-preferences__panel,
+  .dthl-header-preferences__modes > button,
+  .dthl-site-palette-picker__option {
+    scroll-behavior: auto;
+    transition: none !important;
   }
 }
