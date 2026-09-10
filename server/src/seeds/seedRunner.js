@@ -18,8 +18,13 @@ import { seedLeads } from './seedLeads.js';
 import { seedSystem } from './seedSystem.js';
 import { buildSeedSummary } from './seedSummary.js';
 import { DEMO_PASSWORD } from './seedHelpers.js';
+import { assertDemoSeedAllowed } from './seedSafety.js';
 
 export async function runSeed({ includeDemo = true } = {}) {
+  if (includeDemo) {
+    assertDemoSeedAllowed('the full demo seed');
+  }
+
   logger.info('Seeding roles and permissions');
   await seedRoles();
 
