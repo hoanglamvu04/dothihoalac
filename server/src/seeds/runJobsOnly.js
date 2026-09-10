@@ -14,8 +14,11 @@ import { seedAdmin } from './seedAdmin.js';
 import { seedUsers } from './seedUsers.js';
 import { seedMedia } from './seedMedia.js';
 import { seedJobs } from './seedJobs.js';
+import { assertDemoSeedAllowed } from './seedSafety.js';
 
 async function run() {
+  assertDemoSeedAllowed('the jobs demo seed');
+
   const dnsServers = configureDnsServers();
   logger.info({ dnsServers }, 'DNS configured for job seed runner');
   logger.info('Starting job seed');
