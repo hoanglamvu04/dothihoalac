@@ -1,9 +1,67 @@
 /* =========================================================
    RESPONSIVE READING SCALE
-   A single mobile readability policy for the public product. Narrow screens
-   should reflow content, not make important text harder to read.
+   A shared readability policy for the public product. Viewports should reflow
+   content before they miniaturize important text.
 ========================================================= */
 
+/* Laptop / tablet landscape.
+   Many route styles were originally tuned with tiny rem values. Keep a stable
+   floor here so 1024-1440px windows do not look like a scaled-down desktop. */
+@media (min-width: 761px) and (max-width: 1440px) {
+  html body .app-shell .main-content {
+    font-size: 16px;
+    line-height: 1.58;
+  }
+
+  html body .app-shell :is(
+    .content-meta,
+    .content-meta span,
+    .result-summary,
+    .pagination button,
+    .pagination > span
+  ) {
+    font-size: 13px !important;
+    line-height: 1.45 !important;
+  }
+
+  html body .app-shell .home-reference-v2 :is(
+    .home-side-story h3,
+    .home-latest-story h3,
+    .home-spotlight-story h3,
+    .home-job-story h3,
+    .home-community-story > p,
+    .home-property-story h3
+  ) {
+    font-size: 16px !important;
+    line-height: 1.42 !important;
+  }
+
+  html body .app-shell .jobs-page .jobs-results__main .job-card h3,
+  html body .app-shell .jobs-featured-card .job-card h3 {
+    font-size: 16.5px !important;
+    line-height: 1.42 !important;
+  }
+
+  html body .app-shell .community-social-page .community-reference-center .community-feed-card__content .community-feed-card__text {
+    font-size: 16px !important;
+    line-height: 1.55 !important;
+  }
+
+  html body .app-shell :is(.property-card h3, .content-card h3, .community-card h3) {
+    font-size: 16px !important;
+    line-height: 1.42 !important;
+  }
+
+  html body .app-shell .search-page .search-result-item h3 {
+    font-size: 16.5px !important;
+    line-height: 1.42 !important;
+    font-weight: 650 !important;
+  }
+}
+
+/* Phone / compact tablet.
+   A 17px rem baseline is intentional: these screens are normally read at a
+   shorter physical distance. Controls stay at 16px+ and content reflows. */
 @media (max-width: 760px) {
   html body .app-shell .main-content {
     font-size: 1rem;
