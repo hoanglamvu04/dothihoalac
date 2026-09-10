@@ -1,0 +1,142 @@
+/* Search results sidebar alignment + readable typography.
+   Loaded after the global visual layers so the search workspace owns its rhythm. */
+
+.search-page .search-results-summary p {
+  font-size: 14px;
+  line-height: 1.45;
+}
+
+.search-page .search-results-summary > div > span {
+  padding: 6px 10px;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.search-page .search-results-summary button,
+.search-page .search-error > button {
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.search-page .search-sidebar-card {
+  padding: 18px;
+}
+
+.search-page .search-sidebar-card h2 {
+  margin-bottom: 14px;
+  font-size: 17px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+
+.search-page .search-quick-filter > div,
+.search-page .search-suggestion-card > div {
+  gap: 5px;
+}
+
+.search-page .search-quick-filter button {
+  min-height: 44px;
+  padding: 0 11px;
+  gap: 10px;
+  border-radius: 9px;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.search-page .search-quick-filter button > span {
+  gap: 9px;
+}
+
+.search-page .search-quick-filter button svg {
+  width: 17px;
+  height: 17px;
+}
+
+.search-page .search-quick-filter button small {
+  min-width: 27px;
+  height: 23px;
+  padding: 0 7px;
+  font-size: 11.5px;
+  line-height: 1;
+}
+
+.search-page .search-suggestion-card button {
+  min-height: 39px;
+  padding: 0 5px;
+  gap: 10px;
+  font-size: 13.5px;
+  line-height: 1.4;
+}
+
+.search-page .search-suggestion-card button svg {
+  width: 15px;
+  height: 15px;
+}
+
+.search-page .search-keyword-list {
+  gap: 8px;
+}
+
+.search-page .search-keyword-list button {
+  min-height: 34px;
+  padding: 0 10px;
+  font-size: 12.5px;
+  line-height: 1.2;
+}
+
+.search-page .search-sidebar-promo strong {
+  font-size: 21px;
+}
+
+.search-page .search-sidebar-promo span {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+@media (min-width: 901px) {
+  .search-page .search-workspace {
+    align-items: start;
+  }
+
+  .search-page .search-sidebar {
+    position: sticky;
+    top: 12px;
+    align-self: start;
+    margin-top: 0;
+    gap: 12px;
+  }
+}
+
+@media (max-width: 900px) {
+  .search-page .search-sidebar {
+    position: static;
+    top: auto;
+  }
+}
+
+@media (max-width: 680px) {
+  .search-page .search-results-summary p {
+    font-size: 13px;
+  }
+
+  .search-page .search-sidebar-card {
+    padding: 16px;
+  }
+
+  .search-page .search-sidebar-card h2 {
+    font-size: 16px;
+  }
+
+  .search-page .search-quick-filter button {
+    min-height: 42px;
+    font-size: 13.5px;
+  }
+
+  .search-page .search-suggestion-card button {
+    font-size: 13px;
+  }
+
+  .search-page .search-keyword-list button {
+    font-size: 12px;
+  }
+}
