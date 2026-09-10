@@ -59,6 +59,7 @@ import './styles/account-notifications-clean.css';
 import './styles/account-reports-clean.css';
 import './styles/service-pages-clean.css';
 import './styles/header-preferences-layout.css';
+import './styles/comments-empty-compact.css';
 import './features/propertyMarketplacePaging';
 
 // Apply the saved light/dark appearance before React paints. The brand palette
