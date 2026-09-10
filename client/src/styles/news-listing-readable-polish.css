@@ -239,10 +239,42 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .news-hub .n
   font-size: 11.5px !important;
 }
 
-/* Pagination */
+/* Pagination: neutral ink + restrained gold, no legacy green. */
 .app-shell .news-hub .pagination button,
 .app-shell .news-hub .pagination > span {
   font-size: 13px !important;
+}
+
+.app-shell .news-hub .pagination > button {
+  border-color: #e1ded6 !important;
+  color: #343834 !important;
+  background: #fff !important;
+  box-shadow: none !important;
+}
+
+.app-shell .news-hub .pagination > button:hover:not(:disabled):not(.is-active):not([aria-current='page']) {
+  border-color: #cdbb96 !important;
+  color: #8f7040 !important;
+  background: #faf7f0 !important;
+}
+
+.app-shell .news-hub .pagination > button.is-active,
+.app-shell .news-hub .pagination > button[aria-current='page'] {
+  border-color: #242724 !important;
+  color: #fff !important;
+  background: #242724 !important;
+  box-shadow: 0 6px 15px rgb(36 39 36 / 0.14) !important;
+}
+
+.app-shell .news-hub .pagination > button.is-active > span,
+.app-shell .news-hub .pagination > button[aria-current='page'] > span {
+  color: #fff !important;
+}
+
+.app-shell .news-hub .pagination > button:disabled {
+  border-color: #e7e5df !important;
+  color: #a0a49f !important;
+  background: #f8f8f6 !important;
 }
 
 /* Tablet/mobile: keep the compact composition but stop text becoming tiny. */
