@@ -1,0 +1,283 @@
+/* Shared visual system for contact and consultation/lead pages. These pages use
+   the same hero, form-card and service-card language, so their cross-page
+   tokens live here instead of separate late override files. */
+
+html[data-dthl-theme='light'] :is(.contact-page, .lead-page) {
+  --service-accent: #b59965;
+  --service-accent-dark: #806642;
+  --service-accent-soft: #f8f6f1;
+  --service-ink: #202320;
+  --service-text: #505550;
+  --service-muted: #7d827d;
+  --service-border: #e5e4df;
+  --service-border-warm: #e6dfd3;
+  --service-surface: #ffffff;
+  --service-shadow: 0 8px 26px rgb(48 43 34 / 0.055);
+
+  min-height: 100vh;
+  color: var(--service-ink);
+  background:
+    radial-gradient(circle at 8% 2%, rgb(181 153 101 / 0.07), transparent 24%),
+    #fbfaf7;
+  font-size: 15px;
+}
+
+html[data-dthl-theme='light'] .contact-page {
+  --contact-green: var(--service-accent);
+  --contact-green-hover: #9f8252;
+  --contact-green-dark: var(--service-accent-dark);
+  --contact-green-deep: var(--service-ink);
+  --contact-green-soft: var(--service-accent-soft);
+  --contact-green-border: var(--service-border-warm);
+  --contact-ink: var(--service-ink);
+  --contact-text: var(--service-text);
+  --contact-muted: var(--service-muted);
+  --contact-border: var(--service-border);
+  --contact-background: #fbfaf7;
+  --contact-surface: #fff;
+}
+
+html[data-dthl-theme='light'] .lead-page {
+  --lead-primary: var(--service-accent);
+  --lead-primary-hover: #9f8252;
+  --lead-primary-dark: var(--service-accent-dark);
+  --lead-primary-deep: var(--service-ink);
+  --lead-primary-soft: var(--service-accent-soft);
+  --lead-primary-border: var(--service-border-warm);
+  --lead-ink: var(--service-ink);
+  --lead-text: var(--service-text);
+  --lead-muted: var(--service-muted);
+  --lead-border: var(--service-border);
+  --lead-background: #fbfaf7;
+  --lead-surface: #fff;
+}
+
+html[data-dthl-theme='light'] :is(.contact-page, .lead-page) :is(p, a, button, label, input, select, textarea, li) {
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+html[data-dthl-theme='light'] :is(.contact-page, .lead-page) small {
+  font-size: 12.5px;
+  line-height: 1.4;
+}
+
+html[data-dthl-theme='light'] :is(.contact-page, .lead-page) h1 {
+  font-size: clamp(34px, 4vw, 50px);
+  line-height: 1.08;
+  letter-spacing: -0.045em;
+}
+
+html[data-dthl-theme='light'] :is(.contact-page, .lead-page) h2 {
+  font-size: clamp(20px, 2vw, 26px);
+  line-height: 1.22;
+  letter-spacing: -0.025em;
+}
+
+html[data-dthl-theme='light'] :is(.contact-page, .lead-page) h3 {
+  font-size: 16.5px;
+  line-height: 1.32;
+}
+
+html[data-dthl-theme='light'] .lead-page-breadcrumb {
+  min-height: 48px;
+  color: var(--service-muted);
+  font-size: 13px;
+}
+
+html[data-dthl-theme='light'] .lead-page-breadcrumb :is(a, button) {
+  color: var(--service-muted);
+  font-size: 13px;
+}
+
+html[data-dthl-theme='light'] .lead-page-breadcrumb :is(a, button):hover {
+  color: var(--service-accent-dark);
+}
+
+html[data-dthl-theme='light'] :is(.contact-hero, .lead-page-hero) {
+  border: 1px solid var(--service-border-warm);
+  color: var(--service-ink);
+  background:
+    radial-gradient(circle at 87% 13%, rgb(181 153 101 / 0.17), transparent 30%),
+    linear-gradient(118deg, #fff 0%, #fcfaf5 62%, #f2ebdd 100%);
+  box-shadow: var(--service-shadow);
+}
+
+html[data-dthl-theme='light'] :is(.contact-hero, .lead-page-hero)::before {
+  border-color: rgb(181 153 101 / 0.11);
+  box-shadow:
+    0 0 0 58px rgb(181 153 101 / 0.025),
+    0 0 0 120px rgb(181 153 101 / 0.014);
+}
+
+html[data-dthl-theme='light'] :is(.contact-hero, .lead-page-hero)::after {
+  background: rgb(181 153 101 / 0.07);
+}
+
+html[data-dthl-theme='light'] :is(.contact-hero__eyebrow, .lead-page-hero__eyebrow) {
+  color: var(--service-accent-dark);
+  font-size: 12.5px;
+}
+
+html[data-dthl-theme='light'] :is(.contact-hero, .lead-page-hero) h1 {
+  color: var(--service-ink);
+}
+
+html[data-dthl-theme='light'] :is(.contact-hero__content, .lead-page-hero__content) > p {
+  color: var(--service-text);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+html[data-dthl-theme='light'] :is(.contact-primary-button, .lead-page-primary-action) {
+  border-color: #242724;
+  color: #fff !important;
+  background: #242724;
+  font-size: 13.5px;
+  box-shadow: none;
+}
+
+html[data-dthl-theme='light'] :is(.contact-primary-button, .lead-page-primary-action):hover {
+  border-color: var(--service-accent);
+  color: #fff !important;
+  background: var(--service-accent);
+}
+
+html[data-dthl-theme='light'] :is(.contact-secondary-button, .lead-page-secondary-action) {
+  border-color: #dcd4c6;
+  color: var(--service-accent-dark) !important;
+  background: #fff;
+  font-size: 13.5px;
+}
+
+html[data-dthl-theme='light'] :is(.contact-secondary-button, .lead-page-secondary-action):hover {
+  border-color: var(--service-accent);
+  background: var(--service-accent-soft);
+}
+
+html[data-dthl-theme='light'] :is(.contact-hero__summary, .lead-page-hero__summary) {
+  border-color: #e4dccd;
+  color: var(--service-ink);
+  background: rgb(255 255 255 / 0.8);
+  box-shadow: 0 12px 30px rgb(71 61 44 / 0.05);
+  backdrop-filter: blur(10px);
+}
+
+html[data-dthl-theme='light'] :is(.contact-hero__summary-heading, .lead-page-hero__summary-heading) > span {
+  color: var(--service-accent-dark);
+  background: var(--service-accent-soft);
+}
+
+html[data-dthl-theme='light'] :is(.contact-hero__summary-heading, .lead-page-hero__summary-heading) strong {
+  color: var(--service-ink);
+  font-size: 14.5px;
+}
+
+html[data-dthl-theme='light'] :is(.contact-hero__summary-heading, .lead-page-hero__summary-heading) small {
+  color: var(--service-muted);
+  font-size: 12.5px;
+}
+
+html[data-dthl-theme='light'] :is(.contact-hero__summary-list, .lead-page-hero__summary-list) > div {
+  color: var(--service-text);
+  font-size: 13px;
+}
+
+html[data-dthl-theme='light'] :is(.contact-hero__summary-list, .lead-page-hero__summary-list) svg {
+  color: var(--service-accent-dark);
+}
+
+html[data-dthl-theme='light'] :is(
+  .contact-quick-info article,
+  .contact-topics-grid article,
+  .contact-form-card,
+  .contact-sidebar-card,
+  .lead-page-features article,
+  .lead-page-form-card,
+  .lead-page-sidebar-card
+) {
+  border-color: var(--service-border);
+  color: var(--service-ink);
+  background: #fff;
+  box-shadow: var(--service-shadow);
+}
+
+html[data-dthl-theme='light'] :is(
+  .contact-quick-info article > span,
+  .contact-section-heading > span,
+  .contact-form-card__heading > span,
+  .lead-page-features article > span,
+  .lead-page-form-card__heading > span,
+  .lead-page-brand-card__icon
+) {
+  color: var(--service-accent-dark);
+  background: var(--service-accent-soft);
+}
+
+html[data-dthl-theme='light'] :is(.contact-quick-info, .lead-page-features) small {
+  color: var(--service-muted);
+  font-size: 12px;
+}
+
+html[data-dthl-theme='light'] .contact-quick-info strong,
+html[data-dthl-theme='light'] .lead-page-features h2 {
+  color: var(--service-ink);
+  font-size: 15px;
+}
+
+html[data-dthl-theme='light'] :is(
+  .contact-section-heading > div > span,
+  .contact-form-card__heading > div > span,
+  .lead-page-form-card__heading small
+) {
+  color: var(--service-accent-dark);
+  font-size: 12px;
+}
+
+html[data-dthl-theme='light'] :is(
+  .contact-section-heading p,
+  .contact-topics-grid p,
+  .contact-form-card__heading p,
+  .lead-page-features p,
+  .lead-page-form-card__heading p
+) {
+  color: var(--service-muted);
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+html[data-dthl-theme='light'] :is(
+  .contact-form-card__notice,
+  .lead-page-form-card__notice,
+  .lead-page-source-notice
+) {
+  border-color: var(--service-border-warm);
+  color: var(--service-text);
+  background: var(--service-accent-soft);
+}
+
+html[data-dthl-theme='light'] :is(.contact-page, .lead-page) :is(input, select, textarea) {
+  border-color: var(--service-border);
+  color: var(--service-ink);
+  background: #fff;
+  font-size: 14px;
+}
+
+html[data-dthl-theme='light'] :is(.contact-page, .lead-page) :is(input, select, textarea):focus {
+  border-color: var(--service-accent);
+  box-shadow: 0 0 0 3px rgb(181 153 101 / 0.1);
+}
+
+@media (max-width: 620px) {
+  html[data-dthl-theme='light'] :is(.contact-page, .lead-page) h1 {
+    font-size: clamp(28px, 8vw, 36px);
+  }
+
+  html[data-dthl-theme='light'] :is(.contact-page, .lead-page) h2 {
+    font-size: 20px;
+  }
+
+  html[data-dthl-theme='light'] :is(.contact-page, .lead-page) :is(p, a, button, label, input, select, textarea, li) {
+    font-size: 13.5px;
+  }
+}
