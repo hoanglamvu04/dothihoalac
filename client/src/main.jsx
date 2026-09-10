@@ -59,8 +59,6 @@ import './styles/account-notifications-clean.css';
 import './styles/account-reports-clean.css';
 import './styles/service-pages-clean.css';
 import './styles/site-palette-picker.css';
-import './components/layout/SiteFooter.css';
-import './components/layout/SiteFooter.mobile.css';
 import './features/propertyMarketplacePaging';
 import './features/sitePalettePicker';
 
