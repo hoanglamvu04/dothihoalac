@@ -7,6 +7,8 @@
   --account-border: #e5e4df;
   --account-ink: #202320;
   --account-muted: #7d827d;
+  --account-desktop-surface: #ffffff;
+  --account-desktop-surface-2: #fafaf8;
   --account-desktop-canvas: #ffffff;
   --account-desktop-border: #e5e4df;
   --account-desktop-ink: #202320;
@@ -14,6 +16,7 @@
   --account-desktop-muted: #7d827d;
   --account-desktop-green: #b59965;
   --account-desktop-green-soft: #f8f6f1;
+  --account-desktop-gold: #b59965;
 
   background: #fff;
 }
