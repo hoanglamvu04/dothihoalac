@@ -23,33 +23,40 @@ const navigationLinks = [
 
 const categoryLinks = [
   { to: '/tin-tuc?category=quy-hoach', label: 'Quy hoạch' },
-  { to: '/tin-tuc?category=ha-tang', label: 'Hạ tầng' },
+  { to: '/tin-tuc?category=ha-tang-giao-thong', label: 'Hạ tầng' },
   { to: '/tin-tuc?category=du-an-dtxd', label: 'Dự án ĐTXD' },
   { to: '/tin-tuc?category=chinh-sach', label: 'Chính sách' },
 ];
 
+const facebookUrl = String(import.meta.env.VITE_FACEBOOK_URL || '').trim();
+const youtubeUrl = String(import.meta.env.VITE_YOUTUBE_URL || '').trim();
+
 function FooterSocialLinks({ className = '' }) {
   return (
     <div className={`site-footer__social ${className}`.trim()} aria-label="Kênh cộng đồng">
-      <a
-        href="https://www.facebook.com/"
-        target="_blank"
-        rel="noreferrer"
-        aria-label="Facebook Đô Thị Hòa Lạc"
-        title="Facebook"
-      >
-        <Facebook size={19} />
-      </a>
+      {facebookUrl ? (
+        <a
+          href={facebookUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Facebook Đô Thị Hòa Lạc"
+          title="Facebook"
+        >
+          <Facebook size={19} />
+        </a>
+      ) : null}
 
-      <a
-        href="https://www.youtube.com/"
-        target="_blank"
-        rel="noreferrer"
-        aria-label="YouTube Đô Thị Hòa Lạc"
-        title="YouTube"
-      >
-        <Youtube size={19} />
-      </a>
+      {youtubeUrl ? (
+        <a
+          href={youtubeUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="YouTube Đô Thị Hòa Lạc"
+          title="YouTube"
+        >
+          <Youtube size={19} />
+        </a>
+      ) : null}
 
       <Link
         to="/cong-dong"
