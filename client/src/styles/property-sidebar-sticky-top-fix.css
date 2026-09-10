@@ -41,6 +41,19 @@
   box-shadow: none !important;
 }
 
+/* Desktop results rhythm: replace the old top-only 10px inset with an even
+   20px canvas around both the listing column and right rail. The results header
+   uses the same inset so its title/search row aligns with the grid below. */
+@media (min-width: 961px) {
+  .app-shell .properties-page .properties-results__header {
+    padding: 20px !important;
+  }
+
+  .app-shell .properties-page .properties-results-layout {
+    padding: 20px !important;
+  }
+}
+
 @media (min-width: 1101px) {
   .app-shell .properties-page .properties-results-layout {
     align-items: start !important;
