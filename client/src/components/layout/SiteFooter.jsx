@@ -141,7 +141,7 @@ export default function SiteFooter() {
                 </span>
                 <div>
                   <strong>Email</strong>
-                  <a href="mailto:dothihoalac@xspace.vn">dothihoalac@xspace.vn</a>
+                  <a href="mailto:admin@xspace.vn">admin@xspace.vn</a>
                 </div>
               </div>
 
