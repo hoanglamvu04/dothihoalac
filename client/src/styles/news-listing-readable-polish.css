@@ -1,7 +1,7 @@
 /* =========================================================
    NEWS HUB — READABILITY POLISH
-   Typography-only normalization for /tin-tuc. Keeps the current editorial
-   composition, palette, cards and data behavior intact.
+   Typography normalization for /tin-tuc. The page keeps its editorial
+   composition while using a calmer weight scale and a stronger reading floor.
 ========================================================= */
 
 .app-shell .news-hub {
@@ -10,62 +10,79 @@
 
 /* Masthead */
 .app-shell .news-hub .news-masthead__eyebrow {
-  font-size: 12.5px !important;
+  font-size: 13px !important;
   line-height: 1.4 !important;
+  font-weight: 700 !important;
 }
 
 .app-shell .news-hub .news-masthead h1 {
-  font-size: clamp(36px, 3.2vw, 46px) !important;
-  line-height: 1.05 !important;
+  font-size: clamp(38px, 3.2vw, 48px) !important;
+  line-height: 1.07 !important;
+  font-weight: 740 !important;
+  letter-spacing: -0.035em !important;
 }
 
 .app-shell .news-hub .news-masthead p {
-  font-size: 15px !important;
+  font-size: 16px !important;
   line-height: 1.62 !important;
 }
 
 .app-shell .news-hub .news-masthead__search input {
-  font-size: 14.5px !important;
+  font-size: 15px !important;
 }
 
 .app-shell .news-hub .news-masthead__search button {
-  font-size: 13.5px !important;
+  font-size: 14px !important;
+  font-weight: 680 !important;
 }
 
 /* Categories + filters */
 .app-shell .news-hub .news-category-bar nav button,
 .app-shell .news-hub .news-filter-toggle {
-  font-size: 13px !important;
-  line-height: 1.3 !important;
+  font-size: 14px !important;
+  line-height: 1.35 !important;
+  font-weight: 650 !important;
 }
 
 .app-shell .news-hub .news-filter-panel label > span {
-  font-size: 12.5px !important;
+  font-size: 13px !important;
   line-height: 1.4 !important;
+  font-weight: 650 !important;
 }
 
 .app-shell .news-hub .news-filter-panel select,
 .app-shell .news-hub .news-filter-panel input {
-  font-size: 14px !important;
+  font-size: 14.5px !important;
 }
 
 .app-shell .news-hub .news-filter-reset {
-  font-size: 13px !important;
+  font-size: 13.5px !important;
+  font-weight: 650 !important;
 }
 
 /* Story system */
 .app-shell .news-hub .news-story__kicker span {
-  font-size: 12px !important;
+  font-size: 12.5px !important;
   line-height: 1.4 !important;
+  font-weight: 700 !important;
 }
 
 .app-shell .news-hub .news-story__kicker i {
-  font-size: 11px !important;
+  font-size: 11.5px !important;
   line-height: 1.3 !important;
+  font-weight: 650 !important;
+}
+
+.app-shell .news-hub .news-story h2,
+.app-shell .news-hub .news-story h3,
+.app-shell .news-hub .news-story h2 a,
+.app-shell .news-hub .news-story h3 a {
+  font-weight: 650 !important;
+  letter-spacing: -0.015em !important;
 }
 
 .app-shell .news-hub .news-story .content-meta {
-  font-size: 12.5px !important;
+  font-size: 13px !important;
   line-height: 1.45 !important;
 }
 
@@ -74,50 +91,55 @@
 }
 
 .app-shell .news-hub .news-story--lead h2 {
-  font-size: clamp(29px, 2.65vw, 39px) !important;
-  line-height: 1.1 !important;
+  font-size: clamp(31px, 2.65vw, 40px) !important;
+  line-height: 1.12 !important;
+  font-weight: 680 !important;
 }
 
 .app-shell .news-hub .news-story--lead p {
-  font-size: 15px !important;
+  font-size: 16px !important;
   line-height: 1.58 !important;
 }
 
 .app-shell .news-hub .news-story--side h3 {
-  font-size: 15px !important;
-  line-height: 1.38 !important;
+  font-size: 17px !important;
+  line-height: 1.4 !important;
+  font-weight: 650 !important;
 }
 
 /* Stream heading + feed */
 .app-shell .news-hub .news-stream__heading span {
-  font-size: 12px !important;
+  font-size: 12.5px !important;
   line-height: 1.4 !important;
+  font-weight: 700 !important;
 }
 
 .app-shell .news-hub .news-stream__heading h2 {
-  font-size: clamp(21px, 2vw, 25px) !important;
-  line-height: 1.25 !important;
+  font-size: clamp(23px, 2vw, 27px) !important;
+  line-height: 1.28 !important;
+  font-weight: 700 !important;
 }
 
 .app-shell .news-hub .news-stream__heading > p {
-  font-size: 13px !important;
+  font-size: 13.5px !important;
 }
 
 .app-shell .news-hub .news-story--feed h3,
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .news-hub .news-content-layout .news-story--feed h3 {
-  font-size: 17px !important;
-  line-height: 1.38 !important;
+  font-size: 19px !important;
+  line-height: 1.42 !important;
+  font-weight: 650 !important;
 }
 
 .app-shell .news-hub .news-story--feed p,
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .news-hub .news-content-layout .news-story--feed p {
-  font-size: 14px !important;
-  line-height: 1.55 !important;
+  font-size: 15px !important;
+  line-height: 1.58 !important;
 }
 
 .app-shell .news-hub .news-stream__continue {
-  font-size: 13.5px !important;
-  line-height: 1.5 !important;
+  font-size: 14px !important;
+  line-height: 1.55 !important;
 }
 
 .app-shell .news-hub :is(
@@ -125,124 +147,134 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .news-hub .n
   .news-hub__empty > button,
   .news-hub__error > button
 ) {
-  font-size: 13px !important;
+  font-size: 13.5px !important;
 }
 
 /* Right rail */
 .app-shell .news-hub .news-rail-card__head span {
-  font-size: 11.5px !important;
+  font-size: 12px !important;
   line-height: 1.4 !important;
+  font-weight: 700 !important;
 }
 
 .app-shell .news-hub .news-rail-card__head h2 {
-  font-size: 16.5px !important;
-  line-height: 1.3 !important;
+  font-size: 18px !important;
+  line-height: 1.32 !important;
+  font-weight: 700 !important;
 }
 
 .app-shell .news-hub .news-rail-card__head > a {
-  font-size: 12px !important;
+  font-size: 12.5px !important;
+  font-weight: 650 !important;
 }
 
 .app-shell .news-hub .news-rail-article__copy strong {
-  font-size: 13.5px !important;
-  line-height: 1.4 !important;
+  font-size: 14.5px !important;
+  line-height: 1.42 !important;
+  font-weight: 650 !important;
 }
 
 .app-shell .news-hub .news-rail-article__copy small,
 .app-shell .news-hub .news-rail-empty {
-  font-size: 11.5px !important;
+  font-size: 12.5px !important;
   line-height: 1.45 !important;
 }
 
 .app-shell .news-hub .news-topic-chips a {
-  font-size: 12px !important;
+  font-size: 12.5px !important;
+  font-weight: 620 !important;
 }
 
 .app-shell .news-hub .news-area-links a {
-  font-size: 12.5px !important;
+  font-size: 13px !important;
 }
 
 .app-shell .news-hub .news-ecosystem-links small {
-  font-size: 11px !important;
-}
-
-.app-shell .news-hub .news-ecosystem-links strong {
-  font-size: 13.5px !important;
-  line-height: 1.4 !important;
-}
-
-.app-shell .news-hub .news-ecosystem-links em {
   font-size: 11.5px !important;
 }
 
+.app-shell .news-hub .news-ecosystem-links strong {
+  font-size: 14px !important;
+  line-height: 1.42 !important;
+  font-weight: 650 !important;
+}
+
+.app-shell .news-hub .news-ecosystem-links em {
+  font-size: 12px !important;
+}
+
 .app-shell .news-hub .news-tip-cta small {
-  font-size: 11px !important;
+  font-size: 11.5px !important;
 }
 
 .app-shell .news-hub .news-tip-cta strong {
-  font-size: 15px !important;
-  line-height: 1.4 !important;
+  font-size: 16px !important;
+  line-height: 1.42 !important;
+  font-weight: 680 !important;
 }
 
 .app-shell .news-hub .news-tip-cta p {
-  font-size: 13px !important;
+  font-size: 13.5px !important;
   line-height: 1.58 !important;
 }
 
 .app-shell .news-hub .news-tip-cta > a {
-  font-size: 13px !important;
+  font-size: 13.5px !important;
 }
 
 /* Project/context rail */
 .app-shell .news-hub .news-project-item__top {
-  font-size: 11.5px !important;
+  font-size: 12px !important;
 }
 
 .app-shell .news-hub .news-project-item > strong {
-  font-size: 13.5px !important;
-  line-height: 1.4 !important;
+  font-size: 14px !important;
+  line-height: 1.42 !important;
+  font-weight: 650 !important;
 }
 
 .app-shell .news-hub .news-project-item > small,
 .app-shell .news-hub .news-project-item small span {
-  font-size: 11.5px !important;
+  font-size: 12px !important;
   line-height: 1.4 !important;
 }
 
 /* Weather + discussions */
 .app-shell .news-hub .news-weather-current > div strong {
-  font-size: 27px !important;
+  font-size: 28px !important;
+  font-weight: 700 !important;
 }
 
 .app-shell .news-hub .news-weather-current > div span {
-  font-size: 12.5px !important;
+  font-size: 13px !important;
 }
 
 .app-shell .news-hub .news-weather-current :is(dt, dd) {
-  font-size: 11.5px !important;
+  font-size: 12px !important;
 }
 
 .app-shell .news-hub .news-weather-days span {
-  font-size: 10.5px !important;
+  font-size: 11px !important;
 }
 
 .app-shell .news-hub .news-weather-days strong {
-  font-size: 11.5px !important;
+  font-size: 12px !important;
+  font-weight: 650 !important;
 }
 
 .app-shell .news-hub .news-discussion-list a > span {
-  font-size: 13px !important;
-  line-height: 1.4 !important;
+  font-size: 13.5px !important;
+  line-height: 1.42 !important;
 }
 
 .app-shell .news-hub .news-discussion-list b {
-  font-size: 11.5px !important;
+  font-size: 12px !important;
 }
 
 /* Pagination: neutral ink + restrained gold, no legacy green. */
 .app-shell .news-hub .pagination button,
 .app-shell .news-hub .pagination > span {
-  font-size: 13px !important;
+  font-size: 13.5px !important;
 }
 
 .app-shell .news-hub .pagination > button {
@@ -277,86 +309,101 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .news-hub .n
   background: #f8f8f6 !important;
 }
 
-/* Tablet/mobile: keep the compact composition but stop text becoming tiny. */
+/* Tablet/mobile: narrower screens keep at least the desktop reading floor
+   for body/meta text. Titles reflow instead of becoming excessively small. */
 @media (max-width: 680px) {
   .app-shell .news-hub .news-masthead__eyebrow {
-    font-size: 11.5px !important;
-  }
-
-  .app-shell .news-hub .news-masthead h1 {
-    font-size: 30px !important;
-  }
-
-  .app-shell .news-hub .news-masthead p {
-    font-size: 14px !important;
-    line-height: 1.58 !important;
-  }
-
-  .app-shell .news-hub .news-masthead__search input {
-    font-size: 14px !important;
-  }
-
-  .app-shell .news-hub .news-category-bar nav button,
-  .app-shell .news-hub .news-filter-toggle {
     font-size: 12.5px !important;
   }
 
+  .app-shell .news-hub .news-masthead h1 {
+    font-size: 32px !important;
+    line-height: 1.08 !important;
+  }
+
+  .app-shell .news-hub .news-masthead p {
+    font-size: 16px !important;
+    line-height: 1.6 !important;
+  }
+
+  .app-shell .news-hub .news-masthead__search input {
+    font-size: 15px !important;
+  }
+
+  .app-shell .news-hub .news-masthead__search button,
+  .app-shell .news-hub .news-category-bar nav button,
+  .app-shell .news-hub .news-filter-toggle {
+    font-size: 14px !important;
+  }
+
   .app-shell .news-hub .news-filter-panel label > span {
-    font-size: 12px !important;
+    font-size: 13px !important;
   }
 
   .app-shell .news-hub .news-filter-panel :is(select, input) {
-    font-size: 13.5px !important;
+    font-size: 14.5px !important;
   }
 
   .app-shell .news-hub .news-story__kicker span {
-    font-size: 11px !important;
+    font-size: 12px !important;
   }
 
   .app-shell .news-hub .news-story--lead h2 {
-    font-size: 24px !important;
-    line-height: 1.14 !important;
+    font-size: 26px !important;
+    line-height: 1.16 !important;
+  }
+
+  .app-shell .news-hub .news-story--lead p {
+    font-size: 15.5px !important;
   }
 
   .app-shell .news-hub .news-story--side h3 {
-    font-size: 14.5px !important;
+    font-size: 16.5px !important;
+    line-height: 1.42 !important;
   }
 
   .app-shell .news-hub .news-story--feed h3,
   html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .news-hub .news-content-layout .news-story--feed h3 {
-    font-size: 15px !important;
-    line-height: 1.4 !important;
+    font-size: 17.5px !important;
+    line-height: 1.44 !important;
+    font-weight: 650 !important;
+  }
+
+  .app-shell .news-hub .news-story--feed p,
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .news-hub .news-content-layout .news-story--feed p {
+    font-size: 15.5px !important;
+    line-height: 1.6 !important;
   }
 
   .app-shell .news-hub .news-story .content-meta {
-    font-size: 11.5px !important;
+    font-size: 13px !important;
   }
 
   .app-shell .news-hub .news-stream__heading span {
-    font-size: 11.5px !important;
+    font-size: 12px !important;
   }
 
   .app-shell .news-hub .news-stream__heading h2 {
-    font-size: 20px !important;
+    font-size: 22px !important;
   }
 
   .app-shell .news-hub .news-stream__heading > p {
-    font-size: 12.5px !important;
+    font-size: 13px !important;
   }
 
   .app-shell .news-hub .news-rail-card__head h2 {
-    font-size: 16px !important;
+    font-size: 17.5px !important;
   }
 
   .app-shell .news-hub .news-rail-article__copy strong,
   .app-shell .news-hub .news-discussion-list a > span,
   .app-shell .news-hub .news-ecosystem-links strong {
-    font-size: 13px !important;
+    font-size: 14.5px !important;
   }
 
   .app-shell .news-hub .news-topic-chips a,
   .app-shell .news-hub .news-area-links a,
   .app-shell .news-hub .news-tip-cta > a {
-    font-size: 12px !important;
+    font-size: 13px !important;
   }
 }
