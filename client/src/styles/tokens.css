@@ -71,8 +71,10 @@
   --radius-lg: 22px;
   --radius-xl: 30px;
 
+  /* Reading pages stay narrower; wide marketplace/editorial shells may grow
+     to 1500px, but never stretch indefinitely on 2K/4K monitors. */
   --container: 1180px;
-  --container-wide: 1380px;
+  --container-wide: 1500px;
   --header-height: 72px;
   --transition: 180ms ease;
 }
