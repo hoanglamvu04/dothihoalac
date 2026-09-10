@@ -4,7 +4,6 @@ import {
   ArrowUp,
   ChevronRight,
   Facebook,
-  FileText,
   Mail,
   MapPin,
   Phone,
@@ -24,15 +23,9 @@ const navigationLinks = [
   { to: '/gui-tin', label: 'Gửi thông tin' },
 ];
 
-const categoryLinks = [
-  { to: '/tin-tuc?category=quy-hoach', label: 'Quy hoạch' },
-  { to: '/tin-tuc?category=ha-tang-giao-thong', label: 'Hạ tầng' },
-  { to: '/tin-tuc?category=du-an-dtxd', label: 'Dự án ĐTXD' },
-  { to: '/tin-tuc?category=chinh-sach', label: 'Chính sách' },
-];
-
 const facebookUrl = String(import.meta.env.VITE_FACEBOOK_URL || '').trim();
 const youtubeUrl = String(import.meta.env.VITE_YOUTUBE_URL || '').trim();
+const xspaceUrl = 'https://www.xspace.vn/';
 
 function FooterSocialLinks({ className = '' }) {
   return (
@@ -61,13 +54,15 @@ function FooterSocialLinks({ className = '' }) {
         </a>
       ) : null}
 
-      <Link
-        to="/cong-dong"
-        aria-label="Cộng đồng Đô Thị Hòa Lạc"
-        title="Cộng đồng"
+      <a
+        href={xspaceUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="XSpace Việt Nam"
+        title="XSpace Việt Nam"
       >
         <UsersRound size={19} />
-      </Link>
+      </a>
     </div>
   );
 }
@@ -107,10 +102,10 @@ export default function SiteFooter() {
 
             <p className="site-footer__operator">
               <span>Vận hành bởi</span>
-              <strong>Công ty Cổ phần XSpace Việt Nam</strong>
+              <a href={xspaceUrl} target="_blank" rel="noopener noreferrer">
+                <strong>Công ty Cổ phần XSpace Việt Nam</strong>
+              </a>
             </p>
-
-            <FooterSocialLinks className="site-footer__social--brand" />
           </section>
 
           <section className="site-footer__column site-footer__contact-column">
@@ -145,22 +140,6 @@ export default function SiteFooter() {
                 <div>
                   <strong>Email</strong>
                   <a href="mailto:admin@xspace.vn">admin@xspace.vn</a>
-                </div>
-              </div>
-
-              <div className="site-footer__contact-item site-footer__contact-item--categories">
-                <span className="site-footer__contact-icon" aria-hidden="true">
-                  <FileText size={20} />
-                </span>
-                <div>
-                  <strong>Chuyên mục</strong>
-                  <span className="site-footer__category-links">
-                    {categoryLinks.map((item) => (
-                      <Link key={`${item.to}-${item.label}`} to={item.to}>
-                        {item.label}
-                      </Link>
-                    ))}
-                  </span>
                 </div>
               </div>
             </div>
@@ -202,7 +181,10 @@ export default function SiteFooter() {
           </nav>
 
           <p>
-            © {currentYear} Đô Thị Hòa Lạc. <span>Công ty Cổ phần XSpace Việt Nam</span>
+            © {currentYear} Đô Thị Hòa Lạc.{' '}
+            <a href={xspaceUrl} target="_blank" rel="noopener noreferrer">
+              Công ty Cổ phần XSpace Việt Nam
+            </a>
           </p>
 
           <button
