@@ -207,8 +207,7 @@ html[data-dthl-theme='light'] :is(
   .contact-section-heading > span,
   .contact-form-card__heading > span,
   .lead-page-features article > span,
-  .lead-page-form-card__heading > span,
-  .lead-page-brand-card__icon
+  .lead-page-form-card__heading > span
 ) {
   color: var(--service-accent-dark);
   background: var(--service-accent-soft);
@@ -228,7 +227,8 @@ html[data-dthl-theme='light'] .lead-page-features h2 {
 html[data-dthl-theme='light'] :is(
   .contact-section-heading > div > span,
   .contact-form-card__heading > div > span,
-  .lead-page-form-card__heading small
+  .lead-page-form-card__heading small,
+  .lead-page-section-heading small
 ) {
   color: var(--service-accent-dark);
   font-size: 12px;
@@ -239,7 +239,10 @@ html[data-dthl-theme='light'] :is(
   .contact-topics-grid p,
   .contact-form-card__heading p,
   .lead-page-features p,
-  .lead-page-form-card__heading p
+  .lead-page-form-card__heading p,
+  .lead-page-section-heading p,
+  .lead-page-process__grid p,
+  .lead-page-brand-card p
 ) {
   color: var(--service-muted);
   font-size: 14px;
@@ -266,6 +269,78 @@ html[data-dthl-theme='light'] :is(.contact-page, .lead-page) :is(input, select, 
 html[data-dthl-theme='light'] :is(.contact-page, .lead-page) :is(input, select, textarea):focus {
   border-color: var(--service-accent);
   box-shadow: 0 0 0 3px rgb(181 153 101 / 0.1);
+}
+
+html[data-dthl-theme='light'] :is(.contact-business-card, .lead-page-brand-card) {
+  border-color: rgb(181 153 101 / 0.2);
+  color: #fff;
+  background:
+    radial-gradient(circle at 90% 8%, rgb(181 153 101 / 0.18), transparent 32%),
+    linear-gradient(145deg, #252722, #4f4130);
+  box-shadow: 0 14px 34px rgb(40 34 26 / 0.16);
+}
+
+html[data-dthl-theme='light'] :is(.contact-business-card, .lead-page-brand-card)::after {
+  border-color: rgb(226 205 166 / 0.12);
+  box-shadow: 0 0 0 28px rgb(226 205 166 / 0.025);
+}
+
+html[data-dthl-theme='light'] .contact-business-card > span,
+html[data-dthl-theme='light'] .lead-page-brand-card__icon {
+  color: #e6c98f;
+  background: rgb(255 255 255 / 0.09);
+}
+
+html[data-dthl-theme='light'] :is(.contact-business-card, .lead-page-brand-card) > small {
+  color: #ddc08a;
+  font-size: 11.5px;
+}
+
+html[data-dthl-theme='light'] :is(.contact-business-card, .lead-page-brand-card) h2 {
+  color: #fff;
+  font-size: 18px;
+  line-height: 1.35;
+}
+
+html[data-dthl-theme='light'] :is(.contact-business-card, .lead-page-brand-card) p {
+  color: rgb(255 255 255 / 0.72);
+  font-size: 13.5px;
+}
+
+html[data-dthl-theme='light'] .contact-business-card a,
+html[data-dthl-theme='light'] .lead-page-brand-card > a {
+  color: #202320 !important;
+  background: #fff;
+  font-size: 13px;
+}
+
+html[data-dthl-theme='light'] .contact-business-card a:hover,
+html[data-dthl-theme='light'] .lead-page-brand-card > a:hover {
+  background: #f3ead9;
+}
+
+html[data-dthl-theme='light'] :is(.lead-page-principles div, .lead-page-contact-list :is(a, div)) {
+  border-color: var(--service-border);
+  color: var(--service-text);
+  background: #fafaf8;
+  font-size: 13px;
+}
+
+html[data-dthl-theme='light'] .lead-page-process {
+  border-color: var(--service-border);
+  background: #fff;
+  box-shadow: var(--service-shadow);
+}
+
+html[data-dthl-theme='light'] .lead-page-process__grid article {
+  border-color: var(--service-border);
+  background: linear-gradient(145deg, #fafaf8, #fff);
+}
+
+html[data-dthl-theme='light'] .lead-page-process__grid article > span {
+  color: #fff;
+  background: var(--service-accent);
+  font-size: 11.5px;
 }
 
 @media (max-width: 620px) {
