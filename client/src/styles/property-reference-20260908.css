@@ -90,16 +90,6 @@
   line-height: 1.65 !important;
 }
 
-.app-shell .properties-page .properties-hero__content p::after {
-  display: block;
-  margin-top: 20px;
-  color: #7d6a54;
-  content: '✓ Thông tin minh bạch   ·   ✓ Cập nhật liên tục   ·   ✓ Hỗ trợ tận tâm';
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.01em;
-}
-
 .app-shell .properties-page .properties-hero__finder {
   position: absolute !important;
   z-index: 5 !important;
