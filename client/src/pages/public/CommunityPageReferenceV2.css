@@ -227,7 +227,7 @@
 
 .community-social-page .community-feed-card__author > div {
   margin-top: 2px !important;
-  font-size: 13px !important;
+  font-size: 14px !important;
   line-height: 1.35 !important;
 }
 
@@ -272,7 +272,7 @@
   min-height: 36px !important;
   padding: 6px 18px !important;
   color: var(--community-muted) !important;
-  font-size: 13px !important;
+  font-size: 14px !important;
 }
 
 .community-social-page.community-social-page .community-reference-center .community-feed-card__actions {
@@ -284,7 +284,7 @@
 .community-social-page.community-social-page .community-reference-center .community-feed-action {
   min-height: 40px !important;
   color: var(--community-text) !important;
-  font-size: 13px !important;
+  font-size: 14px !important;
   font-weight: 690 !important;
 }
 
@@ -307,7 +307,7 @@
 
 .community-social-page .community-feed-comment strong {
   color: var(--community-ink) !important;
-  font-size: 13px !important;
+  font-size: 14px !important;
 }
 
 .community-social-page .community-feed-comment p {

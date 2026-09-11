@@ -216,7 +216,7 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card__contac
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-expired p,
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-contact-empty {
-  font-size: 13px !important;
+  font-size: 14px !important;
   line-height: 1.5 !important;
 }
 
@@ -227,7 +227,7 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-sidebar-heading h2
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-sidebar-heading p {
-  font-size: 13px !important;
+  font-size: 14px !important;
   line-height: 1.5 !important;
 }
 
@@ -238,13 +238,13 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-sidebar-summary dd
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-sidebar-safety ul {
-  font-size: 13px !important;
+  font-size: 14px !important;
   line-height: 1.58 !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-sidebar-share__actions button,
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-apply-card__contacts > button {
-  font-size: 13px !important;
+  font-size: 14px !important;
   line-height: 1.35 !important;
 }
 

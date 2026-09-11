@@ -65,7 +65,7 @@ html body .app-shell :is(.contact-page, .lead-page) :is(
 }
 
 html body .app-shell :is(.contact-page, .lead-page) small {
-  font-size: 13px !important;
+  font-size: 14px !important;
 }
 
 html body .app-shell .account-center-page :is(
@@ -225,7 +225,7 @@ html body .admin-shell :is(.admin-nav-group__label, .admin-page small) {
     .news-project-item > small,
     .news-project-item small span
   ) {
-    font-size: 13px !important;
+    font-size: 14px !important;
   }
 
   html body .app-shell .news-hub .news-area-links a {
@@ -358,7 +358,7 @@ html body .admin-shell :is(.admin-nav-group__label, .admin-page small) {
   }
 
   html body .admin-shell :is(.admin-nav-group__label, .admin-page small) {
-    font-size: 13px !important;
+    font-size: 14px !important;
   }
 }
 
@@ -379,7 +379,7 @@ html body .admin-shell :is(.admin-nav-group__label, .admin-page small) {
     .pagination button,
     .pagination > span
   ) {
-    font-size: 13px !important;
+    font-size: 14px !important;
     line-height: 1.45 !important;
   }
 
@@ -462,7 +462,7 @@ html body .admin-shell :is(.admin-nav-group__label, .admin-page small) {
     .pagination button,
     .pagination > span
   ) {
-    font-size: 13px !important;
+    font-size: 14px !important;
     line-height: 1.45 !important;
   }
 
@@ -497,7 +497,7 @@ html body .admin-shell :is(.admin-nav-group__label, .admin-page small) {
     .home-card-meta,
     .home-card-meta span
   ) {
-    font-size: 13px !important;
+    font-size: 14px !important;
     line-height: 1.5 !important;
   }
 
@@ -529,7 +529,7 @@ html body .admin-shell :is(.admin-nav-group__label, .admin-page small) {
 
   html body .app-shell .community-social-page .community-reference-center .community-feed-card__author > div,
   html body .app-shell .community-social-page .community-reference-center .community-feed-action__count {
-    font-size: 13px !important;
+    font-size: 14px !important;
   }
 
   html body .app-shell .community-social-page .community-reference-center .community-feed-card__type {

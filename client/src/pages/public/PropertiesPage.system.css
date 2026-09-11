@@ -20,7 +20,7 @@
 
 /* Hero */
 .app-shell .properties-page .properties-hero__eyebrow {
-  font-size: 13px !important;
+  font-size: 14px !important;
   line-height: 1.25 !important;
 }
 
@@ -61,7 +61,7 @@
 }
 
 .app-shell .properties-page .properties-featured-areas > header > button {
-  font-size: 13px !important;
+  font-size: 14px !important;
 }
 
 .app-shell .properties-page .properties-featured-areas__grid strong {
@@ -70,7 +70,7 @@
 }
 
 .app-shell .properties-page .properties-featured-areas__grid small {
-  font-size: 13px !important;
+  font-size: 14px !important;
 }
 
 /* Filters / result controls */
@@ -85,7 +85,7 @@
 }
 
 .app-shell .properties-page .properties-results__eyebrow {
-  font-size: 13px !important;
+  font-size: 14px !important;
 }
 
 .app-shell .properties-page .properties-results__header h2 {
@@ -96,7 +96,7 @@
 .app-shell .properties-page .properties-results__search input,
 .app-shell .properties-page .properties-results__sort,
 .app-shell .properties-page .properties-results__sort select {
-  font-size: 13px !important;
+  font-size: 14px !important;
 }
 
 .app-shell .properties-page .properties-active-filters > span,
@@ -138,13 +138,13 @@
 }
 
 .app-shell .properties-page .property-card__facts {
-  font-size: 13px !important;
+  font-size: 14px !important;
   line-height: 1.4 !important;
 }
 
 .app-shell .properties-page .property-card__location,
 .app-shell .properties-page .property-card__summary {
-  font-size: 13px !important;
+  font-size: 14px !important;
   line-height: 1.5 !important;
 }
 
@@ -168,7 +168,7 @@
 .app-shell .properties-page .properties-market-card dt,
 .app-shell .properties-page .properties-market-card dd,
 .app-shell .properties-page .properties-market-card > button {
-  font-size: 13px !important;
+  font-size: 14px !important;
 }
 
 .app-shell .properties-page .properties-post-card h3 {
@@ -177,7 +177,7 @@
 
 .app-shell .properties-page .properties-post-card p,
 .app-shell .properties-page .properties-post-card a {
-  font-size: 13px !important;
+  font-size: 14px !important;
 }
 
 /* Pagination is deliberately prominent on the marketplace. */
@@ -202,7 +202,7 @@
 
 .app-shell .properties-page .properties-pagination p,
 .app-shell .properties-page .properties-pagination small {
-  font-size: 13px !important;
+  font-size: 14px !important;
   line-height: 1.4 !important;
 }
 
@@ -247,7 +247,7 @@
   .app-shell .properties-page .properties-toolbar__filters > label,
   .app-shell .properties-page .properties-toolbar__advanced,
   .app-shell .properties-page .properties-toolbar__views button {
-    font-size: 13px !important;
+    font-size: 14px !important;
   }
 
   .app-shell .properties-page .properties-results__header h2 {
@@ -275,6 +275,6 @@
   .app-shell .properties-page .properties-pagination .pagination > button {
     min-width: 38px;
     height: 38px;
-    font-size: 13px !important;
+    font-size: 14px !important;
   }
 }

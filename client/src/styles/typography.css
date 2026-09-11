@@ -178,7 +178,7 @@
 ========================================================= */
 
 .app-shell .jobs-market-hero__eyebrow {
-  font-size: 13px !important;
+  font-size: 14px !important;
 }
 
 .app-shell .jobs-market-hero h2 {
@@ -190,7 +190,7 @@
 }
 
 .app-shell .jobs-market-hero__chips span {
-  font-size: 13px !important;
+  font-size: 14px !important;
 }
 
 .app-shell .jobs-market-search input,
@@ -216,7 +216,7 @@
 .app-shell .jobs-section-heading > button,
 .app-shell .jobs-panel-heading > a,
 .app-shell .jobs-results__reload {
-  font-size: 13px !important;
+  font-size: 14px !important;
 }
 
 .app-shell .jobs-discovery__grid strong {
@@ -232,7 +232,7 @@
 
 .app-shell .jobs-employer-cta strong,
 .app-shell .jobs-employer-cta > a {
-  font-size: 13px !important;
+  font-size: 14px !important;
 }
 
 .app-shell .jobs-featured-card .job-card h3 {
@@ -241,7 +241,7 @@
 }
 
 .app-shell .jobs-featured-card .job-card__body > strong {
-  font-size: 13px !important;
+  font-size: 14px !important;
 }
 
 .app-shell .jobs-featured-card .job-card__salary {
@@ -254,7 +254,7 @@
 }
 
 .app-shell .jobs-results__header p {
-  font-size: 13px !important;
+  font-size: 14px !important;
 }
 
 .app-shell .jobs-results-controls__types button,
@@ -271,7 +271,7 @@
 }
 
 .app-shell .jobs-page .jobs-results__main .job-card__body > strong {
-  font-size: 13px !important;
+  font-size: 14px !important;
   line-height: 1.35 !important;
 }
 
@@ -280,7 +280,7 @@
 }
 
 .app-shell .jobs-page .jobs-results__main .job-card__body > div:last-child {
-  font-size: 13px !important;
+  font-size: 14px !important;
   line-height: 1.4 !important;
 }
 
@@ -290,7 +290,7 @@
 
 .app-shell .jobs-safety-card > p,
 .app-shell .jobs-safety-card li {
-  font-size: 13px !important;
+  font-size: 14px !important;
   line-height: 1.55 !important;
 }
 
@@ -303,7 +303,7 @@
 .app-shell .news-stream__heading span,
 .app-shell .news-rail-card__head span,
 .app-shell .news-project-item__top span {
-  font-size: 13px !important;
+  font-size: 14px !important;
 }
 
 .app-shell .news-masthead p {
@@ -324,13 +324,13 @@
 .app-shell .news-filter-panel select,
 .app-shell .news-filter-panel input,
 .app-shell .news-filter-reset {
-  font-size: 13px !important;
+  font-size: 14px !important;
 }
 
 .app-shell .news-hub .content-meta,
 .app-shell .news-hub .content-meta span,
 .app-shell .news-story .content-meta {
-  font-size: 13px !important;
+  font-size: 14px !important;
 }
 
 .app-shell .news-story--lead p {
@@ -351,7 +351,7 @@
 }
 
 .app-shell .community-social-page .community-reference-center .community-feed-card__author > div {
-  font-size: 13px !important;
+  font-size: 14px !important;
 }
 
 .app-shell .community-social-page .community-reference-center .community-feed-card__type {
@@ -364,7 +364,7 @@
 }
 
 .app-shell .community-social-page .community-reference-center .community-feed-action__count {
-  font-size: 13px !important;
+  font-size: 14px !important;
 }
 
 .app-shell .community-feed-comment-box input,
@@ -459,7 +459,7 @@
   .app-shell .news-masthead__search button,
   .app-shell .news-category-bar nav button,
   .app-shell .news-filter-toggle {
-    font-size: 13px !important;
+    font-size: 14px !important;
   }
 
   .app-shell .news-hub .content-meta,

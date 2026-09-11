@@ -521,7 +521,7 @@
     border-radius: 9px !important;
     color: #555b55 !important;
     background: transparent !important;
-    font-size: 13px !important;
+    font-size: 14px !important;
   }
 
   .account-center-page.is-subpage .my-content-tabs button.is-active {
@@ -544,13 +544,13 @@
     border-color: #dfdfda !important;
     border-radius: 10px !important;
     background: #fbfbfa !important;
-    font-size: 13px !important;
+    font-size: 14px !important;
   }
 
   .account-center-page.is-subpage .my-content-toolbar__right select {
     width: 100%;
     max-width: none !important;
-    font-size: 13px !important;
+    font-size: 14px !important;
   }
 
   .account-center-page.is-subpage .my-content-toolbar__right button {
@@ -567,7 +567,7 @@
   .account-center-page.is-subpage .my-content-summary {
     padding: 0 2px !important;
     color: var(--my-content-muted) !important;
-    font-size: 13px !important;
+    font-size: 14px !important;
   }
 
   .account-center-page.is-subpage .my-content-grid {

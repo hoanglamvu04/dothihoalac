@@ -16,7 +16,7 @@
 
 /* Masthead */
 .app-shell .news-hub .news-masthead__eyebrow {
-  font-size: 13px !important;
+  font-size: 14px !important;
   line-height: 1.4 !important;
   font-weight: 700 !important;
 }
@@ -51,7 +51,7 @@
 }
 
 .app-shell .news-hub .news-filter-panel label > span {
-  font-size: 13px !important;
+  font-size: 14px !important;
   line-height: 1.4 !important;
   font-weight: 650 !important;
 }
@@ -88,7 +88,7 @@
 }
 
 .app-shell .news-hub .news-story .content-meta {
-  font-size: 13px !important;
+  font-size: 14px !important;
   line-height: 1.45 !important;
 }
 
@@ -254,7 +254,7 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .news-hub .n
 
 .app-shell .news-hub .news-project-item > small,
 .app-shell .news-hub .news-project-item small span {
-  font-size: 13px !important;
+  font-size: 14px !important;
   line-height: 1.4 !important;
 }
 
@@ -277,7 +277,7 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .news-hub .n
 }
 
 .app-shell .news-hub .news-weather-days strong {
-  font-size: 13px !important;
+  font-size: 14px !important;
   font-weight: 620 !important;
 }
 
@@ -389,7 +389,7 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .news-hub .n
   }
 
   .app-shell .news-hub .news-filter-panel label > span {
-    font-size: 13px !important;
+    font-size: 14px !important;
   }
 
   .app-shell .news-hub .news-filter-panel :is(select, input) {
@@ -428,7 +428,7 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .news-hub .n
   }
 
   .app-shell .news-hub .news-story .content-meta {
-    font-size: 13px !important;
+    font-size: 14px !important;
   }
 
   .app-shell .news-hub .news-stream__heading span {
@@ -440,7 +440,7 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .news-hub .n
   }
 
   .app-shell .news-hub .news-stream__heading > p {
-    font-size: 13px !important;
+    font-size: 14px !important;
   }
 
   .app-shell .news-hub .news-rail-card__head span {
@@ -472,6 +472,6 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .news-hub .n
     .news-project-item small span,
     .news-ecosystem-links em
   ) {
-    font-size: 13px !important;
+    font-size: 14px !important;
   }
 }

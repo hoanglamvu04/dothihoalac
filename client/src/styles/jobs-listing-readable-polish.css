@@ -75,7 +75,7 @@
   .jobs-section-heading > button,
   .jobs-panel-heading > a
 ) {
-  font-size: 13px !important;
+  font-size: 14px !important;
   line-height: 1.4 !important;
 }
 
@@ -101,7 +101,7 @@
 }
 
 .app-shell .jobs-page .jobs-employers-panel__empty {
-  font-size: 13px !important;
+  font-size: 14px !important;
   line-height: 1.5 !important;
 }
 
@@ -146,7 +146,7 @@
 
 /* Results header + controls */
 .app-shell .jobs-page .jobs-results__header p {
-  font-size: 13px !important;
+  font-size: 14px !important;
   line-height: 1.5 !important;
 }
 
@@ -195,7 +195,7 @@
 }
 
 .app-shell .jobs-page .jobs-results__main .job-card__body > div:last-child {
-  font-size: 13px !important;
+  font-size: 14px !important;
   line-height: 1.45 !important;
 }
 
@@ -211,7 +211,7 @@
 }
 
 .app-shell .jobs-page .jobs-safety-card li {
-  font-size: 13px !important;
+  font-size: 14px !important;
   line-height: 1.5 !important;
 }
 
@@ -232,7 +232,7 @@
 }
 
 .app-shell .jobs-page .jobs-empty-state > div :is(button, a) {
-  font-size: 13px !important;
+  font-size: 14px !important;
 }
 
 .app-shell .jobs-page .jobs-pagination > p {
@@ -242,7 +242,7 @@
 
 .app-shell .jobs-page .pagination button,
 .app-shell .jobs-page .pagination > span {
-  font-size: 13px !important;
+  font-size: 14px !important;
 }
 
 /* Filter modal */
@@ -257,7 +257,7 @@
 }
 
 .app-shell .jobs-page .jobs-modal-select-grid > label > span {
-  font-size: 13px !important;
+  font-size: 14px !important;
   line-height: 1.4 !important;
 }
 
@@ -312,7 +312,7 @@
   }
 
   .app-shell .jobs-page .jobs-discovery__grid strong {
-    font-size: 13px !important;
+    font-size: 14px !important;
   }
 
   .app-shell .jobs-page .jobs-results__main .job-card h3 {

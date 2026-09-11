@@ -111,7 +111,7 @@
 
 /* Tags + article metadata blocks */
 .article-view-page .article-view-tags > span {
-  font-size: 13px !important;
+  font-size: 14px !important;
 }
 
 .article-view-page .article-view-tags > div > span {
@@ -150,7 +150,7 @@
 
 .article-view-page .article-sidebar-card__heading p,
 .article-view-page .article-sidebar-share p {
-  font-size: 13px !important;
+  font-size: 14px !important;
   line-height: 1.5 !important;
 }
 
@@ -160,7 +160,7 @@
 }
 
 .article-view-page .article-sidebar-toc button.is-level-3 {
-  font-size: 13px !important;
+  font-size: 14px !important;
 }
 
 .article-view-page .article-sidebar-info dt,
@@ -170,7 +170,7 @@
 }
 
 .article-view-page .article-sidebar-share__actions button {
-  font-size: 13px !important;
+  font-size: 14px !important;
 }
 
 .article-view-page .article-sidebar-cta > span {
@@ -198,7 +198,7 @@
 }
 
 .article-view-page .article-view-reactions .reaction-picker__choices button {
-  font-size: 13px !important;
+  font-size: 14px !important;
 }
 
 .article-view-page .article-view-reactions .reaction-picker__choices button small {
@@ -296,7 +296,7 @@
 
 @media (max-width: 680px) {
   .article-view-page .article-view-breadcrumb {
-    font-size: 13px !important;
+    font-size: 14px !important;
   }
 
   .article-view-page .article-view-header h1 {
@@ -340,7 +340,7 @@
 
   .article-view-page .article-view-body .article-body figcaption,
   .article-view-page .article-view-body .article-body .article-figure__caption {
-    font-size: 13px !important;
+    font-size: 14px !important;
   }
 
   .article-view-page .article-popular-sidebar__header h2 {

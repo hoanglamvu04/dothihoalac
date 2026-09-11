@@ -128,7 +128,7 @@ html[data-dthl-theme='light'] .account-center-content .account-security-page .ac
 html[data-dthl-theme='light'] .account-center-content .account-security-page .account-verification-card small {
   margin-top: 4px !important;
   color: #818681 !important;
-  font-size: 13px !important;
+  font-size: 14px !important;
   line-height: 1.45 !important;
 }
 
@@ -231,7 +231,7 @@ html[data-dthl-theme='light'] .account-center-content .account-security-page :is
   .account-field__hint,
   .account-field__error
 ) {
-  font-size: 13px !important;
+  font-size: 14px !important;
   line-height: 1.5 !important;
 }
 

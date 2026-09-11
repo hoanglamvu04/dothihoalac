@@ -122,7 +122,7 @@
     margin-top: 10px !important;
     gap: 6px !important;
     color: #4e5751 !important;
-    font-size: 13px !important;
+    font-size: 14px !important;
   }
 
   .app-shell .property-detail-location svg {
@@ -435,14 +435,14 @@
     border: 0 !important;
     color: #465049 !important;
     background: transparent !important;
-    font-size: 13px !important;
+    font-size: 14px !important;
     line-height: 1.65 !important;
   }
 
   .app-shell .property-description-body,
   .app-shell .property-description-body .article-body {
     color: #38423c !important;
-    font-size: 13px !important;
+    font-size: 14px !important;
     line-height: 1.72 !important;
   }
 
@@ -579,7 +579,7 @@
 
   .app-shell .property-contact-card__heading h2 {
     color: #202723 !important;
-    font-size: 13px !important;
+    font-size: 14px !important;
     font-weight: 820 !important;
   }
 

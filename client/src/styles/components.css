@@ -8,8 +8,8 @@
 .btn--sm { min-height: 36px; padding: 9px 13px; font-size: .84rem; }
 .btn--md { min-height: 44px; padding: 12px 18px; }
 .btn--full { width: 100%; }
-.btn--primary { background: var(--primary-800); color: #fff; box-shadow: 0 6px 18px rgb(7 83 103 / .16); }
-.btn--primary:hover:not(:disabled) { background: var(--primary-900); }
+.btn--primary { color: #fff; box-shadow: 0 6px 18px rgb(7 83 103 / .16); }
+
 .btn--accent { background: var(--accent-600); color: #fff; }
 .btn--outline { border-color: var(--ink-200); background: #fff; color: var(--ink-900); }
 .btn--outline:hover:not(:disabled) { border-color: var(--primary-700); color: var(--primary-800); }
