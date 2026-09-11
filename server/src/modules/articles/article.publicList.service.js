@@ -13,8 +13,48 @@ import {
 import { escapeRegex } from '../../utils/escapeRegex.js';
 import ApiError from '../../utils/ApiError.js';
 
+const PUBLIC_PREVIEW_MAX_CHARS = 280;
+
 function normalize(value) {
   return typeof value === 'string' ? value.trim() : '';
+}
+
+function normalizePreviewText(value) {
+  return normalize(value).replace(/\s+/g, ' ');
+}
+
+function publicPreviewFor(item) {
+  const summary = normalizePreviewText(item?.summary);
+  if (summary) return summary.slice(0, PUBLIC_PREVIEW_MAX_CHARS);
+
+  const title = normalizePreviewText(item?.title);
+  let body = normalizePreviewText(item?.bodyText);
+
+  // Một số dữ liệu cũ có thể chứa lại tiêu đề ở đầu bodyText. Không để phần
+  // xem trước trên card lặp nguyên tiêu đề ngay bên dưới headline.
+  if (
+    title &&
+    body.toLocaleLowerCase('vi-VN').startsWith(title.toLocaleLowerCase('vi-VN'))
+  ) {
+    body = body
+      .slice(title.length)
+      .replace(/^[\s:;,.!–—-]+/, '')
+      .trim();
+  }
+
+  return body.slice(0, PUBLIC_PREVIEW_MAX_CHARS);
+}
+
+function toPublicListItem(item) {
+  const preview = publicPreviewFor(item);
+  const { bodyText: _bodyText, ...publicItem } = item;
+
+  return {
+    ...publicItem,
+    // Chỉ ở API danh sách: nếu biên tập viên chưa nhập sapo thì dùng một
+    // đoạn thân bài ngắn làm preview. Không ghi ngược fallback này vào DB.
+    summary: normalizePreviewText(item?.summary) || preview,
+  };
 }
 
 function splitValues(value) {
@@ -176,6 +216,9 @@ export async function listPublicArticles(query = {}) {
 
   const [items, total] = await Promise.all([
     Content.find(filter)
+      // bodyText được select tạm ở server chỉ để tạo excerpt. Dữ liệu đầy đủ
+      // này bị loại trước khi trả response, tránh làm payload public phình to.
+      .select('+bodyText')
       .sort(sort)
       .skip(skip)
       .limit(limit)
@@ -200,7 +243,7 @@ export async function listPublicArticles(query = {}) {
   ]);
 
   return {
-    items,
+    items: items.map(toPublicListItem),
     meta: buildPaginationMeta({ page, limit, total }),
   };
 }
