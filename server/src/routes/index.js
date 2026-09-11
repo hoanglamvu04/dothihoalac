@@ -13,6 +13,7 @@ import contentDraftRoutes from '../modules/contents/contentDraft.routes.js';
 import taxonomyRoutes from '../modules/taxonomy/taxonomy.routes.js';
 import taxonomyAdminRoutes from '../modules/taxonomy/taxonomy.admin.routes.js';
 import mediaRoutes from '../modules/media/media.routes.js';
+import mediaAdminRoutes from '../modules/media/media.admin.routes.js';
 import commentRoutes from '../modules/comments/comment.routes.js';
 import reactionRoutes from '../modules/reactions/reaction.routes.js';
 import bookmarkRoutes from '../modules/bookmarks/bookmark.routes.js';
@@ -61,6 +62,7 @@ router.use('/system', systemRoutes);
 router.use('/admin/articles', articleAdminRoutes);
 router.use('/admin/projects', projectAdminRoutes);
 router.use('/admin/taxonomy', taxonomyAdminRoutes);
+router.use('/admin/media', mediaAdminRoutes);
 router.use('/admin/system', systemAdminRoutes);
 
 // Nhân sự tòa soạn có thể sử dụng Google Docs để soạn/sync bài, nhưng chỉ
