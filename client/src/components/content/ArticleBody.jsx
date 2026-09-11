@@ -11,6 +11,12 @@ function removeLegacyAutoCaptions(html = '') {
   );
 }
 
+function isExplicitCaptionText(text = '') {
+  return /^(?:ảnh|hình|chú\s*thích|caption)\s*[:：-]\s*\S/iu.test(
+    String(text || '').trim(),
+  );
+}
+
 function isManualCaptionParagraph(paragraph) {
   if (!paragraph || paragraph.tagName !== 'P') return false;
 
@@ -19,6 +25,16 @@ function isManualCaptionParagraph(paragraph) {
     .trim();
 
   if (!text || text.length > 500) return false;
+
+  /*
+   * Quy ước biên tập Google Docs:
+   * - dòng ngay sau ảnh và in nghiêng toàn bộ => chú thích ảnh;
+   * - hoặc bắt đầu bằng "Ảnh:", "Hình:", "Chú thích:" / "Caption:".
+   *
+   * Kiểu chữ nghiêng chỉ là dấu hiệu biên tập. CSS public sẽ render
+   * figcaption theo một chuẩn duy nhất, không phụ thuộc style trong Docs.
+   */
+  if (isExplicitCaptionText(text)) return true;
 
   const meaningfulNodes = Array.from(paragraph.childNodes).filter((node) => {
     if (node.nodeType === 3) return Boolean(String(node.textContent || '').trim());
