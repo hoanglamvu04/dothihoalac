@@ -22,6 +22,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { CONTENT_STATUS } from '../../utils/constants';
 import { formatDateTime } from '../../utils/formatters';
+import ArticleUrlImportButton from './ArticleUrlImportButton';
 
 import './AdminArticlesPage.css';
 
@@ -322,7 +323,7 @@ export default function AdminArticlesPage() {
           <p className="admin-kicker">Content Studio</p>
           <h1>Bài viết / Tin tức</h1>
           <p>
-            Google Docs là phòng soạn chính. Có thể tạo bài trống hoặc nhập trực tiếp Word/PDF thành Google Docs rồi đồng bộ về CMS.
+            Google Docs là phòng soạn chính. Có thể tạo bài trống, nhập Word/PDF hoặc lấy bài từ URL rồi đồng bộ nội dung và ảnh về CMS.
           </p>
         </div>
 
@@ -346,6 +347,12 @@ export default function AdminArticlesPage() {
                 accept=".pdf,.doc,.docx,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                 onChange={importDocument}
                 disabled={importing}
+              />
+
+              <ArticleUrlImportButton
+                disabled={Boolean(
+                  importing || deleting || syncingId || publishingId,
+                )}
               />
 
               <Link
