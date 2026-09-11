@@ -60,6 +60,16 @@ function normalizeArticleMarkup(html = '') {
 
   if (!root) return html;
 
+  /*
+   * URL importer dùng marker figure không có <img> để ghi nhận rằng
+   * thumbnail đã được lấy từ ảnh đầu tiên của Google Docs. Marker này giúp
+   * ArticleDetailPage không tự chèn thumbnail lên đầu bài, nhưng tuyệt đối
+   * không được tạo khoảng trắng hoặc phần tử nhìn thấy trong thân bài.
+   */
+  root
+    .querySelectorAll('figure.article-cover-only-marker')
+    .forEach((marker) => marker.remove());
+
   root.querySelectorAll('figure').forEach((figure) => {
     figure.classList.add('article-figure');
 
