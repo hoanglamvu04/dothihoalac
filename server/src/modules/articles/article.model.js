@@ -33,6 +33,34 @@ const schema = new mongoose.Schema(
       default: '',
       maxlength: 2000,
     },
+    sourceUrl: {
+      type: String,
+      trim: true,
+      default: '',
+      maxlength: 2000,
+    },
+    sourceCanonicalUrl: {
+      type: String,
+      trim: true,
+      default: '',
+      maxlength: 2000,
+      index: true,
+    },
+    sourceDomain: {
+      type: String,
+      trim: true,
+      lowercase: true,
+      default: '',
+      maxlength: 255,
+      index: true,
+    },
+    sourceUrlHash: {
+      type: String,
+      trim: true,
+      default: '',
+      maxlength: 64,
+      index: true,
+    },
     factCheckedAt: {
       type: Date,
       default: null,
@@ -117,6 +145,8 @@ const schema = new mongoose.Schema(
     collection: 'articles',
   },
 );
+
+schema.index({ sourceUrlHash: 1, sourceCanonicalUrl: 1 });
 
 export default getOrCreateModel(
   'Article',
