@@ -1,0 +1,159 @@
+/* =========================================================
+   JOB DETAIL — DESKTOP REACTION TOOLBAR ALIGNMENT
+   Keep ReactionBar shared markup untouched. On job detail only, normalize
+   the summary, reaction choices, and utility actions to one visual baseline.
+========================================================= */
+
+@media (min-width: 761px) {
+  .app-shell .job-detail-page .job-reaction-section {
+    padding: 16px 24px !important;
+  }
+
+  .app-shell .job-detail-page .job-reaction-section .reaction-bar {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    align-items: center !important;
+    min-height: 70px !important;
+    margin: 0 !important;
+    padding: 13px 0 !important;
+    gap: 18px !important;
+    border-block: 1px solid #eceeea !important;
+  }
+
+  .app-shell .job-detail-page .job-reaction-section .reaction-picker {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    min-width: 0 !important;
+    gap: 7px !important;
+  }
+
+  .app-shell .job-detail-page .job-reaction-section .reaction-picker__summary {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    flex: 0 0 auto !important;
+    min-height: 42px !important;
+    margin: 0 !important;
+    gap: 4px !important;
+    color: #4d554f !important;
+    font-size: 14px !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+
+  .app-shell .job-detail-page .job-reaction-section .reaction-picker__summary > svg {
+    flex: 0 0 auto !important;
+    width: 18px !important;
+    height: 18px !important;
+    margin: 0 !important;
+  }
+
+  .app-shell .job-detail-page .job-reaction-section .reaction-picker__summary > strong,
+  .app-shell .job-detail-page .job-reaction-section .reaction-picker__summary > span {
+    display: inline !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: inherit !important;
+    line-height: 1 !important;
+  }
+
+  .app-shell .job-detail-page .job-reaction-section .reaction-picker__summary > strong {
+    color: #242924 !important;
+    font-weight: 760 !important;
+  }
+
+  .app-shell .job-detail-page .job-reaction-section .reaction-picker__choices {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: nowrap !important;
+    min-width: 0 !important;
+    gap: 5px !important;
+  }
+
+  .app-shell .job-detail-page .job-reaction-section .reaction-picker__choices > button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 0 0 auto !important;
+    min-width: 0 !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    margin: 0 !important;
+    padding: 0 11px !important;
+    gap: 6px !important;
+    border-radius: 999px !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+
+  .app-shell .job-detail-page .job-reaction-section .reaction-picker__choices > button > svg {
+    flex: 0 0 auto !important;
+    width: 18px !important;
+    height: 18px !important;
+    margin: 0 !important;
+  }
+
+  .app-shell .job-detail-page .job-reaction-section .reaction-picker__choices > button > small {
+    display: inline !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 14px !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+
+  .app-shell .job-detail-page .job-reaction-section .reaction-actions {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    flex-wrap: nowrap !important;
+    min-height: 42px !important;
+    margin: 0 !important;
+    gap: 3px !important;
+    white-space: nowrap !important;
+  }
+
+  .app-shell .job-detail-page .job-reaction-section .reaction-actions > button {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-direction: row !important;
+    width: auto !important;
+    min-width: 0 !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    margin: 0 !important;
+    padding: 0 9px !important;
+    gap: 6px !important;
+    border-radius: 9px !important;
+    font-size: 14px !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+
+  .app-shell .job-detail-page .job-reaction-section .reaction-actions > button > svg {
+    flex: 0 0 auto !important;
+    width: 18px !important;
+    height: 18px !important;
+    margin: 0 !important;
+  }
+}
+
+/* Narrow desktop/tablet: keep the same baseline inside each group, but let the
+   utility actions move to a second row before the toolbar can overflow. */
+@media (min-width: 761px) and (max-width: 1180px) {
+  .app-shell .job-detail-page .job-reaction-section .reaction-bar {
+    grid-template-columns: minmax(0, 1fr) !important;
+    gap: 8px !important;
+  }
+
+  .app-shell .job-detail-page .job-reaction-section .reaction-picker,
+  .app-shell .job-detail-page .job-reaction-section .reaction-picker__choices {
+    flex-wrap: wrap !important;
+  }
+
+  .app-shell .job-detail-page .job-reaction-section .reaction-actions {
+    justify-content: flex-start !important;
+  }
+}
