@@ -65,7 +65,6 @@ import './styles/news-category-chip-polish.css';
 import './styles/jobs-featured-compact.css';
 import './styles/job-detail-reaction-alignment.css';
 import './pages/public/ArticleNewsroomStandard.css';
-import './pages/public/NewsImageEditorialPolish.css';
 import './features/propertyMarketplacePaging';
 
 // Apply the saved light/dark appearance before React paints. The brand palette
