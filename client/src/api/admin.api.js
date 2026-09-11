@@ -21,6 +21,12 @@ export const adminApi = {
   deleteManagedContent: async (type, id) =>
     unwrap(await api.delete(`/admin/contents/${type}/${id}`)),
 
+  media: async (params = {}) => unwrap(await api.get('/admin/media', { params })),
+  mediaStats: async () => unwrap(await api.get('/admin/media/stats')),
+  mediaUsage: async (id) => unwrap(await api.get(`/admin/media/${id}/usage`)),
+  updateMediaAlt: async (id, altText = '') =>
+    unwrap(await api.patch(`/admin/media/${id}/alt`, { altText })),
+
   comments: async (params = {}) =>
     unwrapList(await api.get('/admin/comments', { params })),
   updateComment: async (id, payload) =>
