@@ -18,6 +18,7 @@ const articleStatus = z.enum([
   'published',
 ]);
 const coverMode = z.enum(['first_doc_image', 'custom']);
+const importUrl = z.string().trim().min(8).max(2000);
 
 export const listArticlesSchema = z.object({
   body: empty,
@@ -89,6 +90,24 @@ export const articleBodySchema = z.object({
   params: z.object({
     id: oid.optional(),
   }),
+  query: empty,
+});
+
+export const articleUrlPreviewSchema = z.object({
+  body: z.object({
+    url: importUrl,
+  }),
+  params: empty,
+  query: empty,
+});
+
+export const articleUrlImportSchema = z.object({
+  body: z.object({
+    url: importUrl,
+    includeImages: z.boolean().optional(),
+    force: z.boolean().optional(),
+  }),
+  params: empty,
   query: empty,
 });
 
