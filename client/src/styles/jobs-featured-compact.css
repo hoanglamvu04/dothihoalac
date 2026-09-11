@@ -1,30 +1,39 @@
 /* =========================================================
-   JOBS FEATURED CARDS — COMPACT HEADER ROW
-   Keep the shared JobCard markup untouched. On desktop/tablet, the recruiter
-   icon and job-type badge share one reserved header row, while the title and
-   remaining content always start below it. This prevents any overlap without
-   restoring the old tall card layout.
+   JOBS FEATURED CARDS — COMPACT, EQUAL-HEIGHT LAYOUT
+   Keep shared JobCard markup untouched. Featured cards use one compact
+   icon/type row, a predictable text stack, and a footer pinned to the bottom
+   so longer locations do not make one card taller than its neighbours.
 ========================================================= */
 
 @media (min-width: 761px) {
   .app-shell .jobs-page .jobs-featured-panel__grid {
     align-content: start !important;
-    align-items: start !important;
+    align-items: stretch !important;
+  }
+
+  .app-shell .jobs-page .jobs-featured-card {
+    display: flex !important;
+    min-width: 0 !important;
+    height: 100% !important;
   }
 
   .app-shell .jobs-page .jobs-featured-card .job-card {
     position: relative !important;
-    display: block !important;
+    display: flex !important;
+    width: 100% !important;
     min-height: 0 !important;
-    height: auto !important;
+    height: 100% !important;
     padding: 11px 12px 12px !important;
   }
 
   /* Reserve one explicit row for icon + type badge. */
   .app-shell .jobs-page .jobs-featured-card .job-card__body {
     position: relative !important;
-    display: block !important;
+    display: flex !important;
+    flex: 1 1 auto !important;
+    flex-direction: column !important;
     min-width: 0 !important;
+    min-height: 0 !important;
     padding-top: 38px !important;
   }
 
@@ -87,15 +96,43 @@
   .app-shell .jobs-page .jobs-featured-card .job-card h3 {
     position: relative !important;
     z-index: 1 !important;
+    display: -webkit-box !important;
+    min-height: 2.7em !important;
     margin: 0 !important;
+    overflow: hidden !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 2 !important;
   }
 
   .app-shell .jobs-page .jobs-featured-card .job-card__body > strong {
+    display: block !important;
+    min-height: 1.4em !important;
     margin-top: 4px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
   }
 
-  .app-shell .jobs-page .jobs-featured-card .job-card__salary,
-  .app-shell .jobs-page .jobs-featured-card .job-card__body > div:last-child {
+  .app-shell .jobs-page .jobs-featured-card .job-card__salary {
     margin-top: 6px !important;
+  }
+
+  /* Pin the location/deadline block to the bottom of every featured card. */
+  .app-shell .jobs-page .jobs-featured-card .job-card__body > div:last-child {
+    display: grid !important;
+    margin-top: auto !important;
+    padding-top: 10px !important;
+    gap: 4px !important;
+  }
+
+  .app-shell .jobs-page .jobs-featured-card .job-card__body > div:last-child > span {
+    min-width: 0 !important;
+  }
+
+  .app-shell .jobs-page .jobs-featured-card .job-card__body > div:last-child > span:first-child {
+    display: -webkit-box !important;
+    overflow: hidden !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 2 !important;
   }
 }
