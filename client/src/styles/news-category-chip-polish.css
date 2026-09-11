@@ -1,0 +1,59 @@
+/* News story category labels: compact editorial chips instead of raw uppercase text. */
+html[data-dthl-theme='light'] .news-hub .news-story__kicker > span {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: fit-content !important;
+  min-height: 27px !important;
+  padding: 4px 10px !important;
+  border: 1px solid #e4d7bf !important;
+  border-radius: 999px !important;
+  color: #795a2f !important;
+  background: #faf6ee !important;
+  font-size: 12.5px !important;
+  font-weight: 760 !important;
+  letter-spacing: 0.035em !important;
+  line-height: 1 !important;
+  text-transform: uppercase !important;
+  white-space: nowrap !important;
+  box-shadow: none !important;
+  transition: background-color 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+html[data-dthl-theme='light'] .news-hub .news-story:hover .news-story__kicker > span {
+  border-color: #cbae78 !important;
+  color: #664820 !important;
+  background: #f6efe2 !important;
+}
+
+/* The lead story sits on photography, so keep the chip readable without a solid light block. */
+html[data-dthl-theme='light'] .news-hub .news-story--lead .news-story__kicker > span {
+  border-color: rgb(201 168 103 / 0.72) !important;
+  color: #f7e8c9 !important;
+  background: rgb(18 24 20 / 0.68) !important;
+  backdrop-filter: blur(7px);
+  -webkit-backdrop-filter: blur(7px);
+}
+
+html[data-dthl-theme='light'] .news-hub .news-story--lead:hover .news-story__kicker > span {
+  border-color: #d1b275 !important;
+  color: #fff4dc !important;
+  background: rgb(18 24 20 / 0.8) !important;
+}
+
+/* Keep the small cards compact while preserving the same visual language. */
+html[data-dthl-theme='light'] .news-hub .news-story--side .news-story__kicker > span {
+  min-height: 25px !important;
+  padding-inline: 9px !important;
+  font-size: 11.75px !important;
+}
+
+@media (max-width: 680px) {
+  html[data-dthl-theme='light'] .news-hub .news-story__kicker > span,
+  html[data-dthl-theme='light'] .news-hub .news-story--side .news-story__kicker > span {
+    min-height: 24px !important;
+    padding: 3px 8px !important;
+    font-size: 11.5px !important;
+    letter-spacing: 0.025em !important;
+  }
+}
