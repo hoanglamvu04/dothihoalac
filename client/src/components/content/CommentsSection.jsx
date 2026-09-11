@@ -4,7 +4,7 @@ import {
   useRef,
   useState,
 } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import {
   CheckCircle2,
   ChevronDown,
@@ -108,8 +108,10 @@ export default function CommentsSection({
 }) {
   const { user, isAuthenticated } = useAuth();
   const toast = useToast();
+  const location = useLocation();
   const composerRef = useRef(null);
   const attachmentInputRef = useRef(null);
+  const loginReturnPath = `${location.pathname}${location.search || ''}#binh-luan`;
 
   const [items, setItems] = useState([]);
   const [meta, setMeta] = useState({ page: 1, totalPages: 1 });
@@ -849,19 +851,28 @@ export default function CommentsSection({
               {renderComposerTools()}
             </div>
 
-            <button
-              type="submit"
-              className="thread-comment-composer__send"
-              aria-label="Đăng phản hồi"
-              disabled={
-                !isAuthenticated ||
-                (!body.trim() && !attachment) ||
-                submitting ||
-                uploadingAttachment
-              }
-            >
-              <Send size={19} />
-            </button>
+            {isAuthenticated ? (
+              <button
+                type="submit"
+                className="thread-comment-composer__send"
+                aria-label="Đăng phản hồi"
+                disabled={
+                  (!body.trim() && !attachment) ||
+                  submitting ||
+                  uploadingAttachment
+                }
+              >
+                <Send size={19} />
+              </button>
+            ) : (
+              <Link
+                to="/dang-nhap"
+                state={{ from: loginReturnPath }}
+                className="btn btn--primary btn--sm"
+              >
+                Đăng nhập
+              </Link>
+            )}
           </form>
         ) : null}
 
@@ -939,18 +950,27 @@ export default function CommentsSection({
 
         <div>
           <small>{body.length}/5000</small>
-          <Button
-            type="submit"
-            size="sm"
-            loading={submitting}
-            disabled={
-              !isAuthenticated ||
-              (!body.trim() && !attachment) ||
-              uploadingAttachment
-            }
-          >
-            Đăng bình luận
-          </Button>
+          {isAuthenticated ? (
+            <Button
+              type="submit"
+              size="sm"
+              loading={submitting}
+              disabled={
+                (!body.trim() && !attachment) ||
+                uploadingAttachment
+              }
+            >
+              Đăng bình luận
+            </Button>
+          ) : (
+            <Link
+              to="/dang-nhap"
+              state={{ from: loginReturnPath }}
+              className="btn btn--primary btn--sm"
+            >
+              Đăng nhập ngay
+            </Link>
+          )}
         </div>
       </form>
 
