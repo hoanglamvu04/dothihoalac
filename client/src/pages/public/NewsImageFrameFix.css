@@ -1,0 +1,159 @@
+/* =========================================================
+   NEWS IMAGE FRAME FIX
+   Normalizes thumbnail geometry without changing the current palette or
+   overall page structure. Text height must never stretch an image frame.
+========================================================= */
+
+/* Shared rule: the frame owns the ratio; the image only fills that frame. */
+.news-hub .news-content-layout .news-story--side .news-story__media,
+.news-hub .news-content-layout .news-story--feed .news-story__media,
+.news-hub .news-context-rail .news-rail-article__thumb {
+  position: relative;
+  display: block;
+  min-width: 0;
+  min-height: 0 !important;
+  overflow: hidden;
+  background: #f1f3f1;
+}
+
+.news-hub .news-content-layout .news-story--side .news-story__image,
+.news-hub .news-content-layout .news-story--feed .news-story__image,
+.news-hub .news-context-rail .news-rail-article__thumb img {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100% !important;
+  max-width: none;
+  height: 100% !important;
+  min-height: 0 !important;
+  aspect-ratio: auto !important;
+  object-fit: cover;
+  object-position: 50% 45%;
+}
+
+/* Secondary stories: use a proper landscape news-photo frame instead of the
+   previous near-square 132x104 crop. The card can grow with its headline,
+   while the photo keeps its own stable 16:9 geometry. */
+.news-hub .news-content-layout .news-story--side {
+  grid-template-columns: 148px minmax(0, 1fr);
+  align-items: center;
+  min-height: 108px;
+  padding: 7px;
+  gap: 10px;
+}
+
+.news-hub .news-content-layout .news-story--side .news-story__media {
+  width: 148px;
+  height: auto !important;
+  aspect-ratio: 16 / 9;
+  align-self: center;
+  border-radius: 7px;
+}
+
+.news-hub .news-content-layout .news-story--side .news-story__body {
+  min-width: 0;
+  padding: 2px 6px 2px 0;
+}
+
+/* Main stream: consistent 16:9 thumbnails. No intrinsic image dimensions can
+   make one row taller, narrower or visually skewed compared with another. */
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .news-hub .news-content-layout .news-story--feed,
+.news-hub .news-content-layout .news-story--feed {
+  grid-template-columns: 188px minmax(0, 1fr);
+  align-items: center;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .news-hub .news-content-layout .news-story--feed .news-story__media,
+.news-hub .news-content-layout .news-story--feed .news-story__media {
+  width: 188px;
+  height: auto !important;
+  min-height: 0 !important;
+  aspect-ratio: 16 / 9;
+  align-self: center;
+  border-radius: 7px;
+}
+
+/* Related-news rail: use the classic 3:2 thumbnail ratio found on compact
+   news lists. The old 72x52 frame was too square and cropped photos harshly. */
+.news-hub .news-context-rail .news-rail-article {
+  grid-template-columns: 82px minmax(0, 1fr);
+  align-items: center;
+  min-height: 68px;
+  gap: 10px;
+}
+
+.news-hub .news-context-rail .news-rail-article__thumb {
+  width: 82px;
+  height: auto;
+  aspect-ratio: 3 / 2;
+  align-self: center;
+  border-radius: 6px;
+}
+
+/* Keep the lead photograph stable as well. It remains the current overlay
+   hero, but intrinsic width/height attributes are not allowed to distort it. */
+.news-hub .news-content-layout .news-story--lead .news-story__media {
+  overflow: hidden;
+}
+
+.news-hub .news-content-layout .news-story--lead .news-story__image {
+  width: 100% !important;
+  max-width: none;
+  height: 100% !important;
+  min-height: 0 !important;
+  aspect-ratio: auto !important;
+  object-fit: cover;
+  object-position: 50% 48%;
+}
+
+@media (hover: hover) {
+  .news-hub .news-story:hover .news-story__image {
+    transform: scale(1.012);
+  }
+}
+
+@media (max-width: 680px) {
+  .news-hub .news-content-layout .news-story--side {
+    grid-template-columns: 118px minmax(0, 1fr);
+    min-height: 88px;
+    padding: 6px;
+    gap: 9px;
+  }
+
+  .news-hub .news-content-layout .news-story--side .news-story__media {
+    width: 118px;
+    aspect-ratio: 16 / 9;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth']
+    .news-hub .news-content-layout .news-story--feed,
+  .news-hub .news-content-layout .news-story--feed {
+    grid-template-columns: 116px minmax(0, 1fr);
+    min-height: 82px;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth']
+    .news-hub .news-content-layout .news-story--feed .news-story__media,
+  .news-hub .news-content-layout .news-story--feed .news-story__media {
+    width: 116px;
+    aspect-ratio: 16 / 9;
+  }
+
+  .news-hub .news-context-rail .news-rail-article {
+    grid-template-columns: 78px minmax(0, 1fr);
+  }
+
+  .news-hub .news-context-rail .news-rail-article__thumb {
+    width: 78px;
+    aspect-ratio: 3 / 2;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .news-hub .news-story__image,
+  .news-hub .news-rail-article__thumb img {
+    transition: none;
+  }
+}
