@@ -274,6 +274,75 @@
   width: min(64%, 500px);
 }
 
+/* Mixed-orientation gallery: keep 2-4 image posts compact and balanced.
+   Full source images remain available through the existing lightbox. */
+.community-thread-media.is-carousel:is(
+    :has(> .community-thread-media__item:nth-child(2):last-child),
+    :has(> .community-thread-media__item:nth-child(3):last-child),
+    :has(> .community-thread-media__item:nth-child(4):last-child)
+  ) {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 8px;
+  padding-bottom: 0;
+  overflow: visible;
+  scroll-snap-type: none;
+}
+
+.community-thread-media.is-carousel:has(
+    > .community-thread-media__item:nth-child(2):last-child
+  ) {
+  grid-auto-rows: 300px;
+}
+
+.community-thread-media.is-carousel:is(
+    :has(> .community-thread-media__item:nth-child(3):last-child),
+    :has(> .community-thread-media__item:nth-child(4):last-child)
+  ) {
+  grid-template-rows: repeat(2, minmax(0, 245px));
+}
+
+.community-thread-media.is-carousel:has(
+    > .community-thread-media__item:nth-child(3):last-child
+  ) > .community-thread-media__item:first-child {
+  grid-row: 1 / span 2;
+}
+
+.community-thread-media.is-carousel:is(
+    :has(> .community-thread-media__item:nth-child(2):last-child),
+    :has(> .community-thread-media__item:nth-child(3):last-child),
+    :has(> .community-thread-media__item:nth-child(4):last-child)
+  ) > .community-thread-media__item {
+  width: 100%;
+  height: 100%;
+}
+
+.community-thread-media.is-carousel:is(
+    :has(> .community-thread-media__item:nth-child(2):last-child),
+    :has(> .community-thread-media__item:nth-child(3):last-child),
+    :has(> .community-thread-media__item:nth-child(4):last-child)
+  ) .content-image,
+.community-thread-media.is-carousel:is(
+    :has(> .community-thread-media__item:nth-child(2):last-child),
+    :has(> .community-thread-media__item:nth-child(3):last-child),
+    :has(> .community-thread-media__item:nth-child(4):last-child)
+  ) .content-image img {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  max-height: none;
+}
+
+.community-thread-media.is-carousel:is(
+    :has(> .community-thread-media__item:nth-child(2):last-child),
+    :has(> .community-thread-media__item:nth-child(3):last-child),
+    :has(> .community-thread-media__item:nth-child(4):last-child)
+  ) .content-image img {
+  object-fit: cover;
+  object-position: center;
+}
+
 .community-thread-media__item::after {
   position: absolute;
   inset: 0;
@@ -503,6 +572,27 @@
     width: 82%;
   }
 
+  .community-thread-media.is-carousel:has(
+      > .community-thread-media__item:nth-child(2):last-child
+    ) {
+    grid-auto-rows: 220px;
+  }
+
+  .community-thread-media.is-carousel:is(
+      :has(> .community-thread-media__item:nth-child(3):last-child),
+      :has(> .community-thread-media__item:nth-child(4):last-child)
+    ) {
+    grid-template-rows: repeat(2, minmax(0, 170px));
+  }
+
+  .community-thread-media.is-carousel:is(
+      :has(> .community-thread-media__item:nth-child(2):last-child),
+      :has(> .community-thread-media__item:nth-child(3):last-child),
+      :has(> .community-thread-media__item:nth-child(4):last-child)
+    ) > .community-thread-media__item {
+    width: 100%;
+  }
+
   .community-thread-media .content-image img {
     max-height: 540px;
   }
@@ -543,6 +633,27 @@
 
   .community-thread-media.is-carousel .community-thread-media__item {
     width: 88%;
+  }
+
+  .community-thread-media.is-carousel:has(
+      > .community-thread-media__item:nth-child(2):last-child
+    ) {
+    grid-auto-rows: 180px;
+  }
+
+  .community-thread-media.is-carousel:is(
+      :has(> .community-thread-media__item:nth-child(3):last-child),
+      :has(> .community-thread-media__item:nth-child(4):last-child)
+    ) {
+    grid-template-rows: repeat(2, minmax(0, 135px));
+  }
+
+  .community-thread-media.is-carousel:is(
+      :has(> .community-thread-media__item:nth-child(2):last-child),
+      :has(> .community-thread-media__item:nth-child(3):last-child),
+      :has(> .community-thread-media__item:nth-child(4):last-child)
+    ) > .community-thread-media__item {
+    width: 100%;
   }
 
   .community-thread__actions {
