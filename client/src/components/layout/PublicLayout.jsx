@@ -182,10 +182,11 @@ export default function PublicLayout() {
         .filter(Boolean)
         .join(' ')}
     >
+      <SiteHeader />
+      <DeferredHeaderNavigation />
+
       {!authRoute ? (
         <>
-          <SiteHeader />
-          <DeferredHeaderNavigation />
           <AdSlot slotKey="site_below_header" layout="strip" deferMs={450} />
           {topSlot ? <AdSlot slotKey={topSlot} layout="strip" deferMs={650} /> : null}
         </>
@@ -200,14 +201,11 @@ export default function PublicLayout() {
         <Outlet />
       </main>
 
-      {!authRoute ? (
-        <>
-          <AdSlot slotKey="site_before_footer" layout="strip" />
-          <DeferredSiteFooter />
-          {showBottomNav ? <MobileBottomNav /> : null}
-          <DeferredCommunityQuickComposer />
-        </>
-      ) : null}
+      {!authRoute ? <AdSlot slotKey="site_before_footer" layout="strip" /> : null}
+      <DeferredSiteFooter />
+
+      {showBottomNav ? <MobileBottomNav /> : null}
+      {!authRoute ? <DeferredCommunityQuickComposer /> : null}
     </div>
   );
 }
