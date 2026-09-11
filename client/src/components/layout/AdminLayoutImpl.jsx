@@ -1,16 +1,19 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { Link, NavLink, Outlet, useLocation, useNavigate } from 'react-router-dom';
 import {
+  ArrowRight,
   BarChart3,
   BriefcaseBusiness,
   Building2,
   ChevronLeft,
   ChevronRight,
   Cloud,
+  ExternalLink,
   FileText,
   Flag,
   FolderKanban,
   FolderTree,
+  Images,
   LayoutDashboard,
   LogOut,
   Menu,
@@ -19,6 +22,7 @@ import {
   MessageSquareText,
   MessageSquareWarning,
   Rss,
+  Search,
   Settings,
   ShieldCheck,
   Users,
@@ -27,7 +31,9 @@ import {
 
 import { useAuth } from '../../context/AuthContext';
 
+import '../../styles/admin.css';
 import './AdminLayoutProjectNav.css';
+import './AdminModernShell.css';
 
 const SIDEBAR_STORAGE_KEY = 'dthl-admin-sidebar-collapsed';
 
@@ -81,6 +87,12 @@ const navGroups = [
         label: 'Bài viết / Tin tức',
         icon: FileText,
         permissions: ['create_article', 'edit_article', 'approve_article', 'publish_article'],
+      },
+      {
+        to: '/quan-tri/media',
+        label: 'Thư viện media',
+        icon: Images,
+        permissions: ['manage_media', 'manage_system'],
       },
       {
         to: '/quan-tri/du-an',
@@ -220,11 +232,19 @@ function primaryStaffRole(user) {
   return slug ? ROLE_LABELS[slug] : 'Nhân sự quản trị';
 }
 
+function itemMatchesPath(item, pathname) {
+  if (item.end) return pathname === item.to;
+  return pathname === item.to || pathname.startsWith(`${item.to}/`);
+}
+
 export default function AdminLayoutImpl() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const commandInputRef = useRef(null);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [commandOpen, setCommandOpen] = useState(false);
+  const [commandQuery, setCommandQuery] = useState('');
   const [collapsed, setCollapsed] = useState(() => (
     window.localStorage.getItem(SIDEBAR_STORAGE_KEY) === '1'
   ));
@@ -244,12 +264,33 @@ export default function AdminLayoutImpl() {
     [user],
   );
 
-  useEffect(() => {
-    void import('../../styles/admin.css');
-  }, []);
+  const commandItems = useMemo(
+    () => visibleNavGroups.flatMap((group) => group.items.map((item) => ({
+      ...item,
+      group: group.label,
+    }))),
+    [visibleNavGroups],
+  );
+
+  const activeItem = useMemo(
+    () => commandItems
+      .filter((item) => itemMatchesPath(item, location.pathname))
+      .sort((a, b) => b.to.length - a.to.length)[0] || commandItems[0] || null,
+    [commandItems, location.pathname],
+  );
+
+  const filteredCommandItems = useMemo(() => {
+    const keyword = commandQuery.trim().toLocaleLowerCase('vi-VN');
+    if (!keyword) return commandItems;
+    return commandItems.filter((item) => (
+      `${item.label} ${item.group}`.toLocaleLowerCase('vi-VN').includes(keyword)
+    ));
+  }, [commandItems, commandQuery]);
 
   useEffect(() => {
     setMobileOpen(false);
+    setCommandOpen(false);
+    setCommandQuery('');
   }, [location.pathname]);
 
   useEffect(() => {
@@ -259,9 +300,38 @@ export default function AdminLayoutImpl() {
     );
   }, [collapsed]);
 
+  useEffect(() => {
+    const handleShortcut = (event) => {
+      const commandKey = (event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 'k';
+      if (commandKey && !studioMode) {
+        event.preventDefault();
+        setCommandOpen((value) => !value);
+        return;
+      }
+      if (event.key === 'Escape') {
+        setCommandOpen(false);
+      }
+    };
+
+    window.addEventListener('keydown', handleShortcut);
+    return () => window.removeEventListener('keydown', handleShortcut);
+  }, [studioMode]);
+
+  useEffect(() => {
+    if (!commandOpen) return undefined;
+    const timer = window.setTimeout(() => commandInputRef.current?.focus(), 0);
+    return () => window.clearTimeout(timer);
+  }, [commandOpen]);
+
   const signOut = async () => {
     await logout();
     navigate('/dang-nhap', { replace: true });
+  };
+
+  const openCommandItem = (item) => {
+    setCommandOpen(false);
+    setCommandQuery('');
+    navigate(item.to);
   };
 
   const displayName =
@@ -346,10 +416,88 @@ export default function AdminLayoutImpl() {
       ) : null}
 
       <main className="admin-main">
+        {!studioMode ? (
+          <header className="admin-topbar">
+            <div className="admin-topbar__context">
+              <span>{activeItem?.group || 'Quản trị'}</span>
+              <strong>{activeItem?.label || 'Tổng quan vận hành'}</strong>
+            </div>
+
+            <div className="admin-topbar__actions">
+              <button type="button" className="admin-command-trigger" onClick={() => setCommandOpen(true)}>
+                <Search size={17} />
+                <span>Đi tới chức năng...</span>
+                <kbd>Ctrl K</kbd>
+              </button>
+              <Link className="admin-site-link" to="/" target="_blank" rel="noreferrer">
+                <ExternalLink size={16} />
+                <span>Website</span>
+              </Link>
+            </div>
+          </header>
+        ) : null}
+
         <div className="admin-page">
           <Outlet />
         </div>
       </main>
+
+      {commandOpen && !studioMode ? (
+        <div className="admin-command-backdrop" onMouseDown={() => setCommandOpen(false)}>
+          <section
+            className="admin-command-palette"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Đi tới chức năng quản trị"
+            onMouseDown={(event) => event.stopPropagation()}
+          >
+            <div className="admin-command-palette__search">
+              <Search size={20} />
+              <input
+                ref={commandInputRef}
+                value={commandQuery}
+                onChange={(event) => setCommandQuery(event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' && filteredCommandItems[0]) {
+                    event.preventDefault();
+                    openCommandItem(filteredCommandItems[0]);
+                  }
+                }}
+                placeholder="Tìm trang, chức năng quản trị..."
+                aria-label="Tìm chức năng quản trị"
+              />
+              <button type="button" onClick={() => setCommandOpen(false)} aria-label="Đóng">
+                <X size={18} />
+              </button>
+            </div>
+
+            <div className="admin-command-results">
+              {filteredCommandItems.length ? filteredCommandItems.map(({ to, label, group, icon: Icon, end }) => (
+                <button
+                  type="button"
+                  key={to}
+                  className="admin-command-result"
+                  onClick={() => openCommandItem({ to, label, group, icon: Icon, end })}
+                >
+                  <span className="admin-command-result__icon"><Icon size={18} /></span>
+                  <span className="admin-command-result__copy">
+                    <strong>{label}</strong>
+                    <small>{group}</small>
+                  </span>
+                  <ArrowRight className="admin-command-result__arrow" size={17} />
+                </button>
+              )) : (
+                <div className="admin-command-empty">Không tìm thấy chức năng phù hợp.</div>
+              )}
+            </div>
+
+            <footer className="admin-command-palette__footer">
+              <span>Enter để mở kết quả đầu tiên</span>
+              <span>Esc để đóng</span>
+            </footer>
+          </section>
+        </div>
+      ) : null}
     </div>
   );
 }
