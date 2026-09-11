@@ -189,6 +189,19 @@
   line-height: 1.6;
 }
 
+/* Ảnh đại diện là media riêng, không ép vào khung card crop trong workspace. */
+.article-workspace-card > .content-image.content-image--card {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 420px;
+  aspect-ratio: auto;
+  border-radius: 14px;
+  background: #f7faf8;
+  object-fit: contain;
+  object-position: center;
+}
+
 .article-cover-empty {
   display: grid;
   min-height: 180px;
