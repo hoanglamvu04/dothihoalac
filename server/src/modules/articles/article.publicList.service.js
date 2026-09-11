@@ -47,7 +47,8 @@ function publicPreviewFor(item) {
 
 function toPublicListItem(item) {
   const preview = publicPreviewFor(item);
-  const { bodyText: _bodyText, ...publicItem } = item;
+  const publicItem = { ...item };
+  delete publicItem.bodyText;
 
   return {
     ...publicItem,
