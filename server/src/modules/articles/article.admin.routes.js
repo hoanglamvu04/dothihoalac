@@ -10,10 +10,16 @@ import {
   articleBulkDeleteSchema,
   articleDeleteSchema,
   articleMetadataSchema,
+  articleUrlImportSchema,
+  articleUrlPreviewSchema,
 } from './article.validation.js';
 import asyncHandler from '../../utils/asyncHandler.js';
-import { sendCreated } from '../../utils/apiResponse.js';
+import { sendCreated, sendSuccess } from '../../utils/apiResponse.js';
 import { importAdminArticleDocument } from './article.documentImport.service.js';
+import {
+  importAdminArticleUrl,
+  previewAdminArticleUrl,
+} from './article.urlImport.service.js';
 
 const r = Router();
 const editorialReadPermissions = [
@@ -48,6 +54,33 @@ r.post(
       res,
       result,
       'Đã nhập tài liệu và tạo bản nháp Google Docs.',
+    );
+  }),
+);
+r.post(
+  '/import-url/preview',
+  requirePermission(PERMISSIONS.CREATE_ARTICLE, PERMISSIONS.MANAGE_SYSTEM),
+  validate(articleUrlPreviewSchema),
+  asyncHandler(async (req, res) => {
+    const result = await previewAdminArticleUrl(req.body.url);
+
+    return sendSuccess(res, {
+      data: result,
+      message: 'Đã phân tích URL bài viết.',
+    });
+  }),
+);
+r.post(
+  '/import-url',
+  requirePermission(PERMISSIONS.CREATE_ARTICLE, PERMISSIONS.MANAGE_SYSTEM),
+  validate(articleUrlImportSchema),
+  asyncHandler(async (req, res) => {
+    const result = await importAdminArticleUrl(req.user._id, req.body);
+
+    return sendCreated(
+      res,
+      result,
+      'Đã nhập URL và tạo bản nháp Google Docs.',
     );
   }),
 );
