@@ -594,6 +594,16 @@ function blocksToHtml(blocks = []) {
     }
 
     if (
+      block.type === 'cover-marker' &&
+      block.mediaId
+    ) {
+      html.push(
+        `<figure class="article-cover-only-marker" data-media-id="${escapeHtml(block.mediaId)}" data-caption-optional="true"></figure>`,
+      );
+      continue;
+    }
+
+    if (
       block.type === 'image' &&
       block.url &&
       block.mediaId
@@ -708,6 +718,13 @@ export async function syncGoogleDocsArticleContent({
   const blocks = [];
   const seenObjectIds = new Set();
 
+  const useFirstDocImageAsCover =
+    article?.coverMode !== 'custom';
+  const importedFromUrl = Boolean(
+    article?.sourceCanonicalUrl ||
+    article?.sourceUrl,
+  );
+
   let coverMediaId = '';
   let coverUrl = '';
 
@@ -784,11 +801,27 @@ export async function syncGoogleDocsArticleContent({
         );
       }
 
-      // Ảnh đầu tiên vẫn là thumbnail/ảnh bìa cho card, SEO và danh sách,
-      // nhưng không được xóa khỏi thân bài. Vị trí trong Google Docs là nguồn sự thật.
-      if (!coverMediaId) {
+      const isCoverCandidate =
+        useFirstDocImageAsCover &&
+        !coverMediaId;
+
+      if (isCoverCandidate) {
         coverMediaId = stored.mediaId;
         coverUrl = stored.url;
+
+        /*
+         * URL importer luôn đặt ảnh đại diện ở vị trí ảnh đầu tiên của Docs.
+         * Ảnh này là cover/card/SEO, không phải một ảnh trong thân bài.
+         * Giữ một figure marker không có <img> để trang chi tiết biết thumbnail
+         * đã được đại diện trong body và không tự chèn cover lên đầu bài.
+         */
+        if (importedFromUrl) {
+          blocks.push({
+            type: 'cover-marker',
+            mediaId: stored.mediaId,
+          });
+          continue;
+        }
       }
 
       blocks.push({
@@ -869,6 +902,7 @@ export async function syncGoogleDocsArticleContent({
   const meaningful = blocks.filter(
     (block) =>
       block.type === 'image' ||
+      block.type === 'cover-marker' ||
       Boolean(block.text) ||
       Boolean(block.items?.length),
   );
@@ -890,7 +924,9 @@ export async function syncGoogleDocsArticleContent({
     imageUrls,
     imageMediaIds,
     imageCount: imageMediaIds.length,
-    inlineImageCount: imageMediaIds.length,
+    inlineImageCount: meaningful.filter(
+      (block) => block.type === 'image',
+    ).length,
     coverMediaId,
     coverUrl,
   };
