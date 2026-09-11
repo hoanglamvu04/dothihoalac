@@ -254,38 +254,123 @@
 }
 
 /* Filter drawer */
+.app-shell .community-social-page .community-social-filter-overlay {
+  background: rgb(28 27 24 / 0.34) !important;
+}
+
+.app-shell .community-social-page .community-social-filter-drawer {
+  border-left-color: #e3dfd6 !important;
+  box-shadow: -18px 0 48px rgb(28 27 24 / 0.12) !important;
+}
+
+.app-shell .community-social-page .community-social-filter-drawer__icon {
+  color: #9c7e4c !important;
+  background: #f8f3e9 !important;
+}
+
 .app-shell .community-social-page .community-social-filter-drawer__header h2 {
+  color: #202320 !important;
   font-size: 22px !important;
   line-height: 1.35 !important;
 }
 
 .app-shell .community-social-page .community-social-filter-drawer__header p {
+  color: #7d827d !important;
   font-size: 15px !important;
   line-height: 1.58 !important;
 }
 
+.app-shell .community-social-page .community-social-filter-drawer__close {
+  border-color: #e3dfd6 !important;
+  color: #555b55 !important;
+  background: #fff !important;
+}
+
+.app-shell .community-social-page .community-social-filter-drawer__close:hover {
+  border-color: #cdbb96 !important;
+  color: #8f7040 !important;
+  background: #faf7f0 !important;
+}
+
+.app-shell .community-social-page .community-social-filter-search {
+  border-color: #e3dfd6 !important;
+  color: #9c7e4c !important;
+  background: #fbfaf7 !important;
+}
+
+.app-shell .community-social-page .community-social-filter-search:focus-within {
+  border-color: #b59965 !important;
+  box-shadow: 0 0 0 3px rgb(181 153 101 / 0.12) !important;
+}
+
 .app-shell .community-social-page .community-social-filter-search input {
+  color: #202320 !important;
   font-size: 15px !important;
   line-height: 1.42 !important;
 }
 
+.app-shell .community-social-page .community-social-filter-search input::placeholder {
+  color: #9b9d98 !important;
+}
+
 .app-shell .community-social-page .community-social-filter-search button {
+  color: #fff !important;
+  background: #b59965 !important;
   font-size: 14.5px !important;
 }
 
+.app-shell .community-social-page .community-social-filter-search button:hover {
+  background: #9c7e4c !important;
+}
+
 .app-shell .community-social-page .community-social-filter-field > span {
+  color: #4f544f !important;
   font-size: 14px !important;
   line-height: 1.42 !important;
 }
 
+.app-shell .community-social-page .community-social-filter-field > div {
+  border-color: #e3dfd6 !important;
+  color: #9c7e4c !important;
+  background: #fff !important;
+}
+
+.app-shell .community-social-page .community-social-filter-field > div:focus-within {
+  border-color: #b59965 !important;
+  box-shadow: 0 0 0 3px rgb(181 153 101 / 0.1) !important;
+}
+
 .app-shell .community-social-page .community-social-filter-field select {
+  color: #2d312d !important;
+  background-color: transparent !important;
   font-size: 15px !important;
   line-height: 1.42 !important;
 }
 
 .app-shell .community-social-page .community-social-filter-drawer__actions button {
+  border-color: #e3dfd6 !important;
+  color: #5d625d !important;
+  background: #fff !important;
   font-size: 14.5px !important;
   line-height: 1.42 !important;
+}
+
+.app-shell .community-social-page .community-social-filter-drawer__actions button:hover:not(:disabled) {
+  border-color: #cdbb96 !important;
+  color: #8f7040 !important;
+  background: #faf7f0 !important;
+}
+
+.app-shell .community-social-page .community-social-filter-drawer__actions button:last-child {
+  border-color: #b59965 !important;
+  color: #fff !important;
+  background: #b59965 !important;
+}
+
+.app-shell .community-social-page .community-social-filter-drawer__actions button:last-child:hover:not(:disabled) {
+  border-color: #9c7e4c !important;
+  color: #fff !important;
+  background: #9c7e4c !important;
 }
 
 /* Windows display scaling can keep a 1920px screen below the previous 2000px
