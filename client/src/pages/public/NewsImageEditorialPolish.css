@@ -1,0 +1,290 @@
+/* =========================================================
+   NEWS IMAGE EDITORIAL POLISH
+   Keep news photography readable instead of stretching the lead image into
+   a very wide landing-page hero. The ratios below follow common newsroom
+   presentation: lead 16:10, secondary 4:3, stream 3:2.
+========================================================= */
+
+.news-content-layout .news-story__media {
+  position: relative;
+  isolation: isolate;
+  background: #f4f4f1;
+}
+
+.news-content-layout .news-story__media::after {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border: 1px solid rgb(20 23 20 / 0.055);
+  content: '';
+  pointer-events: none;
+}
+
+.news-content-layout .news-story__image {
+  object-position: center center;
+  transform: translateZ(0);
+}
+
+/* =========================================================
+   LEAD STORY
+   Image and copy sit next to each other. This avoids the old ultra-wide,
+   heavily cropped background image and keeps headline text off the photo.
+========================================================= */
+
+.news-content-layout .news-story--lead {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(285px, 0.82fr);
+  align-items: stretch;
+  min-height: 0;
+  overflow: hidden;
+  border: 1px solid var(--news-border);
+  border-radius: 12px;
+  color: var(--news-ink);
+  background: #fff;
+}
+
+.news-content-layout .news-story--lead::after {
+  display: none;
+}
+
+.news-content-layout .news-story--lead .news-story__media {
+  position: relative;
+  inset: auto;
+  min-width: 0;
+  height: auto;
+  min-height: 0;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+}
+
+.news-content-layout .news-story--lead .news-story__image,
+.news-content-layout .news-story--lead .news-story__image-fallback {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: cover;
+}
+
+.news-content-layout .news-story--lead .news-story__body {
+  position: relative;
+  inset: auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  padding: clamp(22px, 3vw, 34px);
+  color: var(--news-ink);
+  background: #fff;
+}
+
+.news-content-layout .news-story--lead .news-story__kicker span {
+  color: var(--news-green);
+}
+
+.news-content-layout .news-story--lead h2 {
+  max-width: none;
+  margin-top: 9px;
+  color: var(--news-ink);
+  font-size: clamp(1.45rem, 2.25vw, 2.05rem);
+  line-height: 1.14;
+  letter-spacing: -0.035em;
+}
+
+.news-content-layout .news-story--lead h2 a {
+  color: inherit;
+}
+
+.news-content-layout .news-story--lead p {
+  max-width: none;
+  margin: 11px 0 14px;
+  color: var(--news-text);
+  font-size: 0.86rem;
+  line-height: 1.62;
+}
+
+.news-content-layout .news-story--lead .content-meta {
+  margin-top: 2px;
+  color: var(--news-muted);
+}
+
+/* =========================================================
+   SECONDARY STORIES
+========================================================= */
+
+.news-content-layout .news-lead-grid__side {
+  gap: 12px;
+}
+
+.news-content-layout .news-story--side {
+  grid-template-columns: minmax(155px, 42%) minmax(0, 1fr);
+  min-height: 0;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.news-content-layout .news-story--side .news-story__media {
+  height: auto;
+  min-height: 0;
+  aspect-ratio: 4 / 3;
+}
+
+.news-content-layout .news-story--side .news-story__image,
+.news-content-layout .news-story--side .news-story__image-fallback {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: cover;
+}
+
+.news-content-layout .news-story--side .news-story__body {
+  justify-content: center;
+  padding: 14px 15px;
+}
+
+.news-content-layout .news-story--side h3 {
+  font-size: 0.96rem;
+  line-height: 1.32;
+  -webkit-line-clamp: 3;
+}
+
+/* =========================================================
+   NEWS STREAM
+========================================================= */
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .news-content-layout .news-story--feed {
+  grid-template-columns: 218px minmax(0, 1fr);
+  min-height: 0;
+  padding: 14px 0;
+  gap: 16px;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .news-content-layout .news-story--feed .news-story__media {
+  height: auto;
+  min-height: 0;
+  aspect-ratio: 3 / 2;
+  border-radius: 8px;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .news-content-layout .news-story--feed .news-story__image,
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .news-content-layout .news-story--feed .news-story__image-fallback {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  object-fit: cover;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .news-content-layout .news-story--feed .news-story__body {
+  justify-content: center;
+}
+
+/* Right rail thumbnails use a calmer 4:3 news-photo frame. */
+.news-context-rail .news-rail-article {
+  grid-template-columns: 88px minmax(0, 1fr);
+}
+
+.news-context-rail .news-rail-article__thumb {
+  width: 88px;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  border-radius: 6px;
+}
+
+.news-context-rail .news-rail-article__thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Slightly stronger but still restrained hover, focused on the photograph. */
+@media (hover: hover) {
+  .news-content-layout .news-story:hover .news-story__image {
+    transform: scale(1.022);
+  }
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1120px) {
+  .news-content-layout .news-story--lead {
+    grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.8fr);
+  }
+
+  .news-content-layout .news-story--lead .news-story__body {
+    padding: 22px;
+  }
+}
+
+@media (max-width: 900px) {
+  .news-content-layout .news-story--lead {
+    grid-template-columns: 1fr;
+  }
+
+  .news-content-layout .news-story--lead .news-story__media {
+    aspect-ratio: 16 / 9;
+  }
+
+  .news-content-layout .news-story--lead .news-story__body {
+    padding: 20px 22px 22px;
+  }
+
+  .news-content-layout .news-story--lead h2 {
+    font-size: clamp(1.45rem, 4vw, 1.95rem);
+  }
+}
+
+@media (max-width: 680px) {
+  .news-content-layout .news-story--lead {
+    border-radius: 9px;
+  }
+
+  .news-content-layout .news-story--lead .news-story__media {
+    aspect-ratio: 4 / 3;
+  }
+
+  .news-content-layout .news-story--lead .news-story__body {
+    padding: 16px;
+  }
+
+  .news-content-layout .news-story--lead p {
+    display: -webkit-box;
+    margin: 8px 0 10px;
+    overflow: hidden;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  .news-content-layout .news-story--side {
+    grid-template-columns: 126px minmax(0, 1fr);
+  }
+
+  .news-content-layout .news-story--side .news-story__media {
+    aspect-ratio: 4 / 3;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth']
+    .news-content-layout .news-story--feed {
+    grid-template-columns: 126px minmax(0, 1fr);
+    min-height: 0;
+    gap: 11px;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth']
+    .news-content-layout .news-story--feed .news-story__media {
+    height: auto;
+    aspect-ratio: 4 / 3;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .news-content-layout .news-story__image {
+    transition: none;
+  }
+}
