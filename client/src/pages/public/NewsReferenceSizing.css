@@ -1,0 +1,370 @@
+/* =========================================================
+   NEWS REFERENCE SIZING
+   Structural sizing only. Brand colors intentionally remain untouched.
+   The goal is a compact Vietnamese news-portal rhythm: controlled lead
+   height, denser feed rows and a balanced right rail.
+========================================================= */
+
+/* Keep the whole news canvas centred and stop it becoming excessively wide. */
+.news-hub .news-hub__container {
+  width: min(calc(100% - 36px), 1240px);
+}
+
+/* Compact heading/search area similar to the supplied reference. */
+.news-hub .news-masthead {
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  gap: 24px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+.news-hub .news-masthead h1 {
+  font-size: clamp(1.65rem, 2.6vw, 2.2rem);
+  line-height: 1.05;
+}
+
+.news-hub .news-masthead p {
+  margin-top: 6px;
+  font-size: 0.76rem;
+}
+
+.news-hub .news-masthead__search {
+  min-height: 40px;
+}
+
+.news-hub .news-category-bar {
+  min-height: 44px;
+}
+
+/* Main/news rail proportions. */
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .news-hub .news-content-layout,
+.news-hub .news-content-layout {
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 18px;
+  margin-top: 12px;
+}
+
+/* =========================================================
+   LEAD STORY
+   Keep the existing image-overlay treatment, but at the compact proportions
+   of the reference instead of a landing-page-sized hero.
+========================================================= */
+.news-hub .news-content-layout .news-story--lead {
+  min-height: 0;
+  height: 318px;
+  border-radius: 10px;
+}
+
+.news-hub .news-content-layout .news-story--lead .news-story__media,
+.news-hub .news-content-layout .news-story--lead .news-story__image,
+.news-hub .news-content-layout .news-story--lead .news-story__image-fallback {
+  height: 100%;
+  min-height: 0;
+}
+
+.news-hub .news-content-layout .news-story--lead .news-story__image {
+  object-fit: cover;
+  object-position: center 48%;
+}
+
+.news-hub .news-content-layout .news-story--lead::after {
+  background: linear-gradient(
+    180deg,
+    transparent 36%,
+    rgb(5 26 15 / 0.08) 52%,
+    rgb(5 26 15 / 0.88) 100%
+  );
+}
+
+.news-hub .news-content-layout .news-story--lead .news-story__body {
+  padding: 18px 20px;
+}
+
+.news-hub .news-content-layout .news-story--lead h2 {
+  max-width: 720px;
+  margin-top: 6px;
+  font-size: clamp(1.35rem, 2.1vw, 1.9rem);
+  line-height: 1.09;
+}
+
+.news-hub .news-content-layout .news-story--lead p {
+  max-width: 700px;
+  margin: 7px 0 8px;
+  font-size: 0.74rem;
+  line-height: 1.45;
+}
+
+.news-hub .news-content-layout .news-story--lead .content-meta {
+  font-size: 0.58rem;
+}
+
+/* The two secondary stories stay in the current data flow, but become much
+   more compact so they do not compete with the main lead. */
+.news-hub .news-content-layout .news-lead-grid__side {
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.news-hub .news-content-layout .news-story--side {
+  grid-template-columns: 132px minmax(0, 1fr);
+  min-height: 104px;
+  border-radius: 9px;
+}
+
+.news-hub .news-content-layout .news-story--side .news-story__media,
+.news-hub .news-content-layout .news-story--side .news-story__image,
+.news-hub .news-content-layout .news-story--side .news-story__image-fallback {
+  height: 104px;
+  min-height: 104px;
+}
+
+.news-hub .news-content-layout .news-story--side .news-story__body {
+  padding: 9px 11px;
+}
+
+.news-hub .news-content-layout .news-story--side h3 {
+  margin-top: 4px;
+  font-size: 0.78rem;
+  line-height: 1.28;
+  -webkit-line-clamp: 3;
+}
+
+.news-hub .news-content-layout .news-story--side .content-meta {
+  margin-top: 5px;
+  font-size: 0.55rem;
+}
+
+/* =========================================================
+   LATEST NEWS STREAM
+   Compact bordered rows, with photo dimensions close to the supplied sample.
+========================================================= */
+.news-hub .news-stream {
+  margin-top: 16px;
+}
+
+.news-hub .news-stream__heading {
+  padding-bottom: 7px;
+}
+
+.news-hub .news-stream__heading h2 {
+  font-size: clamp(1.05rem, 1.7vw, 1.3rem);
+}
+
+.news-hub .news-stream__list {
+  gap: 7px;
+  margin-top: 8px;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .news-hub .news-content-layout .news-story--feed,
+.news-hub .news-content-layout .news-story--feed {
+  grid-template-columns: 188px minmax(0, 1fr);
+  min-height: 118px;
+  padding: 7px;
+  gap: 13px;
+  border: 1px solid var(--news-border);
+  border-radius: 9px;
+  background: var(--news-surface);
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .news-hub .news-content-layout .news-story--feed .news-story__media,
+.news-hub .news-content-layout .news-story--feed .news-story__media,
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .news-hub .news-content-layout .news-story--feed .news-story__image,
+.news-hub .news-content-layout .news-story--feed .news-story__image,
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .news-hub .news-content-layout .news-story--feed .news-story__image-fallback,
+.news-hub .news-content-layout .news-story--feed .news-story__image-fallback {
+  height: 104px;
+  min-height: 104px;
+  border-radius: 7px;
+}
+
+.news-hub .news-content-layout .news-story--feed .news-story__body {
+  justify-content: center;
+  padding: 1px 5px 1px 0;
+}
+
+.news-hub .news-content-layout .news-story--feed h3 {
+  margin-top: 4px;
+  font-size: 0.84rem;
+  line-height: 1.26;
+}
+
+.news-hub .news-content-layout .news-story--feed p {
+  margin: 4px 0 5px;
+  font-size: 0.66rem;
+  line-height: 1.38;
+  -webkit-line-clamp: 2;
+}
+
+.news-hub .news-content-layout .news-story--feed .content-meta {
+  font-size: 0.55rem;
+}
+
+/* =========================================================
+   RIGHT RAIL
+========================================================= */
+.news-hub .news-context-rail,
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .news-hub .news-context-rail {
+  gap: 11px;
+}
+
+.news-hub .news-rail-card {
+  padding: 13px;
+  border-radius: 9px;
+}
+
+.news-hub .news-rail-card__head {
+  padding-bottom: 8px;
+}
+
+.news-hub .news-rail-card__head h2 {
+  font-size: 0.91rem;
+}
+
+.news-hub .news-rail-article {
+  grid-template-columns: 72px minmax(0, 1fr);
+  min-height: 69px;
+  padding: 7px 0;
+  gap: 9px;
+}
+
+.news-hub .news-rail-article__thumb {
+  width: 72px;
+  height: 52px;
+  border-radius: 6px;
+}
+
+.news-hub .news-rail-article__copy strong {
+  font-size: 0.65rem;
+  line-height: 1.32;
+  -webkit-line-clamp: 3;
+}
+
+.news-hub .news-rail-article__copy small {
+  margin-top: 3px;
+  font-size: 0.53rem;
+}
+
+.news-hub .news-topic-chips {
+  gap: 6px;
+  padding-top: 9px;
+}
+
+.news-hub .news-topic-chips a {
+  min-height: 27px;
+  padding-inline: 8px;
+  font-size: 0.56rem;
+}
+
+.news-hub .news-area-links {
+  gap: 6px;
+  padding-top: 9px;
+}
+
+.news-hub .news-area-links a {
+  min-height: 34px;
+  font-size: 0.58rem;
+}
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+@media (max-width: 1080px) {
+  html[data-dthl-theme='light'][data-dthl-palette='earth']
+    .news-hub .news-content-layout,
+  .news-hub .news-content-layout {
+    grid-template-columns: minmax(0, 1fr) 276px;
+    gap: 16px;
+  }
+
+  .news-hub .news-content-layout .news-story--lead {
+    height: 300px;
+  }
+}
+
+@media (max-width: 900px) {
+  .news-hub .news-hub__container {
+    width: min(calc(100% - 28px), 760px);
+  }
+
+  .news-hub .news-masthead {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth']
+    .news-hub .news-content-layout,
+  .news-hub .news-content-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .news-hub .news-content-layout .news-story--lead {
+    height: 340px;
+  }
+}
+
+@media (max-width: 680px) {
+  .news-hub .news-hub__container {
+    width: min(calc(100% - 20px), 620px);
+  }
+
+  .news-hub .news-content-layout .news-story--lead {
+    height: 300px;
+    border-radius: 8px;
+  }
+
+  .news-hub .news-content-layout .news-story--lead .news-story__body {
+    padding: 15px;
+  }
+
+  .news-hub .news-content-layout .news-story--lead h2 {
+    font-size: clamp(1.2rem, 6vw, 1.55rem);
+  }
+
+  .news-hub .news-content-layout .news-lead-grid__side {
+    grid-template-columns: 1fr;
+  }
+
+  .news-hub .news-content-layout .news-story--side {
+    grid-template-columns: 116px minmax(0, 1fr);
+    min-height: 94px;
+  }
+
+  .news-hub .news-content-layout .news-story--side .news-story__media,
+  .news-hub .news-content-layout .news-story--side .news-story__image,
+  .news-hub .news-content-layout .news-story--side .news-story__image-fallback {
+    height: 94px;
+    min-height: 94px;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth']
+    .news-hub .news-content-layout .news-story--feed,
+  .news-hub .news-content-layout .news-story--feed {
+    grid-template-columns: 118px minmax(0, 1fr);
+    min-height: 98px;
+    padding: 6px;
+    gap: 9px;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth']
+    .news-hub .news-content-layout .news-story--feed .news-story__media,
+  .news-hub .news-content-layout .news-story--feed .news-story__media,
+  html[data-dthl-theme='light'][data-dthl-palette='earth']
+    .news-hub .news-content-layout .news-story--feed .news-story__image,
+  .news-hub .news-content-layout .news-story--feed .news-story__image,
+  html[data-dthl-theme='light'][data-dthl-palette='earth']
+    .news-hub .news-content-layout .news-story--feed .news-story__image-fallback,
+  .news-hub .news-content-layout .news-story--feed .news-story__image-fallback {
+    height: 86px;
+    min-height: 86px;
+  }
+
+  .news-hub .news-content-layout .news-story--feed p {
+    display: none;
+  }
+}
