@@ -59,6 +59,14 @@
   white-space: nowrap;
 }
 
+/* Text lives inside the author column now, so it no longer waits for the
+   avatar row to finish before starting. */
+.community-feed-card__content .community-feed-card__text {
+  padding: 4px 0 0 !important;
+  color: #171a18;
+  line-height: 1.46;
+}
+
 .community-feed-card__text button {
   margin-top: 3px;
 }
@@ -161,6 +169,29 @@
   color: #777e7a !important;
   font-size: 0.67rem !important;
   line-height: 1.2 !important;
+}
+
+.community-social-page.community-social-page.community-social-page
+  .community-reference-center
+  .community-feed-card__type {
+  padding: 3px 7px !important;
+  border: 1px solid #ece7db;
+  border-radius: 999px;
+  color: #756847;
+  background: #fbf8f1 !important;
+  font-size: 0.59rem !important;
+  line-height: 1.2;
+}
+
+.community-social-page.community-social-page.community-social-page
+  .community-reference-center
+  .community-feed-card__content
+  .community-feed-card__text {
+  padding: 4px 0 0 !important;
+  color: #171a18 !important;
+  font-size: 0.9rem !important;
+  line-height: 1.46 !important;
+  letter-spacing: -0.004em;
 }
 
 /* Media follows the same content column as Threads. */
@@ -354,6 +385,23 @@
     gap: 3px !important;
     margin-top: 0 !important;
     font-size: 0.62rem !important;
+  }
+
+  .community-social-page.community-social-page.community-social-page
+    .community-reference-center
+    .community-feed-card__type {
+    padding: 3px 6px !important;
+    font-size: 0.55rem !important;
+  }
+
+  .community-feed-card__content .community-feed-card__text,
+  .community-social-page.community-social-page.community-social-page
+    .community-reference-center
+    .community-feed-card__content
+    .community-feed-card__text {
+    padding: 3px 0 0 !important;
+    font-size: 0.87rem !important;
+    line-height: 1.42 !important;
   }
 
   .community-social-page.community-social-page.community-social-page
