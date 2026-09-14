@@ -28,7 +28,12 @@ import {
 } from 'lucide-react';
 
 import Avatar from '../common/Avatar';
-import CommunitySocialEditor from './CommunitySocialEditor';
+import CommunitySocialEditor, {
+  persistTemporaryCommunityMedia,
+  releaseTemporaryCommunityMedia,
+  rollbackTemporaryCommunityMedia,
+  stripTemporaryCommunityMedia,
+} from './CommunitySocialEditor';
 import { communityApi } from '../../api/content.api';
 import { apiErrorMessage } from '../../api/http';
 import { useAuth } from '../../context/AuthContext';
@@ -41,6 +46,7 @@ import './CommunityQuickComposer.css';
 import './CommunityQuickComposerDesktop.css';
 
 const DEFAULT_TYPE = 'discussion';
+const COMMUNITY_PREVIEW_URI = /^(?:(?:(?:f|ht)tps?|mailto|tel|callto|sms|cid|xmpp|blob):|[^a-z]|[a-z+.\-]+(?:[^a-z+.\-:]|$))/i;
 const EDITABLE_STATUSES = new Set([
   'draft',
   'needs_revision',
@@ -157,7 +163,9 @@ export default function CommunityQuickComposerDesktop() {
 
   const plainText = useMemo(() => stripHtml(bodyHtml), [bodyHtml]);
   const previewHtml = useMemo(
-    () => DOMPurify.sanitize(String(bodyHtml || '')),
+    () => DOMPurify.sanitize(String(bodyHtml || ''), {
+      ALLOWED_URI_REGEXP: COMMUNITY_PREVIEW_URI,
+    }),
     [bodyHtml],
   );
   const hasInlineImage = /data-media-id=/i.test(bodyHtml);
@@ -315,10 +323,10 @@ export default function CommunityQuickComposerDesktop() {
   }, [activePanel, loadingEdit, open, previewOpen, requestClose]);
 
   const buildPayload = useCallback(
-    () => ({
-      title: deriveTitle(bodyHtml, postType),
-      summary: deriveSummary(bodyHtml),
-      bodyHtml: bodyHtml.trim(),
+    (nextBodyHtml = bodyHtml) => ({
+      title: deriveTitle(nextBodyHtml, postType),
+      summary: deriveSummary(nextBodyHtml),
+      bodyHtml: String(nextBodyHtml || '').trim(),
       postType,
       primaryCategoryId: categoryId || null,
       primaryAreaId: areaId || null,
@@ -340,10 +348,22 @@ export default function CommunityQuickComposerDesktop() {
       return;
     }
 
+    const draftBodyHtml = stripTemporaryCommunityMedia(bodyHtml);
+    const draftHasContent = Boolean(
+      stripHtml(draftBodyHtml) || /data-media-id=|<img\b/i.test(draftBodyHtml),
+    );
+
+    if (!draftHasContent) {
+      setFormError(
+        'Ảnh đang được giữ tạm trên trình duyệt và chỉ được tải lên khi đăng. Hãy thêm nội dung chữ hoặc đăng bài để lưu ảnh.',
+      );
+      return;
+    }
+
     setSaving(true);
     setFormError('');
     try {
-      const payload = buildPayload();
+      const payload = buildPayload(draftBodyHtml);
       let id = draftId;
       if (id) {
         await communityApi.update(id, payload);
@@ -356,7 +376,9 @@ export default function CommunityQuickComposerDesktop() {
       }
 
       toast.success(
-        editStatus === 'published' ? 'Đã lưu thay đổi.' : 'Đã lưu bản nháp.',
+        bodyHtml !== draftBodyHtml
+          ? 'Đã lưu bản nháp phần nội dung. Ảnh vẫn được giữ tạm trên trình duyệt đến khi đăng.'
+          : 'Đã lưu bản nháp.',
       );
     } catch (error) {
       setFormError(
@@ -380,9 +402,19 @@ export default function CommunityQuickComposerDesktop() {
 
     setSaving(true);
     setFormError('');
+
+    let uploadedMedia = [];
+    let contentSaved = false;
+
     try {
-      const payload = buildPayload();
+      const prepared = await persistTemporaryCommunityMedia(bodyHtml, {
+        uploadFolder: 'community/inline',
+      });
+      const publishBodyHtml = prepared.html;
+      uploadedMedia = prepared.uploads;
+      const payload = buildPayload(publishBodyHtml);
       let id = draftId;
+
       if (id) {
         await communityApi.update(id, payload);
       } else {
@@ -390,6 +422,13 @@ export default function CommunityQuickComposerDesktop() {
         id = created?._id || created?.id || '';
         if (!id) throw new Error('Server không trả về ID bài viết.');
         setDraftId(id);
+      }
+
+      contentSaved = true;
+
+      if (uploadedMedia.length) {
+        setBodyHtml(publishBodyHtml);
+        releaseTemporaryCommunityMedia(uploadedMedia);
       }
 
       if (editStatus === 'published') {
@@ -406,6 +445,10 @@ export default function CommunityQuickComposerDesktop() {
         }),
       );
     } catch (error) {
+      if (!contentSaved && uploadedMedia.length) {
+        await rollbackTemporaryCommunityMedia(uploadedMedia);
+      }
+
       setFormError(
         apiErrorMessage(
           error,
@@ -504,7 +547,6 @@ export default function CommunityQuickComposerDesktop() {
                     setFormError('');
                   }}
                   placeholder="Bạn đang nghĩ gì?"
-                  uploadFolder="community/inline"
                   maxImages={12}
                   maxImageSizeMb={10}
                 />
@@ -633,7 +675,7 @@ export default function CommunityQuickComposerDesktop() {
             type="button"
             className="community-desktop-composer__save"
             disabled={actionDisabled}
-            onClick={saveDraft}
+            onClick={editStatus === 'published' ? publish : saveDraft}
           >
             <Save size={18} />
             {editStatus === 'published' ? 'Lưu thay đổi' : 'Lưu nháp'}
