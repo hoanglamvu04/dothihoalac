@@ -12,6 +12,7 @@ import { seedCommunityPosts } from './seedCommunityPosts.js';
 import { seedProperties } from './seedProperties.js';
 import { seedPropertyShowcase } from './seedPropertyShowcase.js';
 import { seedJobs } from './seedJobs.js';
+import { seedJobShowcase } from './seedJobShowcase.js';
 import { seedInteractions } from './seedInteractions.js';
 import { seedNotifications } from './seedNotifications.js';
 import { seedModeration } from './seedModeration.js';
@@ -72,7 +73,19 @@ export async function runSeed({ includeDemo = true } = {}) {
     ...baseProperties,
     ...showcaseProperties,
   };
-  const jobs = await seedJobs({ users, categories, areas, tags, media });
+
+  const baseJobs = await seedJobs({ users, categories, areas, tags, media });
+  const showcaseJobs = await seedJobShowcase({
+    users: { ...users, admin: adminUser },
+    categories,
+    areas,
+    tags,
+    media,
+  });
+  const jobs = {
+    ...baseJobs,
+    ...showcaseJobs,
+  };
 
   logger.info('Seeding interactions, notifications, moderation and leads');
   await seedInteractions({ users, articles, community, properties, areas, categories, tags });
@@ -97,5 +110,6 @@ export async function runSeed({ includeDemo = true } = {}) {
     propertiesCount: Object.keys(properties).length,
     propertyShowcaseCount: Object.keys(showcaseProperties).length,
     jobsCount: Object.keys(jobs).length,
+    jobShowcaseCount: Object.keys(showcaseJobs).length,
   };
 }
