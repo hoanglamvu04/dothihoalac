@@ -17,6 +17,7 @@ import {
 } from '../../utils/constants';
 import { getPropertyTypeLabel } from '../../utils/propertyPosting';
 import { contentPath } from '../../utils/content';
+import './PropertyCard.css';
 
 function compactSummary(item) {
   return String(item?.summary || item?.body?.bodyText || '')
@@ -35,10 +36,10 @@ export default function PropertyCard({ item }) {
       <Link to={href} className="property-card__image" aria-label={`Xem ${item.title}`}>
         <ContentImage media={item.thumbnailMediaId} alt={item.title} ratio="property" />
         <div className="property-card__badges">
-          <Badge tone="accent">
+          <Badge tone="accent" className="property-card__badge--transaction">
             {TRANSACTION_TYPES[property.transactionType] || 'Bất động sản'}
           </Badge>
-          <Badge tone="dark">
+          <Badge tone="dark" className="property-card__badge--owner">
             {OWNER_TYPES[property.ownerType] || 'Tin đăng'}
           </Badge>
         </div>
@@ -72,20 +73,22 @@ export default function PropertyCard({ item }) {
           <p className="property-card__summary">{summary}</p>
         ) : null}
 
-        <div className="property-card__footer">
-          <span>
-            <UserRound size={15} />
-            {property.contactName || OWNER_TYPES[property.ownerType] || 'Người đăng'}
-          </span>
-
-          {property.legalStatus && property.legalStatus !== 'unknown' ? (
+        <div className="property-card__footer property-card__footer--aligned">
+          <div className="property-card__footer-meta">
             <span>
-              <ShieldCheck size={15} />
-              {LEGAL_STATUS[property.legalStatus] || 'Thông tin pháp lý'}
+              <UserRound size={15} />
+              {property.contactName || OWNER_TYPES[property.ownerType] || 'Người đăng'}
             </span>
-          ) : null}
 
-          <Link to={href}>Xem chi tiết</Link>
+            {property.legalStatus && property.legalStatus !== 'unknown' ? (
+              <span>
+                <ShieldCheck size={15} />
+                {LEGAL_STATUS[property.legalStatus] || 'Thông tin pháp lý'}
+              </span>
+            ) : null}
+          </div>
+
+          <Link to={href} className="property-card__detail-link">Xem chi tiết</Link>
         </div>
       </div>
     </article>
