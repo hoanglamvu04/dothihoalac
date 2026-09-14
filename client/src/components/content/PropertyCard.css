@@ -1,0 +1,60 @@
+.property-card__badge--transaction,
+.property-card__badge--owner {
+  border: 1px solid rgb(255 255 255 / 0.28);
+  color: #fff;
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.24);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 0.2);
+  backdrop-filter: blur(7px);
+}
+
+.property-card__badge--transaction {
+  background: rgb(151 105 47 / 0.94);
+}
+
+.property-card__badge--owner {
+  background: rgb(18 67 47 / 0.92);
+}
+
+.property-card__footer--aligned {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 12px;
+  width: 100%;
+}
+
+.property-card__footer-meta {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 7px 10px;
+}
+
+.property-card__footer-meta > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.property-card__detail-link {
+  display: inline-flex;
+  min-height: 36px;
+  align-items: center;
+  justify-content: center;
+  align-self: center;
+  padding: 0 12px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+  .property-card__footer--aligned {
+    grid-template-columns: 1fr;
+    row-gap: 9px;
+  }
+
+  .property-card__detail-link {
+    justify-self: end;
+  }
+}
