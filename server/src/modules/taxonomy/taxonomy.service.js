@@ -5,6 +5,11 @@ import { createUniqueSlug } from '../../services/slug.service.js';
 import ApiError from '../../utils/ApiError.js';
 
 const map = { categories: Category, tags: Tag, areas: Area };
+const areaMediaPopulate = {
+  path: 'thumbnailMediaId',
+  select: 'url secureUrl altText width height resourceType status',
+  match: { status: 'active', resourceType: 'image' },
+};
 
 function modelFor(type) {
   const Model = map[type];
@@ -85,9 +90,13 @@ function filterEffectiveHierarchy(items) {
 
 export async function list(type, q = {}) {
   const Model = modelFor(type);
-  const items = await Model.find(publicFilter(type, q))
-    .sort(sortFor(type))
-    .lean();
+  let query = Model.find(publicFilter(type, q)).sort(sortFor(type));
+
+  if (type === 'areas') {
+    query = query.populate(areaMediaPopulate);
+  }
+
+  const items = await query.lean();
 
   // Nếu một danh mục/khu vực cha đã tắt thì toàn bộ nhánh con cũng phải biến mất
   // khỏi public taxonomy, kể cả bản ghi con vẫn còn isActive=true.
@@ -105,7 +114,9 @@ export async function listAdmin(type, q = {}) {
   if (type === 'categories') {
     query = query.populate('parentId', 'name slug contentScope isActive');
   } else if (type === 'areas') {
-    query = query.populate('parentId', 'name slug areaType isActive');
+    query = query
+      .populate('parentId', 'name slug areaType isActive')
+      .populate(areaMediaPopulate);
   }
 
   return query.lean();
