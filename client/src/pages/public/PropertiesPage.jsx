@@ -601,6 +601,7 @@ export default function PropertiesPage() {
             <div className="properties-featured-areas__grid">
               {featuredAreas.map((area, index) => {
                 const areaItem = result.items.find((item) => sameArea(item, area));
+                const areaMedia = area?.thumbnailMediaId || areaItem?.thumbnailMediaId;
                 const selected =
                   String(currentArea) === String(area?._id) ||
                   String(currentArea) === String(area?.slug);
@@ -614,10 +615,10 @@ export default function PropertiesPage() {
                     onClick={() => update('area', selected ? '' : taxonomyUrlValue(area))}
                   >
                     <span className="properties-featured-areas__media">
-                      {areaItem?.thumbnailMediaId ? (
+                      {areaMedia ? (
                         <ContentImage
-                          media={areaItem.thumbnailMediaId}
-                          alt=""
+                          media={areaMedia}
+                          alt={area.name}
                           ratio="property"
                           loading={index < 2 ? 'eager' : 'lazy'}
                         />
