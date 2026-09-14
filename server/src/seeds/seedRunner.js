@@ -10,6 +10,7 @@ import { seedMedia } from './seedMedia.js';
 import { seedArticles } from './seedArticles.js';
 import { seedCommunityPosts } from './seedCommunityPosts.js';
 import { seedProperties } from './seedProperties.js';
+import { seedPropertyShowcase } from './seedPropertyShowcase.js';
 import { seedJobs } from './seedJobs.js';
 import { seedInteractions } from './seedInteractions.js';
 import { seedNotifications } from './seedNotifications.js';
@@ -51,7 +52,7 @@ export async function runSeed({ includeDemo = true } = {}) {
   logger.info('Seeding articles, community, properties and jobs');
   const articles = await seedArticles({ users, categories, areas, tags, media });
   const community = await seedCommunityPosts({ users, categories, areas, tags, media });
-  const properties = await seedProperties({
+  const baseProperties = await seedProperties({
     users,
     categories,
     areas,
@@ -59,6 +60,18 @@ export async function runSeed({ includeDemo = true } = {}) {
     media,
     propertyFeatures,
   });
+  const showcaseProperties = await seedPropertyShowcase({
+    users,
+    categories,
+    areas,
+    tags,
+    media,
+    propertyFeatures,
+  });
+  const properties = {
+    ...baseProperties,
+    ...showcaseProperties,
+  };
   const jobs = await seedJobs({ users, categories, areas, tags, media });
 
   logger.info('Seeding interactions, notifications, moderation and leads');
@@ -81,6 +94,8 @@ export async function runSeed({ includeDemo = true } = {}) {
       business: 'doanhnghiep@example.com',
       member: 'thanhvien@example.com',
     },
+    propertiesCount: Object.keys(properties).length,
+    propertyShowcaseCount: Object.keys(showcaseProperties).length,
     jobsCount: Object.keys(jobs).length,
   };
 }
