@@ -6,6 +6,7 @@ import {
   useState,
 } from 'react';
 import { createPortal } from 'react-dom';
+import DOMPurify from 'dompurify';
 import {
   Check,
   ChevronRight,
@@ -155,6 +156,10 @@ export default function CommunityQuickComposerDesktop() {
   }, [categories, categoryQuery]);
 
   const plainText = useMemo(() => stripHtml(bodyHtml), [bodyHtml]);
+  const previewHtml = useMemo(
+    () => DOMPurify.sanitize(String(bodyHtml || '')),
+    [bodyHtml],
+  );
   const hasInlineImage = /data-media-id=/i.test(bodyHtml);
   const hasContent = Boolean(plainText || hasInlineImage);
   const isTooLong = plainText.length > 3000;
@@ -858,9 +863,13 @@ export default function CommunityQuickComposerDesktop() {
                   </small>
                 </span>
               </div>
-              <div className="community-desktop-composer__preview-copy">
-                {plainText || 'Bài viết có nội dung hình ảnh.'}
-              </div>
+              <div
+                className="community-desktop-composer__preview-copy rte-content"
+                style={{ minHeight: 0, whiteSpace: 'normal' }}
+                dangerouslySetInnerHTML={{
+                  __html: previewHtml || '<p>Bài viết có nội dung hình ảnh.</p>',
+                }}
+              />
             </section>
           </div>
         ) : null}
