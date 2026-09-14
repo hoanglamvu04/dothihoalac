@@ -230,7 +230,7 @@
   gap: 14px;
 }
 
-.job-detail-main > section {
+.job-detail-main > section:not(.job-reaction-section) {
   min-width: 0;
   padding: 23px 25px;
   border: 1px solid var(--job-border);
@@ -965,7 +965,7 @@
     grid-column: auto;
   }
 
-  .job-detail-main > section {
+  .job-detail-main > section:not(.job-reaction-section) {
     padding: 19px 17px;
     border-radius: 12px;
   }
