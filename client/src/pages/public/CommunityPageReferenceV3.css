@@ -344,7 +344,7 @@ body:has(.dthl-header.is-hidden) .community-reference-right { top: 16px; max-hei
   font-weight: 720 !important;
 }
 .community-social-page .community-feed-card__text {
-  padding: 4px 16px 13px !important;
+  padding: 10px 16px 18px !important;
   color: var(--c-ink) !important;
   font-size: 15.5px !important;
   line-height: 1.48 !important;
@@ -497,7 +497,7 @@ html[data-dthl-theme='dark'] .community-discovery-list button.is-active { backgr
   .community-social-page .community-feed-card__author > a { max-width: 64%; font-size: 13.5px !important; }
   .community-social-page .community-feed-card__author > a::after { display: none; }
   .community-social-page .community-feed-card__author > div { font-size: 11px !important; }
-  .community-social-page .community-feed-card__text { padding: 4px 12px 11px !important; font-size: 14.5px !important; }
+  .community-social-page .community-feed-card__text { padding: 8px 12px 15px !important; font-size: 14.5px !important; }
   .community-social-page .community-feed-media--1 .community-feed-media__item { aspect-ratio: 4 / 3 !important; max-height: 420px !important; }
   .community-social-page .community-feed-media--2 { height: 265px !important; }
   .community-social-page .community-feed-media--3,
