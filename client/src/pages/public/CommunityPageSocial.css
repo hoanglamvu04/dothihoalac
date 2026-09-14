@@ -510,13 +510,6 @@ body:has(.dthl-header.is-hidden) .community-social-page {
   padding: 14px 16px 8px !important;
 }
 
-.community-social-page.community-social-page .community-reference-center .community-feed-card__text {
-  padding: 5px 16px 12px !important;
-  color: #26382f !important;
-  font-size: 0.83rem !important;
-  line-height: 1.52 !important;
-}
-
 .community-social-page.community-social-page .community-reference-center .community-feed-card__stats {
   min-height: 33px !important;
   padding: 5px 16px !important;

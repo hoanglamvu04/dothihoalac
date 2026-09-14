@@ -167,7 +167,6 @@
   gap: 4px !important;
   margin-top: 0 !important;
   color: #777e7a !important;
-  font-size: 0.67rem !important;
   line-height: 1.2 !important;
 }
 
@@ -181,17 +180,6 @@
   background: #fbf8f1 !important;
   font-size: 0.59rem !important;
   line-height: 1.2;
-}
-
-.community-social-page.community-social-page.community-social-page
-  .community-reference-center
-  .community-feed-card__content
-  .community-feed-card__text {
-  padding: 4px 0 0 !important;
-  color: #171a18 !important;
-  font-size: 0.9rem !important;
-  line-height: 1.46 !important;
-  letter-spacing: -0.004em;
 }
 
 /* Media follows the same content column as Threads. */
