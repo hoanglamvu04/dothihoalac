@@ -1,29 +1,22 @@
 import { useState } from 'react';
 import {
   Bookmark,
-  Eye,
   Flag,
-  Lightbulb,
   Navigation,
   Share2,
   ShieldCheck,
-  Sparkles,
   ThumbsDown,
   ThumbsUp,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { bookmarkApi, reactionApi } from '../../api/interaction.api';
-import { REACTIONS } from '../../utils/constants';
 import ReportModal from './ReportModal';
 
-const REACTION_ICONS = {
-  like: ThumbsUp,
-  interested: Eye,
-  helpful: Lightbulb,
-  surprised: Sparkles,
-  disagree: ThumbsDown,
-};
+const SIMPLE_REACTIONS = [
+  { value: 'like', label: 'Thích', Icon: ThumbsUp },
+  { value: 'disagree', label: 'Không thích', Icon: ThumbsDown },
+];
 
 function propertyDirectionsUrl(content) {
   if (content?.contentType !== 'property') return '';
@@ -49,7 +42,6 @@ export default function ReactionBar({ content }) {
   const [reaction, setReaction] = useState(null);
   const [bookmarked, setBookmarked] = useState(false);
   const [reportOpen, setReportOpen] = useState(false);
-  const [count, setCount] = useState(content?.reactionCount || 0);
   const directionsUrl = propertyDirectionsUrl(content);
   const isPreview = Boolean(content?.viewerAccess?.preview);
 
@@ -67,10 +59,8 @@ export default function ReactionBar({ content }) {
       if (reaction === type) {
         await reactionApi.remove('content', content._id);
         setReaction(null);
-        setCount((value) => Math.max(0, value - 1));
       } else {
         await reactionApi.put('content', content._id, type);
-        setCount((value) => value + (reaction ? 0 : 1));
         setReaction(type);
       }
     } catch {
@@ -133,42 +123,24 @@ export default function ReactionBar({ content }) {
     <>
       <div className="reaction-bar">
         <div className="reaction-picker">
-          <span className="reaction-picker__summary">
-            <Sparkles size={16} aria-hidden="true" />
-            <strong>{count}</strong>
-            <span>cảm xúc</span>
-          </span>
-
           <div className="reaction-picker__choices" aria-label="Cảm xúc về bài viết">
-            {REACTIONS.map((item) => {
-              const Icon = REACTION_ICONS[item.value] || Sparkles;
-
-              return (
-                <button
-                  key={item.value}
-                  type="button"
-                  className={reaction === item.value ? 'is-active' : ''}
-                  onClick={() => react(item.value)}
-                  title={item.label}
-                  aria-pressed={reaction === item.value}
-                >
-                  <Icon size={16} strokeWidth={1.9} aria-hidden="true" />
-                  <small>{item.label}</small>
-                </button>
-              );
-            })}
+            {SIMPLE_REACTIONS.map(({ value, label, Icon }) => (
+              <button
+                key={value}
+                type="button"
+                className={reaction === value ? 'is-active' : ''}
+                onClick={() => react(value)}
+                title={label}
+                aria-pressed={reaction === value}
+              >
+                <Icon size={16} strokeWidth={1.9} aria-hidden="true" />
+                <small>{label}</small>
+              </button>
+            ))}
           </div>
         </div>
 
         <div className="reaction-actions">
-          {directionsUrl ? (
-            <button
-              type="button"
-              onClick={() => window.open(directionsUrl, '_blank', 'noopener,noreferrer')}
-            >
-              <Navigation size={18} /> Xem đường đi
-            </button>
-          ) : null}
           <button type="button" className={bookmarked ? 'is-active' : ''} onClick={bookmark}>
             <Bookmark size={18} /> {bookmarked ? 'Đã lưu' : 'Lưu'}
           </button>
