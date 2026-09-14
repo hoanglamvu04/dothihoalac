@@ -19,6 +19,7 @@ const schema = new mongoose.Schema(
       index: true,
     },
     parentId: { type: mongoose.Schema.Types.ObjectId, ref: 'Area', default: null, index: true },
+    thumbnailMediaId: { type: mongoose.Schema.Types.ObjectId, ref: 'Media', default: null },
     description: { type: String, default: '', maxlength: 3000 },
     location: { type: pointSchema, default: undefined },
     isActive: { type: Boolean, default: true, index: true },
