@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   CheckCircle2,
   CircleOff,
   FolderTree,
+  ImagePlus,
   Layers3,
   MapPinned,
   Pencil,
@@ -10,6 +11,7 @@ import {
   RefreshCw,
   Search,
   Tags,
+  Trash2,
 } from 'lucide-react';
 
 import Seo from '../../components/common/Seo';
@@ -19,7 +21,9 @@ import EmptyState from '../../components/common/EmptyState';
 import Modal from '../../components/common/Modal';
 import FormField from '../../components/common/FormField';
 import { LoadingBlock } from '../../components/common/Loading';
+import ContentImage from '../../components/content/ContentImage';
 import { taxonomyAdminApi } from '../../api/taxonomy.admin.api';
+import { mediaApi } from '../../api/media.api';
 import { apiErrorMessage } from '../../api/http';
 import {
   invalidateTaxonomyCache,
@@ -27,6 +31,7 @@ import {
 import { useToast } from '../../context/ToastContext';
 
 import './AdminTaxonomyPage.css';
+import './AdminTaxonomyAreaImage.css';
 
 const tabs = {
   categories: {
@@ -92,6 +97,7 @@ function emptyForm(type, categoryScope = 'article') {
       slug: '',
       areaType: 'commune',
       parentId: '',
+      thumbnailMediaId: null,
       description: '',
       isActive: true,
     };
@@ -125,6 +131,12 @@ function parentName(item) {
   return 'Có mục cha';
 }
 
+function mediaId(value) {
+  if (!value) return null;
+  if (typeof value === 'object') return value._id || value.id || null;
+  return value;
+}
+
 export default function AdminTaxonomyPage() {
   const toast = useToast();
   const [type, setType] = useState('categories');
@@ -137,6 +149,10 @@ export default function AdminTaxonomyPage() {
   const [saving, setSaving] = useState(false);
   const [selected, setSelected] = useState(null);
   const [form, setForm] = useState(emptyForm('categories', 'article'));
+  const areaImageObjectUrlRef = useRef('');
+  const [areaImageFile, setAreaImageFile] = useState(null);
+  const [areaImagePreview, setAreaImagePreview] = useState('');
+  const [areaImageRemoved, setAreaImageRemoved] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -168,6 +184,12 @@ export default function AdminTaxonomyPage() {
     if (type !== 'categories') setScopeFilter('*');
     if (type !== 'areas') setAreaTypeFilter('all');
   }, [type]);
+
+  useEffect(() => () => {
+    if (areaImageObjectUrlRef.current) {
+      URL.revokeObjectURL(areaImageObjectUrlRef.current);
+    }
+  }, []);
 
   const currentItems = data[type] || [];
 
@@ -247,18 +269,63 @@ export default function AdminTaxonomyPage() {
     return [];
   }, [data.areas, data.categories, form.contentScope, type]);
 
+  const clearTemporaryAreaImage = useCallback(() => {
+    if (areaImageObjectUrlRef.current) {
+      URL.revokeObjectURL(areaImageObjectUrlRef.current);
+      areaImageObjectUrlRef.current = '';
+    }
+    setAreaImageFile(null);
+    setAreaImagePreview('');
+  }, []);
+
+  const resetAreaImageDraft = useCallback(() => {
+    clearTemporaryAreaImage();
+    setAreaImageRemoved(false);
+  }, [clearTemporaryAreaImage]);
+
   const openCreate = () => {
+    resetAreaImageDraft();
     setSelected({ mode: 'create' });
     setForm(emptyForm(type, scopeFilter));
   };
 
   const openEdit = (item) => {
+    resetAreaImageDraft();
     setSelected(item);
     setForm({
       ...emptyForm(type, scopeFilter),
       ...item,
       parentId: item.parentId?._id || item.parentId || '',
     });
+  };
+
+  const closeEditor = () => {
+    if (saving) return;
+    resetAreaImageDraft();
+    setSelected(null);
+  };
+
+  const handleAreaImageChange = (event) => {
+    const file = event.target.files?.[0];
+    event.target.value = '';
+    if (!file) return;
+
+    if (!String(file.type || '').startsWith('image/')) {
+      toast.error('Vui lòng chọn một tệp ảnh hợp lệ.');
+      return;
+    }
+
+    clearTemporaryAreaImage();
+    const previewUrl = URL.createObjectURL(file);
+    areaImageObjectUrlRef.current = previewUrl;
+    setAreaImageFile(file);
+    setAreaImagePreview(previewUrl);
+    setAreaImageRemoved(false);
+  };
+
+  const removeAreaImage = () => {
+    clearTemporaryAreaImage();
+    setAreaImageRemoved(true);
   };
 
   const afterMutation = async () => {
@@ -280,7 +347,26 @@ export default function AdminTaxonomyPage() {
     delete payload.__v;
     delete payload._id;
 
+    if (type === 'areas') {
+      payload.thumbnailMediaId = areaImageRemoved ? null : mediaId(form.thumbnailMediaId);
+    }
+
+    let uploadedMedia = null;
+    let taxonomySaved = false;
+
     try {
+      if (type === 'areas' && areaImageFile) {
+        uploadedMedia = await mediaApi.uploadImage(
+          areaImageFile,
+          `Ảnh đại diện khu vực ${String(form.name || '').trim()}`,
+        );
+
+        if (!uploadedMedia?._id) {
+          throw new Error('Media upload did not return an id.');
+        }
+        payload.thumbnailMediaId = uploadedMedia._id;
+      }
+
       if (selected?.mode === 'create') {
         await taxonomyAdminApi.create(type, payload);
         toast.success(`Đã thêm ${tabs[type].shortLabel.toLowerCase()}.`);
@@ -288,9 +374,19 @@ export default function AdminTaxonomyPage() {
         await taxonomyAdminApi.update(type, selected._id, payload);
         toast.success('Đã cập nhật dữ liệu phân loại.');
       }
+
+      taxonomySaved = true;
+      resetAreaImageDraft();
       setSelected(null);
       await afterMutation();
     } catch (error) {
+      if (!taxonomySaved && uploadedMedia?._id) {
+        try {
+          await mediaApi.remove(uploadedMedia._id);
+        } catch {
+          // Không che lỗi lưu taxonomy nếu rollback media thất bại.
+        }
+      }
       toast.error(apiErrorMessage(error, 'Không thể lưu dữ liệu phân loại.'));
     } finally {
       setSaving(false);
@@ -316,6 +412,9 @@ export default function AdminTaxonomyPage() {
 
   const currentTab = tabs[type];
   const CurrentIcon = currentTab.icon;
+  const currentAreaImage = type === 'areas' && !areaImageRemoved
+    ? form.thumbnailMediaId
+    : null;
 
   return (
     <main className="taxonomy-admin-page">
@@ -483,8 +582,29 @@ export default function AdminTaxonomyPage() {
                 {items.map((item) => (
                   <tr key={item._id} className={item.isActive ? '' : 'is-inactive'}>
                     <td className="taxonomy-admin-table__name">
-                      <strong>{item.name}</strong>
-                      <small>{item.description || 'Chưa có mô tả.'}</small>
+                      {type === 'areas' ? (
+                        <div className="taxonomy-admin-name-row">
+                          <span className="taxonomy-admin-area-thumb">
+                            {item.thumbnailMediaId ? (
+                              <ContentImage
+                                media={item.thumbnailMediaId}
+                                alt={`Ảnh đại diện ${item.name}`}
+                                loading="lazy"
+                                fallback={<MapPinned size={18} />}
+                              />
+                            ) : <MapPinned size={18} />}
+                          </span>
+                          <div>
+                            <strong>{item.name}</strong>
+                            <small>{item.description || 'Chưa có mô tả.'}</small>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <strong>{item.name}</strong>
+                          <small>{item.description || 'Chưa có mô tả.'}</small>
+                        </>
+                      )}
                     </td>
                     <td>
                       <span className="taxonomy-admin-parent">{parentName(item)}</span>
@@ -537,7 +657,7 @@ export default function AdminTaxonomyPage() {
 
       <Modal
         open={Boolean(selected)}
-        onClose={() => !saving && setSelected(null)}
+        onClose={closeEditor}
         title={selected?.mode === 'create'
           ? `Thêm ${currentTab.shortLabel.toLowerCase()}`
           : `Sửa ${currentTab.shortLabel.toLowerCase()}`}
@@ -599,23 +719,75 @@ export default function AdminTaxonomyPage() {
           ) : null}
 
           {type === 'areas' ? (
-            <div className="form-grid form-grid--2">
-              <FormField label="Loại khu vực">
-                <select value={form.areaType || 'commune'} onChange={(event) => setForm({ ...form, areaType: event.target.value })}>
-                  {Object.entries(areaTypes).map(([value, label]) => (
-                    <option key={value} value={value}>{label}</option>
-                  ))}
-                </select>
+            <>
+              <div className="form-grid form-grid--2">
+                <FormField label="Loại khu vực">
+                  <select value={form.areaType || 'commune'} onChange={(event) => setForm({ ...form, areaType: event.target.value })}>
+                    {Object.entries(areaTypes).map(([value, label]) => (
+                      <option key={value} value={value}>{label}</option>
+                    ))}
+                  </select>
+                </FormField>
+                <FormField label="Khu vực cha">
+                  <select value={form.parentId || ''} onChange={(event) => setForm({ ...form, parentId: event.target.value })}>
+                    <option value="">Không có — cấp gốc</option>
+                    {parentOptions.filter((item) => item._id !== selected?._id).map((item) => (
+                      <option key={item._id} value={item._id}>{item.name} · {areaTypes[item.areaType]}</option>
+                    ))}
+                  </select>
+                </FormField>
+              </div>
+
+              <FormField
+                label="Ảnh đại diện khu vực"
+                hint="Ảnh này được ưu tiên dùng ở Khu vực nổi bật và các giao diện khám phá."
+              >
+                <div className="taxonomy-admin-area-image-field">
+                  <div className="taxonomy-admin-area-image-preview">
+                    {areaImagePreview ? (
+                      <img src={areaImagePreview} alt="Xem trước ảnh đại diện khu vực" />
+                    ) : currentAreaImage ? (
+                      <ContentImage
+                        media={currentAreaImage}
+                        alt={`Ảnh đại diện ${form.name || 'khu vực'}`}
+                        fallback={(
+                          <span><ImagePlus size={24} />Không tải được ảnh hiện tại</span>
+                        )}
+                      />
+                    ) : (
+                      <span><ImagePlus size={24} />Chưa có ảnh đại diện</span>
+                    )}
+                    {areaImagePreview ? <b>Chưa lưu</b> : currentAreaImage ? <b>Đang dùng</b> : null}
+                  </div>
+
+                  <div className="taxonomy-admin-area-image-controls">
+                    <label className="taxonomy-admin-area-image-upload">
+                      <ImagePlus size={16} />
+                      {areaImagePreview || currentAreaImage ? 'Thay ảnh' : 'Chọn ảnh'}
+                      <input
+                        type="file"
+                        accept="image/jpeg,image/png,image/webp,image/gif,image/avif"
+                        onChange={handleAreaImageChange}
+                        disabled={saving}
+                      />
+                    </label>
+                    {areaImagePreview || currentAreaImage ? (
+                      <button
+                        type="button"
+                        className="taxonomy-admin-area-image-remove"
+                        onClick={removeAreaImage}
+                        disabled={saving}
+                      >
+                        <Trash2 size={15} /> Bỏ ảnh
+                      </button>
+                    ) : null}
+                    <small>
+                      Ảnh vừa chọn chỉ lưu tạm trong trình duyệt. Hệ thống chỉ tải ảnh lên media khi bạn bấm “Lưu thay đổi”.
+                    </small>
+                  </div>
+                </div>
               </FormField>
-              <FormField label="Khu vực cha">
-                <select value={form.parentId || ''} onChange={(event) => setForm({ ...form, parentId: event.target.value })}>
-                  <option value="">Không có — cấp gốc</option>
-                  {parentOptions.filter((item) => item._id !== selected?._id).map((item) => (
-                    <option key={item._id} value={item._id}>{item.name} · {areaTypes[item.areaType]}</option>
-                  ))}
-                </select>
-              </FormField>
-            </div>
+            </>
           ) : null}
 
           {type !== 'tags' ? (
@@ -646,7 +818,7 @@ export default function AdminTaxonomyPage() {
           </label>
 
           <div className="taxonomy-admin-form__actions">
-            <Button type="button" variant="outline" disabled={saving} onClick={() => setSelected(null)}>Hủy</Button>
+            <Button type="button" variant="outline" disabled={saving} onClick={closeEditor}>Hủy</Button>
             <Button type="submit" loading={saving}>Lưu thay đổi</Button>
           </div>
         </form>
