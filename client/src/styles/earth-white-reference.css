@@ -54,7 +54,8 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
   background: #ffffff !important;
 }
 
-/* Large surfaces are white. Earth is reserved for recognition and actions. */
+/* Large visual surfaces only. Structural news wrappers are intentionally
+   excluded so the listing does not render stacked white panels/shadows. */
 html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
   .home-reference-panel,
   .home-reference-community,
@@ -63,10 +64,6 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
   .news-masthead,
   .news-category-bar,
   .news-filter-panel,
-  .news-content-layout__main,
-  .news-content-layout__rail,
-  .news-stream,
-  .news-story,
   .article-view-main,
   .article-view-header,
   .article-view-cover,
@@ -139,7 +136,7 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
 }
 
 /* =========================================================
-   NEWS LIST — white editorial canvas.
+   NEWS LIST — keep white content cards; layout wrappers stay unpainted.
 ========================================================= */
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-hub {
   --news-surface: #ffffff !important;
@@ -150,10 +147,7 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-hub {
 html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
   .news-masthead,
   .news-filter-panel,
-  .news-lead-grid,
-  .news-stream,
   .news-story,
-  .news-context-rail,
   .news-context-card
 ) {
   background: #ffffff !important;

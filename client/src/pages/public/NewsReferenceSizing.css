@@ -137,7 +137,8 @@ html[data-dthl-theme='light'][data-dthl-palette='earth']
 
 /* =========================================================
    LATEST NEWS STREAM
-   Compact bordered rows, with photo dimensions close to the supplied sample.
+   Keep compact rows, but let ArticlesPageV3 own the flat newsroom separator.
+   Do not wrap each item in an additional white card surface.
 ========================================================= */
 .news-hub .news-stream {
   margin-top: 16px;
@@ -152,7 +153,6 @@ html[data-dthl-theme='light'][data-dthl-palette='earth']
 }
 
 .news-hub .news-stream__list {
-  gap: 7px;
   margin-top: 8px;
 }
 
@@ -163,9 +163,6 @@ html[data-dthl-theme='light'][data-dthl-palette='earth']
   min-height: 118px;
   padding: 7px;
   gap: 13px;
-  border: 1px solid var(--news-border);
-  border-radius: 9px;
-  background: var(--news-surface);
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth']
