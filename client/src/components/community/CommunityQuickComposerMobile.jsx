@@ -30,7 +30,12 @@ import {
 } from 'lucide-react';
 
 import Avatar from '../common/Avatar';
-import CommunitySocialEditor from './CommunitySocialEditor';
+import CommunitySocialEditor, {
+  persistTemporaryCommunityMedia,
+  releaseTemporaryCommunityMedia,
+  rollbackTemporaryCommunityMedia,
+  stripTemporaryCommunityMedia,
+} from './CommunitySocialEditor';
 import { communityApi } from '../../api/content.api';
 import { apiErrorMessage } from '../../api/http';
 import { useAuth } from '../../context/AuthContext';
@@ -342,10 +347,10 @@ export default function CommunityQuickComposerMobile() {
     };
   }, [activeSheet, loadingEdit, open, requestClose]);
 
-  const buildPayload = useCallback(() => ({
-    title: deriveTitle(bodyHtml, postType),
-    summary: deriveSummary(bodyHtml),
-    bodyHtml: bodyHtml.trim(),
+  const buildPayload = useCallback((nextBodyHtml = bodyHtml) => ({
+    title: deriveTitle(nextBodyHtml, postType),
+    summary: deriveSummary(nextBodyHtml),
+    bodyHtml: String(nextBodyHtml || '').trim(),
     postType,
     primaryCategoryId: categoryId || null,
     primaryAreaId: areaId || null,
@@ -357,11 +362,23 @@ export default function CommunityQuickComposerMobile() {
   const saveDraft = async () => {
     if (!hasContent || !withinLimit || saving || loadingEdit || !canEditCurrent) return;
 
+    const draftBodyHtml = stripTemporaryCommunityMedia(bodyHtml);
+    const draftHasContent = Boolean(
+      stripHtml(draftBodyHtml) || /data-media-id=|<img\b/i.test(draftBodyHtml),
+    );
+
+    if (!draftHasContent) {
+      setFormError(
+        'Ảnh đang được giữ tạm trên trình duyệt và chỉ được tải lên khi đăng. Hãy thêm nội dung chữ hoặc đăng bài để lưu ảnh.',
+      );
+      return;
+    }
+
     setSaving(true);
     setFormError('');
 
     try {
-      const payload = buildPayload();
+      const payload = buildPayload(draftBodyHtml);
       let id = draftId;
 
       if (id) {
@@ -374,7 +391,11 @@ export default function CommunityQuickComposerMobile() {
         setEditStatus('draft');
       }
 
-      toast.success(editStatus === 'published' ? 'Đã lưu thay đổi.' : 'Đã lưu bản nháp.');
+      toast.success(
+        bodyHtml !== draftBodyHtml
+          ? 'Đã lưu bản nháp phần nội dung. Ảnh vẫn được giữ tạm trên trình duyệt đến khi đăng.'
+          : 'Đã lưu bản nháp.',
+      );
     } catch (error) {
       setFormError(apiErrorMessage(error, 'Không thể lưu bản nháp. Vui lòng thử lại.'));
     } finally {
@@ -388,8 +409,16 @@ export default function CommunityQuickComposerMobile() {
     setSaving(true);
     setFormError('');
 
+    let uploadedMedia = [];
+    let contentSaved = false;
+
     try {
-      const payload = buildPayload();
+      const prepared = await persistTemporaryCommunityMedia(bodyHtml, {
+        uploadFolder: 'community/inline',
+      });
+      const publishBodyHtml = prepared.html;
+      uploadedMedia = prepared.uploads;
+      const payload = buildPayload(publishBodyHtml);
       let id = draftId;
 
       if (id) {
@@ -399,6 +428,13 @@ export default function CommunityQuickComposerMobile() {
         id = created?._id || created?.id || '';
         if (!id) throw new Error('Server không trả về ID bài viết.');
         setDraftId(id);
+      }
+
+      contentSaved = true;
+
+      if (uploadedMedia.length) {
+        setBodyHtml(publishBodyHtml);
+        releaseTemporaryCommunityMedia(uploadedMedia);
       }
 
       if (editStatus === 'published') {
@@ -415,6 +451,10 @@ export default function CommunityQuickComposerMobile() {
         detail: { id, updated: isEditing },
       }));
     } catch (error) {
+      if (!contentSaved && uploadedMedia.length) {
+        await rollbackTemporaryCommunityMedia(uploadedMedia);
+      }
+
       setFormError(apiErrorMessage(
         error,
         isEditing
@@ -497,7 +537,6 @@ export default function CommunityQuickComposerMobile() {
                     setFormError('');
                   }}
                   placeholder="Bạn đang nghĩ gì?"
-                  uploadFolder="community/inline"
                   maxImages={12}
                   maxImageSizeMb={10}
                 />
@@ -591,7 +630,7 @@ export default function CommunityQuickComposerMobile() {
             type="button"
             className="community-mobile-composer__save"
             disabled={publishDisabled}
-            onClick={saveDraft}
+            onClick={editStatus === 'published' ? publish : saveDraft}
           >
             <Save size={20} />
             <span>{editStatus === 'published' ? 'Lưu' : 'Lưu nháp'}</span>
