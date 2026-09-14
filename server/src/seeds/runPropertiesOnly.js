@@ -15,6 +15,7 @@ import { seedAdmin } from './seedAdmin.js';
 import { seedUsers } from './seedUsers.js';
 import { seedMedia } from './seedMedia.js';
 import { seedProperties } from './seedProperties.js';
+import { seedPropertyShowcase } from './seedPropertyShowcase.js';
 import { assertDemoSeedAllowed } from './seedSafety.js';
 
 async function run() {
@@ -62,7 +63,7 @@ async function run() {
       users,
     });
 
-  const properties =
+  const baseProperties =
     await seedProperties({
       users,
       categories,
@@ -72,11 +73,31 @@ async function run() {
       propertyFeatures,
     });
 
+  const showcaseProperties =
+    await seedPropertyShowcase({
+      users,
+      categories,
+      areas,
+      tags,
+      media,
+      propertyFeatures,
+    });
+
+  const properties = {
+    ...baseProperties,
+    ...showcaseProperties,
+  };
+
   logger.info(
     {
       count:
         Object.keys(
           properties || {},
+        ).length,
+
+      showcaseCount:
+        Object.keys(
+          showcaseProperties || {},
         ).length,
 
       slugs:
