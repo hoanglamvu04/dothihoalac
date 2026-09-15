@@ -16,6 +16,7 @@
     "seed:core": "node src/seeds/index.js --core-only",
     "seed:properties": "node src/seeds/runPropertiesOnly.js",
     "seed:jobs": "node src/seeds/runJobsOnly.js",
+    "seed:projects": "node src/seeds/runProjectsOnly.js",
     "seed:community": "node src/seeds/runCommunityOnly.js",
     "seed:taxonomy": "node src/seeds/normalizeCategories.js"
   },

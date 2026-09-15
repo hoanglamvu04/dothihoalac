@@ -13,6 +13,7 @@ import { seedProperties } from './seedProperties.js';
 import { seedPropertyShowcase } from './seedPropertyShowcase.js';
 import { seedJobs } from './seedJobs.js';
 import { seedJobShowcase } from './seedJobShowcase.js';
+import { seedProjectShowcase } from './seedProjectShowcase.js';
 import { seedInteractions } from './seedInteractions.js';
 import { seedNotifications } from './seedNotifications.js';
 import { seedModeration } from './seedModeration.js';
@@ -50,7 +51,7 @@ export async function runSeed({ includeDemo = true } = {}) {
   const users = await seedUsers({ areas, adminUser });
   const media = await seedMedia({ users });
 
-  logger.info('Seeding articles, community, properties and jobs');
+  logger.info('Seeding articles, community, properties, jobs and Project Tracker');
   const articles = await seedArticles({ users, categories, areas, tags, media });
   const community = await seedCommunityPosts({ users, categories, areas, tags, media });
   const baseProperties = await seedProperties({
@@ -87,6 +88,11 @@ export async function runSeed({ includeDemo = true } = {}) {
     ...showcaseJobs,
   };
 
+  const showcaseProjects = await seedProjectShowcase({
+    adminUser,
+    areas,
+  });
+
   logger.info('Seeding interactions, notifications, moderation and leads');
   await seedInteractions({ users, articles, community, properties, areas, categories, tags });
   await seedNotifications({ users, articles, community });
@@ -111,5 +117,6 @@ export async function runSeed({ includeDemo = true } = {}) {
     propertyShowcaseCount: Object.keys(showcaseProperties).length,
     jobsCount: Object.keys(jobs).length,
     jobShowcaseCount: Object.keys(showcaseJobs).length,
+    projectShowcaseCount: Object.keys(showcaseProjects).length,
   };
 }
