@@ -1,0 +1,31 @@
+/* Typography polish for the specific news areas highlighted in the desktop review. */
+@media (min-width: 901px) {
+  .news-hub .news-content-layout .news-story--feed p {
+    font-size: 0.8rem;
+    line-height: 1.52;
+  }
+
+  .news-hub .news-context-rail .news-project-item__top span {
+    font-size: 0.75rem;
+  }
+
+  .news-hub .news-context-rail .news-project-item__top b {
+    font-size: 0.72rem;
+  }
+
+  .news-hub .news-context-rail .news-project-item > strong {
+    font-size: 0.9rem;
+    line-height: 1.35;
+  }
+
+  .news-hub .news-context-rail .news-project-item > small {
+    font-size: 0.66rem;
+    line-height: 1.4;
+  }
+
+  .news-hub .news-context-rail .news-topic-chips a {
+    font-size: 0.72rem;
+    line-height: 1.2;
+    font-weight: 750;
+  }
+}
