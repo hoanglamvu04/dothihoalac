@@ -5,9 +5,9 @@ const FIXED_PALETTE = 'earth';
 export const SITE_PALETTES = [
   {
     id: 'earth',
-    label: 'Nâu đất',
-    description: 'Nâu đất làm màu nhận diện trên nền trắng xanh rất nhạt, sạch và thoáng.',
-    swatches: ['#B59965', '#4A3D2C', '#F7FAF8'],
+    label: 'Vàng đất',
+    description: 'Hệ màu cố định của DTHL: vàng đất trên nền kem ấm, nhấn bằng đỏ đất KTHL.',
+    swatches: ['#B59965', '#F9F1E3', '#9F5635'],
   },
 ];
 
@@ -22,9 +22,12 @@ function syncThemeColor() {
     document.head.appendChild(meta);
   }
 
-  if (document.documentElement.dataset.dthlTheme !== 'dark') {
-    meta.setAttribute('content', '#f7faf8');
-  }
+  meta.setAttribute(
+    'content',
+    document.documentElement.dataset.dthlTheme === 'dark'
+      ? '#2C211A'
+      : '#F9F1E3',
+  );
 }
 
 export function readSitePalette() {
@@ -52,8 +55,7 @@ export function initializeSitePalette() {
   return applySitePalette();
 }
 
-// Kept as compatibility no-ops for any lazy chunk compiled against the older
-// palette API. The product now intentionally uses one fixed brand palette.
+// Compatibility no-ops for lazy chunks compiled against the older palette API.
 export function setSitePalette() {
   return applySitePalette();
 }
