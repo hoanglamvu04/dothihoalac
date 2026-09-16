@@ -60,6 +60,7 @@ import './styles/job-detail-reaction-alignment.css';
 import './pages/public/ArticleNewsroomStandard.css';
 import './pages/public/NewsReferenceSizing.css';
 import './pages/public/NewsImageFrameFix.css';
+import './pages/public/NewsMarkedTypography.css';
 import './styles/home-mobile-shortcuts-fix.css';
 /* Final brand layers must remain after every route/page stylesheet. */
 import './styles/site-palette-hardening.css';
