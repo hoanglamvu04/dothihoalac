@@ -75,21 +75,51 @@ html[data-dthl-theme='light'][data-dthl-palette='earth']
   border-radius: 7px;
 }
 
-/* Related-news rail: use the classic 3:2 thumbnail ratio found on compact
-   news lists. The old 72x52 frame was too square and cropped photos harshly. */
+/* Related-news rail: the rail was widened in NewsReferenceSizing.css, so use
+   the extra room for a visibly larger thumbnail and readable editorial type. */
+.news-hub .news-context-rail .news-rail-card {
+  padding: 16px;
+}
+
+.news-hub .news-context-rail .news-rail-card__head {
+  padding-bottom: 10px;
+}
+
+.news-hub .news-context-rail .news-rail-card__head span,
+.news-hub .news-context-rail .news-rail-card__head > a {
+  font-size: 0.64rem;
+}
+
+.news-hub .news-context-rail .news-rail-card__head h2 {
+  font-size: 1.05rem;
+  line-height: 1.22;
+}
+
 .news-hub .news-context-rail .news-rail-article {
-  grid-template-columns: 82px minmax(0, 1fr);
+  grid-template-columns: 104px minmax(0, 1fr);
   align-items: center;
-  min-height: 68px;
-  gap: 10px;
+  min-height: 86px;
+  padding: 9px 0;
+  gap: 12px;
 }
 
 .news-hub .news-context-rail .news-rail-article__thumb {
-  width: 82px;
+  width: 104px;
   height: auto;
   aspect-ratio: 3 / 2;
   align-self: center;
-  border-radius: 6px;
+  border-radius: 7px;
+}
+
+.news-hub .news-context-rail .news-rail-article__copy strong {
+  font-size: 0.78rem;
+  line-height: 1.36;
+  -webkit-line-clamp: 3;
+}
+
+.news-hub .news-context-rail .news-rail-article__copy small {
+  margin-top: 5px;
+  font-size: 0.58rem;
 }
 
 /* Keep the lead photograph stable as well. It remains the current overlay
@@ -141,13 +171,28 @@ html[data-dthl-theme='light'][data-dthl-palette='earth']
     aspect-ratio: 16 / 9;
   }
 
+  .news-hub .news-context-rail .news-rail-card {
+    padding: 14px;
+  }
+
   .news-hub .news-context-rail .news-rail-article {
-    grid-template-columns: 78px minmax(0, 1fr);
+    grid-template-columns: 84px minmax(0, 1fr);
+    min-height: 72px;
+    padding: 7px 0;
+    gap: 10px;
   }
 
   .news-hub .news-context-rail .news-rail-article__thumb {
-    width: 78px;
+    width: 84px;
     aspect-ratio: 3 / 2;
+  }
+
+  .news-hub .news-context-rail .news-rail-article__copy strong {
+    font-size: 0.7rem;
+  }
+
+  .news-hub .news-context-rail .news-rail-article__copy small {
+    font-size: 0.55rem;
   }
 }
 
