@@ -43,8 +43,14 @@ export default function JobCard({ item }) {
         <strong>{companyName}</strong>
         <p className="job-card__salary">{salary}</p>
         <div>
-          <span><MapPin size={15} /> {job.workLocation || 'Hòa Lạc'}</span>
-          <span><CalendarDays size={15} /> Hạn {formatDate(job.deadline)}</span>
+          <span>
+            <MapPin size={15} />
+            <span className="job-card__meta-text">{job.workLocation || 'Hòa Lạc'}</span>
+          </span>
+          <span>
+            <CalendarDays size={15} />
+            <span className="job-card__meta-text">Hạn {formatDate(job.deadline)}</span>
+          </span>
         </div>
       </div>
     </article>
