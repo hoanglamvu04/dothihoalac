@@ -3,26 +3,27 @@
    Single brand system only:
    - Deep green: #103323
    - Earth gold: #B59965
-   - Warm canvas: #F9F1E3
+   - White canvas: #FFFFFF
+   - #F9F1E3 is reserved for soft highlight surfaces only
 ========================================================= */
 
 html[data-dthl-palette='earth'] {
   --dthl-palette-brand: #103323;
   --dthl-palette-accent: #b59965;
-  --dthl-palette-canvas: #f9f1e3;
-  --dthl-palette-surface: color-mix(in srgb, #f9f1e3 34%, white);
-  --dthl-palette-surface-2: color-mix(in srgb, #f9f1e3 70%, white);
-  --dthl-palette-surface-3: color-mix(in srgb, #b59965 14%, #f9f1e3);
-  --dthl-palette-border: color-mix(in srgb, #103323 14%, #f9f1e3);
-  --dthl-palette-border-strong: color-mix(in srgb, #103323 22%, #f9f1e3);
+  --dthl-palette-canvas: #ffffff;
+  --dthl-palette-surface: #ffffff;
+  --dthl-palette-surface-2: #ffffff;
+  --dthl-palette-surface-3: #f9f1e3;
+  --dthl-palette-border: color-mix(in srgb, #103323 14%, white);
+  --dthl-palette-border-strong: color-mix(in srgb, #103323 22%, white);
   --dthl-palette-ink: #103323;
-  --dthl-palette-text: color-mix(in srgb, #103323 70%, #f9f1e3);
-  --dthl-palette-muted: color-mix(in srgb, #103323 48%, #f9f1e3);
+  --dthl-palette-text: color-mix(in srgb, #103323 70%, white);
+  --dthl-palette-muted: color-mix(in srgb, #103323 48%, white);
   --dthl-palette-brand-hover: color-mix(in srgb, #103323 86%, #b59965);
   --dthl-palette-brand-dark: #103323;
-  --dthl-palette-brand-soft: color-mix(in srgb, #103323 9%, #f9f1e3);
-  --dthl-palette-accent-soft: color-mix(in srgb, #b59965 16%, #f9f1e3);
-  --dthl-palette-shadow: 0 10px 30px rgb(16 51 35 / 0.09);
+  --dthl-palette-brand-soft: color-mix(in srgb, #103323 7%, white);
+  --dthl-palette-accent-soft: color-mix(in srgb, #b59965 14%, #f9f1e3);
+  --dthl-palette-shadow: 0 10px 30px rgb(16 51 35 / 0.08);
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] {
@@ -59,7 +60,7 @@ html[data-dthl-theme='dark'][data-dthl-palette='earth'] {
   --dthl-mode-shadow: 0 14px 38px rgb(0 0 0 / 0.28) !important;
 }
 
-/* Legacy variable names are bridged to the same three-color system. */
+/* Legacy variable names are bridged to the same two-color brand system. */
 html[data-dthl-palette='earth'] {
   --dthl-brand-force: #103323 !important;
   --dthl-brand-force-hover: color-mix(in srgb, #103323 86%, #b59965) !important;
@@ -77,9 +78,9 @@ html[data-dthl-palette='earth'] {
   --dthl-earth: #b59965 !important;
   --dthl-earth-dark: color-mix(in srgb, #b59965 76%, #103323) !important;
   --dthl-earth-mid: #b59965 !important;
-  --dthl-earth-light: color-mix(in srgb, #b59965 54%, #f9f1e3) !important;
+  --dthl-earth-light: color-mix(in srgb, #b59965 54%, white) !important;
   --dthl-earth-soft: var(--dthl-palette-accent-soft) !important;
-  --dthl-earth-border: color-mix(in srgb, #b59965 30%, #f9f1e3) !important;
+  --dthl-earth-border: color-mix(in srgb, #b59965 30%, white) !important;
 
   --dthl-ink: var(--dthl-mode-ink) !important;
   --dthl-text: var(--dthl-mode-text) !important;
