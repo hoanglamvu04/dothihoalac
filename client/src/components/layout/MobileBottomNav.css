@@ -25,10 +25,10 @@
     min-height: 72px;
     margin-inline: auto;
     padding: 4px 5px 5px;
-    border: 1px solid var(--dthl-palette-border, #e3d5c1);
+    border: 1px solid var(--dthl-palette-border, color-mix(in srgb, #103323 14%, #f9f1e3));
     border-radius: 26px;
-    background: color-mix(in srgb, var(--dthl-palette-surface, #fffdf8) 96%, transparent);
-    box-shadow: 0 12px 34px rgb(79 56 39 / 0.14);
+    background: color-mix(in srgb, var(--dthl-palette-surface, #f9f1e3) 96%, transparent);
+    box-shadow: 0 12px 34px rgb(16 51 35 / 0.14);
     backdrop-filter: blur(18px);
     -webkit-backdrop-filter: blur(18px);
     pointer-events: auto;
@@ -43,7 +43,7 @@
     align-items: center;
     justify-content: center;
     gap: 4px;
-    color: var(--dthl-palette-text, #62574c);
+    color: var(--dthl-palette-text, #103323);
     text-decoration: none;
     flex-direction: column;
     font-size: 10.5px;
@@ -72,17 +72,17 @@
   }
 
   .mobile-bottom-nav__item.is-active {
-    color: var(--dthl-palette-accent, #9f5635);
+    color: var(--dthl-palette-brand, #103323);
     font-weight: 780;
   }
 
   .mobile-bottom-nav__item.is-active:not(.is-featured) .mobile-bottom-nav__icon {
-    background: var(--dthl-palette-brand-soft, #f1e5d0);
+    background: var(--dthl-palette-accent-soft, color-mix(in srgb, #b59965 16%, #f9f1e3));
   }
 
   .mobile-bottom-nav__item.is-featured {
     padding-top: 1px;
-    color: var(--dthl-palette-text, #62574c);
+    color: var(--dthl-palette-text, #103323);
   }
 
   .mobile-bottom-nav__item.is-featured .mobile-bottom-nav__icon {
@@ -90,15 +90,15 @@
     height: 58px;
     margin-top: -27px;
     margin-bottom: 1px;
-    border: 5px solid var(--dthl-palette-surface, #fffdf8);
+    border: 5px solid var(--dthl-palette-surface, #f9f1e3);
     border-radius: 50%;
-    color: #fffdf8;
-    background: var(--dthl-palette-accent, #9f5635);
-    box-shadow: 0 8px 20px rgb(159 86 53 / 0.28);
+    color: #f9f1e3;
+    background: var(--dthl-palette-brand, #103323);
+    box-shadow: 0 8px 20px rgb(16 51 35 / 0.28);
   }
 
   .mobile-bottom-nav__item.is-featured.is-active {
-    color: var(--dthl-palette-accent, #9f5635);
+    color: var(--dthl-palette-brand, #103323);
   }
 
   .mobile-bottom-nav__item:active .mobile-bottom-nav__icon {
