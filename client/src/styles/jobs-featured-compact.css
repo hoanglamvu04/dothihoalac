@@ -127,7 +127,7 @@
 
   .app-shell .jobs-page .jobs-featured-card .job-card__body > div:last-child > span {
     display: flex !important;
-    align-items: flex-start !important;
+    align-items: center !important;
     min-width: 0 !important;
     gap: 4px !important;
     line-height: 1.35 !important;
@@ -135,7 +135,7 @@
 
   .app-shell .jobs-page .jobs-featured-card .job-card__body > div:last-child > span > svg {
     flex: 0 0 auto !important;
-    margin-top: 0.08em !important;
+    margin-top: 0 !important;
   }
 
   .app-shell .jobs-page .jobs-featured-card .job-card__meta-text {
