@@ -1,29 +1,28 @@
 /* =========================================================
    DTHL FIXED BRAND PALETTE — 2026
-   The previous green/white/stone/mist choices are retired.
-   Brand colors:
+   Single brand system only:
+   - Deep green: #103323
    - Earth gold: #B59965
    - Warm canvas: #F9F1E3
-   - KTHL earth red accent: #9F5635
 ========================================================= */
 
 html[data-dthl-palette='earth'] {
-  --dthl-palette-brand: #b59965;
-  --dthl-palette-accent: #9f5635;
+  --dthl-palette-brand: #103323;
+  --dthl-palette-accent: #b59965;
   --dthl-palette-canvas: #f9f1e3;
-  --dthl-palette-surface: #fffdf8;
-  --dthl-palette-surface-2: #fcf7ee;
-  --dthl-palette-surface-3: #f1e5d0;
-  --dthl-palette-border: #e3d5c1;
-  --dthl-palette-border-strong: #d1bda2;
-  --dthl-palette-ink: #2c261f;
-  --dthl-palette-text: #62574c;
-  --dthl-palette-muted: #8d7e70;
-  --dthl-palette-brand-hover: color-mix(in srgb, #b59965 76%, #9f5635);
-  --dthl-palette-brand-dark: #9f5635;
-  --dthl-palette-brand-soft: color-mix(in srgb, #b59965 16%, #f9f1e3);
-  --dthl-palette-accent-soft: color-mix(in srgb, #9f5635 12%, #f9f1e3);
-  --dthl-palette-shadow: 0 10px 30px rgb(79 56 39 / 0.09);
+  --dthl-palette-surface: color-mix(in srgb, #f9f1e3 34%, white);
+  --dthl-palette-surface-2: color-mix(in srgb, #f9f1e3 70%, white);
+  --dthl-palette-surface-3: color-mix(in srgb, #b59965 14%, #f9f1e3);
+  --dthl-palette-border: color-mix(in srgb, #103323 14%, #f9f1e3);
+  --dthl-palette-border-strong: color-mix(in srgb, #103323 22%, #f9f1e3);
+  --dthl-palette-ink: #103323;
+  --dthl-palette-text: color-mix(in srgb, #103323 70%, #f9f1e3);
+  --dthl-palette-muted: color-mix(in srgb, #103323 48%, #f9f1e3);
+  --dthl-palette-brand-hover: color-mix(in srgb, #103323 86%, #b59965);
+  --dthl-palette-brand-dark: #103323;
+  --dthl-palette-brand-soft: color-mix(in srgb, #103323 9%, #f9f1e3);
+  --dthl-palette-accent-soft: color-mix(in srgb, #b59965 16%, #f9f1e3);
+  --dthl-palette-shadow: 0 10px 30px rgb(16 51 35 / 0.09);
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] {
@@ -37,50 +36,50 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] {
   --dthl-mode-text: var(--dthl-palette-text) !important;
   --dthl-mode-muted: var(--dthl-palette-muted) !important;
   --dthl-mode-brand: var(--dthl-palette-brand) !important;
-  --dthl-mode-brand-dark: var(--dthl-palette-accent) !important;
+  --dthl-mode-brand-dark: var(--dthl-palette-brand) !important;
   --dthl-mode-brand-soft: var(--dthl-palette-brand-soft) !important;
-  --dthl-mode-green: var(--dthl-palette-accent) !important;
+  --dthl-mode-green: var(--dthl-palette-brand) !important;
   --dthl-mode-shadow: var(--dthl-palette-shadow) !important;
 }
 
 html[data-dthl-theme='dark'][data-dthl-palette='earth'] {
-  --dthl-mode-canvas: #211914 !important;
-  --dthl-mode-surface: #2c211a !important;
-  --dthl-mode-surface-2: #34271f !important;
-  --dthl-mode-surface-3: #3d2d23 !important;
-  --dthl-mode-border: #5b4637 !important;
-  --dthl-mode-border-strong: #765b45 !important;
+  --dthl-mode-canvas: color-mix(in srgb, #103323 84%, black) !important;
+  --dthl-mode-surface: color-mix(in srgb, #103323 74%, black) !important;
+  --dthl-mode-surface-2: color-mix(in srgb, #103323 66%, black) !important;
+  --dthl-mode-surface-3: color-mix(in srgb, #103323 58%, black) !important;
+  --dthl-mode-border: color-mix(in srgb, #b59965 28%, #103323) !important;
+  --dthl-mode-border-strong: color-mix(in srgb, #b59965 42%, #103323) !important;
   --dthl-mode-ink: #f9f1e3 !important;
-  --dthl-mode-text: #e2d4c1 !important;
-  --dthl-mode-muted: #b7a28f !important;
+  --dthl-mode-text: color-mix(in srgb, #f9f1e3 82%, #103323) !important;
+  --dthl-mode-muted: color-mix(in srgb, #f9f1e3 58%, #103323) !important;
   --dthl-mode-brand: #b59965 !important;
-  --dthl-mode-brand-dark: #d3ba88 !important;
-  --dthl-mode-brand-soft: rgb(181 153 101 / 0.16) !important;
-  --dthl-mode-green: #9f5635 !important;
+  --dthl-mode-brand-dark: #b59965 !important;
+  --dthl-mode-brand-soft: color-mix(in srgb, #b59965 16%, transparent) !important;
+  --dthl-mode-green: #b59965 !important;
   --dthl-mode-shadow: 0 14px 38px rgb(0 0 0 / 0.28) !important;
 }
 
-/* Bridge legacy semantic variable names to the single fixed palette. */
+/* Legacy variable names are bridged to the same three-color system. */
 html[data-dthl-palette='earth'] {
-  --dthl-brand-force: #b59965 !important;
-  --dthl-brand-force-hover: color-mix(in srgb, #b59965 76%, #9f5635) !important;
-  --dthl-brand-force-dark: #9f5635 !important;
+  --dthl-brand-force: #103323 !important;
+  --dthl-brand-force-hover: color-mix(in srgb, #103323 86%, #b59965) !important;
+  --dthl-brand-force-dark: #103323 !important;
   --dthl-brand-force-soft: var(--dthl-palette-brand-soft) !important;
   --dthl-brand-force-border: var(--dthl-palette-border-strong) !important;
 
-  --dthl-green: #b59965 !important;
-  --dthl-green-hover: color-mix(in srgb, #b59965 76%, #9f5635) !important;
-  --dthl-green-dark: #9f5635 !important;
-  --dthl-green-deep: color-mix(in srgb, #9f5635 82%, black) !important;
+  --dthl-green: #103323 !important;
+  --dthl-green-hover: color-mix(in srgb, #103323 86%, #b59965) !important;
+  --dthl-green-dark: #103323 !important;
+  --dthl-green-deep: #103323 !important;
   --dthl-green-soft: var(--dthl-palette-brand-soft) !important;
   --dthl-green-soft-strong: var(--dthl-palette-surface-3) !important;
 
   --dthl-earth: #b59965 !important;
-  --dthl-earth-dark: #9f5635 !important;
+  --dthl-earth-dark: color-mix(in srgb, #b59965 76%, #103323) !important;
   --dthl-earth-mid: #b59965 !important;
-  --dthl-earth-light: color-mix(in srgb, #b59965 52%, #f9f1e3) !important;
-  --dthl-earth-soft: var(--dthl-palette-brand-soft) !important;
-  --dthl-earth-border: var(--dthl-palette-border-strong) !important;
+  --dthl-earth-light: color-mix(in srgb, #b59965 54%, #f9f1e3) !important;
+  --dthl-earth-soft: var(--dthl-palette-accent-soft) !important;
+  --dthl-earth-border: color-mix(in srgb, #b59965 30%, #f9f1e3) !important;
 
   --dthl-ink: var(--dthl-mode-ink) !important;
   --dthl-text: var(--dthl-mode-text) !important;
