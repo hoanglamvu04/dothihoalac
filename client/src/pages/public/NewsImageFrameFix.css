@@ -75,51 +75,51 @@ html[data-dthl-theme='light'][data-dthl-palette='earth']
   border-radius: 7px;
 }
 
-/* Related-news rail: the rail was widened in NewsReferenceSizing.css, so use
-   the extra room for a visibly larger thumbnail and readable editorial type. */
+/* Related-news rail: use the wider rail for larger editorial imagery and
+   a more readable hierarchy without changing the overall two-column split. */
 .news-hub .news-context-rail .news-rail-card {
-  padding: 16px;
+  padding: 17px;
 }
 
 .news-hub .news-context-rail .news-rail-card__head {
-  padding-bottom: 10px;
+  padding-bottom: 11px;
 }
 
 .news-hub .news-context-rail .news-rail-card__head span,
 .news-hub .news-context-rail .news-rail-card__head > a {
-  font-size: 0.64rem;
+  font-size: 0.68rem;
 }
 
 .news-hub .news-context-rail .news-rail-card__head h2 {
-  font-size: 1.05rem;
+  font-size: 1.12rem;
   line-height: 1.22;
 }
 
 .news-hub .news-context-rail .news-rail-article {
-  grid-template-columns: 104px minmax(0, 1fr);
+  grid-template-columns: 116px minmax(0, 1fr);
   align-items: center;
-  min-height: 86px;
-  padding: 9px 0;
-  gap: 12px;
+  min-height: 96px;
+  padding: 10px 0;
+  gap: 13px;
 }
 
 .news-hub .news-context-rail .news-rail-article__thumb {
-  width: 104px;
+  width: 116px;
   height: auto;
   aspect-ratio: 3 / 2;
   align-self: center;
-  border-radius: 7px;
+  border-radius: 8px;
 }
 
 .news-hub .news-context-rail .news-rail-article__copy strong {
-  font-size: 0.78rem;
+  font-size: 0.84rem;
   line-height: 1.36;
   -webkit-line-clamp: 3;
 }
 
 .news-hub .news-context-rail .news-rail-article__copy small {
-  margin-top: 5px;
-  font-size: 0.58rem;
+  margin-top: 6px;
+  font-size: 0.61rem;
 }
 
 /* Keep the lead photograph stable as well. It remains the current overlay
