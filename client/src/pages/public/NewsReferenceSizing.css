@@ -36,12 +36,15 @@
   min-height: 44px;
 }
 
-/* Main/news rail proportions. */
+/* Main/news rail proportions. Keep the editorial rail visibly wider on
+   desktop, matching the reference split (~70/30) instead of the old 300px
+   narrow rail. This file is imported after NewsEditorialSidebar.css, so this
+   is the final structural rule that must own the production proportions. */
 html[data-dthl-theme='light'][data-dthl-palette='earth']
   .news-hub .news-content-layout,
 .news-hub .news-content-layout {
-  grid-template-columns: minmax(0, 1fr) 300px;
-  gap: 18px;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 22px;
   margin-top: 12px;
 }
 
@@ -275,8 +278,8 @@ html[data-dthl-theme='light'][data-dthl-palette='earth']
   html[data-dthl-theme='light'][data-dthl-palette='earth']
     .news-hub .news-content-layout,
   .news-hub .news-content-layout {
-    grid-template-columns: minmax(0, 1fr) 276px;
-    gap: 16px;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 18px;
   }
 
   .news-hub .news-content-layout .news-story--lead {
