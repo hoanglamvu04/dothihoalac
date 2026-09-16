@@ -42,6 +42,9 @@ jobs:
             cd /var/www/dothihoalac
             PREVIOUS_COMMIT="$(git rev-parse HEAD)"
             git fetch origin main
+            # deploy.sh used to be an untracked VPS-only file. Remove that stale
+            # copy so the tracked fail-safe script from main can replace it.
+            rm -f server/deploy.sh
             git reset --hard origin/main
             export DTHL_PREVIOUS_COMMIT="$PREVIOUS_COMMIT"
             cd server
