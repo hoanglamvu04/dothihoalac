@@ -36,7 +36,6 @@ import './pages/public/JobsPage.earth.css';
 import './styles/public-earth-system.css';
 import './styles/public-white-canvas.css';
 import './styles/site-palettes.css';
-import './styles/site-palette-hardening.css';
 import './styles/header-topbar-removal.css';
 import './styles/earth-white-reference.css';
 import './styles/earth-mint-canvas.css';
@@ -68,10 +67,12 @@ import './pages/public/ArticleNewsroomStandard.css';
 import './pages/public/NewsReferenceSizing.css';
 import './pages/public/NewsImageFrameFix.css';
 import './styles/home-mobile-shortcuts-fix.css';
+/* Final color isolation layer: keep it after all route/page style sheets. */
+import './styles/site-palette-hardening.css';
 import './features/propertyMarketplacePaging';
 
 // Apply the saved light/dark appearance before React paints. The brand palette
-// is intentionally fixed to Earth so the site stays visually consistent.
+// is intentionally fixed so the site stays visually consistent.
 initializeSiteTheme();
 initializeSitePalette();
 
