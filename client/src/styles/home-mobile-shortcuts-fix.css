@@ -1,21 +1,352 @@
-/* Mobile home quick navigation: keep compact labels on one line. */
+/* Mobile home reference polish.
+ * Keeps the existing Earth palette while tightening the home hierarchy to the
+ * supplied mobile reference: rounded hero, five quick actions and editorial
+ * list cards. This file is imported after the shared responsive typography so
+ * the mobile composition remains stable.
+ */
 @media (max-width: 760px) {
+  html body .app-shell .home-reference-v2 {
+    --home-mobile-radius-lg: 22px;
+    --home-mobile-radius-md: 16px;
+  }
+
+  html body .app-shell .home-reference-v2 .container {
+    width: calc(100% - 20px) !important;
+    max-width: 560px !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-reference-main {
+    padding: 8px 0 20px !important;
+  }
+
+  /* Hero */
+  html body .app-shell .home-reference-v2 .home-reference-hero {
+    display: block !important;
+    height: auto !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-reference-side-list {
+    display: none !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-hero-card {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    aspect-ratio: 16 / 9 !important;
+    overflow: hidden !important;
+    border: 0 !important;
+    border-radius: var(--home-mobile-radius-lg) !important;
+    box-shadow: 0 10px 26px rgb(47 38 23 / 0.12) !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-hero-card__media,
+  html body .app-shell .home-reference-v2 .home-hero-card__media .content-image {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-hero-card__media .content-image {
+    object-fit: cover !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-hero-card__shade {
+    background:
+      linear-gradient(180deg, rgb(5 7 5 / 0.02) 25%, rgb(5 7 5 / 0.2) 55%, rgb(5 7 5 / 0.88) 100%) !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-hero-card__content {
+    right: 16px !important;
+    bottom: 25px !important;
+    left: 16px !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-hero-card__content h1 {
+    display: -webkit-box !important;
+    max-width: 94% !important;
+    margin-top: 7px !important;
+    overflow: hidden !important;
+    font-size: clamp(20px, 5.8vw, 26px) !important;
+    font-weight: 820 !important;
+    letter-spacing: -0.035em !important;
+    line-height: 1.08 !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 3 !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-hero-card__content p,
+  html body .app-shell .home-reference-v2 .home-hero-card__more {
+    display: none !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-hero-card__content .home-pill {
+    min-height: 24px !important;
+    padding-inline: 9px !important;
+    font-size: 10px !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-hero-card__content .home-card-meta {
+    margin-top: 9px !important;
+    color: rgb(255 255 255 / 0.82) !important;
+    font-size: 11px !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-hero-card__dots {
+    bottom: 9px !important;
+    gap: 5px !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-hero-card__dots span {
+    width: 7px !important;
+    height: 7px !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-hero-card__dots span.is-active {
+    width: 28px !important;
+  }
+
+  /* Five primary shortcuts */
+  html body .app-shell .home-reference-v2 .home-mobile-shortcuts {
+    display: grid !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    width: 100% !important;
+    margin: 12px 0 0 !important;
+    padding: 10px 8px !important;
+    gap: 4px !important;
+    overflow: visible !important;
+    border: 1px solid var(--hr-border) !important;
+    border-radius: var(--home-mobile-radius-lg) !important;
+    background: var(--hr-surface) !important;
+    box-shadow: 0 9px 24px rgb(47 38 23 / 0.07) !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-mobile-shortcuts a:nth-child(n + 6) {
+    display: none !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-mobile-shortcuts a {
+    display: flex !important;
+    min-width: 0 !important;
+    min-height: 82px !important;
+    padding: 8px 2px 7px !important;
+    gap: 6px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-direction: column !important;
+    border-radius: 16px !important;
+    transition: background 160ms ease, transform 160ms ease !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-mobile-shortcuts a:first-child {
+    position: relative !important;
+    background: color-mix(in srgb, var(--hr-green) 10%, transparent) !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-mobile-shortcuts a:first-child::after {
+    position: absolute !important;
+    right: 34% !important;
+    bottom: 0 !important;
+    left: 34% !important;
+    height: 3px !important;
+    border-radius: 999px !important;
+    background: var(--hr-green) !important;
+    content: '' !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-mobile-shortcuts a:active {
+    transform: scale(0.97) !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-mobile-shortcuts a > span {
+    display: grid !important;
+    place-items: center !important;
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 12px !important;
+    color: var(--hr-green) !important;
+    background: transparent !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-mobile-shortcuts a > span svg {
+    width: 24px !important;
+    height: 24px !important;
+    stroke-width: 2 !important;
+  }
+
   html body .app-shell .home-reference-v2 .home-mobile-shortcuts a strong {
     display: block !important;
     width: max-content !important;
     max-width: none !important;
     margin-inline: auto !important;
     color: var(--hr-ink) !important;
-    font-size: 10px !important;
+    font-size: 10.5px !important;
     font-weight: 760 !important;
     line-height: 1.12 !important;
-    letter-spacing: -0.02em !important;
+    letter-spacing: -0.025em !important;
     white-space: nowrap !important;
+  }
+
+  /* Home sections */
+  html body .app-shell .home-reference-v2 .home-reference-dashboard {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    margin-top: 18px !important;
+    gap: 20px !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-reference-panel {
+    min-width: 0 !important;
+    min-height: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-ref-section-header {
+    position: relative !important;
+    min-height: 36px !important;
+    padding: 0 0 9px 13px !important;
+    margin: 0 0 2px !important;
+    gap: 10px !important;
+    border-bottom: 0 !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-ref-section-header::before {
+    position: absolute !important;
+    top: 2px !important;
+    bottom: 10px !important;
+    left: 0 !important;
+    width: 4px !important;
+    border-radius: 999px !important;
+    background: var(--hr-green) !important;
+    content: '' !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-ref-section-header h2 {
+    color: var(--hr-ink) !important;
+    font-size: 18px !important;
+    font-weight: 840 !important;
+    letter-spacing: -0.025em !important;
+    text-transform: uppercase !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-ref-section-header > a {
+    color: var(--hr-green) !important;
+    font-size: 12px !important;
+    font-weight: 780 !important;
+  }
+
+  /* Featured/editorial rows */
+  html body .app-shell .home-reference-v2 .home-reference-latest-list {
+    display: grid !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-latest-story {
+    display: grid !important;
+    grid-template-columns: 112px minmax(0, 1fr) !important;
+    min-height: 84px !important;
+    padding: 10px 0 !important;
+    gap: 12px !important;
+    align-items: center !important;
+    border-top: 1px solid var(--hr-border) !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-latest-story:first-child {
+    padding-top: 7px !important;
+    border-top: 0 !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-latest-story__image {
+    display: block !important;
+    width: 112px !important;
+    height: 72px !important;
+    overflow: hidden !important;
+    border-radius: 11px !important;
+    background: var(--hr-surface-3) !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-latest-story__image .content-image {
+    width: 100% !important;
+    height: 72px !important;
+    border-radius: 0 !important;
+    object-fit: cover !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-latest-story > div {
+    min-width: 0 !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-latest-story h3 {
+    display: -webkit-box !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    color: var(--hr-ink) !important;
+    font-size: 15px !important;
+    font-weight: 780 !important;
+    letter-spacing: -0.015em !important;
+    line-height: 1.3 !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 2 !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-latest-story .home-card-meta {
+    margin-top: 7px !important;
+    gap: 4px 9px !important;
+    color: var(--hr-muted) !important;
+    font-size: 11px !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Keep subsequent blocks visually related without turning them into heavy cards. */
+  html body .app-shell .home-reference-v2 :is(
+    .home-reference-community-section,
+    .home-reference-property-section
+  ) {
+    padding-top: 16px !important;
+    padding-bottom: 18px !important;
+  }
+
+  html body .app-shell .home-reference-v2 :is(
+    .home-reference-community-shell,
+    .home-reference-property-shell
+  ) {
+    border-radius: var(--home-mobile-radius-lg) !important;
   }
 }
 
-@media (max-width: 360px) {
+@media (max-width: 390px) {
+  html body .app-shell .home-reference-v2 .home-mobile-shortcuts {
+    padding-inline: 5px !important;
+    gap: 1px !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-mobile-shortcuts a {
+    min-height: 78px !important;
+    padding-inline: 0 !important;
+  }
+
   html body .app-shell .home-reference-v2 .home-mobile-shortcuts a strong {
     font-size: 9.5px !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-latest-story {
+    grid-template-columns: 102px minmax(0, 1fr) !important;
+    gap: 10px !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-latest-story__image {
+    width: 102px !important;
+    height: 68px !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-latest-story__image .content-image {
+    height: 68px !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-latest-story h3 {
+    font-size: 14px !important;
   }
 }
