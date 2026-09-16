@@ -1,0 +1,122 @@
+/* =========================================================
+   DTHL WHITE CANVAS
+   Final light-mode safety layer. The public/admin brand remains #103323 and
+   #B59965, while #F9F1E3 is only a soft highlight and never the page canvas.
+========================================================= */
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] {
+  --brand-canvas: #ffffff !important;
+  --brand-surface: #ffffff !important;
+  --brand-surface-2: #ffffff !important;
+  --brand-surface-3: #f9f1e3 !important;
+
+  --dthl-palette-canvas: #ffffff !important;
+  --dthl-palette-surface: #ffffff !important;
+  --dthl-palette-surface-2: #ffffff !important;
+  --dthl-mode-canvas: #ffffff !important;
+  --dthl-mode-surface: #ffffff !important;
+  --dthl-mode-surface-2: #ffffff !important;
+
+  --earth-bg: #ffffff !important;
+  --earth-card: #ffffff !important;
+  --canvas: #ffffff !important;
+  --paper: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  body,
+  #root,
+  .app-shell,
+  .main-content,
+  .dth-home.home-ref,
+  .home-reference-v2,
+  .home-reference-main,
+  .home-ref-top,
+  .home-ref-community-section,
+  .home-ref-property-section,
+  .news-hub,
+  .article-view-page,
+  .properties-page,
+  .property-detail-page,
+  .jobs-page,
+  .jobs-marketplace-page,
+  .job-detail-page,
+  .community-social-page,
+  .community-detail-page,
+  .area-page,
+  .search-page,
+  .static-page-view,
+  .contact-page,
+  .lead-page,
+  .public-member-page,
+  .create-hub-page,
+  .job-editor-page,
+  .property-editor-page,
+  .news-tip-page,
+  .account-center-page
+) {
+  background-color: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .news-hub,
+  .article-view-page,
+  .properties-page,
+  .property-detail-page,
+  .jobs-page,
+  .jobs-marketplace-page,
+  .job-detail-page,
+  .community-social-page,
+  .community-detail-page,
+  .area-page,
+  .search-page,
+  .static-page-view,
+  .contact-page,
+  .lead-page,
+  .public-member-page
+) {
+  background-image: none !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page {
+  --jobs-bg: #ffffff !important;
+  --jobs-background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .job-detail-page {
+  --job-background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(.properties-page, .property-detail-page) {
+  --property-background: #ffffff !important;
+  --property-detail-background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-hub {
+  --news-background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .article-view-page {
+  --article-background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page {
+  --community-bg: #ffffff !important;
+}
+
+/* Keep panels/cards white; reserve cream for deliberately selected/soft states. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .home-reference-panel,
+  .home-ref-panel,
+  .home-ref-community-shell,
+  .home-ref-property-shell,
+  .home-mobile-shortcuts,
+  .dthl-header,
+  .dthl-header-main,
+  .dthl-header-nav,
+  .dthl-mobile-nav__panel,
+  .dthl-user-menu__panel,
+  .dthl-notification-panel
+) {
+  background-color: #ffffff !important;
+}
