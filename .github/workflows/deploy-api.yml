@@ -7,12 +7,30 @@ on:
     paths:
       - 'server/**'
   workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type DEPLOY_DTHL_API to confirm the manual VPS deploy'
+        required: true
+        type: string
+
+concurrency:
+  group: deploy-dthl-api-production
+  cancel-in-progress: false
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Validate manual dispatch
+        if: github.event_name == 'workflow_dispatch'
+        shell: bash
+        run: |
+          if [ "${{ inputs.confirm }}" != "DEPLOY_DTHL_API" ]; then
+            echo "Manual dispatch rejected: confirmation text is incorrect."
+            exit 1
+          fi
+
       - name: Deploy Backend VPS
         uses: appleboy/ssh-action@v1.0.3
         with:
@@ -20,5 +38,9 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script: |
-            cd /var/www/dothihoalac/server
-            ./deploy.sh
+            set -euo pipefail
+            cd /var/www/dothihoalac
+            git fetch origin main
+            git reset --hard origin/main
+            cd server
+            bash ./deploy.sh
