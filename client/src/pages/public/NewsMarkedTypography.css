@@ -1,31 +1,47 @@
-/* Typography polish for the specific news areas highlighted in the desktop review. */
+/* Typography test for the specific news areas highlighted in the desktop review. */
 @media (min-width: 901px) {
+  /* Feed descriptions highlighted on the left column. */
   .news-hub .news-content-layout .news-story--feed p {
-    font-size: 0.8rem;
-    line-height: 1.52;
+    font-size: 1rem;
+    line-height: 1.5;
   }
 
-  .news-hub .news-context-rail .news-project-item__top span {
-    font-size: 0.75rem;
-  }
-
-  .news-hub .news-context-rail .news-project-item__top b {
-    font-size: 0.72rem;
-  }
-
-  .news-hub .news-context-rail .news-project-item > strong {
-    font-size: 0.9rem;
-    line-height: 1.35;
-  }
-
+  /* Project tracker content highlighted in the right rail. */
+  .news-hub .news-context-rail .news-project-item__top span,
+  .news-hub .news-context-rail .news-project-item__top b,
+  .news-hub .news-context-rail .news-project-item > strong,
   .news-hub .news-context-rail .news-project-item > small {
-    font-size: 0.66rem;
+    font-size: 1rem;
     line-height: 1.4;
   }
 
+  /* Topic chips highlighted in the right rail. */
   .news-hub .news-context-rail .news-topic-chips a {
-    font-size: 0.72rem;
+    font-size: 1rem;
     line-height: 1.2;
     font-weight: 750;
+  }
+
+  /* Area links highlighted in the right rail. */
+  .news-hub .news-context-rail .news-area-links a {
+    font-size: 1rem;
+    line-height: 1.25;
+  }
+
+  /* Jobs / property ecosystem rows highlighted in the right rail. */
+  .news-hub .news-context-rail .news-ecosystem-links small,
+  .news-hub .news-context-rail .news-ecosystem-links strong,
+  .news-hub .news-context-rail .news-ecosystem-links em {
+    font-size: 1rem;
+    line-height: 1.3;
+  }
+
+  /* News-tip CTA highlighted at the bottom of the rail. */
+  .news-hub .news-context-rail .news-tip-cta small,
+  .news-hub .news-context-rail .news-tip-cta strong,
+  .news-hub .news-context-rail .news-tip-cta p,
+  .news-hub .news-context-rail .news-tip-cta > a {
+    font-size: 1rem;
+    line-height: 1.4;
   }
 }
