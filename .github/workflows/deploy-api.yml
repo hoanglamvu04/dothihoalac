@@ -1,4 +1,4 @@
-name: Deploy Backend VPS
+name: Deploy DTHL API VPS
 
 on:
   push:
@@ -6,13 +6,14 @@ on:
       - main
 
 jobs:
+
   deploy:
 
     runs-on: ubuntu-latest
 
     steps:
 
-      - name: Deploy via SSH
+      - name: Deploy Backend VPS
 
         uses: appleboy/ssh-action@v1.0.3
 
