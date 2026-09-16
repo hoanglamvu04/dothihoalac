@@ -67,6 +67,7 @@ import './styles/job-detail-reaction-alignment.css';
 import './pages/public/ArticleNewsroomStandard.css';
 import './pages/public/NewsReferenceSizing.css';
 import './pages/public/NewsImageFrameFix.css';
+import './styles/home-mobile-shortcuts-fix.css';
 import './features/propertyMarketplacePaging';
 
 // Apply the saved light/dark appearance before React paints. The brand palette
