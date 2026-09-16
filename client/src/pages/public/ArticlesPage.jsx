@@ -8,8 +8,11 @@ import {
 import { Link, useSearchParams } from 'react-router-dom';
 import {
   CalendarDays,
+  Check,
+  ChevronDown,
   ChevronRight,
   Clock3,
+  Database,
   Filter,
   MapPin,
   Newspaper,
@@ -42,8 +45,13 @@ import {
 import './ArticlesPageV3.css';
 import './NewsPortalEnhancements.css';
 import './NewsEditorialSidebar.css';
+import './NewsFilterModern.css';
 
 const PAGE_SIZE = 12;
+const SORT_OPTIONS = [
+  { value: '', label: 'Mới nhất' },
+  { value: 'popular', label: 'Đọc nhiều' },
+];
 
 function valueOf(item) {
   return String(item?.slug || item?._id || item?.id || '');
@@ -91,6 +99,137 @@ function getPageCopy(category, categoryName) {
     latestTitle: `${name} mới nhất`,
     filteredTitle: `${name} theo bộ lọc`,
   };
+}
+
+function FilterSelect({
+  label,
+  Icon,
+  value,
+  options,
+  onChange,
+  placeholder,
+  searchable = false,
+  disabled = false,
+}) {
+  const rootRef = useRef(null);
+  const [open, setOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const selectedOption = useMemo(
+    () => options.find((option) => String(option.value) === String(value)),
+    [options, value],
+  );
+
+  const visibleOptions = useMemo(() => {
+    const normalized = searchTerm.trim().toLocaleLowerCase('vi-VN');
+    if (!normalized) return options;
+
+    return options.filter((option) =>
+      String(option.label || '')
+        .toLocaleLowerCase('vi-VN')
+        .includes(normalized),
+    );
+  }, [options, searchTerm]);
+
+  useEffect(() => {
+    if (!open) return undefined;
+
+    const handlePointerDown = (event) => {
+      if (!rootRef.current?.contains(event.target)) {
+        setOpen(false);
+        setSearchTerm('');
+      }
+    };
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        setOpen(false);
+        setSearchTerm('');
+      }
+    };
+
+    document.addEventListener('mousedown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('mousedown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [open]);
+
+  const choose = (nextValue) => {
+    onChange(nextValue);
+    setOpen(false);
+    setSearchTerm('');
+  };
+
+  return (
+    <div
+      ref={rootRef}
+      className={`news-filter-control news-filter-select${open ? ' is-open' : ''}`}
+    >
+      <span className="news-filter-control__label">
+        <Icon size={14} />
+        {label}
+      </span>
+
+      <button
+        type="button"
+        className="news-filter-select__trigger"
+        onClick={() => setOpen((current) => !current)}
+        aria-haspopup="listbox"
+        aria-expanded={open}
+        disabled={disabled}
+      >
+        <span>
+          {disabled
+            ? 'Đang đồng bộ dữ liệu...'
+            : selectedOption?.label || placeholder}
+        </span>
+        <ChevronDown size={16} aria-hidden="true" />
+      </button>
+
+      {open && !disabled ? (
+        <div className="news-filter-select__menu" role="listbox" aria-label={label}>
+          {searchable ? (
+            <div className="news-filter-select__search">
+              <Search size={15} aria-hidden="true" />
+              <input
+                type="search"
+                value={searchTerm}
+                onChange={(event) => setSearchTerm(event.target.value)}
+                placeholder="Tìm khu vực..."
+                aria-label={`Tìm trong ${label.toLocaleLowerCase('vi-VN')}`}
+                autoFocus
+              />
+            </div>
+          ) : null}
+
+          {visibleOptions.length ? (
+            visibleOptions.map((option) => {
+              const selected = String(option.value) === String(value);
+
+              return (
+                <button
+                  type="button"
+                  role="option"
+                  aria-selected={selected}
+                  className={`news-filter-select__option${selected ? ' is-selected' : ''}`}
+                  key={`${label}-${option.value || 'all'}`}
+                  onClick={() => choose(option.value)}
+                >
+                  <span>{option.label}</span>
+                  {selected ? <Check size={15} aria-hidden="true" /> : null}
+                </button>
+              );
+            })
+          ) : (
+            <p className="news-filter-select__empty">Không tìm thấy dữ liệu phù hợp.</p>
+          )}
+        </div>
+      ) : null}
+    </div>
+  );
 }
 
 function StoryImage({ item, className = '', eager = false }) {
@@ -144,7 +283,12 @@ function StoryCard({ item, variant = 'feed', eager = false }) {
 
 export default function ArticlesPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { categories = [], areas = [] } = useTaxonomy();
+  const {
+    categories = [],
+    areas = [],
+    loading: taxonomyLoading,
+    reload: reloadTaxonomy,
+  } = useTaxonomy();
   const resultsRef = useRef(null);
 
   const articleCategories = useMemo(
@@ -155,6 +299,30 @@ export default function ArticlesPage() {
     [categories],
   );
 
+  const navigationCategories = useMemo(
+    () =>
+      articleCategories
+        .map((item) => ({
+          slug: String(item?.slug || ''),
+          label: String(item?.name || '').trim(),
+        }))
+        .filter((item) => item.slug && item.label),
+    [articleCategories],
+  );
+
+  const areaOptions = useMemo(
+    () => [
+      { value: '', label: 'Tất cả khu vực' },
+      ...areas
+        .map((item) => ({
+          value: valueOf(item),
+          label: String(item?.name || '').trim(),
+        }))
+        .filter((item) => item.value && item.label),
+    ],
+    [areas],
+  );
+
   const category = searchParams.get('category') || '';
   const area = searchParams.get('area') || '';
   const date = searchParams.get('date') || '';
@@ -163,6 +331,7 @@ export default function ArticlesPage() {
 
   const [searchDraft, setSearchDraft] = useState(query);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [filterTaxonomyRefreshing, setFilterTaxonomyRefreshing] = useState(false);
 
   useEffect(() => {
     setSearchDraft(query);
@@ -237,7 +406,18 @@ export default function ArticlesPage() {
     return params;
   }, [searchParams, category, categoryItem, area, areaItem, sort, query, date]);
 
-  const result = useListPage(articleApi.list, listParams);
+  // Mỗi thay đổi bộ lọc tạo một fetcher mới và tắt request-cache tầng API,
+  // nhờ đó tổ hợp lọc mới luôn hỏi lại /articles thay vì giữ response cũ.
+  const articleListFetcher = useCallback(
+    (params, config = {}) =>
+      articleApi.list(params, {
+        ...config,
+        cache: false,
+      }),
+    [category, area, date, sort, query],
+  );
+
+  const result = useListPage(articleListFetcher, listParams);
 
   const updateUrl = useCallback(
     (values) => {
@@ -258,6 +438,25 @@ export default function ArticlesPage() {
     },
     [setSearchParams],
   );
+
+  const refreshFilterTaxonomy = useCallback(async () => {
+    setFilterTaxonomyRefreshing(true);
+    try {
+      await reloadTaxonomy({ fresh: true });
+    } finally {
+      setFilterTaxonomyRefreshing(false);
+    }
+  }, [reloadTaxonomy]);
+
+  const toggleFilters = useCallback(() => {
+    if (filtersOpen) {
+      setFiltersOpen(false);
+      return;
+    }
+
+    setFiltersOpen(true);
+    void refreshFilterTaxonomy();
+  }, [filtersOpen, refreshFilterTaxonomy]);
 
   const onPageChange = useCallback(
     (page) => {
@@ -306,6 +505,8 @@ export default function ArticlesPage() {
     setFiltersOpen(false);
   };
 
+  const taxonomyBusy = taxonomyLoading || filterTaxonomyRefreshing;
+
   return (
     <section className={`news-hub news-hub--${pageCopy.theme || 'news'}`}>
       <Seo title={pageCopy.seoTitle} description={pageCopy.seoDescription} />
@@ -345,7 +546,7 @@ export default function ArticlesPage() {
             >
               Mới nhất
             </button>
-            {ARTICLE_CATEGORY_RAIL.map((item) => (
+            {navigationCategories.map((item) => (
               <button
                 type="button"
                 key={item.slug}
@@ -360,7 +561,7 @@ export default function ArticlesPage() {
           <button
             type="button"
             className={filtersOpen || hasSecondaryFilter ? 'news-filter-toggle is-active' : 'news-filter-toggle'}
-            onClick={() => setFiltersOpen((value) => !value)}
+            onClick={toggleFilters}
             aria-expanded={filtersOpen}
           >
             <SlidersHorizontal size={16} />
@@ -370,30 +571,47 @@ export default function ArticlesPage() {
 
         {filtersOpen || hasSecondaryFilter ? (
           <section className="news-filter-panel" aria-label="Bộ lọc tin tức">
-            <label>
-              <span><MapPin size={14} /> Khu vực</span>
-              <select value={area} onChange={(event) => updateUrl({ area: event.target.value })}>
-                <option value="">Tất cả khu vực</option>
-                {areas.map((item) => (
-                  <option key={item._id || valueOf(item)} value={valueOf(item)}>
-                    {item.name}
-                  </option>
-                ))}
-              </select>
-            </label>
+            <div className="news-filter-panel__head">
+              <div className="news-filter-panel__identity">
+                <span><Database size={17} aria-hidden="true" /></span>
+                <div>
+                  <strong>Bộ lọc dữ liệu trực tiếp</strong>
+                  <small>Khu vực và chuyên mục được đồng bộ từ taxonomy của hệ thống.</small>
+                </div>
+              </div>
+              <span className={`news-filter-panel__sync${taxonomyBusy ? ' is-loading' : ''}`}>
+                {taxonomyBusy ? 'Đang đồng bộ từ máy chủ' : 'Đã đồng bộ với máy chủ'}
+              </span>
+            </div>
 
-            <label>
+            <FilterSelect
+              label="Khu vực"
+              Icon={MapPin}
+              value={area}
+              options={areaOptions}
+              placeholder="Tất cả khu vực"
+              searchable
+              disabled={taxonomyBusy}
+              onChange={(nextArea) => updateUrl({ area: nextArea })}
+            />
+
+            <label className="news-filter-date">
               <span><CalendarDays size={14} /> Ngày đăng</span>
-              <input type="date" value={date} onChange={(event) => updateUrl({ date: event.target.value })} />
+              <input
+                type="date"
+                value={date}
+                onChange={(event) => updateUrl({ date: event.target.value })}
+              />
             </label>
 
-            <label>
-              <span>{sort === 'popular' ? <TrendingUp size={14} /> : <Clock3 size={14} />} Sắp xếp</span>
-              <select value={sort} onChange={(event) => updateUrl({ sort: event.target.value })}>
-                <option value="">Mới nhất</option>
-                <option value="popular">Đọc nhiều</option>
-              </select>
-            </label>
+            <FilterSelect
+              label="Sắp xếp"
+              Icon={sort === 'popular' ? TrendingUp : Clock3}
+              value={sort}
+              options={SORT_OPTIONS}
+              placeholder="Mới nhất"
+              onChange={(nextSort) => updateUrl({ sort: nextSort })}
+            />
 
             {hasSecondaryFilter ? (
               <button type="button" className="news-filter-reset" onClick={clearSecondaryFilters}>
