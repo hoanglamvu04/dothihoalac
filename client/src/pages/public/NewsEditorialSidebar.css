@@ -5,8 +5,8 @@
 ========================================================= */
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout {
-  grid-template-columns: minmax(0, 1fr) 328px;
-  gap: 24px;
+  grid-template-columns: minmax(0, 2.2fr) minmax(360px, 1fr);
+  gap: 28px;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-context-rail {
