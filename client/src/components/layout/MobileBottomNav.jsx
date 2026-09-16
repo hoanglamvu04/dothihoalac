@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import {
-  BriefcaseBusiness,
+  Compass,
   House,
   Newspaper,
   UserRound,
@@ -18,11 +18,18 @@ const ITEMS = [
     prefetch: () => import('../../pages/public/HomePage'),
   },
   {
-    to: '/viec-lam',
-    label: 'Việc làm',
-    icon: BriefcaseBusiness,
-    match: (pathname) => pathname === '/viec-lam' || pathname.startsWith('/viec-lam/'),
-    prefetch: () => import('../../pages/public/JobsPage'),
+    to: '/tin-tuc',
+    label: 'Tin tức',
+    icon: Newspaper,
+    match: (pathname) => pathname === '/tin-tuc' || pathname.startsWith('/tin-tuc/'),
+    prefetch: () => import('../../pages/public/ArticlesPage'),
+  },
+  {
+    to: '/tim-kiem',
+    label: 'Khám phá',
+    icon: Compass,
+    featured: true,
+    match: (pathname) => pathname === '/tim-kiem' || pathname.startsWith('/tim-kiem/'),
   },
   {
     to: '/cong-dong',
@@ -30,13 +37,6 @@ const ITEMS = [
     icon: UsersRound,
     match: (pathname) => pathname === '/cong-dong' || pathname.startsWith('/cong-dong/'),
     prefetch: () => import('../../pages/public/CommunityPage'),
-  },
-  {
-    to: '/tin-tuc',
-    label: 'Tin tức',
-    icon: Newspaper,
-    match: (pathname) => pathname === '/tin-tuc' || pathname.startsWith('/tin-tuc/'),
-    prefetch: () => import('../../pages/public/ArticlesPage'),
   },
   {
     to: '/tai-khoan',
@@ -67,14 +67,23 @@ export default function MobileBottomNav() {
             <Link
               key={item.to}
               to={item.to}
-              className={`mobile-bottom-nav__item${active ? ' is-active' : ''}`}
+              className={[
+                'mobile-bottom-nav__item',
+                active ? 'is-active' : '',
+                item.featured ? 'is-featured' : '',
+              ]
+                .filter(Boolean)
+                .join(' ')}
               aria-current={active ? 'page' : undefined}
               onPointerEnter={() => warmItem(item)}
               onTouchStart={() => warmItem(item)}
               onFocus={() => warmItem(item)}
             >
               <span className="mobile-bottom-nav__icon" aria-hidden="true">
-                <Icon size={21} strokeWidth={active ? 2.4 : 2} />
+                <Icon
+                  size={item.featured ? 25 : 21}
+                  strokeWidth={active || item.featured ? 2.35 : 2}
+                />
               </span>
               <span>{item.label}</span>
             </Link>
