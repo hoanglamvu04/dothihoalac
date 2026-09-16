@@ -1,0 +1,21 @@
+/* Mobile home quick navigation: keep compact labels on one line. */
+@media (max-width: 760px) {
+  html body .app-shell .home-reference-v2 .home-mobile-shortcuts a strong {
+    display: block !important;
+    width: max-content !important;
+    max-width: none !important;
+    margin-inline: auto !important;
+    color: var(--hr-ink) !important;
+    font-size: 10px !important;
+    font-weight: 760 !important;
+    line-height: 1.12 !important;
+    letter-spacing: -0.02em !important;
+    white-space: nowrap !important;
+  }
+}
+
+@media (max-width: 360px) {
+  html body .app-shell .home-reference-v2 .home-mobile-shortcuts a strong {
+    font-size: 9.5px !important;
+  }
+}
