@@ -61,22 +61,17 @@ import './pages/public/ArticleNewsroomStandard.css';
 import './pages/public/NewsReferenceSizing.css';
 import './pages/public/NewsImageFrameFix.css';
 import './styles/home-mobile-shortcuts-fix.css';
-/* Final color isolation layer: keep it after all route/page style sheets. */
+/* Final brand layers must remain after every route/page stylesheet. */
 import './styles/site-palette-hardening.css';
+import './styles/dthl-palette-contract.css';
 import './features/propertyMarketplacePaging';
 
-// Apply the saved light/dark appearance before React paints. The brand palette
-// is intentionally fixed so the site stays visually consistent.
 initializeSiteTheme();
 initializeSitePalette();
 
 const root = createRoot(document.getElementById('root'));
 const enableStrictMode = import.meta.env.VITE_REACT_STRICT_MODE === 'true';
 
-// React StrictMode cố ý mount/effect hai lần ở development. Với ứng dụng có
-// nhiều feed/API toàn cục điều này làm localhost tạo request đôi và cảm giác
-// lag rõ rệt. Mặc định chạy một lifecycle thật; vẫn có thể bật lại khi audit
-// side-effect bằng VITE_REACT_STRICT_MODE=true.
 root.render(
   enableStrictMode ? (
     <StrictMode>
