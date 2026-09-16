@@ -14,9 +14,19 @@ function parseOrigins(value = '') {
     .filter(Boolean);
 }
 
+const OFFICIAL_PRODUCTION_ORIGINS = [
+  'https://dothihoalac.vn',
+  'https://www.dothihoalac.vn',
+  'https://api.dothihoalac.vn',
+];
+
 const allowedOrigins = new Set([
   ...parseOrigins(env.CLIENT_URL),
-  ...parseOrigins(process.env.CORS_ORIGINS),
+  ...parseOrigins(env.APP_URL),
+  ...parseOrigins(env.CORS_ORIGINS),
+  ...(env.NODE_ENV === 'production'
+    ? OFFICIAL_PRODUCTION_ORIGINS.map(normalizeOrigin)
+    : []),
 ]);
 
 function normalizeHostname(value = '') {
@@ -80,8 +90,7 @@ export const corsOptions = {
   origin(origin, callback) {
     /*
      * Cho phép request không có Origin:
-     * Postman, curl, Render health check,
-     * server-to-server.
+     * Postman, curl, health check và server-to-server.
      */
     if (!origin) {
       return callback(null, true);
