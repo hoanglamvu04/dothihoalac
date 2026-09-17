@@ -1,21 +1,22 @@
 /* =========================================================
    DTHL WHITE CANVAS
-   Final light-mode safety layer. The public/admin brand remains #103323 and
-   #B59965, while #F9F1E3 is only a soft highlight and never the page canvas.
+   Final light-mode safety layer. The UI now follows the logo palette:
+   #0E3323 green + #B03525 red on a clean white/neutral canvas.
+   Panels stay white; soft states use neutral/green tints instead of cream.
 ========================================================= */
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] {
   --brand-canvas: #ffffff !important;
   --brand-surface: #ffffff !important;
-  --brand-surface-2: #ffffff !important;
-  --brand-surface-3: #f9f1e3 !important;
+  --brand-surface-2: #f7f9f8 !important;
+  --brand-surface-3: #eef4f1 !important;
 
   --dthl-palette-canvas: #ffffff !important;
   --dthl-palette-surface: #ffffff !important;
-  --dthl-palette-surface-2: #ffffff !important;
+  --dthl-palette-surface-2: #f7f9f8 !important;
   --dthl-mode-canvas: #ffffff !important;
   --dthl-mode-surface: #ffffff !important;
-  --dthl-mode-surface-2: #ffffff !important;
+  --dthl-mode-surface-2: #f7f9f8 !important;
 
   --earth-bg: #ffffff !important;
   --earth-card: #ffffff !important;
@@ -104,7 +105,7 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page 
   --community-bg: #ffffff !important;
 }
 
-/* Keep panels/cards white; reserve cream for deliberately selected/soft states. */
+/* Keep panels/cards white; reserve tint for selected, hover and helper states. */
 html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
   .home-reference-panel,
   .home-ref-panel,
