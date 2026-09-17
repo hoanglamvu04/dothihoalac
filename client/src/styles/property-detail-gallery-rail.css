@@ -1,0 +1,100 @@
+/* =========================================================
+   PROPERTY DETAIL — DESKTOP THUMBNAIL RAIL
+   Final layout layer for the reference-v2 gallery. Keep thumbnail cards
+   compact and top-aligned instead of stretching sparse galleries into five
+   equal rows. Longer galleries remain accessible with a vertical scroll rail.
+========================================================= */
+
+@media (min-width: 1101px) {
+  .app-shell .property-detail-page--reference-v2 .property-gallery {
+    grid-template-columns: minmax(0, 1fr) 132px !important;
+    gap: 10px !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-gallery__thumbnails {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    align-self: stretch !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    padding: 6px !important;
+    gap: 9px !important;
+    overflow-x: hidden !important;
+    overflow-y: auto !important;
+    border: 1px solid #ece5dc !important;
+    border-radius: 12px !important;
+    background: #fbfaf7 !important;
+    scrollbar-width: thin;
+    scrollbar-color: #d6c1a8 transparent;
+    overscroll-behavior: contain;
+    scroll-snap-type: y proximity;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-gallery__thumbnails::-webkit-scrollbar {
+    width: 5px;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-gallery__thumbnails::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-gallery__thumbnails::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: #d6c1a8;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-gallery__thumbnails button,
+  .app-shell .property-detail-page--reference-v2 .property-gallery__thumbnails button:nth-child(n + 6) {
+    display: block !important;
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    aspect-ratio: 4 / 3 !important;
+    padding: 3px !important;
+    overflow: hidden !important;
+    border: 1px solid #e2d8cc !important;
+    border-radius: 10px !important;
+    background: #fff !important;
+    box-shadow: 0 2px 8px rgb(55 42 29 / 0.035) !important;
+    opacity: 0.84 !important;
+    transform: none !important;
+    transition:
+      border-color 150ms ease,
+      box-shadow 150ms ease,
+      opacity 150ms ease,
+      transform 150ms ease !important;
+    scroll-snap-align: start;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-gallery__thumbnails button:hover {
+    border-color: #c7a780 !important;
+    box-shadow: 0 5px 14px rgb(83 58 32 / 0.09) !important;
+    opacity: 1 !important;
+    transform: translateY(-1px) !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-gallery__thumbnails button.is-active {
+    border-color: #a8753f !important;
+    box-shadow: 0 0 0 2px rgb(168 117 63 / 0.15), 0 5px 14px rgb(83 58 32 / 0.08) !important;
+    opacity: 1 !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-gallery__thumbnails button > * {
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .app-shell .property-detail-page--reference-v2 .property-gallery__thumbnails img {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    border-radius: 7px !important;
+    object-fit: cover !important;
+  }
+}
