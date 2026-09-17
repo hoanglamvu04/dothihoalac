@@ -1,0 +1,147 @@
+/* Readability layer for the multi-step job editor.
+   Keep this scoped to the wizard so public job pages and other studio forms are untouched. */
+.job-editor-page.job-editor-wizard--active .job-editor-wizard-stepper__index {
+  font-size: 14px;
+}
+
+.job-editor-page.job-editor-wizard--active .job-editor-wizard-stepper__copy small {
+  font-size: 12px;
+}
+
+.job-editor-page.job-editor-wizard--active .job-editor-wizard-stepper__copy strong {
+  font-size: 15px;
+  line-height: 1.3;
+}
+
+.job-editor-page.job-editor-wizard--active .job-editor-wizard-intro__eyebrow {
+  font-size: 12px;
+}
+
+.job-editor-page.job-editor-wizard--active .job-editor-wizard-intro__title {
+  font-size: 27px;
+}
+
+.job-editor-page.job-editor-wizard--active .job-editor-wizard-intro__description {
+  font-size: 16px;
+  line-height: 1.6;
+}
+
+.job-editor-page.job-editor-wizard--active .job-editor-wizard-button {
+  font-size: 15px;
+}
+
+/* Content cards inherited from the original editor. */
+.job-editor-page.job-editor-wizard--active .job-editor-card__heading small {
+  font-size: 13px;
+}
+
+.job-editor-page.job-editor-wizard--active .job-editor-card__heading h2 {
+  font-size: 21px;
+}
+
+.job-editor-page.job-editor-wizard--active .job-editor-card__heading p {
+  font-size: 16px;
+  line-height: 1.55;
+}
+
+.job-editor-page.job-editor-wizard--active .job-editor-field__label label {
+  font-size: 16px;
+}
+
+.job-editor-page.job-editor-wizard--active .job-editor-field__label small {
+  font-size: 14px;
+}
+
+.job-editor-page.job-editor-wizard--active .job-editor-field input,
+.job-editor-page.job-editor-wizard--active .job-editor-field select,
+.job-editor-page.job-editor-wizard--active .job-editor-field textarea {
+  font-size: 16px;
+}
+
+.job-editor-page.job-editor-wizard--active .job-field-hint,
+.job-editor-page.job-editor-wizard--active .job-field-error {
+  font-size: 14px;
+}
+
+.job-editor-page.job-editor-wizard--active .job-selected-type strong,
+.job-editor-page.job-editor-wizard--active .job-template-panel__heading strong,
+.job-editor-page.job-editor-wizard--active .job-preset-block__heading strong {
+  font-size: 16px;
+}
+
+.job-editor-page.job-editor-wizard--active .job-selected-type p,
+.job-editor-page.job-editor-wizard--active .job-editor-notice p,
+.job-editor-page.job-editor-wizard--active .job-template-panel__heading p {
+  font-size: 15px;
+  line-height: 1.55;
+}
+
+.job-editor-page.job-editor-wizard--active .job-rich-editor .rte-content {
+  font-size: 17px;
+  line-height: 1.72;
+}
+
+/* Sidebar stays useful while each wizard page is short. */
+.job-editor-page.job-editor-wizard--active .job-sidebar-heading h2 {
+  font-size: 16px;
+}
+
+.job-editor-page.job-editor-wizard--active .job-sidebar-heading p {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.job-editor-page.job-editor-wizard--active .job-completion-list li {
+  font-size: 14px;
+}
+
+.job-editor-page.job-editor-wizard--active .job-completion-list li small {
+  font-size: 12px;
+}
+
+/* Review screen. */
+.job-editor-page.job-editor-wizard--active .job-editor-wizard-review__heading span {
+  font-size: 12px;
+}
+
+.job-editor-page.job-editor-wizard--active .job-editor-wizard-review__heading h2 {
+  font-size: 25px;
+}
+
+.job-editor-page.job-editor-wizard--active .job-editor-wizard-review__heading p {
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.job-editor-page.job-editor-wizard--active .job-editor-wizard-review__block header small {
+  font-size: 12px;
+}
+
+.job-editor-page.job-editor-wizard--active .job-editor-wizard-review__block header h3 {
+  font-size: 18px;
+}
+
+.job-editor-page.job-editor-wizard--active .job-editor-wizard-review__block header button {
+  font-size: 14px;
+}
+
+.job-editor-page.job-editor-wizard--active .job-editor-wizard-review__block h4 {
+  font-size: 14px;
+}
+
+.job-editor-page.job-editor-wizard--active .job-editor-wizard-review__block dt,
+.job-editor-page.job-editor-wizard--active .job-editor-wizard-review__block dd,
+.job-editor-page.job-editor-wizard--active .job-editor-wizard-review__empty {
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+@media (max-width: 860px) {
+  .job-editor-page.job-editor-wizard--active .job-editor-wizard-intro__title {
+    font-size: 24px;
+  }
+
+  .job-editor-page.job-editor-wizard--active .job-editor-wizard-stepper__copy strong {
+    font-size: 14px;
+  }
+}
