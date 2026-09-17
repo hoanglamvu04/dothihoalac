@@ -64,6 +64,7 @@ import './pages/public/NewsImageFrameFix.css';
 import './pages/public/NewsMarkedTypography.css';
 import './styles/home-mobile-shortcuts-fix.css';
 import './styles/job-editor-wizard.css';
+import './styles/job-editor-wizard-type-scale.css';
 /* Final brand layers must remain after every route/page stylesheet. */
 import './styles/site-palette-hardening.css';
 import './styles/dthl-palette-contract.css';
