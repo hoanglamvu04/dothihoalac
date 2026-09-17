@@ -23,32 +23,36 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-notification-badg
   background: #b59965 !important;
 }
 
+/* Primary navigation: neutral black copy + gold icon at rest.
+ * Hover/active move back into the deep-green brand state.
+ */
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link {
-  color: color-mix(in srgb, #103323 72%, white) !important;
+  color: #171a18 !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__icon {
-  border-color: color-mix(in srgb, #103323 14%, white) !important;
-  color: #103323 !important;
-  background: color-mix(in srgb, #b59965 10%, white) !important;
+  border-color: color-mix(in srgb, #b59965 34%, white) !important;
+  color: #b59965 !important;
+  background: color-mix(in srgb, #b59965 9%, white) !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link:hover,
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link.is-active {
-  border-color: color-mix(in srgb, #b59965 30%, white) !important;
+  border-color: color-mix(in srgb, #103323 24%, white) !important;
   color: #103323 !important;
-  background: color-mix(in srgb, #b59965 10%, white) !important;
+  background: color-mix(in srgb, #103323 5%, white) !important;
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link.is-active {
-  box-shadow: inset 0 -3px 0 #b59965 !important;
-}
-
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link:hover .dthl-primary-nav__icon,
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link.is-active .dthl-primary-nav__icon {
   border-color: #103323 !important;
   color: #ffffff !important;
   background: #103323 !important;
   box-shadow: 0 5px 12px rgb(16 51 35 / 0.2) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link.is-active {
+  box-shadow: inset 0 -3px 0 #b59965 !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
