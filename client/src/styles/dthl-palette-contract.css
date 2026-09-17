@@ -156,3 +156,186 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
   color: #ffffff !important;
   background: #164a34 !important;
 }
+
+/* Community: intentionally restrained. The route uses white surfaces,
+   logo green for structure/actions and logo red only for small semantic
+   accents. This final contract removes the older tan/gold dashboard cast. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page {
+  --c-green: #0e3323 !important;
+  --c-green-2: #0e3323 !important;
+  --c-green-soft: #eef4f1 !important;
+  --c-gold: #b03525 !important;
+  --c-ink: #171a18 !important;
+  --c-text: #4f5c55 !important;
+  --c-muted: #68736d !important;
+  --c-line: #dfe5e1 !important;
+  --c-surface: #ffffff !important;
+  --c-surface-2: #f7f9f8 !important;
+  --c-canvas: #ffffff !important;
+
+  --community-green: #0e3323 !important;
+  --community-green-hover: #164a34 !important;
+  --community-green-dark: #0e3323 !important;
+  --community-green-soft: #eef4f1 !important;
+  --community-ink: #171a18 !important;
+  --community-text: #4f5c55 !important;
+  --community-muted: #68736d !important;
+  --community-border: #dfe5e1 !important;
+  --community-border-soft: #edf1ef !important;
+  --community-surface: #ffffff !important;
+  --community-bg: #ffffff !important;
+
+  color: #171a18 !important;
+  background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page :is(
+  .community-reference-card,
+  .community-reference-composer,
+  .community-card,
+  .community-social-empty
+) {
+  border-color: #dfe5e1 !important;
+  background: #ffffff !important;
+  box-shadow: 0 1px 2px rgb(14 51 35 / 0.04), 0 3px 12px rgb(14 51 35 / 0.035) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-left-primary :is(a, button) {
+  color: #313a35 !important;
+  background: transparent !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-left-primary :is(a:hover, button:hover),
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-left-primary a.is-active {
+  color: #0e3323 !important;
+  background: #eef4f1 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-left-primary__icon {
+  color: #0e3323 !important;
+  background: #eef4f1 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-left-primary a.is-active .community-left-primary__icon {
+  color: #ffffff !important;
+  background: #0e3323 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page :is(
+  .community-discovery-list__icon,
+  .community-discovery-list__topic-dot,
+  .community-popular-item__media,
+  .community-social-empty > span
+) {
+  color: #0e3323 !important;
+  background: #eef4f1 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-discovery-list button:hover,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-discovery-list button.is-active {
+  color: #0e3323 !important;
+  background: #f3f7f5 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-reference-composer__prompt {
+  border-color: #e2e7e4 !important;
+  color: #68736d !important;
+  background: #f7f9f8 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-reference-composer__actions > a {
+  border-color: #dfe5e1 !important;
+  color: #4f5c55 !important;
+  background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-reference-composer__actions > a svg {
+  color: #0e3323 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-reference-composer__actions > a:hover {
+  border-color: #cbd7d0 !important;
+  color: #0e3323 !important;
+  background: #f3f7f5 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-reference-composer__actions > .community-reference-composer__submit {
+  border-color: #0e3323 !important;
+  color: #ffffff !important;
+  background: #0e3323 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-reference-composer__actions > .community-reference-composer__submit:hover {
+  border-color: #164a34 !important;
+  color: #ffffff !important;
+  background: #164a34 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-reference-feed-tabs nav :is(button, a),
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-reference-filter-trigger {
+  border-color: #dfe5e1 !important;
+  color: #56625b !important;
+  background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-reference-feed-tabs nav :is(button:hover, button.is-active, a:hover),
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-reference-filter-trigger:hover {
+  border-color: #0e3323 !important;
+  color: #ffffff !important;
+  background: #0e3323 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-reference-filter-trigger strong {
+  border-color: #ffffff !important;
+  color: #ffffff !important;
+  background: #b03525 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-feed-card__type {
+  border-color: color-mix(in srgb, #b03525 42%, white) !important;
+  color: #8f2c21 !important;
+  background: #faefed !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-reference-active-filters button:not(.community-reference-active-filters__clear) {
+  border-color: #cbd7d0 !important;
+  color: #0e3323 !important;
+  background: #eef4f1 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-feed-action:hover {
+  color: #0e3323 !important;
+  background: #f3f7f5 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-feed-like.is-active {
+  color: #b03525 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-reference-card h2 {
+  color: #0e3323 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-member-item__copy small {
+  color: #68736d !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-join-card__actions a {
+  border-color: #0e3323 !important;
+  color: #ffffff !important;
+  background: #0e3323 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-join-card__actions a + a {
+  color: #0e3323 !important;
+  background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page :is(
+  .community-discovery-section + .community-discovery-section,
+  .community-popular-item,
+  .community-member-item,
+  .community-feed-card__actions
+) {
+  border-color: #e3e8e5 !important;
+}
