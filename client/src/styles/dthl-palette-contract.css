@@ -1,58 +1,101 @@
-/* Final DTHL color contract.
- * Brand colors: #103323 and #B59965 on a white canvas.
- * #F9F1E3 is a soft highlight only, never the page background.
+/* Final DTHL logo color contract.
+ * Visual direction: clean Google-like white surfaces, strong logo green,
+ * neutral near-black text and restrained logo-red accents.
+ *
+ * Primary green: #0E3323
+ * Accent red:   #B03525
+ * Main text:    #171A18
  */
 
 html[data-dthl-palette='earth'] {
-  --earth-brand: #103323 !important;
-  --earth-brand-dark: #103323 !important;
-  --earth-dark: #103323 !important;
+  /* Canonical brand tokens. --brand-gold remains as a compatibility alias
+     because older route styles already consume that variable. */
+  --brand-primary: #0e3323 !important;
+  --brand-primary-hover: #164a34 !important;
+  --brand-accent: #b03525 !important;
+  --brand-gold: #b03525 !important;
+  --brand-canvas: #ffffff !important;
+  --brand-surface: #ffffff !important;
+  --brand-surface-2: #f7f9f8 !important;
+  --brand-surface-3: #eef4f1 !important;
+  --brand-border: #dfe5e1 !important;
+  --brand-border-strong: #cbd7d0 !important;
+  --brand-text: #171a18 !important;
+  --brand-muted: #68736d !important;
+  --brand-primary-soft: #eef4f1 !important;
+  --brand-gold-soft: #faefed !important;
+  --brand-accent-soft: #faefed !important;
+  --brand-shadow: 0 1px 2px rgb(14 51 35 / 0.06), 0 4px 14px rgb(14 51 35 / 0.05) !important;
+
+  /* Legacy earth tokens are kept so old components inherit the logo palette
+     without needing a route-by-route rewrite. */
+  --earth-brand: #0e3323 !important;
+  --earth-brand-dark: #0e3323 !important;
+  --earth-dark: #0e3323 !important;
   --earth-bg: #ffffff !important;
   --earth-card: #ffffff !important;
-  --earth-text: #103323 !important;
-  --earth-muted: color-mix(in srgb, #103323 48%, white) !important;
-  --earth-soft: color-mix(in srgb, #b59965 14%, #f9f1e3) !important;
-  --earth-green: #103323 !important;
-  --earth-border: color-mix(in srgb, #103323 14%, white) !important;
-  --earth-border-strong: color-mix(in srgb, #103323 22%, white) !important;
+  --earth-text: #171a18 !important;
+  --earth-muted: #68736d !important;
+  --earth-soft: #f7f9f8 !important;
+  --earth-green: #0e3323 !important;
+  --earth-border: #dfe5e1 !important;
+  --earth-border-strong: #cbd7d0 !important;
+}
+
+/* Google-like form treatment: white input surfaces, neutral border and a calm
+   brand-green focus ring instead of the previous cream/gold focus state. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(input, select, textarea) {
+  border-color: #dfe5e1 !important;
+  color: #171a18 !important;
+  background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(input, select, textarea):focus {
+  border-color: #0e3323 !important;
+  box-shadow: 0 0 0 3px rgb(14 51 35 / 0.11) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(a, button, input, select, textarea):focus-visible {
+  outline-color: #0e3323 !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-notification-badge {
   border-color: #ffffff !important;
-  color: #103323 !important;
-  background: #b59965 !important;
+  color: #ffffff !important;
+  background: #b03525 !important;
 }
 
-/* Primary navigation: neutral black copy + gold icon at rest.
- * Hover/active move back into the deep-green brand state.
+/* Primary navigation: near-black copy + logo-red icon at rest.
+ * Hover/active move into the logo-green state, with the red used only as a
+ * restrained accent/selection marker.
  */
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link {
   color: #171a18 !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__icon {
-  border-color: color-mix(in srgb, #b59965 34%, white) !important;
-  color: #b59965 !important;
-  background: color-mix(in srgb, #b59965 9%, white) !important;
+  border-color: color-mix(in srgb, #b03525 26%, white) !important;
+  color: #b03525 !important;
+  background: #faefed !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link:hover,
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link.is-active {
-  border-color: color-mix(in srgb, #103323 24%, white) !important;
-  color: #103323 !important;
-  background: color-mix(in srgb, #103323 5%, white) !important;
+  border-color: color-mix(in srgb, #0e3323 22%, white) !important;
+  color: #0e3323 !important;
+  background: #eef4f1 !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link:hover .dthl-primary-nav__icon,
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link.is-active .dthl-primary-nav__icon {
-  border-color: #103323 !important;
+  border-color: #0e3323 !important;
   color: #ffffff !important;
-  background: #103323 !important;
-  box-shadow: 0 5px 12px rgb(16 51 35 / 0.2) !important;
+  background: #0e3323 !important;
+  box-shadow: 0 2px 6px rgb(14 51 35 / 0.18) !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link.is-active {
-  box-shadow: inset 0 -3px 0 #b59965 !important;
+  box-shadow: inset 0 -3px 0 #b03525 !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
@@ -62,38 +105,54 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
   .dthl-icon-button,
   .dthl-mobile-menu-button
 ) {
-  border-color: color-mix(in srgb, #103323 14%, white) !important;
-  color: #103323 !important;
+  border-color: #dfe5e1 !important;
+  color: #171a18 !important;
   background: #ffffff !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__submenu strong,
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__submenu a {
-  color: #103323 !important;
-  border-color: color-mix(in srgb, #103323 14%, white) !important;
+  color: #171a18 !important;
+  border-color: #e8ece9 !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__submenu a:hover,
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-theme-toggle:hover {
-  color: #103323 !important;
-  background: color-mix(in srgb, #b59965 12%, white) !important;
+  color: #0e3323 !important;
+  background: #eef4f1 !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search__submit {
-  border-color: #103323 !important;
+  border-color: #0e3323 !important;
   color: #ffffff !important;
-  background: #103323 !important;
-  box-shadow: 0 6px 15px rgb(16 51 35 / 0.16) !important;
+  background: #0e3323 !important;
+  box-shadow: none !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search__submit:hover:not(:disabled) {
-  border-color: #b59965 !important;
-  color: #103323 !important;
-  background: #b59965 !important;
+  border-color: #164a34 !important;
+  color: #ffffff !important;
+  background: #164a34 !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search__submit:disabled {
-  border-color: color-mix(in srgb, #b59965 34%, white) !important;
-  color: color-mix(in srgb, #103323 50%, white) !important;
-  background: color-mix(in srgb, #b59965 18%, white) !important;
+  border-color: #dfe5e1 !important;
+  color: #87918b !important;
+  background: #f3f5f4 !important;
+}
+
+/* Keep primary actions green on hover. Red is an accent, not a destructive
+   interaction color for ordinary navigation/actions. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .dthl-register-button,
+  .dthl-post-button,
+  .dthl-mobile-post-button,
+  .button-primary,
+  .btn-primary,
+  .primary-button,
+  [class*='button--primary']
+):hover:not(:disabled) {
+  border-color: #164a34 !important;
+  color: #ffffff !important;
+  background: #164a34 !important;
 }
