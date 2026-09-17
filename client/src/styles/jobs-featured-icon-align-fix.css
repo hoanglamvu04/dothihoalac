@@ -1,0 +1,12 @@
+.app-shell .jobs-page .jobs-featured-card .job-card__body > div:last-child > span {
+  align-items: center !important;
+}
+
+.app-shell .jobs-page .jobs-featured-card .job-card__body > div:last-child > span > svg {
+  align-self: center !important;
+  flex: 0 0 auto !important;
+}
+
+.app-shell .jobs-page .jobs-featured-card .job-card__meta-text {
+  line-height: 1.35 !important;
+}
