@@ -56,6 +56,7 @@ import './styles/comments-empty-compact.css';
 import './styles/responsive-type-scale.css';
 import './styles/news-category-chip-polish.css';
 import './styles/jobs-featured-compact.css';
+import './styles/jobs-featured-icon-align-fix.css';
 import './styles/job-detail-reaction-alignment.css';
 import './pages/public/ArticleNewsroomStandard.css';
 import './pages/public/NewsReferenceSizing.css';
