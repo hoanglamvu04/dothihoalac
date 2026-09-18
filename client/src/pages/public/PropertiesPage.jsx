@@ -1101,29 +1101,64 @@ export default function PropertiesPage() {
                 </section>
 
                 <section className="properties-sidebar-card properties-market-card">
-                  <header>
-                    <div>
-                      <TrendingUp size={18} />
-                      <h3>Thị trường Hòa Lạc</h3>
+                  <header className="properties-market-card__header">
+                    <div className="properties-market-card__heading">
+                      <span className="properties-market-card__trend" aria-hidden="true">
+                        <TrendingUp size={18} />
+                      </span>
+                      <div>
+                        <span className="properties-market-card__eyebrow">Tổng quan thị trường</span>
+                        <h3>Thị trường Hòa Lạc</h3>
+                      </div>
                     </div>
+                    <span className="properties-market-card__badge">BĐS</span>
                   </header>
-                  <dl>
+
+                  <p className="properties-market-card__intro">
+                    Số liệu nhanh từ nguồn cung đang có trên hệ thống.
+                  </p>
+
+                  <dl className="properties-market-card__stats">
                     <div>
-                      <dt>Nguồn cung</dt>
-                      <dd>{total.toLocaleString('vi-VN')} tin</dd>
+                      <span className="properties-market-card__stat-icon" aria-hidden="true">
+                        <Building2 size={17} />
+                      </span>
+                      <div>
+                        <dt>Nguồn cung</dt>
+                        <dd>
+                          {total.toLocaleString('vi-VN')}
+                          <small> tin</small>
+                        </dd>
+                      </div>
                     </div>
                     <div>
-                      <dt>Khu vực</dt>
-                      <dd>{areas.length.toLocaleString('vi-VN')}</dd>
+                      <span className="properties-market-card__stat-icon" aria-hidden="true">
+                        <MapPin size={17} />
+                      </span>
+                      <div>
+                        <dt>Khu vực</dt>
+                        <dd>{areas.length.toLocaleString('vi-VN')}</dd>
+                      </div>
                     </div>
                     <div>
-                      <dt>Loại hình</dt>
-                      <dd>{Object.keys(PROPERTY_TYPES).length.toLocaleString('vi-VN')}</dd>
+                      <span className="properties-market-card__stat-icon" aria-hidden="true">
+                        <Home size={17} />
+                      </span>
+                      <div>
+                        <dt>Loại hình</dt>
+                        <dd>{Object.keys(PROPERTY_TYPES).length.toLocaleString('vi-VN')}</dd>
+                      </div>
                     </div>
                   </dl>
-                  <button type="button" onClick={result.reload} disabled={result.loading}>
+
+                  <button
+                    type="button"
+                    className="properties-market-card__refresh"
+                    onClick={result.reload}
+                    disabled={result.loading}
+                  >
                     <RefreshCw size={15} className={result.loading ? 'is-spinning' : ''} />
-                    Cập nhật dữ liệu
+                    {result.loading ? 'Đang cập nhật...' : 'Làm mới số liệu'}
                   </button>
                 </section>
 
