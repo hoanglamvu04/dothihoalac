@@ -10,7 +10,7 @@ import {
 import { taxonomyApi } from '../api/taxonomy.api';
 
 const TaxonomyContext = createContext(null);
-const TAXONOMY_CACHE_KEY = 'dthl:taxonomy-cache:v2';
+const TAXONOMY_CACHE_KEY = 'dthl:taxonomy-cache:v3';
 const TAXONOMY_INVALIDATION_KEY = 'dthl:taxonomy-invalidated-at';
 const TAXONOMY_CHANGED_EVENT = 'dthl:taxonomy-changed';
 const TAXONOMY_CACHE_TTL_MS = 10 * 60 * 1000;
