@@ -691,9 +691,9 @@
   flex-wrap: wrap;
   gap: 7px 12px;
   margin-top: 11px;
-  color: #171a18;
+  color: var(--property-green);
   font-size: 0.64rem;
-  font-weight: 650;
+  font-weight: 750;
 }
 .properties-page .property-card__facts span {
   display: inline-flex;
@@ -708,8 +708,9 @@
   align-items: flex-start;
   gap: 5px;
   margin: 8px 0 0;
-  color: #171a18;
+  color: var(--property-green);
   font-size: 0.61rem;
+  font-weight: 800;
   line-height: 1.4;
 }
 .properties-page .property-card__location svg {
@@ -740,6 +741,11 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
+}
+
+.properties-page .property-card__footer-meta > span {
+  color: var(--property-red);
+  font-weight: 700;
 }
 .properties-page .property-card__footer > a {
   margin-left: auto;
