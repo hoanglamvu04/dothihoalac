@@ -1,0 +1,472 @@
+/* Final marketplace palette alignment.
+ * DTHL canonical brand:
+ *   green  #0E3323
+ *   red    #B03525
+ *   ink    #171A18
+ * This file is intentionally loaded after all legacy property/jobs styles so
+ * the previous tan/gold earth palette cannot leak back into these routes.
+ */
+
+/* -------------------------------------------------------------------------- */
+/* PROPERTY MARKETPLACE                                                       */
+/* -------------------------------------------------------------------------- */
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-page {
+  --property-green: #0e3323 !important;
+  --property-green-strong: #0e3323 !important;
+  --property-green-soft: #eef4f1 !important;
+  --property-gold: #b03525 !important;
+  --property-ink: #171a18 !important;
+  --property-text: #4f5c55 !important;
+  --property-muted: #68736d !important;
+  --property-border: #dfe5e1 !important;
+  --property-surface: #ffffff !important;
+  --property-surface-2: #f7f9f8 !important;
+  --property-canvas: #ffffff !important;
+  --property-warm: #f7f9f8 !important;
+
+  color: #171a18 !important;
+  background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-page__container {
+  background: #ffffff !important;
+  box-shadow: 0 0 0 1px #edf1ef !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-hero {
+  border-color: #dfe5e1 !important;
+  background:
+    radial-gradient(circle at 82% 14%, rgb(176 53 37 / 0.085), transparent 28%),
+    radial-gradient(circle at 12% 18%, rgb(14 51 35 / 0.07), transparent 30%),
+    linear-gradient(115deg, #ffffff 0 52%, #f7f9f8 100%) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-hero__background {
+  opacity: 0.18 !important;
+  filter: saturate(0.55) contrast(0.9) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-hero__shade {
+  background:
+    linear-gradient(90deg,
+      #ffffff 0%,
+      rgb(255 255 255 / 0.98) 42%,
+      rgb(247 249 248 / 0.94) 60%,
+      rgb(238 244 241 / 0.66) 100%) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-hero__eyebrow {
+  color: #b03525 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-hero__eyebrow svg {
+  color: #b03525 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-hero h1,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-featured-areas h2 {
+  color: #0e3323 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-hero__content p {
+  color: #4f5c55 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-hero__finder {
+  border-color: #dfe5e1 !important;
+  background: rgb(255 255 255 / 0.97) !important;
+  box-shadow: 0 10px 28px rgb(14 51 35 / 0.09) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-hero__finder > label {
+  border-right-color: #edf1ef !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-hero__finder > label > span {
+  color: #68736d !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-hero__finder > label > div,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-hero__finder > label > div > svg {
+  color: #0e3323 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-hero__finder select {
+  color: #171a18 !important;
+  background: transparent !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-hero__finder > button {
+  border: 1px solid #0e3323 !important;
+  color: #ffffff !important;
+  background: #0e3323 !important;
+  box-shadow: 0 7px 18px rgb(14 51 35 / 0.17) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-hero__finder > button:hover {
+  border-color: #164a34 !important;
+  color: #ffffff !important;
+  background: #164a34 !important;
+  box-shadow: 0 9px 22px rgb(14 51 35 / 0.2) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-type-rail,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-featured-areas {
+  background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-type-rail button {
+  border-color: #dfe5e1 !important;
+  color: #4f5c55 !important;
+  background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-type-rail button svg {
+  color: #b03525 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-type-rail button:hover {
+  border-color: #cbd7d0 !important;
+  color: #0e3323 !important;
+  background: #eef4f1 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-type-rail button.is-active {
+  border-color: #0e3323 !important;
+  color: #ffffff !important;
+  background: #0e3323 !important;
+  box-shadow: 0 6px 15px rgb(14 51 35 / 0.16) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-type-rail button.is-active svg {
+  color: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-featured-areas > header > div > span,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-featured-areas > header > button {
+  color: #b03525 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-featured-areas__grid > button {
+  border-color: #dfe5e1 !important;
+  color: #171a18 !important;
+  background: #ffffff !important;
+  box-shadow: 0 4px 14px rgb(14 51 35 / 0.035) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-featured-areas__grid > button:hover,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-featured-areas__grid > button.is-active {
+  border-color: #0e3323 !important;
+  background: #f7f9f8 !important;
+  box-shadow: 0 9px 22px rgb(14 51 35 / 0.075) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-featured-areas__placeholder {
+  color: #0e3323 !important;
+  background:
+    linear-gradient(135deg, #eef4f1, #f7f9f8),
+    repeating-linear-gradient(45deg, transparent 0 16px, rgb(255 255 255 / 0.48) 16px 17px) !important;
+}
+
+/* Keep route controls neutral/white; red is a small accent, green is the
+   selected/action state. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-page :is(
+  .properties-market-shell,
+  .properties-toolbar,
+  .properties-filter-drawer,
+  .properties-filter-panel,
+  .properties-results,
+  .properties-results__main
+) {
+  border-color: #dfe5e1 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-page :is(
+  input,
+  select,
+  textarea
+) {
+  border-color: #dfe5e1 !important;
+  color: #171a18 !important;
+  background: #ffffff !important;
+  accent-color: #0e3323 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-page :is(
+  input,
+  select,
+  textarea
+):focus {
+  border-color: #0e3323 !important;
+  box-shadow: 0 0 0 3px rgb(14 51 35 / 0.1) !important;
+}
+
+/* -------------------------------------------------------------------------- */
+/* JOB MARKETPLACE                                                            */
+/* -------------------------------------------------------------------------- */
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page {
+  --jobs-brand: #b03525 !important;
+  --jobs-brand-deep: #0e3323 !important;
+  --jobs-brand-soft: #faefed !important;
+  --jobs-ink: #171a18 !important;
+  --jobs-text: #4f5c55 !important;
+  --jobs-muted: #68736d !important;
+  --jobs-border: #dfe5e1 !important;
+  --jobs-border-soft: #edf1ef !important;
+  --jobs-surface: #ffffff !important;
+  --jobs-background: #ffffff !important;
+  --jobs-green: #0e3323 !important;
+  --jobs-green-hover: #164a34 !important;
+  --jobs-green-dark: #0e3323 !important;
+  --jobs-green-soft: #eef4f1 !important;
+  --jobs-green-soft-strong: #dfeae4 !important;
+  --jobs-shadow: 0 1px 2px rgb(14 51 35 / 0.05), 0 6px 20px rgb(14 51 35 / 0.05) !important;
+  --jobs-shadow-soft: 0 1px 2px rgb(14 51 35 / 0.04), 0 4px 14px rgb(14 51 35 / 0.035) !important;
+
+  color: #171a18 !important;
+  background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-market-hero {
+  border-color: #dfe5e1 !important;
+  background:
+    radial-gradient(circle at 8% 18%, rgb(176 53 37 / 0.075), transparent 26%),
+    radial-gradient(circle at 90% 20%, rgb(14 51 35 / 0.07), transparent 30%),
+    linear-gradient(120deg, #ffffff 0%, #f7f9f8 58%, #eef4f1 100%) !important;
+  box-shadow: 0 6px 20px rgb(14 51 35 / 0.055) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-market-hero::before {
+  background: #faefed !important;
+  opacity: 0.9 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-market-hero::after {
+  background: #eef4f1 !important;
+  opacity: 0.92 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-market-hero__eyebrow,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-market-hero__eyebrow svg {
+  color: #b03525 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-market-hero h1 {
+  color: #0e3323 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-market-hero h2 {
+  color: #b03525 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-market-hero__copy > p {
+  color: #4f5c55 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-market-hero__chips span {
+  border-color: #dfe5e1 !important;
+  color: #171a18 !important;
+  background: #ffffff !important;
+  box-shadow: 0 3px 12px rgb(14 51 35 / 0.035) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-market-hero__chips svg {
+  color: #b03525 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-market-search {
+  border-color: #dfe5e1 !important;
+  background: rgb(255 255 255 / 0.98) !important;
+  box-shadow: 0 12px 30px rgb(14 51 35 / 0.09) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-market-search > label {
+  border-right-color: #edf1ef !important;
+  color: #0e3323 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-market-search > label:focus-within {
+  background: #f7f9f8 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-market-search input,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-market-search select {
+  color: #171a18 !important;
+  background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-market-search > button {
+  color: #ffffff !important;
+  background: #0e3323 !important;
+  box-shadow: 0 8px 20px rgb(14 51 35 / 0.18) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-market-search > button:hover {
+  color: #ffffff !important;
+  background: #164a34 !important;
+  box-shadow: 0 10px 24px rgb(14 51 35 / 0.2) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell :is(
+  .jobs-section-heading > div > span,
+  .jobs-panel-heading > div > span,
+  .jobs-safety-card__eyebrow,
+  .jobs-results__eyebrow
+) {
+  color: #b03525 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell :is(
+  .jobs-section-heading h2,
+  .jobs-panel-heading h2,
+  .jobs-results__header h2,
+  .jobs-safety-card h3
+) {
+  color: #0e3323 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-discovery__grid > button,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell :is(
+  .jobs-employers-panel,
+  .jobs-featured-panel,
+  .jobs-results__main,
+  .jobs-safety-card
+) {
+  border-color: #dfe5e1 !important;
+  background: #ffffff !important;
+  box-shadow: var(--jobs-shadow-soft) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-discovery__grid > button:hover,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-discovery__grid > button.is-active {
+  border-color: #cbd7d0 !important;
+  background: #eef4f1 !important;
+  box-shadow: 0 8px 22px rgb(14 51 35 / 0.07) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-discovery__grid strong,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page .job-card h3,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page .jobs-results__main .job-card h3 {
+  color: #0e3323 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-results-controls__types button:hover,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-results-controls__types button.is-active {
+  border-color: #0e3323 !important;
+  color: #ffffff !important;
+  background: #0e3323 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-results-controls__actions > button b {
+  color: #ffffff !important;
+  background: #b03525 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-active-filters > button {
+  border-color: #eed3cf !important;
+  color: #8f2d21 !important;
+  background: #faefed !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page .jobs-results__main .job-card {
+  border-color: #dfe5e1 !important;
+  background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page .jobs-results__main .job-card:hover {
+  border-color: #cbd7d0 !important;
+  box-shadow: 0 8px 22px rgb(14 51 35 / 0.07) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page .job-card__icon {
+  color: #0e3323 !important;
+  background: #eef4f1 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page .job-card__salary {
+  color: #b03525 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-employer-cta {
+  background:
+    radial-gradient(circle at 86% 45%, rgb(176 53 37 / 0.08), transparent 34%),
+    linear-gradient(135deg, #f7f9f8, #eef4f1) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-employer-cta strong {
+  color: #0e3323 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-employer-cta > a {
+  color: #ffffff !important;
+  background: #0e3323 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-safety-card {
+  border-color: #dfe5e1 !important;
+  background:
+    radial-gradient(circle at 84% 18%, rgb(176 53 37 / 0.06), transparent 34%),
+    linear-gradient(180deg, #ffffff, #f7f9f8) !important;
+  scrollbar-color: #cbd7d0 transparent !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-safety-card li svg {
+  color: #b03525 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page .pagination > button {
+  border-color: #dfe5e1 !important;
+  color: #0e3323 !important;
+  background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page .pagination > button:hover:not(:disabled):not(.is-active) {
+  border-color: #cbd7d0 !important;
+  color: #0e3323 !important;
+  background: #eef4f1 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page .pagination > button.is-active,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page .pagination > button[aria-current='page'] {
+  border-color: #0e3323 !important;
+  color: #ffffff !important;
+  background: #0e3323 !important;
+  box-shadow: 0 6px 16px rgb(14 51 35 / 0.16) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page :is(a, button, input, select, textarea):focus-visible {
+  outline-color: #0e3323 !important;
+}
+
+@media (max-width: 760px) {
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page {
+    background: #ffffff !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-market-hero {
+    border-color: #dfe5e1 !important;
+    background:
+      radial-gradient(circle at 8% 18%, rgb(176 53 37 / 0.07), transparent 26%),
+      linear-gradient(145deg, #ffffff, #eef4f1) !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell :is(
+    .jobs-market-search,
+    .jobs-employers-panel,
+    .jobs-featured-panel,
+    .jobs-results__main,
+    .jobs-safety-card,
+    .jobs-page .job-card
+  ) {
+    border-color: #dfe5e1 !important;
+    background: #ffffff !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-market-search > button,
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-results-controls__types button.is-active {
+    color: #ffffff !important;
+    background: #0e3323 !important;
+  }
+}
