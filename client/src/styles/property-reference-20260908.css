@@ -232,7 +232,7 @@
 .app-shell .properties-page .properties-featured-areas__grid > button:hover,
 .app-shell .properties-page .properties-featured-areas__grid > button.is-active {
   border-color: #cbd7d0 !important;
-  box-shadow: 0 10px 24px rgb(78 55 32 / 0.08) !important;
+  box-shadow: 0 10px 24px rgb(14 51 35 / 0.08) !important;
 }
 
 .app-shell .properties-page .properties-featured-areas__media {
@@ -401,12 +401,12 @@
   border-color: #dfe5e1 !important;
   border-radius: 11px !important;
   background: #fff !important;
-  box-shadow: 0 3px 12px rgb(36 30 23 / 0.025) !important;
+  box-shadow: 0 3px 12px rgb(14 51 35 / 0.025) !important;
 }
 
 .app-shell .properties-page .property-card:hover {
   border-color: #cbd7d0 !important;
-  box-shadow: 0 9px 24px rgb(73 52 30 / 0.07) !important;
+  box-shadow: 0 9px 24px rgb(14 51 35 / 0.07) !important;
 }
 
 .app-shell .properties-page .properties-grid.is-list .property-card {
