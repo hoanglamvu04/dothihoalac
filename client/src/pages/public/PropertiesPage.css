@@ -691,7 +691,7 @@
   flex-wrap: wrap;
   gap: 7px 12px;
   margin-top: 11px;
-  color: #536159;
+  color: #171a18;
   font-size: 0.64rem;
   font-weight: 650;
 }
@@ -708,7 +708,7 @@
   align-items: flex-start;
   gap: 5px;
   margin: 8px 0 0;
-  color: #79847d;
+  color: #171a18;
   font-size: 0.61rem;
   line-height: 1.4;
 }
@@ -720,7 +720,7 @@
   display: -webkit-box;
   margin: 8px 0 0;
   overflow: hidden;
-  color: #68736c;
+  color: #171a18;
   font-size: 0.62rem;
   line-height: 1.55;
   -webkit-box-orient: vertical;
@@ -733,7 +733,7 @@
   gap: 7px 10px;
   margin-top: auto;
   padding-top: 9px;
-  color: #79847d;
+  color: #171a18;
   font-size: 0.58rem;
 }
 .properties-page .property-card__footer > span {
