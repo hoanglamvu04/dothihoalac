@@ -39,6 +39,7 @@ import {
 
 import Seo from '../../components/common/Seo';
 import JobCard from '../../components/content/JobCard';
+import ContentImage from '../../components/content/ContentImage';
 import Pagination from '../../components/common/Pagination';
 import ErrorState from '../../components/common/ErrorState';
 import { LoadingBlock } from '../../components/common/Loading';
@@ -181,10 +182,16 @@ function buildCompanies(items) {
       companies.set(key, {
         name,
         count: 0,
+        media: item?.thumbnailMediaId || null,
       });
     }
 
-    companies.get(key).count += 1;
+    const company = companies.get(key);
+    company.count += 1;
+
+    if (!company.media && item?.thumbnailMediaId) {
+      company.media = item.thumbnailMediaId;
+    }
   });
 
   return [...companies.values()]
@@ -807,13 +814,30 @@ export default function JobsPage() {
                     <button
                       type="button"
                       key={company.name}
+                      aria-label={`Xem việc làm tại ${company.name}`}
                       onClick={() => {
                         setSearchInput(company.name);
                         commitSearch(company.name);
                       }}
                     >
-                      <span>{companyInitials(company.name)}</span>
-                      <strong>{company.name}</strong>
+                      <span className={`jobs-employer-avatar${company.media ? ' has-media' : ''}`}>
+                        <ContentImage
+                          media={company.media}
+                          alt={`${company.name} - nhà tuyển dụng`}
+                          className="jobs-employer-avatar__image"
+                          width={48}
+                          height={48}
+                          fallback={
+                            <span className="jobs-employer-avatar__fallback" aria-hidden="true">
+                              {companyInitials(company.name)}
+                            </span>
+                          }
+                        />
+                      </span>
+                      <span className="jobs-employer-card__copy">
+                        <strong>{company.name}</strong>
+                        <small>{company.count.toLocaleString('vi-VN')} vị trí đang tuyển</small>
+                      </span>
                     </button>
                   ))}
                 </div>
