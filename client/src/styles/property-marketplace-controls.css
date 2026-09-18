@@ -339,6 +339,25 @@ select[data-property-smart-enhanced='true'] {
   z-index: 1 !important;
 }
 
+/* Reserve real layout space for an opened hero select.
+   The menus are absolute popovers, so without this the type rail begins
+   immediately below the hero and visually overlaps the dropdown. */
+.app-shell .properties-page .properties-type-rail {
+  transition: margin-top 160ms ease !important;
+}
+
+.app-shell .properties-page .properties-hero:has(.property-smart-select.is-open)
+  + .properties-type-rail {
+  margin-top: 350px !important;
+}
+
+.app-shell .properties-page .properties-hero:has(
+    > .properties-hero__finder > label:first-child .property-smart-select.is-open
+  )
+  + .properties-type-rail {
+  margin-top: 380px !important;
+}
+
 .properties-hero__finder .property-smart-select__trigger {
   height: 34px;
   font-size: 0.8rem;
