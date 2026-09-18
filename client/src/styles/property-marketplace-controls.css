@@ -303,18 +303,40 @@ select[data-property-smart-enhanced='true'] {
 }
 
 /* Hero filters */
+.app-shell .properties-page .properties-page__container {
+  overflow: visible !important;
+}
+
 .app-shell .properties-page .properties-hero {
+  position: relative !important;
+  z-index: 40 !important;
   overflow: visible !important;
 }
 
 .app-shell .properties-page .properties-hero__finder {
-  z-index: 80 !important;
+  position: relative !important;
+  z-index: 60 !important;
   overflow: visible !important;
 }
 
 .app-shell .properties-page .properties-hero__finder > label {
   position: relative !important;
+  z-index: 1 !important;
   overflow: visible !important;
+}
+
+.app-shell .properties-page .properties-hero__finder > label:has(.property-smart-select.is-open) {
+  z-index: 80 !important;
+}
+
+.app-shell .properties-page .properties-type-rail {
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+.app-shell .properties-page .properties-featured-areas {
+  position: relative !important;
+  z-index: 1 !important;
 }
 
 .properties-hero__finder .property-smart-select__trigger {
