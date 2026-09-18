@@ -589,43 +589,100 @@ body:has(.dthl-header.is-hidden) .jobs-page {
 
 .jobs-employers-panel__companies button {
   display: grid;
-  place-items: center;
+  grid-template-columns: 50px minmax(0, 1fr);
+  align-items: center;
   min-width: 0;
-  min-height: 72px;
-  padding: 8px;
-  gap: 5px;
-  border: 1px solid #e5ebe7;
-  border-radius: 10px;
+  min-height: 82px;
+  padding: 11px;
+  gap: 11px;
+  border: 1px solid #e1e9e4;
+  border-radius: 12px;
   color: #405149;
-  background: #fbfcfb;
+  background:
+    linear-gradient(180deg, #ffffff 0%, #fbfdfc 100%);
+  text-align: left;
+  box-shadow: 0 2px 8px rgb(13 70 39 / 0.035);
   cursor: pointer;
-  transition: border-color 150ms ease, background 150ms ease, transform 150ms ease;
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    transform 150ms ease,
+    background-color 150ms ease;
 }
 
 .jobs-employers-panel__companies button:hover {
-  border-color: #b9d8c5;
-  background: #f4faf6;
+  border-color: #a9cdb8;
+  background: #ffffff;
+  box-shadow: 0 8px 20px rgb(13 70 39 / 0.08);
   transform: translateY(-1px);
 }
 
-.jobs-employers-panel__companies button > span {
+.jobs-employer-avatar {
+  position: relative;
   display: grid;
+  width: 48px;
+  height: 48px;
   place-items: center;
-  width: 34px;
-  height: 34px;
-  border-radius: 9px;
-  color: #0d7b3f;
-  background: #e7f5ec;
-  font-size: 0.62rem;
+  overflow: hidden;
+  border: 1px solid #d8e5dd;
+  border-radius: 13px;
+  background:
+    linear-gradient(145deg, #eef7f1, #e2efe7);
+  box-shadow:
+    inset 0 0 0 1px rgb(255 255 255 / 0.75),
+    0 3px 10px rgb(13 70 39 / 0.05);
+}
+
+.jobs-employer-avatar.has-media {
+  background: #ffffff;
+}
+
+.jobs-employer-avatar__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.jobs-employer-avatar__fallback {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  place-items: center;
+  color: #ffffff;
+  background:
+    radial-gradient(circle at 28% 22%, rgb(255 255 255 / 0.18), transparent 34%),
+    linear-gradient(145deg, #166c43, #0c4c31);
+  font-size: 0.68rem;
   font-weight: 850;
+  letter-spacing: 0.03em;
+}
+
+.jobs-employer-card__copy {
+  display: block;
+  min-width: 0;
 }
 
 .jobs-employers-panel__companies strong {
-  max-width: 100%;
+  display: -webkit-box;
   overflow: hidden;
-  color: #536158;
-  font-size: 0.56rem;
-  font-weight: 690;
+  max-width: 100%;
+  color: #173a29;
+  font-size: 0.68rem;
+  font-weight: 780;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.jobs-employer-card__copy small {
+  display: block;
+  margin-top: 4px;
+  overflow: hidden;
+  color: #849087;
+  font-size: 0.55rem;
+  font-weight: 620;
+  line-height: 1.25;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
