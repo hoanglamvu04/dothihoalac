@@ -440,10 +440,23 @@
   font-size: 15px !important;
 }
 
-.app-shell .properties-page .property-card__facts,
-.app-shell .properties-page .property-card__location,
+.app-shell .properties-page .property-card__facts {
+  color: #0e3323 !important;
+  font-weight: 750 !important;
+}
+
+.app-shell .properties-page .property-card__location {
+  color: #0e3323 !important;
+  font-weight: 800 !important;
+}
+
 .app-shell .properties-page .property-card__footer {
   color: #171a18 !important;
+}
+
+.app-shell .properties-page .property-card__footer-meta > span {
+  color: #b03525 !important;
+  font-weight: 700 !important;
 }
 
 .app-shell .properties-page .property-card__facts svg,
