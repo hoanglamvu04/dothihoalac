@@ -250,8 +250,9 @@
 
 .app-shell .properties-page .properties-featured-areas__grid strong {
   margin-top: 8px !important;
-  color: #222a26 !important;
-  font-size: 12px !important;
+  color: #0e3323 !important;
+  font-size: 15px !important;
+  font-weight: 820 !important;
 }
 
 .app-shell .properties-page .properties-featured-areas__grid small {
@@ -504,15 +505,15 @@
 }
 
 .app-shell .properties-page .properties-sidebar-card {
-  border-color: #e7e2db !important;
+  border-color: #dfe5e1 !important;
   border-radius: 11px !important;
   background: #fff !important;
-  box-shadow: 0 6px 20px rgb(53 42 30 / 0.045) !important;
+  box-shadow: 0 6px 20px rgb(14 51 35 / 0.045) !important;
 }
 
 .app-shell .properties-page .properties-sidebar-card > header {
-  min-height: 48px !important;
-  padding-inline: 13px !important;
+  min-height: 52px !important;
+  padding-inline: 14px !important;
   border-bottom-color: #dfe5e1 !important;
 }
 
@@ -544,14 +545,19 @@
   border-color: #fff !important;
   color: #fff !important;
   background: #0e3323 !important;
-  box-shadow: 0 4px 10px rgb(112 75 37 / 0.20) !important;
+  box-shadow: 0 4px 10px rgb(14 51 35 / 0.22) !important;
 }
 
 .app-shell .properties-page .properties-sidebar-map__areas button {
-  color: #656d68 !important;
+  min-height: 48px !important;
+  color: #171a18 !important;
+  font-size: 12.5px !important;
+  font-weight: 650 !important;
+  line-height: 1.35 !important;
 }
 
 .app-shell .properties-page .properties-sidebar-map__areas button svg {
+  flex: 0 0 auto !important;
   color: #b03525 !important;
 }
 
@@ -568,10 +574,10 @@
 
 .app-shell .properties-page .properties-market-card dl > div {
   display: grid !important;
-  min-height: 64px !important;
+  min-height: 72px !important;
   place-items: center !important;
   align-content: center !important;
-  padding: 6px !important;
+  padding: 8px !important;
   border: 1px solid #dfe5e1 !important;
   border-radius: 8px !important;
   background: #f7f9f8 !important;
@@ -579,19 +585,24 @@
 }
 
 .app-shell .properties-page .properties-market-card dt {
-  color: #8b8f8c !important;
-  font-size: 9px !important;
+  color: #4f5c55 !important;
+  font-size: 11.5px !important;
+  font-weight: 650 !important;
 }
 
 .app-shell .properties-page .properties-market-card dd {
   color: #b03525 !important;
-  font-size: 12px !important;
+  font-size: 15px !important;
+  font-weight: 820 !important;
 }
 
 .app-shell .properties-page .properties-market-card > button {
+  min-height: 42px !important;
   border-color: #0e3323 !important;
   color: #0e3323 !important;
   background: #ffffff !important;
+  font-size: 12.5px !important;
+  font-weight: 780 !important;
 }
 
 .app-shell .properties-page .properties-market-card > button:hover {
@@ -605,7 +616,7 @@
   border-color: #dfe5e1 !important;
   color: #171a18 !important;
   background:
-    radial-gradient(circle at 96% 92%, rgb(186 137 76 / 0.18), transparent 34%),
+    radial-gradient(circle at 96% 92%, rgb(176 53 37 / 0.09), transparent 34%),
     linear-gradient(145deg, #f7f9f8, #eef4f1) !important;
 }
 
@@ -615,15 +626,19 @@
 
 .app-shell .properties-page .properties-post-card h3 {
   color: #0e3323 !important;
+  font-size: 16px !important;
 }
 
 .app-shell .properties-page .properties-post-card p {
-  color: #4f5c55 !important;
+  color: #171a18 !important;
+  font-size: 12.5px !important;
 }
 
 .app-shell .properties-page .properties-post-card a {
   color: #fff !important;
-  background: linear-gradient(135deg, #b03525, #8f2d21) !important;
+  background: #b03525 !important;
+  font-size: 12.5px !important;
+  font-weight: 800 !important;
 }
 
 /* ---------------------------------------------------------
