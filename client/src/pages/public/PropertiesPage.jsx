@@ -884,43 +884,8 @@ export default function PropertiesPage() {
         ) : null}
 
         <main className="properties-market-shell" ref={resultsRef} id="property-results">
-          <section className="properties-toolbar" aria-label="Bộ lọc nhanh">
+          <section className="properties-toolbar" aria-label="Bộ lọc bổ sung">
             <div className="properties-toolbar__filters">
-              <label>
-                <MapPin size={16} />
-                <select value={currentArea} onChange={(event) => update('area', event.target.value)}>
-                  <option value="">Khu vực</option>
-                  {areas.map((area) => (
-                    <option key={area._id || area.slug} value={taxonomyUrlValue(area)}>{area.name}</option>
-                  ))}
-                </select>
-                <ChevronDown size={14} />
-              </label>
-
-              <label>
-                <WalletCards size={16} />
-                <select value={priceSelectValue} onChange={(event) => handlePresetSelect('price', event.target.value)}>
-                  <option value="">Mức giá</option>
-                  {PRICE_PRESETS.map((preset) => (
-                    <option key={preset.label} value={presetValue(preset)}>{preset.label}</option>
-                  ))}
-                  {priceRangeLabel && !pricePreset ? <option value="custom">Tùy chỉnh</option> : null}
-                </select>
-                <ChevronDown size={14} />
-              </label>
-
-              <label>
-                <Ruler size={16} />
-                <select value={areaSelectValue} onChange={(event) => handlePresetSelect('area', event.target.value)}>
-                  <option value="">Diện tích</option>
-                  {AREA_PRESETS.map((preset) => (
-                    <option key={preset.label} value={presetValue(preset)}>{preset.label}</option>
-                  ))}
-                  {areaRangeLabel && !areaPreset ? <option value="custom">Tùy chỉnh</option> : null}
-                </select>
-                <ChevronDown size={14} />
-              </label>
-
               <label>
                 <ShieldCheck size={16} />
                 <select value={currentLegalStatus} onChange={(event) => update('legalStatus', event.target.value)}>
@@ -937,7 +902,7 @@ export default function PropertiesPage() {
                 setFiltersOpen(true);
               }}>
                 <SlidersHorizontal size={16} />
-                Bộ lọc
+                Bộ lọc nâng cao
                 {filterCount ? <b>{filterCount}</b> : null}
               </button>
             </div>
