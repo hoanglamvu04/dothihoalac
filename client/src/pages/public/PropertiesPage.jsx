@@ -194,7 +194,7 @@ function getTransactionIcon(value) {
 
 export default function PropertiesPage() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const { areas = [] } = useTaxonomy();
+  const { areas = [], reload: reloadTaxonomy } = useTaxonomy();
   const resultsRef = useRef(null);
 
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -215,6 +215,12 @@ export default function PropertiesPage() {
     maxArea: searchParams.get('maxArea') || '',
   });
   const [rangeError, setRangeError] = useState('');
+
+  useEffect(() => {
+    // Luon dong bo khu vuc moi nhat tu backend khi mo trang BDS thay vi chi
+    // dung taxonomy cache trong sessionStorage.
+    void reloadTaxonomy({ fresh: true });
+  }, [reloadTaxonomy]);
 
   const searchKey = searchParams.toString();
 
