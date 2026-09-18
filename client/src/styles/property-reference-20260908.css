@@ -443,7 +443,7 @@
 .app-shell .properties-page .property-card__facts,
 .app-shell .properties-page .property-card__location,
 .app-shell .properties-page .property-card__footer {
-  color: #747c77 !important;
+  color: #171a18 !important;
 }
 
 .app-shell .properties-page .property-card__facts svg,
@@ -453,7 +453,7 @@
 }
 
 .app-shell .properties-page .property-card__summary {
-  color: #747b77 !important;
+  color: #171a18 !important;
   font-size: 10.5px !important;
   -webkit-line-clamp: 1 !important;
 }
