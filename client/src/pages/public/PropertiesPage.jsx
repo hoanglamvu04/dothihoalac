@@ -1,10 +1,12 @@
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
 } from 'react';
+import { createPortal } from 'react-dom';
 
 import { Link, useSearchParams } from 'react-router-dom';
 import {
@@ -159,9 +161,12 @@ function PropertySmartSelect({
   searchable = false,
 }) {
   const rootRef = useRef(null);
+  const triggerRef = useRef(null);
+  const menuRef = useRef(null);
   const searchRef = useRef(null);
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState('');
+  const [menuPosition, setMenuPosition] = useState(null);
 
   const selected = options.find((option) => String(option.value) === String(value));
   const normalizedQuery = query.trim().toLocaleLowerCase('vi-VN');
@@ -170,20 +175,87 @@ function PropertySmartSelect({
         String(option.label || '').toLocaleLowerCase('vi-VN').includes(normalizedQuery))
     : options;
 
+  const updateMenuPosition = useCallback(() => {
+    const trigger = triggerRef.current;
+    if (!trigger || typeof window === 'undefined') return;
+
+    const rect = trigger.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const horizontalGap = 12;
+    const verticalGap = 10;
+    const desiredWidth = Math.max(290, rect.width + 54);
+    const width = Math.min(360, desiredWidth, viewportWidth - horizontalGap * 2);
+    const preferredLeft = rect.left - 42;
+    const left = Math.min(
+      Math.max(horizontalGap, preferredLeft),
+      Math.max(horizontalGap, viewportWidth - width - horizontalGap),
+    );
+
+    const spaceBelow = viewportHeight - rect.bottom - verticalGap - horizontalGap;
+    const spaceAbove = rect.top - verticalGap - horizontalGap;
+    const openUpward = spaceBelow < 220 && spaceAbove > spaceBelow;
+    const availableHeight = Math.max(
+      150,
+      Math.min(360, openUpward ? spaceAbove : spaceBelow),
+    );
+    const top = openUpward
+      ? Math.max(horizontalGap, rect.top - availableHeight - verticalGap)
+      : rect.bottom + verticalGap;
+    const optionsMaxHeight = Math.max(
+      110,
+      Math.min(286, availableHeight - (searchable ? 66 : 18)),
+    );
+
+    setMenuPosition({
+      position: 'fixed',
+      top,
+      left,
+      width,
+      maxHeight: availableHeight,
+      '--property-select-options-max-height': `${optionsMaxHeight}px`,
+    });
+  }, [searchable]);
+
+  useLayoutEffect(() => {
+    if (!open) {
+      setMenuPosition(null);
+      return undefined;
+    }
+
+    updateMenuPosition();
+
+    const handleViewportChange = () => updateMenuPosition();
+    window.addEventListener('resize', handleViewportChange);
+    window.addEventListener('scroll', handleViewportChange, true);
+
+    return () => {
+      window.removeEventListener('resize', handleViewportChange);
+      window.removeEventListener('scroll', handleViewportChange, true);
+    };
+  }, [open, updateMenuPosition]);
+
   useEffect(() => {
     if (!open) return undefined;
 
     const handlePointerDown = (event) => {
-      if (!rootRef.current?.contains(event.target)) {
-        setOpen(false);
-        setQuery('');
+      const target = event.target;
+      if (
+        rootRef.current?.contains(target) ||
+        menuRef.current?.contains(target)
+      ) {
+        return;
       }
+
+      setOpen(false);
+      setQuery('');
     };
 
     const handleKeyDown = (event) => {
       if (event.key === 'Escape') {
         setOpen(false);
         setQuery('');
+        triggerRef.current?.focus();
       }
     };
 
@@ -202,69 +274,98 @@ function PropertySmartSelect({
     }
   }, [open, searchable]);
 
+  const menu =
+    open && menuPosition && typeof document !== 'undefined'
+      ? createPortal(
+          <div
+            ref={menuRef}
+            className="property-smart-select__menu property-smart-select__menu--portal"
+            style={menuPosition}
+          >
+            {searchable ? (
+              <label className="property-smart-select__search">
+                <Search
+                  className="property-smart-select__search-icon"
+                  size={17}
+                  aria-hidden="true"
+                />
+                <input
+                  ref={searchRef}
+                  className="property-smart-select__search-input"
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  placeholder="Tìm khu vực..."
+                  aria-label="Tìm trong danh sách khu vực"
+                />
+              </label>
+            ) : null}
+
+            <div
+              className="property-smart-select__options"
+              role="listbox"
+              aria-label={ariaLabel}
+            >
+              {visibleOptions.length ? (
+                visibleOptions.map((option) => {
+                  const isSelected = String(option.value) === String(value);
+
+                  return (
+                    <button
+                      type="button"
+                      role="option"
+                      aria-selected={isSelected}
+                      className={`property-smart-select__option${isSelected ? ' is-selected' : ''}`}
+                      key={`${option.value || 'all'}-${option.label}`}
+                      onClick={() => {
+                        onChange(option.value);
+                        setOpen(false);
+                        setQuery('');
+                        triggerRef.current?.focus();
+                      }}
+                    >
+                      <span>{option.label}</span>
+                      {isSelected ? <Check size={15} aria-hidden="true" /> : null}
+                    </button>
+                  );
+                })
+              ) : (
+                <div className="property-smart-select__empty">
+                  Không tìm thấy khu vực phù hợp
+                </div>
+              )}
+            </div>
+          </div>,
+          document.body,
+        )
+      : null;
+
   return (
-    <div ref={rootRef} className={`property-smart-select${open ? ' is-open' : ''}`}>
-      <button
-        type="button"
-        className="property-smart-select__trigger"
-        aria-label={ariaLabel}
-        aria-haspopup="listbox"
-        aria-expanded={open}
-        onClick={() => {
-          setOpen((current) => !current);
-          if (open) setQuery('');
-        }}
-      >
-        <span className="property-smart-select__value">
-          {selected?.label || placeholder}
-        </span>
-        <ChevronDown className="property-smart-select__chevron" size={17} aria-hidden="true" />
-      </button>
-
-      {open ? (
-        <div className="property-smart-select__menu">
-          {searchable ? (
-            <label className="property-smart-select__search">
-              <Search className="property-smart-select__search-icon" size={17} aria-hidden="true" />
-              <input
-                ref={searchRef}
-                className="property-smart-select__search-input"
-                value={query}
-                onChange={(event) => setQuery(event.target.value)}
-                placeholder="Tìm khu vực..."
-                aria-label="Tìm trong danh sách khu vực"
-              />
-            </label>
-          ) : null}
-
-          <div className="property-smart-select__options" role="listbox" aria-label={ariaLabel}>
-            {visibleOptions.length ? visibleOptions.map((option) => {
-              const isSelected = String(option.value) === String(value);
-
-              return (
-                <button
-                  type="button"
-                  role="option"
-                  aria-selected={isSelected}
-                  className={`property-smart-select__option${isSelected ? ' is-selected' : ''}`}
-                  key={`${option.value || 'all'}-${option.label}`}
-                  onClick={() => {
-                    onChange(option.value);
-                    setOpen(false);
-                    setQuery('');
-                  }}
-                >
-                  <span>{option.label}</span>
-                  {isSelected ? <Check size={15} aria-hidden="true" /> : null}
-                </button>
-              );
-            }) : (
-              <div className="property-smart-select__empty">Không tìm thấy khu vực phù hợp</div>
-            )}
-          </div>
-        </div>
-      ) : null}
-    </div>
+    <>
+      <div ref={rootRef} className={`property-smart-select${open ? ' is-open' : ''}`}>
+        <button
+          ref={triggerRef}
+          type="button"
+          className="property-smart-select__trigger"
+          aria-label={ariaLabel}
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          onClick={() => {
+            setOpen((current) => !current);
+            if (open) setQuery('');
+          }}
+        >
+          <span className="property-smart-select__value">
+            {selected?.label || placeholder}
+          </span>
+          <ChevronDown
+            className="property-smart-select__chevron"
+            size={17}
+            aria-hidden="true"
+          />
+        </button>
+      </div>
+      {menu}
+    </>
   );
 }
 
