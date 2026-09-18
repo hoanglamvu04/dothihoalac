@@ -825,8 +825,8 @@ export default function JobsPage() {
                           media={company.media}
                           alt={`${company.name} - nhà tuyển dụng`}
                           className="jobs-employer-avatar__image"
-                          width={48}
-                          height={48}
+                          width={46}
+                          height={46}
                           fallback={
                             <span className="jobs-employer-avatar__fallback" aria-hidden="true">
                               {companyInitials(company.name)}
@@ -834,10 +834,7 @@ export default function JobsPage() {
                           }
                         />
                       </span>
-                      <span className="jobs-employer-card__copy">
-                        <strong>{company.name}</strong>
-                        <small>{company.count.toLocaleString('vi-VN')} vị trí đang tuyển</small>
-                      </span>
+                      <strong>{company.name}</strong>
                     </button>
                   ))}
                 </div>
