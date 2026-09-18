@@ -1498,3 +1498,62 @@
   .properties-modal-range-inputs > b { display: none; }
   .properties-filter-modal__footer button { flex: 1 1 0; }
 }
+
+
+/* =========================================================
+   POLISHED CUSTOM FILTER FIELDS
+========================================================= */
+.properties-toolbar__select {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  min-height: 42px;
+  min-width: 138px;
+  padding: 0 10px 0 11px;
+  gap: 7px;
+  border: 1px solid var(--property-border);
+  border-radius: 10px;
+  color: #435048;
+  background: var(--property-surface);
+  box-shadow: 0 1px 2px rgb(16 51 35 / 0.025);
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    background-color 150ms ease;
+}
+
+.properties-toolbar__select:hover,
+.properties-toolbar__select:focus-within {
+  border-color: #9bb8a8;
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgb(16 51 35 / 0.055);
+}
+
+.properties-toolbar__select > svg {
+  flex: 0 0 auto;
+  color: var(--property-red);
+}
+
+.properties-filter-field {
+  min-width: 0;
+}
+
+.properties-filter-field > span {
+  display: block;
+  margin: 0 0 7px 1px;
+  color: #647169;
+  font-size: 0.64rem;
+  font-weight: 760;
+  letter-spacing: 0.01em;
+}
+
+.properties-filter-field .property-smart-select {
+  width: 100%;
+}
+
+@media (max-width: 760px) {
+  .properties-toolbar__select {
+    min-height: 38px;
+    min-width: 124px;
+  }
+}
