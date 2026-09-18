@@ -5,7 +5,8 @@
 ========================================================= */
 
 .app-shell .properties-page {
-  --property-green: #b03525 !important;
+  --property-green: #0e3323 !important;
+  --property-red: #b03525 !important;
   --property-green-strong: #0e3323 !important;
   --property-green-soft: #f7f9f8 !important;
   --property-gold: #b03525 !important;
@@ -38,7 +39,7 @@
   overflow: hidden !important;
   border: 0 !important;
   background:
-    radial-gradient(circle at 18% 12%, rgb(181 139 85 / 0.10), transparent 30%),
+    radial-gradient(circle at 18% 12%, rgb(176 53 37 / 0.07), transparent 30%),
     linear-gradient(106deg, #fff 0 48%, #eef4f1 48% 100%) !important;
 }
 
@@ -57,7 +58,7 @@
       rgb(255 255 255 / 0.76) 53%,
       rgb(255 255 255 / 0.20) 75%,
       rgb(255 255 255 / 0.05) 100%),
-    linear-gradient(0deg, rgb(117 77 37 / 0.06), transparent 46%) !important;
+    linear-gradient(0deg, rgb(14 51 35 / 0.06), transparent 46%) !important;
 }
 
 .app-shell .properties-page .properties-hero__content {
@@ -103,7 +104,7 @@
   border: 1px solid #dfe5e1 !important;
   border-radius: 13px !important;
   background: rgb(255 255 255 / 0.97) !important;
-  box-shadow: 0 14px 36px rgb(61 43 24 / 0.12) !important;
+  box-shadow: 0 14px 36px rgb(14 51 35 / 0.12) !important;
   backdrop-filter: blur(12px);
 }
 
@@ -136,14 +137,14 @@
   border: 1px solid #0e3323 !important;
   border-radius: 9px !important;
   color: #fff !important;
-  background: linear-gradient(135deg, #b03525, #8f2d21) !important;
-  box-shadow: 0 8px 18px rgb(126 82 37 / 0.18) !important;
+  background: #0e3323 !important;
+  box-shadow: 0 8px 18px rgb(14 51 35 / 0.18) !important;
   font-size: 12px !important;
 }
 
 .app-shell .properties-page .properties-hero__finder > button:hover {
   background: #0e3323 !important;
-  box-shadow: 0 10px 22px rgb(126 82 37 / 0.22) !important;
+  box-shadow: 0 10px 22px rgb(14 51 35 / 0.22) !important;
 }
 
 /* ---------------------------------------------------------
@@ -163,7 +164,7 @@
   border-radius: 9px !important;
   color: #59635d !important;
   background: #fff !important;
-  box-shadow: 0 2px 8px rgb(34 28 22 / 0.025) !important;
+  box-shadow: 0 2px 8px rgb(14 51 35 / 0.025) !important;
   font-size: 11px !important;
   font-weight: 730 !important;
 }
@@ -179,10 +180,10 @@
 }
 
 .app-shell .properties-page .properties-type-rail button.is-active {
-  border-color: #b03525 !important;
+  border-color: #0e3323 !important;
   color: #fff !important;
-  background: #b03525 !important;
-  box-shadow: 0 6px 14px rgb(126 82 37 / 0.16) !important;
+  background: #0e3323 !important;
+  box-shadow: 0 6px 14px rgb(14 51 35 / 0.16) !important;
 }
 
 .app-shell .properties-page .properties-type-rail button.is-active svg {
@@ -226,7 +227,7 @@
   padding: 6px 6px 10px !important;
   border-color: #dfe5e1 !important;
   border-radius: 11px !important;
-  box-shadow: 0 5px 14px rgb(46 37 27 / 0.035) !important;
+  box-shadow: 0 5px 14px rgb(14 51 35 / 0.035) !important;
 }
 
 .app-shell .properties-page .properties-featured-areas__grid > button:hover,
