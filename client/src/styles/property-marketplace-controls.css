@@ -476,3 +476,121 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-pagination 
     border-radius: 10px !important;
   }
 }
+
+
+/* =========================================================
+   FILTER SELECT VISUAL UPGRADE
+   Replaces browser-native dropdown appearance with the shared smart select.
+========================================================= */
+.properties-toolbar__select .property-smart-select {
+  min-width: 96px;
+}
+
+.properties-toolbar__select .property-smart-select__trigger {
+  min-height: 40px;
+  padding: 0;
+  gap: 10px;
+  color: #25332b;
+  font-size: 0.73rem;
+  font-weight: 760;
+}
+
+.properties-toolbar__select .property-smart-select__chevron {
+  width: 17px;
+  height: 17px;
+}
+
+.properties-filter-modal .property-smart-select__trigger {
+  min-height: 48px;
+  padding: 0 13px;
+  gap: 12px;
+  border: 1px solid #d7e2dc;
+  border-radius: 12px;
+  color: #27362e;
+  background: #ffffff;
+  font-size: 0.78rem;
+  font-weight: 720;
+  box-shadow: 0 1px 2px rgb(14 51 35 / 0.025);
+  transition:
+    border-color 150ms ease,
+    box-shadow 150ms ease,
+    background-color 150ms ease,
+    transform 150ms ease;
+}
+
+.properties-filter-modal .property-smart-select__trigger:hover {
+  border-color: #a9c1b4;
+  background: #fbfdfc;
+}
+
+.properties-filter-modal .property-smart-select.is-open .property-smart-select__trigger,
+.properties-filter-modal .property-smart-select__trigger:focus-visible {
+  border-color: #0e3323;
+  background: #ffffff;
+  box-shadow: 0 0 0 4px rgb(14 51 35 / 0.08);
+}
+
+.properties-filter-modal .property-smart-select__chevron {
+  width: 20px;
+  height: 20px;
+  color: #0e3323;
+}
+
+.property-smart-select__menu {
+  padding: 9px;
+  border-color: #d4dfd9;
+  border-radius: 16px;
+  box-shadow:
+    0 24px 60px rgb(14 51 35 / 0.16),
+    0 6px 18px rgb(14 51 35 / 0.08);
+}
+
+.property-smart-select__search {
+  min-height: 44px;
+  margin-bottom: 8px;
+  padding: 0 12px;
+  border-radius: 11px;
+  background: #f5f8f6;
+}
+
+.property-smart-select__search-input {
+  height: 40px;
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.property-smart-select__option {
+  min-height: 46px;
+  padding: 0 11px 0 13px;
+  border-radius: 10px;
+  color: #25342c;
+  font-size: 0.78rem;
+  font-weight: 680;
+}
+
+.property-smart-select__option + .property-smart-select__option {
+  margin-top: 2px;
+}
+
+.property-smart-select__option:hover:not(:disabled) {
+  color: #0e3323;
+  background: #edf4f0;
+}
+
+.property-smart-select__option.is-selected {
+  color: #ffffff;
+  background: #0e3323;
+  box-shadow: 0 5px 12px rgb(14 51 35 / 0.12);
+}
+
+.property-smart-select__empty {
+  padding: 17px 10px 13px;
+  font-size: 0.74rem;
+}
+
+@media (max-width: 760px) {
+  .properties-filter-modal .property-smart-select__trigger {
+    min-height: 46px;
+    font-size: 0.74rem;
+  }
+}
