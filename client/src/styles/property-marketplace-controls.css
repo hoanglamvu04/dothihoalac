@@ -22,6 +22,9 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-featured-ar
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-hero__finder > label > span {
   color: #4f5c55 !important;
+  font-size: 1rem !important;
+  font-weight: 700 !important;
+  line-height: 1.25;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-hero__finder > label > div > svg:first-child,
@@ -324,8 +327,9 @@ select[data-property-smart-enhanced='true'] {
 }
 
 .properties-hero__finder .property-smart-select__trigger {
-  height: 34px;
-  font-size: 0.8rem;
+  height: 40px;
+  font-size: 1rem;
+  font-weight: 700;
 }
 
 .properties-hero__finder [data-property-smart-select-host='true']:focus-within > span,
