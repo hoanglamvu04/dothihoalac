@@ -891,43 +891,198 @@
   color: var(--property-green);
   background: var(--property-green-soft);
 }
-.properties-market-card dl {
-  display: grid;
-  margin: 0;
-  padding: 8px 14px 4px;
+.properties-market-card {
+  position: relative;
+  overflow: hidden;
+  border-color: #d5e2da;
+  border-radius: 16px;
+  background:
+    radial-gradient(circle at 92% 8%, rgb(178 58 50 / 0.06), transparent 26%),
+    linear-gradient(180deg, #ffffff 0%, #fbfdfc 100%);
+  box-shadow:
+    0 14px 34px rgb(16 51 35 / 0.07),
+    0 2px 8px rgb(16 51 35 / 0.035);
 }
-.properties-market-card dl > div {
-  display: flex;
-  align-items: center;
+
+.properties-market-card::before {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  content: '';
+  background: linear-gradient(90deg, var(--property-red), var(--property-green));
+}
+
+.properties-market-card__header {
   justify-content: space-between;
-  min-height: 38px;
-  border-bottom: 1px dashed var(--property-border);
+  min-height: 76px !important;
+  padding: 14px 16px 12px !important;
+  border-bottom: 0 !important;
+  background: transparent;
 }
-.properties-market-card dt {
-  color: var(--property-muted);
-  font-size: 0.62rem;
+
+.properties-market-card__heading {
+  display: flex !important;
+  align-items: center;
+  gap: 10px !important;
 }
-.properties-market-card dd {
-  margin: 0;
-  color: var(--property-green);
-  font-size: 0.64rem;
+
+.properties-market-card__trend {
+  display: grid;
+  width: 36px;
+  height: 36px;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid #efd4cf;
+  border-radius: 11px;
+  color: var(--property-red);
+  background: #fff6f4;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.65);
+}
+
+.properties-market-card__heading > div {
+  min-width: 0;
+}
+
+.properties-market-card__eyebrow {
+  display: block;
+  margin-bottom: 2px;
+  color: var(--property-red);
+  font-size: 0.56rem;
   font-weight: 820;
+  letter-spacing: 0.07em;
+  line-height: 1.2;
+  text-transform: uppercase;
 }
-.properties-market-card > button {
+
+.properties-market-card .properties-market-card__heading h3 {
+  color: var(--property-ink);
+  font-size: 0.94rem;
+  font-weight: 850;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+}
+
+.properties-market-card__badge {
+  display: inline-grid;
+  min-width: 38px;
+  height: 25px;
+  place-items: center;
+  padding: 0 8px;
+  border: 1px solid #d8e5de;
+  border-radius: 999px;
+  color: var(--property-green);
+  background: #f2f7f4;
+  font-size: 0.54rem;
+  font-weight: 820;
+  letter-spacing: 0.04em;
+}
+
+.properties-market-card__intro {
+  margin: -1px 16px 12px;
+  color: #6f7b73;
+  font-size: 0.61rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.properties-market-card__stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+  padding: 0 14px;
+  gap: 8px;
+}
+
+.properties-market-card__stats > div {
+  display: grid;
+  min-width: 0;
+  min-height: 94px;
+  align-content: start;
+  padding: 11px 10px 10px;
+  gap: 8px;
+  border: 1px solid #dce7e1;
+  border-radius: 12px;
+  background:
+    linear-gradient(180deg, #fbfdfc 0%, #f5f9f6 100%);
+  transition:
+    transform 150ms ease,
+    border-color 150ms ease,
+    box-shadow 150ms ease;
+}
+
+.properties-market-card__stats > div:hover {
+  border-color: #b7cdbf;
+  box-shadow: 0 8px 18px rgb(16 51 35 / 0.07);
+  transform: translateY(-1px);
+}
+
+.properties-market-card__stat-icon {
+  display: grid;
+  width: 29px;
+  height: 29px;
+  place-items: center;
+  border-radius: 9px;
+  color: var(--property-green);
+  background: #eaf3ee;
+}
+
+.properties-market-card__stats dt {
+  overflow: hidden;
+  color: #6e7b73;
+  font-size: 0.58rem;
+  font-weight: 720;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.properties-market-card__stats dd {
+  margin: 4px 0 0;
+  color: var(--property-red);
+  font-size: 0.92rem;
+  font-weight: 860;
+  line-height: 1;
+}
+
+.properties-market-card__stats dd small {
+  font-size: 0.56rem;
+  font-weight: 760;
+}
+
+.properties-market-card__refresh {
   display: flex;
   align-items: center;
   justify-content: center;
   width: calc(100% - 28px);
-  min-height: 36px;
-  margin: 9px 14px 13px;
-  gap: 6px;
-  border: 1px solid #c8ddd1;
-  border-radius: 7px;
-  color: var(--property-green);
-  background: var(--property-surface);
-  font-size: 0.62rem;
-  font-weight: 750;
+  min-height: 42px;
+  margin: 13px 14px 14px;
+  gap: 7px;
+  border: 1px solid var(--property-green);
+  border-radius: 10px;
+  color: #ffffff;
+  background: var(--property-green);
+  box-shadow: 0 6px 14px rgb(16 51 35 / 0.14);
+  font-size: 0.64rem;
+  font-weight: 800;
+  transition:
+    transform 150ms ease,
+    box-shadow 150ms ease,
+    background-color 150ms ease;
 }
+
+.properties-market-card__refresh:hover:not(:disabled) {
+  background: var(--property-green-strong);
+  box-shadow: 0 8px 18px rgb(16 51 35 / 0.18);
+  transform: translateY(-1px);
+}
+
+.properties-market-card__refresh:disabled {
+  cursor: wait;
+  opacity: 0.62;
+}
+
 .properties-post-card {
   position: relative;
   min-height: 205px;
