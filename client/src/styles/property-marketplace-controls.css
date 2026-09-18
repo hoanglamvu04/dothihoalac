@@ -189,6 +189,14 @@ select[data-property-smart-enhanced='true'] {
   animation: propertySelectIn 140ms ease-out;
 }
 
+.property-smart-select__menu--portal {
+  position: fixed !important;
+  z-index: 2147483000 !important;
+  box-sizing: border-box;
+  margin: 0 !important;
+  transform-origin: top left;
+}
+
 @keyframes propertySelectIn {
   from {
     opacity: 0;
@@ -248,7 +256,7 @@ select[data-property-smart-enhanced='true'] {
 
 .property-smart-select__options {
   display: grid;
-  max-height: 286px;
+  max-height: var(--property-select-options-max-height, 286px);
   overflow-y: auto;
   overscroll-behavior: contain;
   scrollbar-color: #b7cbbf transparent;
@@ -309,53 +317,10 @@ select[data-property-smart-enhanced='true'] {
 
 .app-shell .properties-page .properties-hero {
   position: relative !important;
-  z-index: 40 !important;
-  overflow: visible !important;
-}
-
-.app-shell .properties-page .properties-hero__finder {
-  position: relative !important;
-  z-index: 60 !important;
-  overflow: visible !important;
 }
 
 .app-shell .properties-page .properties-hero__finder > label {
   position: relative !important;
-  z-index: 1 !important;
-  overflow: visible !important;
-}
-
-.app-shell .properties-page .properties-hero__finder > label:has(.property-smart-select.is-open) {
-  z-index: 80 !important;
-}
-
-.app-shell .properties-page .properties-type-rail {
-  position: relative !important;
-  z-index: 10 !important;
-}
-
-.app-shell .properties-page .properties-featured-areas {
-  position: relative !important;
-  z-index: 1 !important;
-}
-
-/* Reserve real layout space for an opened hero select.
-   The menus are absolute popovers, so without this the type rail begins
-   immediately below the hero and visually overlaps the dropdown. */
-.app-shell .properties-page .properties-type-rail {
-  transition: margin-top 160ms ease !important;
-}
-
-.app-shell .properties-page .properties-hero:has(.property-smart-select.is-open)
-  + .properties-type-rail {
-  margin-top: 350px !important;
-}
-
-.app-shell .properties-page .properties-hero:has(
-    > .properties-hero__finder > label:first-child .property-smart-select.is-open
-  )
-  + .properties-type-rail {
-  margin-top: 380px !important;
 }
 
 .properties-hero__finder .property-smart-select__trigger {
