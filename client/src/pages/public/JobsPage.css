@@ -2184,3 +2184,65 @@ body:has(.dthl-header.is-hidden) .jobs-page {
     font-size: 0.72rem;
   }
 }
+
+/* ===== Job detail sidebar typography upgrade ===== */
+
+.job-detail-sidebar h3,
+.job-sidebar h3,
+.job-page__sidebar h3 {
+  font-size: 1.45rem;
+  font-weight: 800;
+  line-height: 1.3;
+}
+
+.job-detail-sidebar h4,
+.job-sidebar h4,
+.job-page__sidebar h4 {
+  font-size: 1.2rem;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.job-detail-sidebar dt,
+.job-sidebar dt,
+.job-page__sidebar dt,
+.job-detail-sidebar .label,
+.job-sidebar .label,
+.job-page__sidebar .label {
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.45;
+}
+
+.job-detail-sidebar dd,
+.job-sidebar dd,
+.job-page__sidebar dd,
+.job-detail-sidebar .value,
+.job-sidebar .value,
+.job-page__sidebar .value {
+  font-size: 1.08rem;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.job-detail-sidebar p,
+.job-sidebar p,
+.job-page__sidebar p,
+.job-detail-sidebar li,
+.job-sidebar li,
+.job-page__sidebar li {
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.job-detail-sidebar .sidebar-card,
+.job-sidebar .sidebar-card,
+.job-page__sidebar .sidebar-card {
+  padding: 22px 24px;
+}
+
+.job-detail-sidebar ul li + li,
+.job-sidebar ul li + li,
+.job-page__sidebar ul li + li {
+  margin-top: 10px;
+}
