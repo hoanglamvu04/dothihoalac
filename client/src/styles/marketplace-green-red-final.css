@@ -470,3 +470,89 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page :
     background: #0e3323 !important;
   }
 }
+
+
+/* -------------------------------------------------------------------------- */
+/* PROPERTY MARKETPLACE — RUNTIME-SAFE FINAL OVERRIDES                        */
+/* Keep these unscoped from data-dthl-palette so the property route cannot    */
+/* fall back to the legacy warm/yellow palette when runtime theme attrs differ. */
+/* -------------------------------------------------------------------------- */
+
+.app-shell .properties-page {
+  --property-green: #0e3323 !important;
+  --property-red: #b03525 !important;
+  --property-green-strong: #0e3323 !important;
+  --property-green-soft: #eef4f1 !important;
+  --property-gold: #b03525 !important;
+  --property-surface: #ffffff !important;
+  --property-surface-2: #f7f9f8 !important;
+  --property-canvas: #ffffff !important;
+  --property-warm: #f7f9f8 !important;
+}
+
+.app-shell .properties-page .properties-hero__eyebrow,
+.app-shell .properties-page .properties-hero__eyebrow svg {
+  color: #b03525 !important;
+}
+
+.app-shell .properties-page .properties-hero__finder {
+  border-color: #dfe5e1 !important;
+  background: rgb(255 255 255 / 0.98) !important;
+  box-shadow: 0 14px 36px rgb(14 51 35 / 0.12) !important;
+}
+
+.app-shell .properties-page .properties-hero__finder > label {
+  border-right-color: #dfe5e1 !important;
+}
+
+.app-shell .properties-page .properties-hero__finder > label > div,
+.app-shell .properties-page .properties-hero__finder > label > div > svg {
+  color: #b03525 !important;
+}
+
+.app-shell .properties-page .properties-hero__finder > button {
+  border-color: #0e3323 !important;
+  color: #ffffff !important;
+  background: #0e3323 !important;
+  box-shadow: 0 8px 18px rgb(14 51 35 / 0.18) !important;
+}
+
+.app-shell .properties-page .properties-hero__finder > button:hover {
+  border-color: #164a34 !important;
+  color: #ffffff !important;
+  background: #164a34 !important;
+  box-shadow: 0 10px 22px rgb(14 51 35 / 0.22) !important;
+}
+
+.app-shell .properties-page .properties-type-rail {
+  border-bottom-color: #dfe5e1 !important;
+  background: #ffffff !important;
+}
+
+.app-shell .properties-page .properties-type-rail button {
+  border-color: #dfe5e1 !important;
+  color: #29312d !important;
+  background: #ffffff !important;
+  box-shadow: 0 2px 8px rgb(14 51 35 / 0.025) !important;
+}
+
+.app-shell .properties-page .properties-type-rail button svg {
+  color: #0e3323 !important;
+}
+
+.app-shell .properties-page .properties-type-rail button:hover {
+  border-color: #cbd7d0 !important;
+  color: #0e3323 !important;
+  background: #eef4f1 !important;
+}
+
+.app-shell .properties-page .properties-type-rail button.is-active {
+  border-color: #0e3323 !important;
+  color: #ffffff !important;
+  background: #0e3323 !important;
+  box-shadow: 0 6px 14px rgb(14 51 35 / 0.16) !important;
+}
+
+.app-shell .properties-page .properties-type-rail button.is-active svg {
+  color: #ffffff !important;
+}

@@ -142,6 +142,7 @@ function getPaginationItems(currentPage, totalPages) {
 
 function taxonomyCount(item) {
   const value =
+    item?.communityCount ??
     item?.postCount ??
     item?.contentCount ??
     item?.publishedCount ??

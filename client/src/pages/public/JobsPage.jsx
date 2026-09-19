@@ -1,10 +1,13 @@
 import {
   useCallback,
   useEffect,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
 } from 'react';
+
+import { createPortal } from 'react-dom';
 
 import {
   Link,
@@ -16,6 +19,7 @@ import {
   Building2,
   CalendarDays,
   Check,
+  ChevronDown,
   Clock3,
   Filter,
   GraduationCap,
@@ -35,6 +39,7 @@ import {
 
 import Seo from '../../components/common/Seo';
 import JobCard from '../../components/content/JobCard';
+import ContentImage from '../../components/content/ContentImage';
 import Pagination from '../../components/common/Pagination';
 import ErrorState from '../../components/common/ErrorState';
 import { LoadingBlock } from '../../components/common/Loading';
@@ -177,10 +182,16 @@ function buildCompanies(items) {
       companies.set(key, {
         name,
         count: 0,
+        media: item?.thumbnailMediaId || null,
       });
     }
 
-    companies.get(key).count += 1;
+    const company = companies.get(key);
+    company.count += 1;
+
+    if (!company.media && item?.thumbnailMediaId) {
+      company.media = item.thumbnailMediaId;
+    }
   });
 
   return [...companies.values()]
@@ -195,6 +206,228 @@ function companyInitials(name) {
     .slice(0, 2)
     .map((part) => part.charAt(0).toUpperCase())
     .join('');
+}
+
+function JobsSmartSelect({
+  value,
+  options,
+  placeholder,
+  ariaLabel,
+  onChange,
+  searchable = false,
+  searchPlaceholder = 'Tìm lựa chọn...',
+}) {
+  const rootRef = useRef(null);
+  const triggerRef = useRef(null);
+  const menuRef = useRef(null);
+  const searchRef = useRef(null);
+  const [open, setOpen] = useState(false);
+  const [query, setQuery] = useState('');
+  const [menuPosition, setMenuPosition] = useState(null);
+
+  const selected = options.find(
+    (option) => String(option.value) === String(value),
+  );
+
+  const normalizedQuery = query.trim().toLocaleLowerCase('vi-VN');
+  const visibleOptions = normalizedQuery
+    ? options.filter((option) =>
+        String(option.label || '')
+          .toLocaleLowerCase('vi-VN')
+          .includes(normalizedQuery),
+      )
+    : options;
+
+  const updateMenuPosition = useCallback(() => {
+    const trigger = triggerRef.current;
+    if (!trigger || typeof window === 'undefined') return;
+
+    const rect = trigger.getBoundingClientRect();
+    const viewportWidth = window.innerWidth;
+    const viewportHeight = window.innerHeight;
+    const gap = 10;
+    const width = Math.min(
+      360,
+      Math.max(240, rect.width + 24),
+      viewportWidth - 24,
+    );
+    const left = Math.min(
+      Math.max(12, rect.left),
+      Math.max(12, viewportWidth - width - 12),
+    );
+
+    const below = viewportHeight - rect.bottom - gap - 12;
+    const above = rect.top - gap - 12;
+    const openUpward = below < 220 && above > below;
+    const availableHeight = Math.max(
+      160,
+      Math.min(360, openUpward ? above : below),
+    );
+    const top = openUpward
+      ? Math.max(12, rect.top - availableHeight - gap)
+      : rect.bottom + gap;
+
+    setMenuPosition({
+      position: 'fixed',
+      top,
+      left,
+      width,
+      maxHeight: availableHeight,
+      '--jobs-select-options-max-height': `${Math.max(
+        110,
+        Math.min(286, availableHeight - (searchable ? 66 : 18)),
+      )}px`,
+    });
+  }, [searchable]);
+
+  useLayoutEffect(() => {
+    if (!open) {
+      setMenuPosition(null);
+      return undefined;
+    }
+
+    updateMenuPosition();
+    const handleViewportChange = () => updateMenuPosition();
+    window.addEventListener('resize', handleViewportChange);
+    window.addEventListener('scroll', handleViewportChange, true);
+
+    return () => {
+      window.removeEventListener('resize', handleViewportChange);
+      window.removeEventListener('scroll', handleViewportChange, true);
+    };
+  }, [open, updateMenuPosition]);
+
+  useEffect(() => {
+    if (!open) return undefined;
+
+    const handlePointerDown = (event) => {
+      const target = event.target;
+      if (
+        rootRef.current?.contains(target) ||
+        menuRef.current?.contains(target)
+      ) {
+        return;
+      }
+
+      setOpen(false);
+      setQuery('');
+    };
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        setOpen(false);
+        setQuery('');
+        triggerRef.current?.focus();
+      }
+    };
+
+    document.addEventListener('pointerdown', handlePointerDown);
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('pointerdown', handlePointerDown);
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [open]);
+
+  useEffect(() => {
+    if (open && searchable) {
+      requestAnimationFrame(() => searchRef.current?.focus());
+    }
+  }, [open, searchable]);
+
+  const menu =
+    open && menuPosition && typeof document !== 'undefined'
+      ? createPortal(
+          <div
+            ref={menuRef}
+            className="jobs-smart-select__menu jobs-smart-select__menu--portal"
+            style={menuPosition}
+          >
+            {searchable ? (
+              <label className="jobs-smart-select__search">
+                <Search size={16} aria-hidden="true" />
+                <input
+                  ref={searchRef}
+                  value={query}
+                  onChange={(event) => setQuery(event.target.value)}
+                  placeholder={searchPlaceholder}
+                  aria-label={searchPlaceholder}
+                />
+              </label>
+            ) : null}
+
+            <div
+              className="jobs-smart-select__options"
+              role="listbox"
+              aria-label={ariaLabel}
+            >
+              {visibleOptions.length ? (
+                visibleOptions.map((option) => {
+                  const isSelected =
+                    String(option.value) === String(value);
+
+                  return (
+                    <button
+                      type="button"
+                      role="option"
+                      aria-selected={isSelected}
+                      className={`jobs-smart-select__option${isSelected ? ' is-selected' : ''}`}
+                      key={`${option.value || 'all'}-${option.label}`}
+                      onClick={() => {
+                        onChange(option.value);
+                        setOpen(false);
+                        setQuery('');
+                        triggerRef.current?.focus();
+                      }}
+                    >
+                      <span>{option.label}</span>
+                      {isSelected ? <Check size={15} aria-hidden="true" /> : null}
+                    </button>
+                  );
+                })
+              ) : (
+                <div className="jobs-smart-select__empty">
+                  Không tìm thấy lựa chọn phù hợp
+                </div>
+              )}
+            </div>
+          </div>,
+          document.body,
+        )
+      : null;
+
+  return (
+    <>
+      <div
+        ref={rootRef}
+        className={`jobs-smart-select${open ? ' is-open' : ''}`}
+      >
+        <button
+          ref={triggerRef}
+          type="button"
+          className="jobs-smart-select__trigger"
+          aria-label={ariaLabel}
+          aria-haspopup="listbox"
+          aria-expanded={open}
+          onClick={() => {
+            setOpen((current) => !current);
+            if (open) setQuery('');
+          }}
+        >
+          <span className="jobs-smart-select__value">
+            {selected?.label || placeholder}
+          </span>
+          <ChevronDown
+            className="jobs-smart-select__chevron"
+            size={17}
+            aria-hidden="true"
+          />
+        </button>
+      </div>
+      {menu}
+    </>
+  );
 }
 
 export default function JobsPage() {
@@ -485,40 +718,41 @@ export default function JobsPage() {
             ) : null}
           </label>
 
-          <label className="jobs-market-search__select">
-            <MapPin size={17} />
-            <select
+          <div className="jobs-market-search__select">
+            <MapPin size={17} aria-hidden="true" />
+            <JobsSmartSelect
               value={currentArea}
-              onChange={(event) => update('area', event.target.value)}
-              aria-label="Khu vực làm việc"
-            >
-              <option value="">Hòa Lạc và khu vực</option>
-              {areas.map((item) => (
-                <option
-                  key={item._id || item.slug}
-                  value={taxonomyUrlValue(item)}
-                >
-                  {item.name}
-                </option>
-              ))}
-            </select>
-          </label>
+              ariaLabel="Khu vực làm việc"
+              placeholder="Hòa Lạc và khu vực"
+              searchable
+              searchPlaceholder="Tìm khu vực..."
+              options={[
+                { value: '', label: 'Hòa Lạc và khu vực' },
+                ...areas.map((item) => ({
+                  value: taxonomyUrlValue(item),
+                  label: item.name,
+                })),
+              ]}
+              onChange={(value) => update('area', value)}
+            />
+          </div>
 
-          <label className="jobs-market-search__select">
-            <BriefcaseBusiness size={17} />
-            <select
+          <div className="jobs-market-search__select">
+            <BriefcaseBusiness size={17} aria-hidden="true" />
+            <JobsSmartSelect
               value={currentType}
-              onChange={(event) => update('type', event.target.value)}
-              aria-label="Loại công việc"
-            >
-              <option value="">Tất cả loại công việc</option>
-              {Object.entries(JOB_TYPES).map(([value, label]) => (
-                <option key={value} value={value}>
-                  {label}
-                </option>
-              ))}
-            </select>
-          </label>
+              ariaLabel="Loại công việc"
+              placeholder="Tất cả loại công việc"
+              options={[
+                { value: '', label: 'Tất cả loại công việc' },
+                ...Object.entries(JOB_TYPES).map(([value, label]) => ({
+                  value,
+                  label,
+                })),
+              ]}
+              onChange={(value) => update('type', value)}
+            />
+          </div>
 
           <button type="submit">
             <Search size={17} />
@@ -580,12 +814,26 @@ export default function JobsPage() {
                     <button
                       type="button"
                       key={company.name}
+                      aria-label={`Xem việc làm tại ${company.name}`}
                       onClick={() => {
                         setSearchInput(company.name);
                         commitSearch(company.name);
                       }}
                     >
-                      <span>{companyInitials(company.name)}</span>
+                      <span className={`jobs-employer-avatar${company.media ? ' has-media' : ''}`}>
+                        <ContentImage
+                          media={company.media}
+                          alt={`${company.name} - nhà tuyển dụng`}
+                          className="jobs-employer-avatar__image"
+                          width={46}
+                          height={46}
+                          fallback={
+                            <span className="jobs-employer-avatar__fallback" aria-hidden="true">
+                              {companyInitials(company.name)}
+                            </span>
+                          }
+                        />
+                      </span>
                       <strong>{company.name}</strong>
                     </button>
                   ))}
@@ -699,20 +947,19 @@ export default function JobsPage() {
               </div>
 
               <div className="jobs-results-controls__actions">
-                <label>
-                  <SortIcon size={15} />
-                  <select
+                <div className="jobs-results-sort">
+                  <SortIcon size={15} aria-hidden="true" />
+                  <JobsSmartSelect
                     value={currentSort}
-                    onChange={(event) => update('sort', event.target.value)}
-                    aria-label="Sắp xếp việc làm"
-                  >
-                    {SORT_OPTIONS.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                    ariaLabel="Sắp xếp việc làm"
+                    placeholder="Mới nhất"
+                    options={SORT_OPTIONS.map(({ value, label }) => ({
+                      value,
+                      label,
+                    }))}
+                    onChange={(value) => update('sort', value)}
+                  />
+                </div>
 
                 <button type="button" onClick={() => setFiltersOpen(true)}>
                   <Filter size={15} />
@@ -935,88 +1182,90 @@ export default function JobsPage() {
                 <section className="jobs-filter-modal__section">
                   <h3>Loại công việc & khu vực</h3>
                   <div className="jobs-modal-select-grid">
-                    <label>
+                    <div className="jobs-modal-select-field">
                       <span>Loại công việc</span>
                       <div>
-                        <BriefcaseBusiness size={18} />
-                        <select
+                        <BriefcaseBusiness size={18} aria-hidden="true" />
+                        <JobsSmartSelect
                           value={currentType}
-                          onChange={(event) => update('type', event.target.value)}
-                        >
-                          <option value="">Tất cả công việc</option>
-                          {Object.entries(JOB_TYPES).map(([value, label]) => (
-                            <option key={value} value={value}>
-                              {label}
-                            </option>
-                          ))}
-                        </select>
+                          ariaLabel="Loại công việc"
+                          placeholder="Tất cả công việc"
+                          options={[
+                            { value: '', label: 'Tất cả công việc' },
+                            ...Object.entries(JOB_TYPES).map(([value, label]) => ({
+                              value,
+                              label,
+                            })),
+                          ]}
+                          onChange={(value) => update('type', value)}
+                        />
                       </div>
-                    </label>
+                    </div>
 
-                    <label>
+                    <div className="jobs-modal-select-field">
                       <span>Khu vực</span>
                       <div>
-                        <MapPin size={18} />
-                        <select
+                        <MapPin size={18} aria-hidden="true" />
+                        <JobsSmartSelect
                           value={currentArea}
-                          onChange={(event) => update('area', event.target.value)}
-                        >
-                          <option value="">Tất cả khu vực</option>
-                          {areas.map((item) => (
-                            <option
-                              key={item._id || item.slug}
-                              value={taxonomyUrlValue(item)}
-                            >
-                              {item.name}
-                            </option>
-                          ))}
-                        </select>
+                          ariaLabel="Khu vực làm việc"
+                          placeholder="Tất cả khu vực"
+                          searchable
+                          searchPlaceholder="Tìm khu vực..."
+                          options={[
+                            { value: '', label: 'Tất cả khu vực' },
+                            ...areas.map((item) => ({
+                              value: taxonomyUrlValue(item),
+                              label: item.name,
+                            })),
+                          ]}
+                          onChange={(value) => update('area', value)}
+                        />
                       </div>
-                    </label>
+                    </div>
                   </div>
                 </section>
 
                 <section className="jobs-filter-modal__section">
                   <h3>Yêu cầu & thứ tự hiển thị</h3>
                   <div className="jobs-modal-select-grid">
-                    <label>
+                    <div className="jobs-modal-select-field">
                       <span>Kinh nghiệm</span>
                       <div>
-                        <GraduationCap size={18} />
-                        <select
+                        <GraduationCap size={18} aria-hidden="true" />
+                        <JobsSmartSelect
                           value={currentExperience}
-                          onChange={(event) =>
-                            update('experienceLevel', event.target.value)
-                          }
-                        >
-                          <option value="">Tất cả kinh nghiệm</option>
-                          {Object.entries(EXPERIENCE_LEVELS).map(
-                            ([value, label]) => (
-                              <option key={value} value={value}>
-                                {label}
-                              </option>
+                          ariaLabel="Kinh nghiệm"
+                          placeholder="Tất cả kinh nghiệm"
+                          options={[
+                            { value: '', label: 'Tất cả kinh nghiệm' },
+                            ...Object.entries(EXPERIENCE_LEVELS).map(
+                              ([value, label]) => ({ value, label }),
                             ),
-                          )}
-                        </select>
+                          ]}
+                          onChange={(value) =>
+                            update('experienceLevel', value)
+                          }
+                        />
                       </div>
-                    </label>
+                    </div>
 
-                    <label>
+                    <div className="jobs-modal-select-field">
                       <span>Sắp xếp</span>
                       <div>
-                        <SortIcon size={18} />
-                        <select
+                        <SortIcon size={18} aria-hidden="true" />
+                        <JobsSmartSelect
                           value={currentSort}
-                          onChange={(event) => update('sort', event.target.value)}
-                        >
-                          {SORT_OPTIONS.map((option) => (
-                            <option key={option.value} value={option.value}>
-                              {option.label}
-                            </option>
-                          ))}
-                        </select>
+                          ariaLabel="Sắp xếp việc làm"
+                          placeholder="Mới nhất"
+                          options={SORT_OPTIONS.map(({ value, label }) => ({
+                            value,
+                            label,
+                          }))}
+                          onChange={(value) => update('sort', value)}
+                        />
                       </div>
-                    </label>
+                    </div>
                   </div>
                 </section>
 
