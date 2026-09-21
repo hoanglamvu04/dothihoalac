@@ -1471,3 +1471,109 @@ html[data-dthl-theme='light'][data-dthl-palette='earth']
   color: #0e3323 !important;
   background: #ffffff !important;
 }
+
+
+/* ACCOUNT OVERVIEW FINAL GREEN RED LOCK */
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .account-center-page {
+  --account-desktop-canvas: #ffffff !important;
+  --account-desktop-surface: #ffffff !important;
+  --account-desktop-surface-2: #f7f9f8 !important;
+  --account-desktop-border: #dfe5e1 !important;
+  --account-desktop-ink: #17231d !important;
+  --account-desktop-text: #4f5c55 !important;
+  --account-desktop-muted: #718078 !important;
+  --account-desktop-green: #0e3323 !important;
+  --account-desktop-green-soft: #eef4f1 !important;
+  --account-desktop-gold: #b03525 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .account-center-page.is-overview .account-overview-v2 {
+  --aov-accent: #0e3323 !important;
+  --aov-accent-dark: #0e3323 !important;
+  --aov-accent-soft: #eef4f1 !important;
+  --aov-border: #dfe5e1 !important;
+  --aov-surface: #ffffff !important;
+  --aov-surface-soft: #f7f9f8 !important;
+  --aov-ink: #17231d !important;
+  --aov-text: #4f5c55 !important;
+  --aov-muted: #718078 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .account-center-page .account-overview-v2__topline > div > span {
+  color: #b03525 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .account-center-page :is(
+    .account-shell-nav > a.is-active,
+    .account-shell-nav__more a.is-active,
+    .account-shell-nav__more > summary.is-active,
+    .account-shell-nav__more.is-active > summary
+  ) {
+  color: #0e3323 !important;
+  background: #eef4f1 !important;
+  box-shadow: inset 4px 0 0 #0e3323 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .account-center-page :is(
+    .account-shell-nav > a:hover,
+    .account-shell-nav__more a:hover,
+    .account-shell-nav__more summary:hover
+  ) {
+  color: #0e3323 !important;
+  background: #f3f7f5 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .account-center-page :is(
+    .account-overview-v2__highlight-grid article > span,
+    .account-overview-v2__field-icon,
+    .account-overview-v2__quick > a > svg
+  ) {
+  color: #0e3323 !important;
+  background: #eef4f1 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .account-center-page .account-overview-v2__completion > span {
+  background: #0e3323 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .account-center-page :is(
+    .account-overview-v2__section-heading > a,
+    .account-overview-v2__details-link,
+    .account-overview-v2__edit
+  ) {
+  color: #0e3323 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .account-center-page .account-overview-v2__edit:hover {
+  border-color: #bfd0c6 !important;
+  color: #0e3323 !important;
+  background: #eef4f1 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .account-center-page .account-overview-v2__community-cta {
+  border-color: #d7e3dc !important;
+  background:
+    linear-gradient(110deg, rgb(176 53 37 / 0.055), transparent 54%),
+    #f7f9f8 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .account-center-page .account-overview-v2__community-cta > a {
+  color: #ffffff !important;
+  background: #0e3323 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .account-center-page .account-overview-v2__community-cta > a:hover {
+  background: #164a34 !important;
+}
