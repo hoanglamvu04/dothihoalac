@@ -360,21 +360,22 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .article-view-page {
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
   .news-masthead__eyebrow,
+  .news-masthead__eyebrow svg,
   .news-story__kicker span,
   .news-stream__heading span,
   .news-rail-card__head span,
   .news-project-item__top span,
   .article-popular-sidebar__item::before
 ) {
-  color: var(--brand-gold) !important;
+  color: #b03525 !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
   .news-category-bar nav button.is-active,
   .news-filter-toggle.is-active
 ) {
-  color: var(--brand-primary) !important;
-  background: var(--brand-gold-soft) !important;
+  color: #0e3323 !important;
+  background: #faefed !important;
 }
 
 /* Property */
