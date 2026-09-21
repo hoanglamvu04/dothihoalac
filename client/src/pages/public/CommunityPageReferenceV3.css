@@ -518,3 +518,18 @@ html[data-dthl-theme='dark'] .community-discovery-list button.is-active { backgr
   .community-reference-composer__actions > a span { display: none; }
   .community-reference-composer__actions > .community-reference-composer__submit { padding-inline: 12px; }
 }
+
+
+/* FINAL COMMUNITY TOPIC BADGE SCALE */
+.community-social-page .community-reference-center .community-card--social .community-feed-card__header > .community-feed-card__type,
+.community-social-page .community-reference-center .community-card .community-feed-card__header > .community-feed-card__type {
+  min-height: 33px !important;
+  padding: 7px 14px !important;
+  border-color: color-mix(in srgb, var(--c-green) 13%, var(--c-line)) !important;
+  color: #728178 !important;
+  background: color-mix(in srgb, var(--c-green) 3%, var(--c-surface)) !important;
+  font-size: 14.5px !important;
+  font-weight: 560 !important;
+  line-height: 1.1 !important;
+  letter-spacing: 0 !important;
+}
