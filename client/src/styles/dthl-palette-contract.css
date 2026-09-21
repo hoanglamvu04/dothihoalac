@@ -65,23 +65,22 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-notification-badg
   background: #b03525 !important;
 }
 
-/* Primary navigation: near-black copy + logo-red icon at rest.
- * Hover/active move into the logo-green state, with the red used only as a
- * restrained accent/selection marker.
+/* Primary navigation: neutral white/green system.
+ * Red remains reserved for the logo/critical accents rather than navigation.
  */
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link {
   color: #171a18 !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__icon {
-  border-color: color-mix(in srgb, #b03525 26%, white) !important;
-  color: #b03525 !important;
-  background: #faefed !important;
+  border-color: #dfe5e1 !important;
+  color: #0e3323 !important;
+  background: #f7f9f8 !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link:hover,
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link.is-active {
-  border-color: color-mix(in srgb, #0e3323 22%, white) !important;
+  border-color: #cbd7d0 !important;
   color: #0e3323 !important;
   background: #eef4f1 !important;
 }
@@ -91,11 +90,11 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link
   border-color: #0e3323 !important;
   color: #ffffff !important;
   background: #0e3323 !important;
-  box-shadow: 0 2px 6px rgb(14 51 35 / 0.18) !important;
+  box-shadow: 0 2px 6px rgb(14 51 35 / 0.14) !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link.is-active {
-  box-shadow: inset 0 -3px 0 #b03525 !important;
+  box-shadow: inset 0 -3px 0 #0e3323 !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
