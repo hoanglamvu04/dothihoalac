@@ -556,3 +556,103 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page :
 .app-shell .properties-page .properties-type-rail button.is-active svg {
   color: #ffffff !important;
 }
+
+
+/* =========================================================
+   HOME FEATURED HERO CONTRAST GUARD
+   Keep title/summary/meta readable over both bright and dark photography.
+========================================================= */
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .home-reference-v2 .home-hero-card__shade {
+  background:
+    linear-gradient(
+      180deg,
+      rgb(2 10 6 / 0.04) 12%,
+      rgb(2 10 6 / 0.12) 36%,
+      rgb(2 10 6 / 0.5) 62%,
+      rgb(2 10 6 / 0.94) 100%
+    ),
+    linear-gradient(
+      90deg,
+      rgb(2 13 8 / 0.56) 0%,
+      rgb(2 13 8 / 0.3) 52%,
+      rgb(2 13 8 / 0.06) 82%
+    ) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .home-reference-v2 .home-hero-card__content {
+  isolation: isolate;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .home-reference-v2 .home-hero-card__content::before {
+  position: absolute;
+  z-index: -1;
+  inset: -18px -30px -16px -18px;
+  border-radius: 18px;
+  content: '';
+  background:
+    radial-gradient(
+      ellipse at 18% 65%,
+      rgb(2 12 7 / 0.5) 0%,
+      rgb(2 12 7 / 0.28) 48%,
+      transparent 76%
+    );
+  pointer-events: none;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .home-reference-v2 .home-hero-card__content h1,
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .home-reference-v2 .home-hero-card__content h1 a,
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .home-reference-v2 .home-hero-card__content h1 a:hover {
+  color: #ffffff !important;
+  text-shadow:
+    0 2px 4px rgb(0 0 0 / 0.5),
+    0 8px 24px rgb(0 0 0 / 0.3);
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .home-reference-v2 .home-hero-card__content p {
+  color: rgb(255 255 255 / 0.92) !important;
+  text-shadow: 0 2px 10px rgb(0 0 0 / 0.62);
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .home-reference-v2 .home-hero-card__content .home-card-meta,
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .home-reference-v2 .home-hero-card__content .home-card-meta span,
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .home-reference-v2 .home-hero-card__content .home-card-meta svg {
+  color: rgb(255 255 255 / 0.86) !important;
+  text-shadow: 0 1px 8px rgb(0 0 0 / 0.58);
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .home-reference-v2 .home-hero-card__content .home-pill {
+  border: 1px solid rgb(255 255 255 / 0.24) !important;
+  color: #ffffff !important;
+  background: rgb(14 51 35 / 0.84) !important;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 0.18);
+  backdrop-filter: blur(6px);
+}
+
+@media (max-width: 760px) {
+  html[data-dthl-theme='light'][data-dthl-palette='earth']
+    .home-reference-v2 .home-hero-card__shade {
+    background:
+      linear-gradient(
+        180deg,
+        rgb(2 10 6 / 0.02) 18%,
+        rgb(2 10 6 / 0.18) 46%,
+        rgb(2 10 6 / 0.88) 100%
+      ) !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth']
+    .home-reference-v2 .home-hero-card__content::before {
+    inset: -12px -14px -10px -12px;
+  }
+}
