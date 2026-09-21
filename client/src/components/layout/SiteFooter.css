@@ -1,16 +1,16 @@
 .site-footer {
-  --footer-accent: #c9a55f;
-  --footer-accent-soft: #a98548;
-  --footer-bg: #0d0f0e;
-  --footer-bg-soft: #121412;
-  --footer-text: rgb(247 245 239 / 0.9);
-  --footer-muted: rgb(211 210 203 / 0.7);
-  --footer-border: rgb(201 165 95 / 0.2);
+  --footer-accent: #d06457;
+  --footer-accent-soft: #7fa18d;
+  --footer-bg: #0b1511;
+  --footer-bg-soft: #101b16;
+  --footer-text: rgb(242 247 244 / 0.9);
+  --footer-muted: rgb(191 207 198 / 0.72);
+  --footer-border: rgb(83 129 103 / 0.26);
 
   position: relative;
   margin-top: 18px;
   overflow: hidden;
-  color: #f7f5ef;
+  color: #f2f7f4;
   background: var(--footer-bg) !important;
 }
 
@@ -36,8 +36,9 @@
   overflow: hidden;
   padding: 54px 0 48px;
   background:
-    radial-gradient(circle at 55% 34%, rgb(201 165 95 / 0.055), transparent 33%),
-    linear-gradient(112deg, #171816 0%, #131412 52%, #0e0f0e 100%) !important;
+    radial-gradient(circle at 55% 34%, rgb(42 102 70 / 0.11), transparent 33%),
+    radial-gradient(circle at 88% 18%, rgb(176 53 37 / 0.055), transparent 28%),
+    linear-gradient(112deg, #111b16 0%, #0e1713 52%, #0a120f 100%) !important;
 }
 
 .site-footer__main::before {
@@ -49,10 +50,10 @@
   height: 300px;
   opacity: 0.28;
   background:
-    radial-gradient(ellipse at 34% 26%, rgb(201 165 95 / 0.25) 0 19%, transparent 20%),
-    radial-gradient(ellipse at 64% 52%, rgb(201 165 95 / 0.18) 0 18%, transparent 19%),
-    radial-gradient(ellipse at 34% 72%, rgb(201 165 95 / 0.14) 0 18%, transparent 19%),
-    linear-gradient(78deg, transparent 48%, rgb(201 165 95 / 0.18) 49% 50%, transparent 51%);
+    radial-gradient(ellipse at 34% 26%, rgb(72 125 94 / 0.22) 0 19%, transparent 20%),
+    radial-gradient(ellipse at 64% 52%, rgb(72 125 94 / 0.16) 0 18%, transparent 19%),
+    radial-gradient(ellipse at 34% 72%, rgb(176 53 37 / 0.08) 0 18%, transparent 19%),
+    linear-gradient(78deg, transparent 48%, rgb(72 125 94 / 0.16) 49% 50%, transparent 51%);
   border-radius: 50%;
   content: '';
   transform: rotate(-17deg);
@@ -68,8 +69,8 @@
   height: 42%;
   opacity: 0.16;
   background:
-    repeating-linear-gradient(166deg, transparent 0 24px, rgb(201 165 95 / 0.16) 25px 26px, transparent 27px 43px),
-    repeating-linear-gradient(90deg, transparent 0 46px, rgb(201 165 95 / 0.1) 47px 48px, transparent 49px 74px);
+    repeating-linear-gradient(166deg, transparent 0 24px, rgb(72 125 94 / 0.14) 25px 26px, transparent 27px 43px),
+    repeating-linear-gradient(90deg, transparent 0 46px, rgb(72 125 94 / 0.09) 47px 48px, transparent 49px 74px);
   clip-path: polygon(5% 72%, 17% 58%, 28% 64%, 39% 41%, 50% 54%, 61% 34%, 72% 48%, 82% 28%, 100% 40%, 100% 100%, 0 100%);
   content: '';
   pointer-events: none;
@@ -117,7 +118,7 @@
   width: min(100%, 465px);
   height: 1px;
   margin-top: 24px;
-  background: linear-gradient(90deg, rgb(201 165 95 / 0.3), rgb(255 255 255 / 0.07));
+  background: linear-gradient(90deg, rgb(176 53 37 / 0.5), rgb(83 129 103 / 0.22), rgb(255 255 255 / 0.05));
 }
 
 .site-footer__operator {
@@ -137,7 +138,7 @@
 }
 
 .site-footer__operator strong {
-  color: #f4f2ea;
+  color: #f2f7f4;
   font-weight: 680;
 }
 
@@ -164,17 +165,17 @@
   min-height: 44px !important;
   margin: 0 !important;
   padding: 0 !important;
-  border: 1px solid rgb(201 165 95 / 0.3);
+  border: 1px solid rgb(83 129 103 / 0.38);
   border-radius: 50%;
-  color: #e7c985;
+  color: #a9c8b6;
   background: rgb(255 255 255 / 0.025);
   transition: border-color 160ms ease, color 160ms ease, background 160ms ease, transform 160ms ease;
 }
 
 .site-footer .site-footer__social > a:hover {
-  border-color: rgb(201 165 95 / 0.72);
-  color: #f4dda7;
-  background: rgb(201 165 95 / 0.1);
+  border-color: rgb(176 53 37 / 0.68);
+  color: #f2f7f4;
+  background: rgb(72 125 94 / 0.09);
   transform: translateY(-2px);
 }
 
@@ -194,7 +195,7 @@
   height: 3px;
   margin: 14px 0 25px;
   border-radius: 999px;
-  background: linear-gradient(90deg, #c9a55f, #8f7040);
+  background: linear-gradient(90deg, #b03525, #496f5b);
 }
 
 .site-footer__contact-list {
@@ -214,10 +215,10 @@
   place-items: center;
   width: 48px;
   height: 48px;
-  border: 1px solid rgb(201 165 95 / 0.18);
+  border: 1px solid rgb(72 125 94 / 0.16);
   border-radius: 50%;
-  color: #ddbd78;
-  background: linear-gradient(145deg, rgb(201 165 95 / 0.18), rgb(201 165 95 / 0.07));
+  color: #9fc4af;
+  background: linear-gradient(145deg, rgb(42 102 70 / 0.28), rgb(42 102 70 / 0.11));
 }
 
 .site-footer__contact-item > div {
@@ -227,7 +228,7 @@
 }
 
 .site-footer__contact-item strong {
-  color: #f7f5ef;
+  color: #f2f7f4;
   font-size: 14.5px;
   font-weight: 720;
   line-height: 1.35;
@@ -300,13 +301,13 @@
 
 .site-footer__links > a svg {
   flex: 0 0 auto;
-  color: rgb(226 213 183 / 0.7);
+  color: rgb(169 200 182 / 0.74);
   transition: color 150ms ease, transform 150ms ease;
 }
 
 .site-footer__links > a:hover {
   color: var(--footer-accent);
-  border-color: rgb(201 165 95 / 0.3);
+  border-color: rgb(83 129 103 / 0.34);
 }
 
 .site-footer__links > a:hover svg {
@@ -324,10 +325,10 @@
 
 .site-footer__bottom {
   position: relative;
-  border-top: 1px solid rgb(201 165 95 / 0.22);
+  border-top: 1px solid rgb(83 129 103 / 0.26);
   background:
-    radial-gradient(circle at 72% 50%, rgb(201 165 95 / 0.055), transparent 24%),
-    linear-gradient(90deg, #0a0b0a 0%, #101110 50%, #0a0b0a 100%) !important;
+    radial-gradient(circle at 72% 50%, rgb(42 102 70 / 0.08), transparent 24%),
+    linear-gradient(90deg, #08100d 0%, #0d1712 50%, #08100d 100%) !important;
   box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.015);
 }
 
@@ -353,7 +354,7 @@
   min-height: 0 !important;
   margin: 0 !important;
   padding: 0 18px 0 0 !important;
-  color: rgb(247 245 239 / 0.82);
+  color: rgb(235 243 238 / 0.82);
   font-size: 11.5px !important;
   font-weight: 520;
   line-height: 1.25 !important;
@@ -370,7 +371,7 @@
   left: 0;
   width: 1px;
   height: 16px;
-  background: rgb(247 245 239 / 0.36);
+  background: rgb(169 200 182 / 0.28);
   content: '';
   transform: translateY(-50%);
 }
@@ -382,7 +383,7 @@
 .site-footer__bottom p {
   grid-column: 2;
   margin: 0;
-  color: rgb(247 245 239 / 0.78);
+  color: rgb(235 243 238 / 0.78);
   font-size: 11.5px;
   line-height: 1.35;
   text-align: center;
@@ -391,7 +392,7 @@
 
 .site-footer__bottom p span::before {
   margin: 0 12px;
-  color: rgb(247 245 239 / 0.42);
+  color: rgb(169 200 182 / 0.34);
   content: '|';
 }
 
@@ -405,7 +406,7 @@
   min-height: 0;
   padding: 0;
   border: 0;
-  color: #f4f2ea;
+  color: #f2f7f4;
   background: transparent;
   gap: 12px;
   font: inherit;
@@ -418,10 +419,10 @@
   place-items: center;
   width: 46px;
   height: 46px;
-  border: 1px solid rgb(201 165 95 / 0.5);
+  border: 1px solid rgb(83 129 103 / 0.52);
   border-radius: 50%;
-  color: #eed89f;
-  background: rgb(201 165 95 / 0.055);
+  color: #b9d5c5;
+  background: rgb(42 102 70 / 0.12);
   transition: background 150ms ease, transform 150ms ease;
 }
 
@@ -430,26 +431,27 @@
 }
 
 .site-footer__back-top:hover .site-footer__back-top-icon {
-  background: rgb(201 165 95 / 0.12);
+  background: rgb(176 53 37 / 0.14);
   transform: translateY(-2px);
 }
 
 /* Keep the footer palette authoritative even when older public/theme layers
    contain legacy green or warm-brown footer declarations. */
 .app-shell .site-footer {
-  background-color: #0d0f0e !important;
+  background-color: #0b1511 !important;
 }
 
 .app-shell .site-footer .site-footer__main {
   background:
-    radial-gradient(circle at 55% 34%, rgb(201 165 95 / 0.055), transparent 33%),
-    linear-gradient(112deg, #171816 0%, #131412 52%, #0e0f0e 100%) !important;
+    radial-gradient(circle at 55% 34%, rgb(42 102 70 / 0.11), transparent 33%),
+    radial-gradient(circle at 88% 18%, rgb(176 53 37 / 0.055), transparent 28%),
+    linear-gradient(112deg, #111b16 0%, #0e1713 52%, #0a120f 100%) !important;
 }
 
 .app-shell .site-footer .site-footer__bottom {
   background:
-    radial-gradient(circle at 72% 50%, rgb(201 165 95 / 0.055), transparent 24%),
-    linear-gradient(90deg, #0a0b0a 0%, #101110 50%, #0a0b0a 100%) !important;
+    radial-gradient(circle at 72% 50%, rgb(42 102 70 / 0.08), transparent 24%),
+    linear-gradient(90deg, #08100d 0%, #0d1712 50%, #08100d 100%) !important;
 }
 
 /* Footer owns its geometry. This prevents broad public styles from restoring

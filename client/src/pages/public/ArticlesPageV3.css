@@ -54,11 +54,15 @@
   align-items: center;
   gap: 6px;
   margin-bottom: 5px;
-  color: var(--news-green);
+  color: #b03525;
   font-size: 0.66rem;
   font-weight: 780;
   letter-spacing: 0.075em;
   text-transform: uppercase;
+}
+
+.news-masthead__eyebrow svg {
+  color: currentColor;
 }
 
 .news-masthead h1 {

@@ -10,9 +10,9 @@
     --account-desktop-ink: var(--dthl-mode-ink, #10261a);
     --account-desktop-text: var(--dthl-mode-text, #4f6056);
     --account-desktop-muted: var(--dthl-mode-muted, #748078);
-    --account-desktop-green: #13753c;
-    --account-desktop-green-soft: color-mix(in srgb, #eaf8ef 86%, var(--account-desktop-surface) 14%);
-    --account-desktop-gold: var(--dthl-mode-brand, #b59965);
+    --account-desktop-green: #0e3323;
+    --account-desktop-green-soft: color-mix(in srgb, #eef4f1 88%, var(--account-desktop-surface) 12%);
+    --account-desktop-gold: #b03525;
 
     padding: 20px 0 64px;
     background: var(--account-desktop-canvas);
@@ -184,7 +184,7 @@
 
   .account-center-page .account-overview-v2__topline span {
     margin-bottom: 5px;
-    color: var(--account-desktop-green);
+    color: #b03525;
     font-size: 12px;
     letter-spacing: 0.08em;
   }

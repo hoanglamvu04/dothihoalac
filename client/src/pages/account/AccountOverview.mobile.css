@@ -1,33 +1,33 @@
 /* Account overview responsive integration and shell-token bridge. */
 
 .account-center-page.is-overview {
-  --account-green: #b59965;
-  --account-green-dark: #806642;
-  --account-green-soft: #f8f6f1;
-  --account-border: #e5e4df;
-  --account-ink: #202320;
-  --account-muted: #7d827d;
+  --account-green: #0e3323;
+  --account-green-dark: #0e3323;
+  --account-green-soft: #eef4f1;
+  --account-border: #dfe5e1;
+  --account-ink: #17231d;
+  --account-muted: #718078;
   --account-desktop-surface: #ffffff;
-  --account-desktop-surface-2: #fafaf8;
+  --account-desktop-surface-2: #f7f9f8;
   --account-desktop-canvas: #ffffff;
-  --account-desktop-border: #e5e4df;
-  --account-desktop-ink: #202320;
-  --account-desktop-text: #505550;
-  --account-desktop-muted: #7d827d;
-  --account-desktop-green: #b59965;
-  --account-desktop-green-soft: #f8f6f1;
-  --account-desktop-gold: #b59965;
+  --account-desktop-border: #dfe5e1;
+  --account-desktop-ink: #17231d;
+  --account-desktop-text: #4f5c55;
+  --account-desktop-muted: #718078;
+  --account-desktop-green: #0e3323;
+  --account-desktop-green-soft: #eef4f1;
+  --account-desktop-gold: #b03525;
 
   background: #fff;
 }
 
 @media (max-width: 760px) {
   .account-center-page.is-overview {
-    --account-mobile-green: #b59965;
-    --account-mobile-green-dark: #806642;
-    --account-mobile-soft: #f8f6f1;
-    --account-mobile-border: #e5e4df;
-    --account-mobile-muted: #7d827d;
+    --account-mobile-green: #0e3323;
+    --account-mobile-green-dark: #0e3323;
+    --account-mobile-soft: #eef4f1;
+    --account-mobile-border: #dfe5e1;
+    --account-mobile-muted: #718078;
 
     background: #fff !important;
   }
@@ -41,48 +41,48 @@
   }
 
   .account-center-page.is-overview .account-mobile-header {
-    border-color: #e5e4df;
-    box-shadow: 0 5px 16px rgb(48 43 34 / 0.045);
+    border-color: #dfe5e1;
+    box-shadow: 0 5px 16px rgb(14 51 35 / 0.045);
   }
 
   .account-center-page.is-overview .account-mobile-header > a {
-    color: #806642;
+    color: #0e3323;
   }
 
   .account-center-page.is-overview .account-mobile-header > strong {
-    color: #202320;
+    color: #17231d;
     font-size: 13.5px;
   }
 
   .account-center-page.is-overview .account-shell-profile {
-    border-color: #e5e4df;
-    box-shadow: 0 8px 24px rgb(48 43 34 / 0.055);
+    border-color: #dfe5e1;
+    box-shadow: 0 8px 24px rgb(14 51 35 / 0.055);
   }
 
   .account-center-page.is-overview .account-shell-avatar {
-    box-shadow: 0 6px 18px rgb(48 43 34 / 0.14);
+    box-shadow: 0 6px 18px rgb(14 51 35 / 0.14);
   }
 
   .account-center-page.is-overview .account-shell-identity__title h1 {
-    color: #202320;
+    color: #17231d;
     font-size: 19px;
   }
 
   .account-center-page.is-overview .account-shell-identity__title > span {
     color: #fff;
-    background: #b59965;
+    background: #0e3323;
   }
 
   .account-center-page.is-overview .account-shell-identity > p {
-    color: #7d827d;
+    color: #718078;
     font-size: 12.5px;
   }
 
   .account-center-page.is-overview .account-shell-identity__meta span {
     min-height: 26px;
     padding-inline: 9px;
-    color: #505550;
-    background: #f8f6f1;
+    color: #4f5c55;
+    background: #eef4f1;
     font-size: 11px;
   }
 
@@ -102,6 +102,6 @@
   }
 
   .account-center-page.is-overview .account-mobile-dock > a.is-active {
-    color: #806642;
+    color: #0e3323;
   }
 }
