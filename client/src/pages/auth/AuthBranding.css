@@ -396,6 +396,121 @@ html[data-dthl-theme='light'] .dthl-register-page {
   background: #f7f9f8 !important;
 }
 
+/* Forgot-password palette: white + deep green + restrained brand red. */
+.dthl-forgot-page {
+  --dthl-forgot-primary: #0e3323;
+  --dthl-forgot-primary-hover: #164a34;
+  --dthl-forgot-primary-soft: #eef4f1;
+  --dthl-forgot-accent: #b03525;
+  --dthl-forgot-accent-soft: #faefed;
+  --dthl-forgot-border: #dfe5e1;
+}
+
+html[data-dthl-theme='light'] .dthl-forgot-page {
+  background:
+    radial-gradient(circle at 7% 9%, rgb(14 51 35 / 0.07), transparent 27%),
+    radial-gradient(circle at 92% 10%, rgb(176 53 37 / 0.055), transparent 24%),
+    #ffffff !important;
+}
+
+.dthl-forgot-page .dthl-forgot-shell {
+  border-color: var(--dthl-forgot-border) !important;
+  box-shadow:
+    0 30px 80px rgb(14 51 35 / 0.09),
+    0 5px 18px rgb(14 51 35 / 0.04) !important;
+}
+
+.dthl-forgot-page .dthl-forgot-intro {
+  background:
+    radial-gradient(circle at 82% 17%, rgb(176 53 37 / 0.12), transparent 30%),
+    linear-gradient(150deg, #082b1d 0%, #0e3323 48%, #164a34 100%) !important;
+}
+
+.dthl-forgot-page :is(
+  .dthl-forgot-eyebrow,
+  .dthl-forgot-intro__heading h1 em,
+  .dthl-forgot-card__header > span,
+  .dthl-forgot-success__eyebrow
+) {
+  color: var(--dthl-forgot-accent) !important;
+}
+
+.dthl-forgot-page .dthl-forgot-benefits > div > span {
+  color: #ffffff !important;
+  border: 1px solid rgb(208 100 87 / 0.42) !important;
+  background: rgb(176 53 37 / 0.18) !important;
+}
+
+.dthl-forgot-page .dthl-forgot-field label em {
+  color: var(--dthl-forgot-accent) !important;
+}
+
+.dthl-forgot-page .dthl-forgot-input > svg,
+.dthl-forgot-page .dthl-forgot-card__security > svg {
+  color: var(--dthl-forgot-primary) !important;
+}
+
+.dthl-forgot-page .dthl-forgot-input:focus-within {
+  border-color: var(--dthl-forgot-primary) !important;
+  background: #ffffff !important;
+  box-shadow:
+    0 0 0 4px rgb(14 51 35 / 0.1),
+    0 8px 22px rgb(14 51 35 / 0.05) !important;
+}
+
+.dthl-forgot-page :is(
+  .dthl-forgot-switch a,
+  .dthl-forgot-back-link,
+  .dthl-forgot-edit-email
+) {
+  color: var(--dthl-forgot-accent) !important;
+}
+
+.dthl-forgot-page :is(
+  .dthl-forgot-switch a,
+  .dthl-forgot-back-link,
+  .dthl-forgot-edit-email
+):hover {
+  color: #84271e !important;
+}
+
+.dthl-forgot-page .dthl-forgot-submit {
+  border-color: var(--dthl-forgot-primary) !important;
+  color: #ffffff !important;
+  background: var(--dthl-forgot-primary) !important;
+  box-shadow: 0 13px 28px rgb(14 51 35 / 0.18) !important;
+}
+
+.dthl-forgot-page .dthl-forgot-submit:hover:not(:disabled) {
+  border-color: var(--dthl-forgot-primary-hover) !important;
+  background: var(--dthl-forgot-primary-hover) !important;
+  box-shadow: 0 15px 30px rgb(14 51 35 / 0.2) !important;
+}
+
+.dthl-forgot-page .dthl-forgot-resend {
+  border-color: #c9d8d0 !important;
+  color: var(--dthl-forgot-primary) !important;
+  background: var(--dthl-forgot-primary-soft) !important;
+}
+
+.dthl-forgot-page .dthl-forgot-resend:hover {
+  border-color: #a9c1b4 !important;
+  background: #e6f0eb !important;
+}
+
+.dthl-forgot-page .dthl-forgot-dev,
+.dthl-forgot-page .dthl-forgot-card__security {
+  border-color: #dfe5e1 !important;
+  color: #68736d !important;
+  background: #f7f9f8 !important;
+}
+
+.dthl-forgot-page .dthl-forgot-success__icon {
+  border-color: rgb(176 53 37 / 0.22) !important;
+  color: var(--dthl-forgot-accent) !important;
+  background: var(--dthl-forgot-accent-soft) !important;
+}
+
 /* Keep paired registration fields aligned from the top. The username field
    carries a helper line, so stretching both grid children makes the display
    name input drift downward inside the taller row. */
