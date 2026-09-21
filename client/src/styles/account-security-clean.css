@@ -268,9 +268,9 @@ html[data-dthl-theme='light'] .account-center-content .account-security-page .ac
 }
 
 html[data-dthl-theme='light'] .account-center-content .account-security-page .account-page-button--primary:hover:not(:disabled) {
-  border-color: #0e3323 !important;
-  color: #1d201d !important;
-  background: #b59965 !important;
+  border-color: #164a34 !important;
+  color: #ffffff !important;
+  background: #164a34 !important;
 }
 
 html[data-dthl-theme='light'] .account-center-content .account-security-page .account-page-button--soft {
