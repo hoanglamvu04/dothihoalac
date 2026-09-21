@@ -279,11 +279,11 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
   border-color: var(--dthl-palette-border) !important;
 }
 
-/* Gold is a text/icon/accent colour first, not a page fill. */
+/* Legacy accent group. News masthead is excluded because it now uses
+   the current DTHL red accent instead of the retired gold palette. */
 html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
   .properties-hero__eyebrow,
   .properties-featured-areas > header > div > span,
-  .news-masthead__eyebrow,
   .article-view-eyebrow,
   .jobs-page__eyebrow,
   .job-detail-eyebrow,
@@ -291,6 +291,13 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
   .account-overview-v2__topline > div > span
 ) {
   color: var(--dthl-palette-brand) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .news-hub .news-masthead .news-masthead__identity > .news-masthead__eyebrow,
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .news-hub .news-masthead .news-masthead__identity > .news-masthead__eyebrow svg {
+  color: #b03525 !important;
 }
 
 /* =========================================================
