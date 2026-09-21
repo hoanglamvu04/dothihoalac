@@ -338,16 +338,16 @@ body:has(.dthl-header.is-hidden) .community-reference-right { top: 16px; max-hei
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 28px;
-  padding: 5px 11px !important;
-  border: 1px solid color-mix(in srgb, var(--c-green) 20%, var(--c-line));
+  min-height: 30px;
+  padding: 6px 13px !important;
+  border: 1px solid color-mix(in srgb, var(--c-green) 16%, var(--c-line));
   border-radius: 999px;
-  color: #61756a !important;
-  background: color-mix(in srgb, var(--c-green) 5%, var(--c-surface)) !important;
-  font-size: 12px !important;
-  font-weight: 690 !important;
-  line-height: 1;
-  letter-spacing: 0.01em;
+  color: #6d7c73 !important;
+  background: color-mix(in srgb, var(--c-green) 4%, var(--c-surface)) !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  line-height: 1.1;
+  letter-spacing: 0.005em;
 }
 .community-social-page .community-feed-card__text {
   padding: 5px 0 6px !important;
