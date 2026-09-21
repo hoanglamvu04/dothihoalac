@@ -287,10 +287,14 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
   .article-view-eyebrow,
   .jobs-page__eyebrow,
   .job-detail-eyebrow,
-  .community-reference-eyebrow,
-  .account-overview-v2__topline > div > span
+  .community-reference-eyebrow
 ) {
   color: var(--dthl-palette-brand) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .account-center-page .account-overview-v2__topline > div > span {
+  color: #b03525 !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth']
@@ -413,14 +417,14 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page {
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .account-center-page {
   --account-desktop-canvas: #ffffff !important;
   --account-desktop-surface: #ffffff !important;
-  --account-desktop-surface-2: #f8f8f6 !important;
-  --account-desktop-border: var(--dthl-palette-border) !important;
-  --account-desktop-ink: #171917 !important;
-  --account-desktop-text: #4b504b !important;
-  --account-desktop-muted: #7b807b !important;
-  --account-desktop-green: #252825 !important;
-  --account-desktop-green-soft: #f5f6f5 !important;
-  --account-desktop-gold: var(--dthl-palette-brand) !important;
+  --account-desktop-surface-2: #f7f9f8 !important;
+  --account-desktop-border: #dfe5e1 !important;
+  --account-desktop-ink: #17231d !important;
+  --account-desktop-text: #4f5c55 !important;
+  --account-desktop-muted: #718078 !important;
+  --account-desktop-green: #0e3323 !important;
+  --account-desktop-green-soft: #eef4f1 !important;
+  --account-desktop-gold: #b03525 !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
@@ -429,9 +433,9 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
   .account-shell-nav__more > summary.is-active,
   .account-shell-nav__more.is-active > summary
 ) {
-  color: #171917 !important;
-  background: #f7f7f5 !important;
-  box-shadow: inset 3px 0 0 var(--dthl-palette-brand) !important;
+  color: #0e3323 !important;
+  background: #eef4f1 !important;
+  box-shadow: inset 3px 0 0 #0e3323 !important;
 }
 
 /* =========================================================
