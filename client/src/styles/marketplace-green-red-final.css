@@ -890,3 +890,76 @@ html[data-dthl-theme='light'][data-dthl-palette='earth']
   color: #68736d !important;
   background: #f7f9f8 !important;
 }
+
+
+/* AUTH REGISTER FINAL GREEN RED LOCK */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-register-page {
+  --dthl-register-primary: #0e3323 !important;
+  --dthl-register-primary-hover: #164a34 !important;
+  --dthl-register-primary-soft: #eef4f1 !important;
+  --dthl-register-accent: #b03525 !important;
+  --dthl-register-accent-soft: #faefed !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .dthl-register-page :is(
+    .dthl-register-eyebrow,
+    .dthl-register-intro__heading h1 em,
+    .dthl-register-card__header > span,
+    .dthl-register-field label em,
+    .dthl-register-terms a,
+    .dthl-register-switch a
+  ) {
+  color: #b03525 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .dthl-register-page :is(
+    .dthl-register-input > svg,
+    .dthl-register-card__security > svg
+  ) {
+  color: #0e3323 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .dthl-register-page .dthl-register-input:focus-within {
+  border-color: #0e3323 !important;
+  box-shadow:
+    0 0 0 4px rgb(14 51 35 / 0.1),
+    0 8px 22px rgb(14 51 35 / 0.05) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .dthl-register-page .dthl-register-terms input:checked + .dthl-register-checkbox {
+  border-color: #0e3323 !important;
+  color: #ffffff !important;
+  background: #0e3323 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .dthl-register-page .dthl-register-submit {
+  border-color: #0e3323 !important;
+  color: #ffffff !important;
+  background: #0e3323 !important;
+  box-shadow: 0 13px 28px rgb(14 51 35 / 0.18) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .dthl-register-page .dthl-register-submit:hover:not(:disabled) {
+  border-color: #164a34 !important;
+  background: #164a34 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .dthl-register-page .dthl-register-benefits > div > span {
+  border-color: rgb(208 100 87 / 0.42) !important;
+  color: #ffffff !important;
+  background: rgb(176 53 37 / 0.18) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .dthl-register-page .dthl-register-card__security {
+  border-color: #dfe5e1 !important;
+  color: #68736d !important;
+  background: #f7f9f8 !important;
+}
