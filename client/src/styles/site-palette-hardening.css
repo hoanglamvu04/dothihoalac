@@ -506,13 +506,14 @@ html[data-dthl-palette='earth'] .admin-shell .admin-nav a:hover {
 
 /* Footer */
 html[data-dthl-palette='earth'] .site-footer {
-  --footer-green: #b59965 !important;
-  --footer-bg: #103323 !important;
-  --footer-bg-deep: #103323 !important;
-  --footer-text: color-mix(in srgb, #f9f1e3 86%, #103323) !important;
-  --footer-muted: color-mix(in srgb, #f9f1e3 62%, #103323) !important;
-  --footer-border: color-mix(in srgb, #b59965 28%, transparent) !important;
-  background: #103323 !important;
+  --footer-green: #0e3323 !important;
+  --footer-accent: #d06457 !important;
+  --footer-bg: #0b1511 !important;
+  --footer-bg-deep: #08100d !important;
+  --footer-text: rgb(242 247 244 / 0.9) !important;
+  --footer-muted: rgb(191 207 198 / 0.72) !important;
+  --footer-border: rgb(83 129 103 / 0.26) !important;
+  background: #0b1511 !important;
 }
 
 html[data-dthl-palette='earth'] .site-footer :is(
@@ -520,14 +521,33 @@ html[data-dthl-palette='earth'] .site-footer :is(
   .site-footer__operator-label,
   .site-footer__contact-copy span:first-child
 ) {
-  color: #b59965 !important;
+  color: #d06457 !important;
 }
 
-html[data-dthl-palette='earth'] .site-footer__column h3::after,
+html[data-dthl-palette='earth'] .site-footer__heading-rule {
+  background: linear-gradient(90deg, #b03525, #496f5b) !important;
+}
+
 html[data-dthl-palette='earth'] .site-footer__back-top {
-  border-color: #b59965 !important;
-  color: #103323 !important;
-  background: #b59965 !important;
+  border-color: transparent !important;
+  color: rgb(235 243 238 / 0.9) !important;
+  background: transparent !important;
+}
+
+html[data-dthl-palette='earth'] .site-footer__back-top-icon {
+  border-color: rgb(83 129 103 / 0.52) !important;
+  color: #b9d5c5 !important;
+  background: rgb(42 102 70 / 0.12) !important;
+}
+
+html[data-dthl-palette='earth'] .site-footer__back-top:hover {
+  color: #d06457 !important;
+}
+
+html[data-dthl-palette='earth'] .site-footer__back-top:hover .site-footer__back-top-icon {
+  border-color: rgb(176 53 37 / 0.58) !important;
+  color: #ffffff !important;
+  background: rgb(176 53 37 / 0.14) !important;
 }
 
 /* Mobile bottom nav final guard */
