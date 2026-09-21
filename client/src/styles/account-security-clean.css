@@ -1,21 +1,21 @@
 /* =========================================================
-   ACCOUNT SECURITY — CLEAN WHITE / INK / GOLD
+   ACCOUNT SECURITY — CLEAN WHITE / GREEN / RED
    Scope: /tai-khoan/bao-mat in light mode only.
-   Matches the corrected profile settings page without turning gold into a
-   dominant fill colour. Verification green remains semantic and restrained.
+   Matches the current DTHL green/red palette while keeping verification states
+   semantic and restrained.
 ========================================================= */
 
 html[data-dthl-theme='light'] .account-center-content .account-security-page {
-  --ap-green: #b59965 !important;
-  --ap-green-hover: #9d8152 !important;
-  --ap-green-dark: #3c403c !important;
-  --ap-green-soft: #f8f6f1 !important;
-  --ap-green-border: #e6dfd3 !important;
-  --ap-ink: #202320 !important;
-  --ap-text: #505550 !important;
-  --ap-muted: #7d827d !important;
-  --ap-border: #e5e4df !important;
-  --ap-danger: #b84a43 !important;
+  --ap-green: #0e3323 !important;
+  --ap-green-hover: #164a34 !important;
+  --ap-green-dark: #0e3323 !important;
+  --ap-green-soft: #eef4f1 !important;
+  --ap-green-border: #d7e3dc !important;
+  --ap-ink: #17231d !important;
+  --ap-text: #4f5c55 !important;
+  --ap-muted: #718078 !important;
+  --ap-border: #dfe5e1 !important;
+  --ap-danger: #b03525 !important;
 
   width: 100% !important;
   max-width: none !important;
@@ -31,20 +31,20 @@ html[data-dthl-theme='light'] .account-center-content .account-security-page .ac
   align-items: flex-end !important;
   min-height: 92px !important;
   padding: 4px 2px 16px !important;
-  border-bottom: 1px solid #e7e6e1 !important;
+  border-bottom: 1px solid #e3e9e5 !important;
 }
 
 html[data-dthl-theme='light'] .account-center-content .account-security-page .account-page-heading__eyebrow {
   margin-bottom: 7px !important;
   gap: 7px !important;
-  color: #967a4a !important;
+  color: #b03525 !important;
   font-size: 12.5px !important;
   font-weight: 800 !important;
   letter-spacing: 0.075em !important;
 }
 
 html[data-dthl-theme='light'] .account-center-content .account-security-page .account-page-heading h2 {
-  color: #1f221f !important;
+  color: #17231d !important;
   font-size: clamp(24px, 2vw, 30px) !important;
   font-weight: 820 !important;
   letter-spacing: -0.03em !important;
@@ -54,7 +54,7 @@ html[data-dthl-theme='light'] .account-center-content .account-security-page .ac
 html[data-dthl-theme='light'] .account-center-content .account-security-page .account-page-heading p {
   max-width: 720px !important;
   margin-top: 7px !important;
-  color: #747a74 !important;
+  color: #6f7b74 !important;
   font-size: 14.5px !important;
   line-height: 1.55 !important;
 }
@@ -65,20 +65,20 @@ html[data-dthl-theme='light'] .account-center-content .account-security-page .ac
 html[data-dthl-theme='light'] .account-center-content .account-security-page .account-page-card {
   width: 100% !important;
   padding: 24px !important;
-  border: 1px solid #e5e4df !important;
+  border: 1px solid #dfe5e1 !important;
   border-radius: 14px !important;
   background: #ffffff !important;
-  box-shadow: 0 5px 18px rgb(20 23 20 / 0.035) !important;
+  box-shadow: 0 5px 18px rgb(14 51 35 / 0.035) !important;
 }
 
 html[data-dthl-theme='light'] .account-center-content .account-security-page .account-page-card__header {
   padding-bottom: 17px !important;
   margin-bottom: 18px !important;
-  border-bottom-color: #e7e6e1 !important;
+  border-bottom-color: #e3e9e5 !important;
 }
 
 html[data-dthl-theme='light'] .account-center-content .account-security-page .account-page-card__header h3 {
-  color: #222522 !important;
+  color: #17231d !important;
   font-size: 18px !important;
   font-weight: 800 !important;
   line-height: 1.3 !important;
@@ -86,7 +86,7 @@ html[data-dthl-theme='light'] .account-center-content .account-security-page .ac
 
 html[data-dthl-theme='light'] .account-center-content .account-security-page .account-page-card__header p {
   margin-top: 5px !important;
-  color: #7a807a !important;
+  color: #718078 !important;
   font-size: 14px !important;
   line-height: 1.55 !important;
 }
@@ -104,30 +104,30 @@ html[data-dthl-theme='light'] .account-center-content .account-security-page .ac
   min-height: 112px !important;
   padding: 16px !important;
   gap: 13px !important;
-  border: 1px solid #e4e3de !important;
+  border: 1px solid #dfe5e1 !important;
   border-radius: 12px !important;
-  background: #fbfbfa !important;
+  background: #f9fbfa !important;
   box-shadow: none !important;
 }
 
 html[data-dthl-theme='light'] .account-center-content .account-security-page .account-verification-card__icon {
   width: 48px !important;
   height: 48px !important;
-  border: 1px solid #e8e2d8 !important;
+  border: 1px solid #d7e3dc !important;
   border-radius: 12px !important;
-  color: #8f7548 !important;
-  background: #faf8f4 !important;
+  color: #0e3323 !important;
+  background: #eef4f1 !important;
 }
 
 html[data-dthl-theme='light'] .account-center-content .account-security-page .account-verification-card strong {
-  color: #262926 !important;
+  color: #17231d !important;
   font-size: 14.5px !important;
   font-weight: 780 !important;
 }
 
 html[data-dthl-theme='light'] .account-center-content .account-security-page .account-verification-card small {
   margin-top: 4px !important;
-  color: #818681 !important;
+  color: #718078 !important;
   font-size: 14px !important;
   line-height: 1.45 !important;
 }
@@ -148,12 +148,12 @@ html[data-dthl-theme='light'] .account-center-content .account-security-page .ac
 }
 
 html[data-dthl-theme='light'] .account-center-content .account-security-page .account-verification-status.is-pending {
-  color: #806734 !important;
-  background: #f8f3e8 !important;
+  color: #a83a2c !important;
+  background: #fff2ef !important;
 }
 
 html[data-dthl-theme='light'] .account-center-content .account-security-page .account-verification-card__note {
-  color: #666c66 !important;
+  color: #5f6c65 !important;
   font-size: 12.5px !important;
   line-height: 1.5 !important;
 }
@@ -171,33 +171,33 @@ html[data-dthl-theme='light'] .account-center-content .account-security-page .ac
 }
 
 html[data-dthl-theme='light'] .account-center-content .account-security-page .account-field label {
-  color: #252825 !important;
+  color: #17231d !important;
   font-size: 14.5px !important;
   font-weight: 750 !important;
 }
 
 html[data-dthl-theme='light'] .account-center-content .account-security-page .account-field label em {
-  color: #9f8150 !important;
+  color: #b03525 !important;
 }
 
 html[data-dthl-theme='light'] .account-center-content .account-security-page .account-input {
   min-height: 52px !important;
   padding-inline: 14px !important;
   gap: 10px !important;
-  border: 1px solid #deded9 !important;
+  border: 1px solid #d8e0db !important;
   border-radius: 10px !important;
-  background: #fbfbfa !important;
+  background: #f9fbfa !important;
   box-shadow: none !important;
 }
 
 html[data-dthl-theme='light'] .account-center-content .account-security-page .account-input > svg {
-  color: #676d67 !important;
+  color: #5f6c65 !important;
 }
 
 html[data-dthl-theme='light'] .account-center-content .account-security-page .account-input:focus-within {
-  border-color: #b59965 !important;
+  border-color: #0e3323 !important;
   background: #ffffff !important;
-  box-shadow: 0 0 0 3px rgb(181 153 101 / 0.11) !important;
+  box-shadow: 0 0 0 3px rgb(14 51 35 / 0.10) !important;
 }
 
 html[data-dthl-theme='light'] .account-center-content .account-security-page :is(
@@ -205,7 +205,7 @@ html[data-dthl-theme='light'] .account-center-content .account-security-page :is
   .account-input select
 ) {
   height: 50px !important;
-  color: #262926 !important;
+  color: #17231d !important;
   background: transparent !important;
   font-size: 15px !important;
   line-height: 1.35 !important;
@@ -218,13 +218,13 @@ html[data-dthl-theme='light'] .account-center-content .account-security-page .ac
 html[data-dthl-theme='light'] .account-center-content .account-security-page .account-password-toggle {
   width: 36px !important;
   height: 36px !important;
-  color: #777c77 !important;
+  color: #718078 !important;
   background: transparent !important;
 }
 
 html[data-dthl-theme='light'] .account-center-content .account-security-page .account-password-toggle:hover {
-  color: #272a27 !important;
-  background: #f1f1ee !important;
+  color: #0e3323 !important;
+  background: #eef4f1 !important;
 }
 
 html[data-dthl-theme='light'] .account-center-content .account-security-page :is(
@@ -236,7 +236,7 @@ html[data-dthl-theme='light'] .account-center-content .account-security-page :is
 }
 
 html[data-dthl-theme='light'] .account-center-content .account-security-page .account-field__hint {
-  color: #858a85 !important;
+  color: #718078 !important;
 }
 
 /* Keep successful password-strength feedback semantic but restrained. */
@@ -261,28 +261,28 @@ html[data-dthl-theme='light'] .account-center-content .account-security-page .ac
 }
 
 html[data-dthl-theme='light'] .account-center-content .account-security-page .account-page-button--primary {
-  border: 1px solid #232623 !important;
+  border: 1px solid #0e3323 !important;
   color: #ffffff !important;
-  background: #232623 !important;
+  background: #0e3323 !important;
   box-shadow: none !important;
 }
 
 html[data-dthl-theme='light'] .account-center-content .account-security-page .account-page-button--primary:hover:not(:disabled) {
-  border-color: #b59965 !important;
+  border-color: #0e3323 !important;
   color: #1d201d !important;
   background: #b59965 !important;
 }
 
 html[data-dthl-theme='light'] .account-center-content .account-security-page .account-page-button--soft {
-  border: 1px solid #e4dfd6 !important;
-  color: #343834 !important;
-  background: #faf8f4 !important;
+  border: 1px solid #d7e3dc !important;
+  color: #0e3323 !important;
+  background: #eef4f1 !important;
 }
 
 html[data-dthl-theme='light'] .account-center-content .account-security-page .account-page-button--soft:hover:not(:disabled) {
-  border-color: #cdbb9d !important;
-  color: #242724 !important;
-  background: #f5f0e7 !important;
+  border-color: #bfd0c6 !important;
+  color: #0e3323 !important;
+  background: #eaf2ee !important;
 }
 
 html[data-dthl-theme='light'] .account-center-content .account-security-page .account-inline-alert {
@@ -294,9 +294,9 @@ html[data-dthl-theme='light'] .account-center-content .account-security-page .ac
 }
 
 html[data-dthl-theme='light'] .account-center-content .account-security-page .account-inline-alert.is-info {
-  color: #4d514d !important;
-  background: #faf8f4 !important;
-  border: 1px solid #e6dfd3 !important;
+  color: #4f5c55 !important;
+  background: #eef4f1 !important;
+  border: 1px solid #d7e3dc !important;
 }
 
 html[data-dthl-theme='light'] .account-center-content .account-security-page .account-inline-alert.is-danger {
