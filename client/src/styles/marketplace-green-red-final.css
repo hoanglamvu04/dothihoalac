@@ -811,3 +811,10 @@ html body .app-shell .properties-page
   .properties-hero__content > .properties-hero__eyebrow svg {
   color: #b03525 !important;
 }
+
+
+/* NEWS MASTHEAD EYEBROW FINAL COLOR LOCK */
+html body .app-shell .news-hub .news-masthead__eyebrow,
+html body .app-shell .news-hub .news-masthead__eyebrow svg {
+  color: #b03525 !important;
+}
