@@ -1229,3 +1229,245 @@ html[data-dthl-theme='light'][data-dthl-palette='earth']
   border-left-color: #b03525 !important;
   background: #f7f9f8 !important;
 }
+
+
+/* CONTACT PAGE FINAL GREEN RED LOCK */
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .contact-page {
+  --service-accent: #0e3323 !important;
+  --service-accent-dark: #0e3323 !important;
+  --service-accent-soft: #eef4f1 !important;
+  --service-border: #dfe5e1 !important;
+  --service-border-warm: #d7e3dc !important;
+  --service-ink: #17231d !important;
+  --service-text: #4f5c55 !important;
+  --service-muted: #718078 !important;
+
+  --contact-green: #0e3323 !important;
+  --contact-green-hover: #164a34 !important;
+  --contact-green-dark: #0e3323 !important;
+  --contact-green-deep: #082b1d !important;
+  --contact-green-soft: #eef4f1 !important;
+  --contact-green-border: #d7e3dc !important;
+  --contact-ink: #17231d !important;
+  --contact-text: #4f5c55 !important;
+  --contact-muted: #718078 !important;
+  --contact-border: #dfe5e1 !important;
+  --contact-background: #ffffff !important;
+  --contact-surface: #ffffff !important;
+
+  color: #17231d !important;
+  background:
+    radial-gradient(circle at 6% 3%, rgb(14 51 35 / 0.05), transparent 24%),
+    radial-gradient(circle at 96% 8%, rgb(176 53 37 / 0.035), transparent 22%),
+    #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .contact-hero {
+  border-color: #1c4a36 !important;
+  color: #ffffff !important;
+  background:
+    radial-gradient(circle at 86% 16%, rgb(176 53 37 / 0.16), transparent 28%),
+    radial-gradient(circle at 70% 90%, rgb(255 255 255 / 0.05), transparent 26%),
+    linear-gradient(118deg, #082b1d 0%, #0e3323 58%, #164a34 100%) !important;
+  box-shadow: 0 16px 40px rgb(14 51 35 / 0.18) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .contact-hero::before {
+  border-color: rgb(255 255 255 / 0.08) !important;
+  box-shadow:
+    0 0 0 58px rgb(255 255 255 / 0.025),
+    0 0 0 120px rgb(255 255 255 / 0.014) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .contact-hero::after {
+  background: rgb(176 53 37 / 0.09) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell :is(
+    .contact-hero__eyebrow,
+    .contact-hero__eyebrow svg
+  ) {
+  color: #e78478 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .contact-hero h1 {
+  color: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .contact-hero__content > p {
+  color: rgb(255 255 255 / 0.78) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .contact-primary-button {
+  border-color: #b03525 !important;
+  color: #ffffff !important;
+  background: #b03525 !important;
+  box-shadow: 0 10px 24px rgb(0 0 0 / 0.17) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .contact-primary-button:hover {
+  border-color: #c54a3b !important;
+  background: #c54a3b !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .contact-secondary-button {
+  border-color: rgb(255 255 255 / 0.28) !important;
+  color: #ffffff !important;
+  background: rgb(255 255 255 / 0.08) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .contact-secondary-button:hover {
+  border-color: rgb(255 255 255 / 0.42) !important;
+  background: rgb(255 255 255 / 0.14) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .contact-hero__summary {
+  border-color: rgb(255 255 255 / 0.16) !important;
+  color: #ffffff !important;
+  background: rgb(255 255 255 / 0.09) !important;
+  box-shadow: 0 14px 34px rgb(0 0 0 / 0.14) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .contact-hero__summary-heading > span {
+  color: #ffffff !important;
+  background: rgb(176 53 37 / 0.2) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .contact-hero__summary-heading strong {
+  color: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .contact-hero__summary-heading small,
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .contact-hero__summary-list > div {
+  color: rgb(255 255 255 / 0.72) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .contact-hero__summary-list svg {
+  color: #dfeee6 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell :is(
+    .contact-quick-info article,
+    .contact-topics-section,
+    .contact-topics-grid article,
+    .contact-form-card,
+    .contact-sidebar-card,
+    .contact-process-section,
+    .contact-process-grid article,
+    .contact-faq-section
+  ) {
+  border-color: #dfe5e1 !important;
+  background: #ffffff !important;
+  box-shadow: 0 9px 28px rgb(14 51 35 / 0.055) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell :is(
+    .contact-quick-info article > span,
+    .contact-section-heading > span,
+    .contact-topics-grid article > span,
+    .contact-form-card__heading > span
+  ) {
+  color: #0e3323 !important;
+  background: #eef4f1 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell :is(
+    .contact-section-heading > div > span,
+    .contact-form-card__heading > div > span
+  ) {
+  color: #b03525 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .contact-form-card__notice {
+  border-color: #d7e3dc !important;
+  color: #0e3323 !important;
+  background: #eef4f1 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .contact-page :is(input, select, textarea):focus {
+  border-color: #0e3323 !important;
+  box-shadow: 0 0 0 3px rgb(14 51 35 / 0.1) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .contact-business-card {
+  border-color: #1c4a36 !important;
+  color: #ffffff !important;
+  background:
+    radial-gradient(circle at 91% 10%, rgb(176 53 37 / 0.12), transparent 30%),
+    linear-gradient(145deg, #082b1d, #164a34) !important;
+  box-shadow: 0 16px 38px rgb(14 51 35 / 0.18) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .contact-business-card > span {
+  color: #ffffff !important;
+  background: rgb(176 53 37 / 0.18) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .contact-business-card > small {
+  color: #e78478 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .contact-business-card h2 {
+  color: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .contact-business-card p {
+  color: rgb(255 255 255 / 0.72) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .contact-business-card a {
+  color: #0e3323 !important;
+  background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .contact-process-grid article > span {
+  color: #ffffff !important;
+  background: #0e3323 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .contact-faq-list details {
+  border-color: #dfe5e1 !important;
+  background: #f8faf9 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .contact-faq-list details[open] {
+  border-color: #c7d8cf !important;
+  background: #eef4f1 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .contact-faq-toggle {
+  color: #0e3323 !important;
+  background: #ffffff !important;
+}
