@@ -1048,3 +1048,184 @@ html[data-dthl-theme='light'][data-dthl-palette='earth']
   color: #68736d !important;
   background: #f7f9f8 !important;
 }
+
+
+/* STATIC ABOUT/POLICY PAGES FINAL GREEN RED LOCK */
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .static-page-view {
+  --static-green: #0e3323 !important;
+  --static-green-hover: #164a34 !important;
+  --static-green-dark: #0e3323 !important;
+  --static-green-deep: #082b1d !important;
+  --static-green-soft: #eef4f1 !important;
+  --static-green-border: #d7e3dc !important;
+  --static-ink: #17231d !important;
+  --static-text: #4f5c55 !important;
+  --static-muted: #718078 !important;
+  --static-border: #dfe5e1 !important;
+  --static-surface: #ffffff !important;
+  --static-background: #ffffff !important;
+
+  color: #17231d !important;
+  background:
+    radial-gradient(circle at 4% 3%, rgb(14 51 35 / 0.055), transparent 24%),
+    radial-gradient(circle at 96% 8%, rgb(176 53 37 / 0.035), transparent 22%),
+    #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .static-page-hero {
+  border-color: #dfe5e1 !important;
+  background:
+    radial-gradient(circle at 91% 10%, rgb(14 51 35 / 0.105), transparent 30%),
+    radial-gradient(circle at 78% 92%, rgb(176 53 37 / 0.035), transparent 28%),
+    linear-gradient(180deg, #ffffff, #f8fbf9) !important;
+  box-shadow: 0 14px 42px rgb(14 51 35 / 0.075) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .static-page-hero::after {
+  border-color: rgb(14 51 35 / 0.07) !important;
+  box-shadow:
+    0 0 0 36px rgb(14 51 35 / 0.026),
+    0 0 0 75px rgb(14 51 35 / 0.014) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell :is(
+    .static-page-hero__eyebrow,
+    .static-page-hero__eyebrow svg
+  ) {
+  color: #b03525 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .static-page-hero__icon {
+  border-color: #d7e3dc !important;
+  color: #0e3323 !important;
+  background: #eef4f1 !important;
+  box-shadow: 0 11px 26px rgb(14 51 35 / 0.09) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .static-page-hero__meta svg {
+  color: #0e3323 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .static-page-hero__actions button {
+  border-color: #dfe5e1 !important;
+  color: #405149 !important;
+  background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .static-page-hero__actions button:hover {
+  border-color: #bfd0c6 !important;
+  color: #0e3323 !important;
+  background: #eef4f1 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell :is(
+    .static-page-article,
+    .static-sidebar-card
+  ) {
+  border-color: #dfe5e1 !important;
+  background: #ffffff !important;
+  box-shadow: 0 10px 32px rgb(14 51 35 / 0.055) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .static-page-article__heading {
+  border-bottom-color: #dfe5e1 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .static-page-article__heading > span {
+  color: #0e3323 !important;
+  background: #eef4f1 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .static-sidebar-heading {
+  border-bottom-color: #dfe5e1 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .static-sidebar-heading > svg {
+  color: #0e3323 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .static-page-toc button::before {
+  background: #b03525 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .static-page-toc button:hover {
+  color: #0e3323 !important;
+  background: #eef4f1 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .static-page-toc button.is-level-3::before {
+  background: #8ba496 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .static-page-info dt svg {
+  color: #0e3323 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .static-page-tools button {
+  border-color: #dfe5e1 !important;
+  color: #405149 !important;
+  background: #f7f9f8 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .static-page-tools button:hover {
+  border-color: #bfd0c6 !important;
+  color: #0e3323 !important;
+  background: #eef4f1 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .static-page-support {
+  border-color: #d7e3dc !important;
+  background: linear-gradient(145deg, #eef4f1, #ffffff) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .static-page-support > span {
+  color: #0e3323 !important;
+  background: #dfeee6 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .static-page-support > a,
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .static-page-scroll-top {
+  color: #ffffff !important;
+  background: #0e3323 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .static-page-support > a:hover,
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .static-page-scroll-top:hover {
+  background: #164a34 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .static-page-body a {
+  color: #b03525 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  body .app-shell .static-page-body blockquote {
+  border-left-color: #b03525 !important;
+  background: #f7f9f8 !important;
+}
