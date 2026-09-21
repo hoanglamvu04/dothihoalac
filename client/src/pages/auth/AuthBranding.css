@@ -291,6 +291,111 @@ html[data-dthl-theme='light'] :is(.dthl-register-page, .dthl-forgot-page, .dthl-
   background: var(--dthl-auth-earth-soft) !important;
 }
 
+/* Register palette: white + deep green + restrained brand red. */
+.dthl-register-page {
+  --dthl-register-primary: #0e3323;
+  --dthl-register-primary-hover: #164a34;
+  --dthl-register-primary-soft: #eef4f1;
+  --dthl-register-accent: #b03525;
+  --dthl-register-accent-soft: #faefed;
+  --dthl-register-border: #dfe5e1;
+}
+
+html[data-dthl-theme='light'] .dthl-register-page {
+  background:
+    radial-gradient(circle at 7% 9%, rgb(14 51 35 / 0.07), transparent 27%),
+    radial-gradient(circle at 92% 10%, rgb(176 53 37 / 0.055), transparent 24%),
+    #ffffff !important;
+}
+
+.dthl-register-page .dthl-register-shell {
+  border-color: var(--dthl-register-border) !important;
+  box-shadow:
+    0 30px 80px rgb(14 51 35 / 0.09),
+    0 5px 18px rgb(14 51 35 / 0.04) !important;
+}
+
+.dthl-register-page .dthl-register-intro {
+  background:
+    radial-gradient(circle at 82% 17%, rgb(176 53 37 / 0.12), transparent 30%),
+    linear-gradient(150deg, #082b1d 0%, #0e3323 48%, #164a34 100%) !important;
+}
+
+.dthl-register-page :is(
+  .dthl-register-eyebrow,
+  .dthl-register-intro__heading h1 em,
+  .dthl-register-card__header > span
+) {
+  color: var(--dthl-register-accent) !important;
+}
+
+.dthl-register-page .dthl-register-benefits > div > span {
+  color: #ffffff !important;
+  border: 1px solid rgb(208 100 87 / 0.42) !important;
+  background: rgb(176 53 37 / 0.18) !important;
+}
+
+.dthl-register-page .dthl-register-field label em {
+  color: var(--dthl-register-accent) !important;
+}
+
+.dthl-register-page .dthl-register-input > svg,
+.dthl-register-page .dthl-register-card__security > svg {
+  color: var(--dthl-register-primary) !important;
+}
+
+.dthl-register-page .dthl-register-input:focus-within {
+  border-color: var(--dthl-register-primary) !important;
+  background: #ffffff !important;
+  box-shadow:
+    0 0 0 4px rgb(14 51 35 / 0.1),
+    0 8px 22px rgb(14 51 35 / 0.05) !important;
+}
+
+.dthl-register-page .dthl-register-password-toggle:hover {
+  color: var(--dthl-register-primary) !important;
+  background: var(--dthl-register-primary-soft) !important;
+}
+
+.dthl-register-page .dthl-register-terms input:checked + .dthl-register-checkbox {
+  border-color: var(--dthl-register-primary) !important;
+  color: #ffffff !important;
+  background: var(--dthl-register-primary) !important;
+}
+
+.dthl-register-page .dthl-register-terms input:focus-visible + .dthl-register-checkbox {
+  box-shadow: 0 0 0 4px rgb(14 51 35 / 0.1) !important;
+}
+
+.dthl-register-page .dthl-register-terms a,
+.dthl-register-page .dthl-register-switch a {
+  color: var(--dthl-register-accent) !important;
+}
+
+.dthl-register-page .dthl-register-terms a:hover,
+.dthl-register-page .dthl-register-switch a:hover {
+  color: #84271e !important;
+}
+
+.dthl-register-page .dthl-register-submit {
+  border-color: var(--dthl-register-primary) !important;
+  color: #ffffff !important;
+  background: var(--dthl-register-primary) !important;
+  box-shadow: 0 13px 28px rgb(14 51 35 / 0.18) !important;
+}
+
+.dthl-register-page .dthl-register-submit:hover:not(:disabled) {
+  border-color: var(--dthl-register-primary-hover) !important;
+  background: var(--dthl-register-primary-hover) !important;
+  box-shadow: 0 15px 30px rgb(14 51 35 / 0.2) !important;
+}
+
+.dthl-register-page .dthl-register-card__security {
+  border-color: #dfe5e1 !important;
+  color: #68736d !important;
+  background: #f7f9f8 !important;
+}
+
 /* Keep paired registration fields aligned from the top. The username field
    carries a helper line, so stretching both grid children makes the display
    name input drift downward inside the taller row. */
