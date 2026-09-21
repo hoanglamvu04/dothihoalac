@@ -23,18 +23,27 @@ html[data-dthl-theme='light'] :is(.contact-page, .lead-page) {
 }
 
 html[data-dthl-theme='light'] .contact-page {
-  --contact-green: var(--service-accent);
-  --contact-green-hover: #9f8252;
-  --contact-green-dark: var(--service-accent-dark);
-  --contact-green-deep: var(--service-ink);
-  --contact-green-soft: var(--service-accent-soft);
-  --contact-green-border: var(--service-border-warm);
-  --contact-ink: var(--service-ink);
-  --contact-text: var(--service-text);
-  --contact-muted: var(--service-muted);
-  --contact-border: var(--service-border);
-  --contact-background: #fbfaf7;
-  --contact-surface: #fff;
+  --service-accent: #0e3323;
+  --service-accent-dark: #0e3323;
+  --service-accent-soft: #eef4f1;
+  --service-border: #dfe5e1;
+  --service-border-warm: #d7e3dc;
+  --service-ink: #17231d;
+  --service-text: #4f5c55;
+  --service-muted: #718078;
+
+  --contact-green: #0e3323;
+  --contact-green-hover: #164a34;
+  --contact-green-dark: #0e3323;
+  --contact-green-deep: #082b1d;
+  --contact-green-soft: #eef4f1;
+  --contact-green-border: #d7e3dc;
+  --contact-ink: #17231d;
+  --contact-text: #4f5c55;
+  --contact-muted: #718078;
+  --contact-border: #dfe5e1;
+  --contact-background: #ffffff;
+  --contact-surface: #ffffff;
 }
 
 html[data-dthl-theme='light'] .lead-page {
