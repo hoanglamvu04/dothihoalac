@@ -109,3 +109,65 @@
     font-size: 12px !important;
   }
 }
+
+@media (max-width: 760px) {
+  /* Final guard for the two utility controls in the job header.
+     Older small-screen rules switch this group back to a vertical layout,
+     which makes the labels wrap one character per line. */
+  .app-shell .job-detail-page .job-detail-header__actions {
+    position: absolute !important;
+    top: 14px !important;
+    right: 14px !important;
+    z-index: 4 !important;
+    display: flex !important;
+    grid-column: auto !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    width: auto !important;
+    max-width: none !important;
+    margin: 0 !important;
+    gap: 8px !important;
+  }
+
+  .app-shell .job-detail-page .job-detail-header__actions button {
+    display: inline-grid !important;
+    place-items: center !important;
+    flex: 0 0 42px !important;
+    width: 42px !important;
+    min-width: 42px !important;
+    max-width: 42px !important;
+    height: 42px !important;
+    min-height: 42px !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    gap: 0 !important;
+    border-radius: 50% !important;
+    font-size: 0 !important;
+    line-height: 0 !important;
+    white-space: nowrap !important;
+  }
+
+  .app-shell .job-detail-page .job-detail-header__actions button svg {
+    display: block !important;
+    width: 19px !important;
+    height: 19px !important;
+    margin: 0 !important;
+  }
+}
+
+@media (max-width: 390px) {
+  .app-shell .job-detail-page .job-detail-header__actions {
+    top: 12px !important;
+    right: 12px !important;
+    gap: 6px !important;
+  }
+
+  .app-shell .job-detail-page .job-detail-header__actions button {
+    flex-basis: 40px !important;
+    width: 40px !important;
+    min-width: 40px !important;
+    max-width: 40px !important;
+    height: 40px !important;
+    min-height: 40px !important;
+  }
+}
