@@ -1280,6 +1280,16 @@ html[data-dthl-theme='dark'] .home-reference-v2 .home-property-story__type {
     scrollbar-width: none;
   }
 
+  .home-reference-wide-heading--property nav {
+    justify-content: flex-start;
+    padding-inline: 2px 10px;
+    scroll-padding-inline: 2px 10px;
+  }
+
+  .home-reference-wide-heading--property nav a {
+    flex: 0 0 auto;
+  }
+
   .home-reference-wide-heading nav::-webkit-scrollbar {
     display: none;
   }
