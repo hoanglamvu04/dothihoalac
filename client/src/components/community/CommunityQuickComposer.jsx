@@ -493,7 +493,7 @@ export default function CommunityQuickComposer() {
         toast.success('Đã cập nhật bài viết.');
       } else {
         await communityApi.submit(id);
-        toast.success('Đã gửi bài vào hàng chờ kiểm duyệt.');
+        toast.success('Đã đăng bài cộng đồng.');
       }
 
       closeComposer();
@@ -865,7 +865,7 @@ export default function CommunityQuickComposer() {
               <span>
                 <strong>Cho phép bình luận</strong>
                 <small>
-                  Người đọc có thể trao đổi bên dưới bài sau khi được duyệt.
+                  Người đọc có thể trao đổi ngay sau khi bài được đăng.
                 </small>
               </span>
             </label>
@@ -894,7 +894,7 @@ export default function CommunityQuickComposer() {
               <small>
                 {editStatus === 'published'
                   ? 'Thay đổi sẽ cập nhật ngay trên bài đang hiển thị.'
-                  : 'Bài sẽ được kiểm duyệt trước khi hiển thị.'}
+                  : 'Bài sẽ hiển thị ngay trên cộng đồng sau khi đăng.'}
               </small>
 
               <button
