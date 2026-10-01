@@ -1,0 +1,55 @@
+/* Final mobile News Hub type scale.
+ * Keep article detail typography untouched; this only compacts the listing
+ * page so repeated story rows do not feel oversized on narrow screens.
+ */
+@media (max-width: 680px) {
+  html body .app-shell .news-hub .news-story__kicker span {
+    font-size: 10.5px !important;
+    line-height: 1.25 !important;
+  }
+
+  html body .app-shell .news-hub .news-story--feed h3,
+  html[data-dthl-theme='light'][data-dthl-palette='earth']
+    body .app-shell .news-hub .news-content-layout .news-story--feed h3 {
+    font-size: 15px !important;
+    line-height: 1.36 !important;
+    font-weight: 650 !important;
+  }
+
+  html body .app-shell .news-hub .news-story--side h3 {
+    font-size: 14.5px !important;
+    line-height: 1.36 !important;
+  }
+
+  html body .app-shell .news-hub .news-story .content-meta,
+  html body .app-shell .news-hub .news-story .content-meta span {
+    font-size: 11.5px !important;
+    line-height: 1.35 !important;
+  }
+
+  html body .app-shell .news-hub .news-stream__heading span {
+    font-size: 10.5px !important;
+  }
+
+  html body .app-shell .news-hub .news-stream__heading h2 {
+    font-size: 19px !important;
+    line-height: 1.25 !important;
+  }
+
+  html body .app-shell .news-hub .news-stream__heading > p {
+    font-size: 12px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  html body .app-shell .news-hub .news-story--feed h3,
+  html[data-dthl-theme='light'][data-dthl-palette='earth']
+    body .app-shell .news-hub .news-content-layout .news-story--feed h3 {
+    font-size: 14.5px !important;
+  }
+
+  html body .app-shell .news-hub .news-story .content-meta,
+  html body .app-shell .news-hub .news-story .content-meta span {
+    font-size: 11px !important;
+  }
+}

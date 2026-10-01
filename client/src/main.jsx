@@ -72,6 +72,7 @@ import './styles/dthl-palette-contract.css';
 import './styles/dthl-white-canvas.css';
 import './styles/marketplace-green-red-final.css';
 import './styles/footer-mobile-final.css';
+import './styles/news-mobile-type-final.css';
 import './features/propertyMarketplacePaging';
 import './features/jobEditorWizard';
 
