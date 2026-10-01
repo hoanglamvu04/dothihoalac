@@ -970,6 +970,7 @@ export default function JobDetailPage() {
             <section className="job-reaction-section">
               <ReactionBar
                 content={item}
+                showReactions={false}
               />
             </section>
 
