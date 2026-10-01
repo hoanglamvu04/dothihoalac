@@ -165,7 +165,7 @@ export async function submit(req, res) {
       req.user._id,
       req.body,
     ),
-    message: 'Đã gửi bài đi duyệt.',
+    message: 'Đã đăng bài cộng đồng.',
   });
 }
 
