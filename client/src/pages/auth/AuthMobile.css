@@ -50,6 +50,17 @@
     background: transparent !important;
   }
 
+  /* Login already has the global mobile header logo. The login intro has
+     no remaining content on mobile except a duplicate brand mark, so remove
+     the entire intro block and let the form start immediately below header. */
+  .dthl-login-page .dthl-login-intro {
+    display: none !important;
+  }
+
+  .dthl-login-page .dthl-login-form-side {
+    padding-top: 20px !important;
+  }
+
   .dthl-login-intro::before,
   .dthl-login-intro::after,
   .dthl-register-intro::before,
