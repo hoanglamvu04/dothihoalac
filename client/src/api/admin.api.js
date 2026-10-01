@@ -116,6 +116,10 @@ export const adminApi = {
   removeTaxonomy: async (type, id) =>
     unwrap(await api.delete(`/admin/taxonomy/${type}/${id}`)),
 
+  branding: async () => unwrap(await api.get('/admin/system/branding')),
+  updateBranding: async (payload) =>
+    unwrap(await api.patch('/admin/system/branding', payload)),
+
   settings: async () => unwrap(await api.get('/admin/system/settings')),
   updateSetting: async (key, payload) =>
     unwrap(await api.patch(`/admin/system/settings/${key}`, payload)),

@@ -3,11 +3,12 @@ import { api, unwrap } from './http';
 export const mediaApi = {
   mine: async () => unwrap(await api.get('/media/mine')),
 
-  uploadImage: async (file, altText = '') => {
+  uploadImage: async (file, altText = '', folder = 'general') => {
     const formData = new FormData();
 
     formData.append('image', file);
     formData.append('altText', altText);
+    formData.append('folder', folder);
 
     return unwrap(
       await api.post('/media/images', formData),

@@ -1,6 +1,9 @@
 import { api, unwrap } from './http';
 
 export const systemApi = {
+  branding: async (config = {}) =>
+    unwrap(await api.get('/system/branding', config)),
+
   homeFeed: async (config = {}) =>
     unwrap(await api.get('/system/home-feed', config)),
 
