@@ -349,9 +349,15 @@ export default function CommunityQuickComposerDesktop() {
     }
 
     const draftBodyHtml = stripTemporaryCommunityMedia(bodyHtml);
+    const draftText = stripHtml(draftBodyHtml);
     const draftHasContent = Boolean(
-      stripHtml(draftBodyHtml) || /data-media-id=|<img\b/i.test(draftBodyHtml),
+      draftText || /data-media-id=|<img\b/i.test(draftBodyHtml),
     );
+
+    if (draftText && draftText.length < 5) {
+      setFormError('Nội dung bài viết cần ít nhất 5 ký tự.');
+      return;
+    }
 
     if (!draftHasContent) {
       setFormError(
@@ -397,6 +403,11 @@ export default function CommunityQuickComposerDesktop() {
       loadingEdit ||
       !canEditCurrent
     ) {
+      return;
+    }
+
+    if (plainText && plainText.length < 5) {
+      setFormError('Nội dung bài viết cần ít nhất 5 ký tự.');
       return;
     }
 

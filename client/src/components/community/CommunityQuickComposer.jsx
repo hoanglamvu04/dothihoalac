@@ -431,6 +431,11 @@ export default function CommunityQuickComposer() {
   const saveDraft = async () => {
     if (!hasContent || saving || loadingEdit || !canEditCurrent) return;
 
+    if (plainText && plainText.length < 5) {
+      setFormError('Nội dung bài viết cần ít nhất 5 ký tự.');
+      return;
+    }
+
     setSaving(true);
     setFormError('');
 
@@ -468,6 +473,11 @@ export default function CommunityQuickComposer() {
 
   const publish = async () => {
     if (!hasContent || saving || loadingEdit || !canEditCurrent) return;
+
+    if (plainText && plainText.length < 5) {
+      setFormError('Nội dung bài viết cần ít nhất 5 ký tự.');
+      return;
+    }
 
     setSaving(true);
     setFormError('');
