@@ -1,0 +1,144 @@
+/* Final mobile footer guard.
+ * Imported after every theme layer so legacy footer rules cannot reflow or
+ * overlap the compact mobile footer.
+ */
+@media (max-width: 720px) {
+  html body .app-shell .site-footer .site-footer__bottom {
+    position: relative !important;
+  }
+
+  html body .app-shell .site-footer .site-footer__bottom-inner {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 34px !important;
+    grid-template-areas:
+      "legal legal"
+      "copy top" !important;
+    align-items: center !important;
+    width: calc(100% - 24px) !important;
+    min-height: 0 !important;
+    margin-inline: auto !important;
+    padding: 14px 0 20px !important;
+    gap: 10px 10px !important;
+  }
+
+  html body .app-shell .site-footer .site-footer__bottom-links {
+    grid-area: legal !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-wrap: wrap !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    gap: 6px 12px !important;
+  }
+
+  html body .app-shell .site-footer .site-footer__bottom-links a,
+  html body .app-shell .site-footer .site-footer__bottom-links a + a {
+    position: static !important;
+    display: inline-flex !important;
+    width: auto !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    font-size: 9px !important;
+    line-height: 1.35 !important;
+    white-space: nowrap !important;
+  }
+
+  html body .app-shell .site-footer .site-footer__bottom-links a + a::before {
+    display: none !important;
+  }
+
+  html body .app-shell .site-footer .site-footer__bottom p {
+    grid-area: copy !important;
+    display: block !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: rgb(235 243 238 / 0.82) !important;
+    font-size: 9.5px !important;
+    line-height: 1.4 !important;
+    text-align: center !important;
+    white-space: normal !important;
+  }
+
+  html body .app-shell .site-footer .site-footer__bottom p > span,
+  html body .app-shell .site-footer .site-footer__bottom p > a {
+    display: block !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1.4 !important;
+  }
+
+  html body .app-shell .site-footer .site-footer__bottom p > a {
+    margin-top: 2px !important;
+    color: rgb(245 249 247 / 0.94) !important;
+    font-weight: 650 !important;
+  }
+
+  html body .app-shell .site-footer .site-footer__bottom p > span::before {
+    display: none !important;
+    content: none !important;
+  }
+
+  html body .app-shell .site-footer .site-footer__back-top {
+    grid-area: top !important;
+    align-self: center !important;
+    justify-self: end !important;
+    display: grid !important;
+    place-items: center !important;
+    width: 32px !important;
+    height: 32px !important;
+    min-width: 32px !important;
+    min-height: 32px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 0 !important;
+    font-size: 0 !important;
+  }
+
+  html body .app-shell .site-footer .site-footer__back-top > span:last-child {
+    display: none !important;
+  }
+
+  html body .app-shell .site-footer .site-footer__back-top-icon {
+    width: 32px !important;
+    height: 32px !important;
+  }
+
+  html body .app-shell .site-footer .site-footer__back-top-icon svg {
+    width: 15px !important;
+    height: 15px !important;
+  }
+}
+
+@media (max-width: 390px) {
+  html body .app-shell .site-footer .site-footer__bottom-inner {
+    width: calc(100% - 18px) !important;
+    grid-template-columns: minmax(0, 1fr) 30px !important;
+    padding-bottom: 22px !important;
+    gap: 9px 8px !important;
+  }
+
+  html body .app-shell .site-footer .site-footer__bottom-links {
+    gap: 5px 9px !important;
+  }
+
+  html body .app-shell .site-footer .site-footer__bottom-links a {
+    font-size: 8.5px !important;
+  }
+
+  html body .app-shell .site-footer .site-footer__bottom p {
+    font-size: 9px !important;
+  }
+
+  html body .app-shell .site-footer .site-footer__back-top,
+  html body .app-shell .site-footer .site-footer__back-top-icon {
+    width: 30px !important;
+    height: 30px !important;
+    min-width: 30px !important;
+    min-height: 30px !important;
+  }
+}
