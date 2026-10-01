@@ -1,7 +1,9 @@
 @media (max-width: 760px) {
   .job-detail-page {
     --job-mobile-pad: 18px;
-    padding: 0 0 152px;
+    --job-mobile-bottom-nav-clearance: 116px;
+    --job-mobile-apply-height: 54px;
+    padding: 0 0 calc(218px + env(safe-area-inset-bottom, 0px));
     background: #f6f8f7;
   }
 
@@ -514,7 +516,12 @@
 
   .job-detail-page .job-scroll-top {
     right: 14px;
-    bottom: calc(146px + env(safe-area-inset-bottom, 0px));
+    bottom: calc(
+      var(--job-mobile-bottom-nav-clearance) +
+      var(--job-mobile-apply-height) +
+      14px +
+      env(safe-area-inset-bottom, 0px)
+    );
     width: 42px;
     height: 42px;
     border-radius: 50%;
@@ -525,10 +532,13 @@
   .job-detail-page .job-apply-card__contacts a:first-of-type {
     position: fixed;
     right: 14px;
-    bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+    bottom: calc(
+      var(--job-mobile-bottom-nav-clearance) +
+      env(safe-area-inset-bottom, 0px)
+    );
     left: 14px;
     z-index: 1440;
-    min-height: 54px;
+    min-height: var(--job-mobile-apply-height);
     justify-content: center;
     border: 0;
     border-radius: 15px;
