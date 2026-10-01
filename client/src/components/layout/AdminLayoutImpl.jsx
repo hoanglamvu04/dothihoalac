@@ -18,6 +18,7 @@ import {
   LogOut,
   Menu,
   Megaphone,
+  Palette,
   MessageCircle,
   MessageSquareText,
   MessageSquareWarning,
@@ -30,6 +31,7 @@ import {
 } from 'lucide-react';
 
 import { useAuth } from '../../context/AuthContext';
+import { useBranding } from '../../context/BrandingContext';
 
 import '../../styles/admin.css';
 import './AdminLayoutProjectNav.css';
@@ -189,6 +191,12 @@ const navGroups = [
         permissions: ['create_article', 'edit_article', 'manage_system'],
       },
       {
+        to: '/quan-tri/thuong-hieu',
+        label: 'Thương hiệu',
+        icon: Palette,
+        permissions: ['manage_system'],
+      },
+      {
         to: '/quan-tri/he-thong',
         label: 'Trang và cấu hình',
         icon: Settings,
@@ -241,6 +249,7 @@ export default function AdminLayoutImpl() {
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuth();
+  const { branding, resolved: resolvedBranding } = useBranding();
   const commandInputRef = useRef(null);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
@@ -352,10 +361,10 @@ export default function AdminLayoutImpl() {
       <aside className="admin-sidebar" aria-label="Điều hướng quản trị">
         <Link className="admin-brand" to="/quan-tri">
           <span className="admin-brand-mark">
-            <img src="/Logo.png" alt="" aria-hidden="true" />
+            <img src={resolvedBranding.mark.url} alt="" aria-hidden="true" />
           </span>
           <span className="admin-brand-copy">
-            <strong>Đô Thị Hòa Lạc</strong>
+            <strong>{branding.siteName}</strong>
             <small>Operations & Content Studio</small>
           </span>
         </Link>
