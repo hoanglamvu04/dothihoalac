@@ -59,6 +59,9 @@ function LogoSelect({
   onChange,
 }) {
   const selected = assets.find((asset) => String(asset.id) === String(value));
+  const selectedUrl = selected?.source === 'builtin'
+    ? selected?.url
+    : mediaUrl(selected);
 
   return (
     <label className="brand-assignment-card">
@@ -68,8 +71,8 @@ function LogoSelect({
       </span>
 
       <span className="brand-assignment-card__preview">
-        {selected?.url ? (
-          <img src={selected.url} alt="" />
+        {selectedUrl ? (
+          <img src={selectedUrl} alt="" />
         ) : (
           <ImagePlus size={22} />
         )}
@@ -195,7 +198,13 @@ export default function AdminBrandingPage() {
         'branding',
       );
 
-      const url = mediaUrl(media);
+      const url = String(
+        media?.secureUrl ||
+        media?.url ||
+        media?.publicUrl ||
+        media?.storagePath ||
+        '',
+      ).trim();
       if (!url) {
         throw new Error('Không lấy được URL ảnh vừa tải lên.');
       }
@@ -364,7 +373,10 @@ export default function AdminBrandingPage() {
           {assets.map((asset) => (
             <article className="brand-asset-card" key={asset.id}>
               <div className="brand-asset-card__image">
-                <img src={asset.url} alt={asset.altText || asset.name} />
+                <img
+                  src={asset.source === 'builtin' ? asset.url : mediaUrl(asset)}
+                  alt={asset.altText || asset.name}
+                />
               </div>
 
               <div className="brand-asset-card__body">
@@ -473,7 +485,9 @@ export default function AdminBrandingPage() {
             <span>Header</span>
             {selectedAssets.header?.url ? (
               <img
-                src={selectedAssets.header.url}
+                src={selectedAssets.header.source === 'builtin'
+                  ? selectedAssets.header.url
+                  : mediaUrl(selectedAssets.header)}
                 alt=""
                 style={{
                   width: `${form.sizes.header.desktopWidth}px`,
@@ -487,7 +501,9 @@ export default function AdminBrandingPage() {
             <span>Footer</span>
             {selectedAssets.footer?.url ? (
               <img
-                src={selectedAssets.footer.url}
+                src={selectedAssets.footer.source === 'builtin'
+                  ? selectedAssets.footer.url
+                  : mediaUrl(selectedAssets.footer)}
                 alt=""
                 style={{
                   width: `${form.sizes.footer.desktopWidth}px`,
@@ -501,10 +517,20 @@ export default function AdminBrandingPage() {
             <span>Favicon / Mark</span>
             <div>
               {selectedAssets.favicon?.url ? (
-                <img src={selectedAssets.favicon.url} alt="" />
+                <img
+                  src={selectedAssets.favicon.source === 'builtin'
+                    ? selectedAssets.favicon.url
+                    : mediaUrl(selectedAssets.favicon)}
+                  alt=""
+                />
               ) : null}
               {selectedAssets.mark?.url ? (
-                <img src={selectedAssets.mark.url} alt="" />
+                <img
+                  src={selectedAssets.mark.source === 'builtin'
+                    ? selectedAssets.mark.url
+                    : mediaUrl(selectedAssets.mark)}
+                  alt=""
+                />
               ) : null}
             </div>
           </div>
