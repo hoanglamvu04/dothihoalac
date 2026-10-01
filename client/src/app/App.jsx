@@ -13,6 +13,7 @@ import {
 import { AuthProvider } from '../context/AuthContext';
 import { ToastProvider } from '../context/ToastContext';
 import { TaxonomyProvider } from '../context/TaxonomyContext';
+import { BrandingProvider } from '../context/BrandingContext';
 import ScrollToTop from '../components/layout/ScrollToTop';
 import PublicLayout from '../components/layout/PublicLayout';
 import AccountLayout from '../components/layout/AccountLayout';
@@ -82,6 +83,7 @@ const AdminLeadsPage = lazy(() => import('../pages/admin/AdminLeadsPage'));
 const AdminAdsPage = lazy(() => import('../pages/admin/AdminAdsPage'));
 const AdminTaxonomyPage = lazy(() => import('../pages/admin/AdminTaxonomyPage'));
 const AdminSystemPage = lazy(() => import('../pages/admin/AdminSystemPage'));
+const AdminBrandingPage = lazy(() => import('../pages/admin/AdminBrandingPage'));
 const AdminLogsPage = lazy(() => import('../pages/admin/AdminLogsPage'));
 
 function Protected({ children }) {
@@ -167,6 +169,7 @@ const router = createBrowserRouter(
         <Route path="quang-cao" element={<AdminAdsPage />} />
         <Route path="phan-loai" element={<AdminTaxonomyPage />} />
         <Route path="google-workspace" element={<GoogleWorkspacePage />} />
+        <Route path="thuong-hieu" element={<AdminBrandingPage />} />
         <Route path="he-thong" element={<AdminSystemPage />} />
         <Route path="nhat-ky" element={<AdminLogsPage />} />
       </Route>
@@ -301,14 +304,16 @@ const router = createBrowserRouter(
 
 export default function App() {
   return (
-    <ToastProvider>
-      <AuthProvider>
-        <TaxonomyProvider>
-          <Suspense fallback={<PageLoading />}>
-            <RouterProvider router={router} />
-          </Suspense>
-        </TaxonomyProvider>
-      </AuthProvider>
-    </ToastProvider>
+    <BrandingProvider>
+      <ToastProvider>
+        <AuthProvider>
+          <TaxonomyProvider>
+            <Suspense fallback={<PageLoading />}>
+              <RouterProvider router={router} />
+            </Suspense>
+          </TaxonomyProvider>
+        </AuthProvider>
+      </ToastProvider>
+    </BrandingProvider>
   );
 }
