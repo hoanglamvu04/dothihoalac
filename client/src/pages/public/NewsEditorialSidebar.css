@@ -346,7 +346,18 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .n
     margin-right: -14px;
     padding-right: 14px;
     overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: x proximity;
     scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .news-topic-chips a {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: max-content;
+    white-space: nowrap;
+    scroll-snap-align: start;
   }
 
   .news-topic-chips::-webkit-scrollbar {
