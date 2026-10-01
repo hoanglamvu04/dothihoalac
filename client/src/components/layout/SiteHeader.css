@@ -487,6 +487,22 @@
    NOTIFICATION PANEL
 ========================= */
 
+/*
+ * The desktop navigation row is painted after the main header. Because the
+ * main header uses backdrop-filter it forms its own stacking context, so the
+ * navigation could visually paint over the notification dropdown even when
+ * the dropdown itself had a high z-index. Raise the main header only while
+ * the notification is open and keep the nav in the lower layer.
+ */
+.dthl-header-main:has(.dthl-notification-panel) {
+  z-index: 40;
+}
+
+.dthl-header:has(.dthl-notification-panel) .dthl-header-nav {
+  position: relative;
+  z-index: 1;
+}
+
 .dthl-notification-wrap {
   position: relative;
 }
@@ -1546,6 +1562,139 @@
 /* =========================
    RESPONSIVE
 ========================= */
+
+/* Compact desktop notification dropdown.
+ * Keep roughly four notifications visible and scroll the rest inside instead
+ * of letting the panel grow close to full-screen height.
+ */
+@media (min-width: 761px) {
+  .dthl-notification-panel {
+    width: min(400px, calc(100vw - 32px));
+    max-height: min(560px, calc(100vh - 120px));
+    border-radius: 16px;
+  }
+
+  .dthl-notification-panel__header {
+    align-items: center;
+    padding: 14px 16px 9px;
+    gap: 12px;
+  }
+
+  .dthl-notification-panel__header h3 {
+    font-size: 1.1rem;
+    line-height: 1.16;
+  }
+
+  .dthl-notification-panel__header > div > span {
+    margin-top: 2px;
+    font-size: 0.71rem;
+  }
+
+  .dthl-notification-mark-all {
+    min-height: 30px;
+    padding-inline: 8px;
+    font-size: 0.72rem;
+  }
+
+  .dthl-notification-tabs {
+    padding: 0 12px 8px;
+    gap: 5px;
+  }
+
+  .dthl-notification-tabs button {
+    min-height: 32px;
+    padding-inline: 12px;
+    gap: 6px;
+    font-size: 0.8rem;
+  }
+
+  .dthl-notification-tabs button span {
+    min-width: 18px;
+    height: 18px;
+    font-size: 0.58rem;
+  }
+
+  .dthl-notification-panel__section-title {
+    padding: 3px 15px 7px;
+  }
+
+  .dthl-notification-panel__section-title strong {
+    font-size: 0.86rem;
+  }
+
+  .dthl-notification-panel__section-title a {
+    font-size: 0.73rem;
+  }
+
+  .dthl-notification-list {
+    max-height: min(336px, 42vh);
+    padding: 0 6px 6px;
+  }
+
+  .dthl-notification-item {
+    grid-template-columns: 44px minmax(0, 1fr) 10px;
+    min-height: 68px;
+    padding: 8px 9px;
+    gap: 9px;
+    border-radius: 12px;
+  }
+
+  .dthl-notification-item__icon {
+    width: 42px;
+    height: 42px;
+    box-shadow: 0 6px 14px rgba(31, 163, 75, 0.16);
+  }
+
+  .dthl-notification-item__icon svg {
+    width: 18px;
+    height: 18px;
+  }
+
+  .dthl-notification-item__content strong {
+    margin-bottom: 2px;
+    font-size: 0.81rem;
+    line-height: 1.3;
+  }
+
+  .dthl-notification-item__content > span {
+    font-size: 0.75rem;
+    line-height: 1.3;
+    -webkit-line-clamp: 1;
+  }
+
+  .dthl-notification-item__content small {
+    margin-top: 3px;
+    font-size: 0.67rem;
+  }
+
+  .dthl-notification-item__dot {
+    width: 8px;
+    height: 8px;
+    box-shadow: 0 0 0 3px rgba(31, 163, 75, 0.1);
+  }
+
+  .dthl-notification-panel__footer {
+    min-height: 42px;
+    font-size: 0.79rem;
+  }
+
+  .dthl-notification-empty {
+    min-height: 160px;
+    padding: 22px 20px;
+  }
+
+  .dthl-notification-skeleton {
+    grid-template-columns: 42px 1fr;
+    min-height: 68px;
+    padding: 8px 9px;
+    gap: 10px;
+  }
+
+  .dthl-notification-skeleton > span {
+    width: 42px;
+    height: 42px;
+  }
+}
 
 @media (max-width: 1240px) {
   .dthl-header-main__inner {
