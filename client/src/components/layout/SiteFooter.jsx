@@ -181,7 +181,7 @@ export default function SiteFooter() {
           </nav>
 
           <p>
-            © {currentYear} Đô Thị Hòa Lạc.{' '}
+            <span>© {currentYear} Đô Thị Hòa Lạc.</span>
             <a href={xspaceUrl} target="_blank" rel="noopener noreferrer">
               Công ty Cổ phần XSpace Việt Nam
             </a>
