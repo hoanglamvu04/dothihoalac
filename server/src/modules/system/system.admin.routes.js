@@ -8,6 +8,9 @@ import asyncHandler from '../../utils/asyncHandler.js';
 const r = Router();
 r.use(requireAuth, requirePermission(PERMISSIONS.MANAGE_SYSTEM));
 
+r.get('/branding', asyncHandler(c.branding));
+r.patch('/branding', asyncHandler(c.updateBranding));
+
 r.get('/settings', asyncHandler(c.settings));
 r.patch('/settings/:key', asyncHandler(c.updateSetting));
 
