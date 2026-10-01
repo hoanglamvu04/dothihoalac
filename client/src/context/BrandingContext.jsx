@@ -8,6 +8,7 @@ import {
 } from 'react';
 
 import { systemApi } from '../api/system.api';
+import { mediaUrl } from '../utils/media';
 
 const DEFAULT_BRANDING = {
   version: 1,
@@ -131,6 +132,12 @@ function ensureHeadLink(rel) {
   return node;
 }
 
+function assetUrl(asset) {
+  if (!asset) return '';
+  if (asset.source === 'builtin') return String(asset.url || '');
+  return mediaUrl(asset) || String(asset.url || '');
+}
+
 function cssUrl(url) {
   return `url("${String(url || '').replace(/["\\\n\r]/g, '')}")`;
 }
@@ -142,9 +149,14 @@ function applyRuntimeBranding(branding, resolved) {
   const header = branding.sizes.header;
   const footer = branding.sizes.footer;
 
-  root.style.setProperty('--dthl-brand-logo-image', cssUrl(resolved.mark.url));
-  root.style.setProperty('--dthl-public-header-logo', cssUrl(resolved.header.url));
-  root.style.setProperty('--dthl-public-footer-logo', cssUrl(resolved.footer.url));
+  const markUrl = assetUrl(resolved.mark);
+  const headerUrl = assetUrl(resolved.header);
+  const footerUrl = assetUrl(resolved.footer);
+  const faviconUrl = assetUrl(resolved.favicon);
+
+  root.style.setProperty('--dthl-brand-logo-image', cssUrl(markUrl));
+  root.style.setProperty('--dthl-public-header-logo', cssUrl(headerUrl));
+  root.style.setProperty('--dthl-public-footer-logo', cssUrl(footerUrl));
 
   const sizeVariables = {
     '--dthl-brand-header-desktop-width': header.desktopWidth,
@@ -228,11 +240,11 @@ function applyRuntimeBranding(branding, resolved) {
   `;
 
   const favicon = ensureHeadLink('icon');
-  favicon.type = 'image/png';
-  favicon.href = resolved.favicon.url;
+  favicon.removeAttribute('type');
+  favicon.href = faviconUrl;
 
   const appleTouch = ensureHeadLink('apple-touch-icon');
-  appleTouch.href = resolved.favicon.url;
+  appleTouch.href = faviconUrl;
 }
 
 export function BrandingProvider({ children }) {
