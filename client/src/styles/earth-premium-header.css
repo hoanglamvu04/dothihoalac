@@ -440,27 +440,27 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-register-button:h
   }
 
   html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-mobile__item {
-    border-color: var(--earth-border) !important;
-    color: var(--earth-text) !important;
+    border-color: #dce9e1 !important;
+    color: #173b2a !important;
     background: #ffffff !important;
   }
 
   html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-mobile__item:hover,
   html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-mobile__item.is-active {
-    border-color: var(--earth-border-strong) !important;
-    color: var(--earth-dark) !important;
-    background: var(--earth-bg) !important;
+    border-color: #bcd9c8 !important;
+    color: #0d6538 !important;
+    background: #f1f8f4 !important;
   }
 
   html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-mobile__icon {
-    color: var(--earth-dark) !important;
-    background: var(--earth-soft) !important;
+    color: #157348 !important;
+    background: #e9f5ee !important;
   }
 
   html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-mobile__item.is-active .dthl-primary-mobile__icon {
     color: #ffffff !important;
-    background: var(--earth-brand) !important;
-    box-shadow: 0 5px 13px rgb(181 153 101 / 0.20) !important;
+    background: #146c43 !important;
+    box-shadow: 0 5px 13px rgb(20 108 67 / 0.20) !important;
   }
 }
 
