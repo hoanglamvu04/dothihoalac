@@ -31,7 +31,7 @@ export async function bannerClick(req, res) {
 }
 
 export async function branding(req, res) {
-  res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
+  res.set('Cache-Control', 'no-cache, must-revalidate');
   return sendSuccess(res, { data: await s.branding() });
 }
 
