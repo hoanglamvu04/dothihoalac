@@ -300,13 +300,13 @@
   }
 
   .article-view-page .article-view-header h1 {
-    font-size: clamp(32px, 9vw, 38px) !important;
-    line-height: 1.12 !important;
+    font-size: clamp(28px, 8vw, 32px) !important;
+    line-height: 1.14 !important;
   }
 
   .article-view-page .article-view-lead {
-    font-size: 17.5px !important;
-    line-height: 1.56 !important;
+    font-size: 16px !important;
+    line-height: 1.55 !important;
   }
 
   .article-view-page .article-view-author strong,
@@ -322,20 +322,23 @@
   .article-view-page .article-view-body,
   .article-view-page .article-view-body .article-body,
   .article-view-page .article-view-body .article-body :is(p, li, blockquote, td, th) {
-    font-size: 16.5px !important;
-    line-height: 1.68 !important;
+    font-size: 15.5px !important;
+    line-height: 1.66 !important;
   }
 
   .article-view-page .article-view-body .article-body h2 {
-    font-size: 25px !important;
+    font-size: 22px !important;
+    line-height: 1.32 !important;
   }
 
   .article-view-page .article-view-body .article-body h3 {
-    font-size: 21px !important;
+    font-size: 19px !important;
+    line-height: 1.36 !important;
   }
 
   .article-view-page .article-view-body .article-body h4 {
-    font-size: 18.5px !important;
+    font-size: 17px !important;
+    line-height: 1.4 !important;
   }
 
   .article-view-page .article-view-body .article-body figcaption,
