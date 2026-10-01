@@ -75,6 +75,7 @@ import './styles/footer-mobile-final.css';
 import './styles/news-mobile-type-final.css';
 import './styles/jobs-mobile-card-final.css';
 import './styles/job-detail-actions-final.css';
+import './styles/property-mobile-layout-final.css';
 import './features/propertyMarketplacePaging';
 import './features/jobEditorWizard';
 

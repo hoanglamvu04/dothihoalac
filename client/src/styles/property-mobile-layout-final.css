@@ -1,0 +1,124 @@
+/* Final mobile property listing layout guard.
+ * The legacy mobile hero reserved a large padding-bottom and absolutely
+ * positioned the finder inside it. That becomes brittle on 360px devices and
+ * can create horizontal overflow / blank space. Keep the finder in normal
+ * document flow on mobile instead.
+ */
+@media (max-width: 720px) {
+  html body .app-shell .properties-page,
+  html body .app-shell .properties-page .properties-page__container,
+  html body .app-shell .properties-page .properties-hero {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    overflow-x: clip !important;
+  }
+
+  html body .app-shell .properties-page .properties-page__container {
+    margin-inline: 0 !important;
+  }
+
+  html body .app-shell .properties-page .properties-hero {
+    min-height: 0 !important;
+    height: auto !important;
+    padding: 24px 12px 14px !important;
+  }
+
+  html body .app-shell .properties-page .properties-hero__content {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    padding: 0 !important;
+  }
+
+  html body .app-shell .properties-page .properties-hero__eyebrow {
+    max-width: 100% !important;
+  }
+
+  html body .app-shell .properties-page .properties-hero h1 {
+    max-width: 100% !important;
+    font-size: clamp(30px, 9.2vw, 38px) !important;
+    line-height: 1.05 !important;
+    overflow-wrap: anywhere;
+  }
+
+  html body .app-shell .properties-page .properties-hero__content p {
+    max-width: 100% !important;
+    margin-top: 10px !important;
+  }
+
+  html body .app-shell .properties-page .properties-hero__finder {
+    position: relative !important;
+    inset: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    margin: 16px 0 0 !important;
+    padding: 7px !important;
+    transform: none !important;
+    box-sizing: border-box !important;
+  }
+
+  html body .app-shell .properties-page .properties-hero__finder > label,
+  html body .app-shell .properties-page .properties-hero__finder > label:nth-of-type(n) {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 49px !important;
+    padding: 4px 9px !important;
+    box-sizing: border-box !important;
+  }
+
+  html body .app-shell .properties-page .properties-hero__finder > label > div,
+  html body .app-shell .properties-page .properties-hero__finder select {
+    min-width: 0 !important;
+    max-width: 100% !important;
+  }
+
+  html body .app-shell .properties-page .properties-hero__finder > button {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 42px !important;
+    margin: 5px 0 0 !important;
+  }
+
+  html body .app-shell .properties-page .properties-type-rail {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 11px 12px 9px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  html body .app-shell .properties-page .properties-type-rail > button {
+    flex: 0 0 auto !important;
+    white-space: nowrap !important;
+  }
+
+  html body .app-shell .properties-page .properties-type-rail::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@media (max-width: 390px) {
+  html body .app-shell .properties-page .properties-hero {
+    padding-inline: 10px !important;
+  }
+
+  html body .app-shell .properties-page .properties-hero h1 {
+    font-size: clamp(28px, 8.8vw, 34px) !important;
+  }
+
+  html body .app-shell .properties-page .properties-hero__finder {
+    margin-top: 14px !important;
+    padding: 6px !important;
+  }
+}
