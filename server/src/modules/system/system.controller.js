@@ -30,6 +30,18 @@ export async function bannerClick(req, res) {
   });
 }
 
+export async function branding(req, res) {
+  res.set('Cache-Control', 'public, max-age=60, stale-while-revalidate=300');
+  return sendSuccess(res, { data: await s.branding() });
+}
+
+export async function updateBranding(req, res) {
+  return sendSuccess(res, {
+    data: await s.saveBranding(req.user._id, req.body),
+    message: 'Đã lưu cấu hình thương hiệu.',
+  });
+}
+
 export async function settings(req, res) {
   return sendSuccess(res, { data: await s.settings() });
 }
