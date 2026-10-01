@@ -77,7 +77,8 @@
   }
 
   .mobile-bottom-nav__item.is-active:not(.is-featured) .mobile-bottom-nav__icon {
-    background: var(--dthl-palette-accent-soft, color-mix(in srgb, #b59965 16%, #f9f1e3));
+    color: #0f6338;
+    background: #e8f5ee;
   }
 
   .mobile-bottom-nav__item.is-featured {
