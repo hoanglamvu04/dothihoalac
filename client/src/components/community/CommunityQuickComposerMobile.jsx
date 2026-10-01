@@ -441,9 +441,11 @@ export default function CommunityQuickComposerMobile() {
         toast.success('Đã cập nhật bài viết.');
       } else {
         await communityApi.submit(id);
-        toast.success(isEditing
-          ? 'Đã lưu thay đổi và gửi bài đi duyệt lại.'
-          : 'Đã đăng bài vào hàng chờ kiểm duyệt.');
+        toast.success(
+          isEditing
+            ? 'Đã cập nhật và đăng lại bài cộng đồng.'
+            : 'Đã đăng bài cộng đồng.',
+        );
       }
 
       closeComposer();
@@ -723,7 +725,7 @@ export default function CommunityQuickComposerMobile() {
               <Check size={20} />
             </button>
             <p className="community-mobile-sheet__note">
-              Community hiện dùng chế độ công khai để nội dung có thể được kiểm duyệt và phân phối thống nhất.
+              Bài cộng đồng ở chế độ công khai sẽ hiển thị ngay sau khi bạn đăng.
             </p>
           </Sheet>
         ) : null}

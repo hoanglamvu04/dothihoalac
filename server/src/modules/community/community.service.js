@@ -492,12 +492,18 @@ export async function submit(id, userId) {
   ) {
     throw new ApiError(
       409,
-      'Bài không thể gửi duyệt.',
+      'Bài không thể đăng ở trạng thái hiện tại.',
       'INVALID_STATUS',
     );
   }
 
-  content.status = 'pending_review';
+  // Community posts are user-generated social content and are published
+  // immediately on submit. Other content types keep their existing
+  // moderation workflows because this service is scoped to community only.
+  content.status = 'published';
+  content.publishedAt = new Date();
+  content.scheduledAt = null;
+
   await content.save();
   return content;
 }

@@ -435,7 +435,7 @@ export default function CommunityQuickComposerDesktop() {
         toast.success('Đã cập nhật bài viết.');
       } else {
         await communityApi.submit(id);
-        toast.success('Đã gửi bài vào hàng chờ kiểm duyệt.');
+        toast.success('Đã đăng bài cộng đồng.');
       }
 
       closeComposer();
@@ -691,7 +691,7 @@ export default function CommunityQuickComposerDesktop() {
           </button>
 
           <span className="community-desktop-composer__moderation-note">
-            Bài sẽ được kiểm duyệt trước khi hiển thị.
+            Bài sẽ hiển thị ngay trên cộng đồng sau khi đăng.
           </span>
 
           <button
@@ -868,7 +868,7 @@ export default function CommunityQuickComposerDesktop() {
                       <MessageCircle size={20} />
                       <span>
                         <strong>Cho phép bình luận</strong>
-                        <small>Người đọc có thể trao đổi bên dưới bài sau khi được duyệt.</small>
+                        <small>Người đọc có thể trao đổi ngay sau khi bài được đăng.</small>
                       </span>
                     </span>
                     <input
