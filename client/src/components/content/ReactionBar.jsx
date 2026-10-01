@@ -36,7 +36,7 @@ function propertyDirectionsUrl(content) {
   return `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(destination)}`;
 }
 
-export default function ReactionBar({ content }) {
+export default function ReactionBar({ content, showReactions = true }) {
   const { isAuthenticated } = useAuth();
   const toast = useToast();
   const [reaction, setReaction] = useState(null);
@@ -121,24 +121,26 @@ export default function ReactionBar({ content }) {
 
   return (
     <>
-      <div className="reaction-bar">
-        <div className="reaction-picker">
-          <div className="reaction-picker__choices" aria-label="Cảm xúc về bài viết">
-            {SIMPLE_REACTIONS.map(({ value, label, Icon }) => (
-              <button
-                key={value}
-                type="button"
-                className={reaction === value ? 'is-active' : ''}
-                onClick={() => react(value)}
-                title={label}
-                aria-pressed={reaction === value}
-              >
-                <Icon size={16} strokeWidth={1.9} aria-hidden="true" />
-                <small>{label}</small>
-              </button>
-            ))}
+      <div className={`reaction-bar${showReactions ? '' : ' reaction-bar--actions-only'}`}>
+        {showReactions ? (
+          <div className="reaction-picker">
+            <div className="reaction-picker__choices" aria-label="Cảm xúc về bài viết">
+              {SIMPLE_REACTIONS.map(({ value, label, Icon }) => (
+                <button
+                  key={value}
+                  type="button"
+                  className={reaction === value ? 'is-active' : ''}
+                  onClick={() => react(value)}
+                  title={label}
+                  aria-pressed={reaction === value}
+                >
+                  <Icon size={16} strokeWidth={1.9} aria-hidden="true" />
+                  <small>{label}</small>
+                </button>
+              ))}
+            </div>
           </div>
-        </div>
+        ) : null}
 
         <div className="reaction-actions">
           <button type="button" className={bookmarked ? 'is-active' : ''} onClick={bookmark}>
