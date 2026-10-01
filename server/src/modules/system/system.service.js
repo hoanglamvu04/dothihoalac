@@ -167,6 +167,162 @@ export async function trackBannerMetric(id, metric) {
   return item;
 }
 
+const BUILTIN_BRAND_ASSETS = [
+  {
+    id: 'builtin-mark',
+    name: 'Logo biểu tượng',
+    url: '/Logo.png',
+    altText: 'Đô Thị Hòa Lạc',
+    source: 'builtin',
+  },
+  {
+    id: 'builtin-header',
+    name: 'Logo ngang Header',
+    url: '/Logo dothihoalac-09.png',
+    altText: 'Đô Thị Hòa Lạc',
+    source: 'builtin',
+  },
+  {
+    id: 'builtin-footer',
+    name: 'Logo ngang Footer',
+    url: '/Logo dothihoalac-10.png',
+    altText: 'Đô Thị Hòa Lạc',
+    source: 'builtin',
+  },
+];
+
+const DEFAULT_BRANDING = {
+  version: 1,
+  siteName: 'Đô Thị Hòa Lạc',
+  tagline: 'Trung tâm phát triển đô thị Hòa Lạc',
+  assets: BUILTIN_BRAND_ASSETS,
+  assignments: {
+    markLogoId: 'builtin-mark',
+    headerLogoId: 'builtin-header',
+    footerLogoId: 'builtin-footer',
+    faviconLogoId: 'builtin-mark',
+  },
+  sizes: {
+    header: {
+      desktopWidth: 242,
+      desktopHeight: 52,
+      tabletWidth: 205,
+      tabletHeight: 44,
+      mobileWidth: 170,
+      mobileHeight: 37,
+      smallMobileWidth: 152,
+      smallMobileHeight: 33,
+    },
+    footer: {
+      desktopWidth: 240,
+      desktopHeight: 48,
+      tabletWidth: 230,
+      tabletHeight: 46,
+      mobileWidth: 200,
+      mobileHeight: 42,
+    },
+  },
+};
+
+function clampBrandSize(value, fallback, min = 20, max = 600) {
+  const parsed = Number(value);
+  if (!Number.isFinite(parsed)) return fallback;
+  return Math.min(max, Math.max(min, Math.round(parsed)));
+}
+
+function normalizeBrandAsset(asset = {}) {
+  const id = text(asset.id || asset.mediaId);
+  const url = text(asset.url);
+  if (!id || !url || (!url.startsWith('/') && !/^https?:\/\//i.test(url))) {
+    return null;
+  }
+
+  return {
+    id,
+    mediaId: text(asset.mediaId) || null,
+    name: text(asset.name) || 'Logo thương hiệu',
+    url,
+    altText: text(asset.altText),
+    source: asset.source === 'builtin' ? 'builtin' : 'media',
+    width: Number.isFinite(Number(asset.width)) ? Number(asset.width) : null,
+    height: Number.isFinite(Number(asset.height)) ? Number(asset.height) : null,
+  };
+}
+
+function normalizeBranding(value = {}) {
+  const incomingAssets = Array.isArray(value?.assets) ? value.assets : [];
+  const assetMap = new Map();
+
+  for (const asset of [...BUILTIN_BRAND_ASSETS, ...incomingAssets]) {
+    const normalized = normalizeBrandAsset(asset);
+    if (normalized) assetMap.set(normalized.id, normalized);
+  }
+
+  const assets = Array.from(assetMap.values());
+  const validIds = new Set(assets.map((asset) => asset.id));
+  const assignments = value?.assignments || {};
+  const headerSizes = value?.sizes?.header || {};
+  const footerSizes = value?.sizes?.footer || {};
+
+  const choose = (candidate, fallback) =>
+    validIds.has(text(candidate)) ? text(candidate) : fallback;
+
+  return {
+    version: 1,
+    siteName: text(value?.siteName) || DEFAULT_BRANDING.siteName,
+    tagline: text(value?.tagline) || DEFAULT_BRANDING.tagline,
+    assets,
+    assignments: {
+      markLogoId: choose(assignments.markLogoId, DEFAULT_BRANDING.assignments.markLogoId),
+      headerLogoId: choose(assignments.headerLogoId, DEFAULT_BRANDING.assignments.headerLogoId),
+      footerLogoId: choose(assignments.footerLogoId, DEFAULT_BRANDING.assignments.footerLogoId),
+      faviconLogoId: choose(assignments.faviconLogoId, DEFAULT_BRANDING.assignments.faviconLogoId),
+    },
+    sizes: {
+      header: {
+        desktopWidth: clampBrandSize(headerSizes.desktopWidth, 242),
+        desktopHeight: clampBrandSize(headerSizes.desktopHeight, 52),
+        tabletWidth: clampBrandSize(headerSizes.tabletWidth, 205),
+        tabletHeight: clampBrandSize(headerSizes.tabletHeight, 44),
+        mobileWidth: clampBrandSize(headerSizes.mobileWidth, 170),
+        mobileHeight: clampBrandSize(headerSizes.mobileHeight, 37),
+        smallMobileWidth: clampBrandSize(headerSizes.smallMobileWidth, 152),
+        smallMobileHeight: clampBrandSize(headerSizes.smallMobileHeight, 33),
+      },
+      footer: {
+        desktopWidth: clampBrandSize(footerSizes.desktopWidth, 240),
+        desktopHeight: clampBrandSize(footerSizes.desktopHeight, 48),
+        tabletWidth: clampBrandSize(footerSizes.tabletWidth, 230),
+        tabletHeight: clampBrandSize(footerSizes.tabletHeight, 46),
+        mobileWidth: clampBrandSize(footerSizes.mobileWidth, 200),
+        mobileHeight: clampBrandSize(footerSizes.mobileHeight, 42),
+      },
+    },
+  };
+}
+
+export async function branding() {
+  const item = await SystemSetting.findOne({ settingKey: 'branding' }).lean();
+  return normalizeBranding(item?.settingValue || DEFAULT_BRANDING);
+}
+
+export async function saveBranding(userId, value = {}) {
+  const previous = await SystemSetting.findOne({ settingKey: 'branding' }).lean();
+  const normalized = normalizeBranding(value);
+  const item = await setSetting(userId, 'branding', normalized, 'json');
+
+  await AdminActivityLog.create({
+    adminId: userId,
+    action: 'branding.update',
+    targetType: 'system_setting',
+    targetId: item._id,
+    oldData: previous?.settingValue || null,
+    newData: normalized,
+  });
+
+  return normalized;
+}
+
 export async function settings() {
   return SystemSetting.find().lean();
 }
