@@ -1,4 +1,21 @@
 @media (max-width: 720px) {
+  /* Mobile footer is intentionally compact because the persistent bottom
+     navigation already provides the primary site navigation. */
+  .site-footer__navigation {
+    display: none !important;
+  }
+
+  .site-footer__brand-divider,
+  .site-footer__operator {
+    display: none !important;
+  }
+
+  .site-footer__connect > h3,
+  .site-footer__connect > .site-footer__heading-rule,
+  .site-footer__connect > p {
+    display: none !important;
+  }
+
   .site-footer {
     margin-top: 18px;
   }
@@ -8,7 +25,7 @@
   }
 
   .site-footer__main {
-    padding: 34px 0 30px;
+    padding: 24px 0 18px;
   }
 
   .site-footer__main::before {
@@ -26,19 +43,23 @@
 
   .site-footer__grid {
     grid-template-columns: 1fr;
-    gap: 32px;
+    gap: 20px;
   }
 
   .site-footer .site-footer__logo {
-    width: min(100%, 245px) !important;
-    height: 52px !important;
+    width: min(100%, 218px) !important;
+    height: 46px !important;
   }
 
   .site-footer__description {
-    max-width: none;
-    margin-top: 17px;
-    font-size: 13.5px;
-    line-height: 1.62;
+    display: -webkit-box;
+    max-width: 320px;
+    margin-top: 12px;
+    overflow: hidden;
+    font-size: 12.5px;
+    line-height: 1.52;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
   }
 
   .site-footer__brand-divider {
@@ -56,41 +77,41 @@
   }
 
   .site-footer__column h3 {
-    font-size: 14.5px;
+    font-size: 13.5px;
   }
 
   .site-footer__heading-rule {
-    width: 42px;
+    width: 38px;
     height: 2px;
-    margin: 10px 0 18px;
+    margin: 8px 0 13px;
   }
 
   .site-footer__contact-list {
-    gap: 13px;
+    gap: 9px;
   }
 
   .site-footer__contact-item {
-    grid-template-columns: 42px minmax(0, 1fr);
-    gap: 12px;
+    grid-template-columns: 36px minmax(0, 1fr);
+    gap: 10px;
   }
 
   .site-footer__contact-icon {
-    width: 42px;
-    height: 42px;
+    width: 36px;
+    height: 36px;
   }
 
   .site-footer__contact-icon svg {
-    width: 18px;
-    height: 18px;
+    width: 16px;
+    height: 16px;
   }
 
   .site-footer__contact-item strong {
-    font-size: 13.5px;
+    font-size: 12.5px;
   }
 
   .site-footer__contact-item a,
   .site-footer__contact-item > div > span {
-    font-size: 13px;
+    font-size: 12px;
   }
 
   .site-footer__links--primary {
@@ -113,15 +134,20 @@
     line-height: 1.6;
   }
 
+  .site-footer__connect {
+    margin-top: -2px;
+  }
+
   .site-footer__social--connect {
-    margin-top: 17px;
+    margin-top: 0;
+    gap: 9px;
   }
 
   .site-footer .site-footer__social > a {
-    width: 40px !important;
-    height: 40px !important;
-    min-width: 40px !important;
-    min-height: 40px !important;
+    width: 36px !important;
+    height: 36px !important;
+    min-width: 36px !important;
+    min-height: 36px !important;
   }
 
   .site-footer .site-footer__social > a svg {
@@ -132,8 +158,8 @@
   .site-footer__bottom-inner {
     grid-template-columns: minmax(0, 1fr) auto;
     min-height: 0;
-    padding: 17px 0 18px;
-    gap: 12px 14px;
+    padding: 12px 0 16px;
+    gap: 8px 12px;
   }
 
   .site-footer__bottom-links {
@@ -143,8 +169,8 @@
   }
 
   .site-footer .site-footer__bottom-links a {
-    padding-right: 10px !important;
-    font-size: 9.5px !important;
+    padding-right: 9px !important;
+    font-size: 9px !important;
   }
 
   .site-footer .site-footer__bottom-links a + a {
@@ -158,7 +184,8 @@
   .site-footer__bottom p {
     grid-column: 1;
     grid-row: 2;
-    font-size: 10px;
+    font-size: 9.5px;
+    line-height: 1.4;
     text-align: left;
     white-space: normal;
   }
@@ -181,8 +208,8 @@
   }
 
   .site-footer__back-top-icon {
-    width: 38px;
-    height: 38px;
+    width: 34px;
+    height: 34px;
   }
 }
 
@@ -192,16 +219,16 @@
   }
 
   .site-footer__main {
-    padding: 30px 0 27px;
+    padding: 22px 0 16px;
   }
 
   .site-footer__grid {
-    gap: 28px;
+    gap: 18px;
   }
 
   .site-footer .site-footer__logo {
-    width: min(100%, 220px) !important;
-    height: 47px !important;
+    width: min(100%, 205px) !important;
+    height: 43px !important;
   }
 
   .site-footer__links--primary {
