@@ -535,7 +535,7 @@ export default function CommunityQuickComposer() {
   const saveLabel = isEditing
     ? editStatus === 'published'
       ? 'Lưu thay đổi'
-      : 'Lưu & gửi duyệt'
+      : 'Đăng bài'
     : 'Đăng';
 
   const mobilePublishLabel =
