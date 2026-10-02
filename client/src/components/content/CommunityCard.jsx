@@ -117,11 +117,11 @@ export default function CommunityCard({ item }) {
     COMMUNITY_TYPES[item.community?.postType] ||
     'Cộng đồng';
 
-  const isLong = text.length > 650;
+  const isLong = text.length > 420;
   const visibleText =
     expanded || !isLong
       ? text
-      : `${text.slice(0, 650).trim()}…`;
+      : `${text.slice(0, 420).trim()}…`;
 
   const openPost = (event) => {
     const interactive = event.target?.closest?.(
@@ -264,26 +264,28 @@ export default function CommunityCard({ item }) {
               ) : null}
             </div>
           </div>
-
-          {text ? (
-            <div className="community-feed-card__text">
-              <p>{visibleText}</p>
-
-              {isLong ? (
-                <button
-                  type="button"
-                  onClick={() => setExpanded((value) => !value)}
-                >
-                  {expanded ? 'Thu gọn' : 'Xem thêm'}
-                </button>
-              ) : null}
-            </div>
-          ) : null}
         </div>
 
         <span className="community-feed-card__type">
           {typeLabel}
         </span>
+
+        {text ? (
+          <div
+            className={`community-feed-card__text${expanded ? ' is-expanded' : ''}`}
+          >
+            <p>{visibleText}</p>
+
+            {isLong ? (
+              <button
+                type="button"
+                onClick={() => setExpanded((value) => !value)}
+              >
+                {expanded ? 'Thu gọn' : 'Xem thêm'}
+              </button>
+            ) : null}
+          </div>
+        ) : null}
       </header>
 
       {media.length ? (
