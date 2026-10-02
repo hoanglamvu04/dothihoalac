@@ -45,6 +45,8 @@ import { PageLoading } from '../../components/common/Loading';
 
 import { jobApi } from '../../api/content.api';
 import { useToast } from '../../context/ToastContext';
+import { mediaUrl } from '../../utils/media';
+import { buildJobPostingJsonLd } from '../../utils/structuredData';
 
 import {
   EXPERIENCE_LEVELS,
@@ -355,6 +357,33 @@ export default function JobDetailPage() {
   const commentCount =
     getCommentCount(item);
 
+  const jobImageUrl = useMemo(
+    () => mediaUrl(item?.thumbnailMediaId),
+    [item?.thumbnailMediaId],
+  );
+
+  const jobJsonLd = useMemo(
+    () =>
+      buildJobPostingJsonLd({
+        item,
+        job,
+        description:
+          item?.summary ||
+          `${jobTypeLabel} tại ${companyName}`,
+        companyName,
+        workLocation,
+        imageUrl: jobImageUrl,
+      }),
+    [
+      item,
+      job,
+      jobTypeLabel,
+      companyName,
+      workLocation,
+      jobImageUrl,
+    ],
+  );
+
   const wasUpdated = useMemo(() => {
     if (
       !publishedAt ||
@@ -595,7 +624,13 @@ export default function JobDetailPage() {
     >
       <Seo
         title={item.title}
-        description={item.summary}
+        description={
+          item.summary ||
+          `${jobTypeLabel} tại ${companyName}`
+        }
+        canonical={`/viec-lam/${item.slug}`}
+        image={jobImageUrl}
+        jsonLd={jobJsonLd}
       />
 
       <div
