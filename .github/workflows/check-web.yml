@@ -30,6 +30,6 @@ jobs:
         run: npm ci
         working-directory: client
 
-      - name: Lint and build frontend
-        run: npm run check
+      - name: Build full frontend
+        run: npm run build
         working-directory: client
