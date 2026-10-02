@@ -582,6 +582,17 @@ html[data-dthl-theme='light'] .auth-page {
 }
 
 @media (max-width: 760px) {
+  /* Forgot-password already uses the global mobile header brand.
+     Keep the auth intro fully removed so the duplicate logo/green strip
+     cannot be restored by the branding layer loaded after AuthMobile.css. */
+  .dthl-forgot-page .dthl-forgot-intro {
+    display: none !important;
+  }
+
+  .dthl-forgot-page .dthl-forgot-form-side {
+    padding-top: 20px !important;
+  }
+
   :is(.dthl-login-page, .dthl-register-page, .dthl-forgot-page, .dthl-reset-page)
     :is(.dthl-login-intro, .dthl-register-intro, .dthl-forgot-intro, .dthl-reset-intro) {
     min-height: 0 !important;
