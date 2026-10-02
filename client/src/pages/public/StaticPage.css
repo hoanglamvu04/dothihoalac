@@ -1163,6 +1163,104 @@
     padding: 10px 0 52px;
   }
 
+  /* Mobile static pages need a larger reading scale for supporting cards.
+     Desktop sizes are intentionally compact, but those 0.57–0.62rem labels
+     become too small on 360px screens. */
+  .static-page-support {
+    padding: 18px 16px;
+    gap: 12px;
+  }
+
+  .static-page-support strong {
+    font-size: 0.86rem;
+    line-height: 1.35;
+  }
+
+  .static-page-support p {
+    margin-top: 6px;
+    font-size: 0.78rem;
+    line-height: 1.6;
+  }
+
+  .static-page-support > a {
+    min-height: 44px;
+    font-size: 0.8rem;
+  }
+
+  .static-sidebar-card {
+    padding: 18px 16px;
+    border-radius: 15px;
+  }
+
+  .static-sidebar-heading {
+    padding-bottom: 13px;
+    gap: 10px;
+  }
+
+  .static-sidebar-heading h2 {
+    font-size: 0.88rem;
+    line-height: 1.3;
+  }
+
+  .static-sidebar-heading p {
+    margin-top: 4px;
+    font-size: 0.76rem;
+    line-height: 1.5;
+  }
+
+  .static-page-toc nav {
+    max-height: none;
+    padding-top: 10px;
+    gap: 4px;
+  }
+
+  .static-page-toc button {
+    min-height: 42px;
+    padding: 9px 10px 9px 20px;
+    font-size: 0.78rem;
+    line-height: 1.45;
+  }
+
+  .static-page-toc button::before {
+    top: 18px;
+    left: 6px;
+    width: 5px;
+    height: 5px;
+  }
+
+  .static-page-toc button.is-level-3 {
+    padding-left: 31px;
+    font-size: 0.74rem;
+  }
+
+  .static-page-toc button.is-level-3::before {
+    left: 18px;
+  }
+
+  .static-page-info {
+    padding-top: 9px;
+  }
+
+  .static-page-info > div {
+    min-height: 49px;
+    gap: 12px;
+  }
+
+  .static-page-info dt,
+  .static-page-info dd {
+    font-size: 0.76rem;
+    line-height: 1.4;
+  }
+
+  .static-page-info dt {
+    gap: 7px;
+  }
+
+  .static-page-info dd {
+    max-width: 160px;
+  }
+
+
   .static-page-container {
     width: calc(100% - 20px);
   }
