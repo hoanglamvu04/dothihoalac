@@ -272,7 +272,11 @@ export async function forgotPassword(email) {
   });
 
   if (!user) {
-    return { accepted: true };
+    throw new ApiError(
+      404,
+      'Email này chưa được đăng ký tài khoản.',
+      'EMAIL_NOT_REGISTERED',
+    );
   }
 
   await PasswordResetRequest.updateMany(

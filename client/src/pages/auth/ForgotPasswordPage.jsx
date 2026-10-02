@@ -322,9 +322,9 @@ export default function ForgotPasswordPage() {
                   </strong>
 
                   <small>
-                    Hệ thống không công khai
-                    email có tồn tại trong cơ sở
-                    dữ liệu hay không.
+                    Hệ thống chỉ gửi liên kết
+                    khôi phục tới email đã đăng
+                    ký tài khoản.
                   </small>
                 </p>
               </div>
@@ -365,15 +365,14 @@ export default function ForgotPasswordPage() {
                 </h2>
 
                 <p>
-                  Nếu có tài khoản liên kết với
-                  email
+                  Hệ thống đã gửi đường dẫn đặt
+                  lại mật khẩu tới
                   {maskedSubmittedEmail ? (
                     <strong>
                       {maskedSubmittedEmail}
                     </strong>
                   ) : null}
-                  , hệ thống đã gửi đường dẫn đặt
-                  lại mật khẩu.
+                  .
                 </p>
 
                 <div className="dthl-forgot-success__steps">
@@ -658,10 +657,9 @@ export default function ForgotPasswordPage() {
                   <ShieldCheck size={16} />
 
                   <span>
-                    Vì lý do bảo mật, hệ thống
-                    luôn hiển thị cùng một thông
-                    báo dù email có tồn tại hay
-                    không.
+                    Chỉ email đã đăng ký tài khoản
+                    mới có thể nhận liên kết đặt
+                    lại mật khẩu.
                   </span>
                 </div>
               </>
