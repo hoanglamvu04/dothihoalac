@@ -259,7 +259,19 @@ export async function requestPhoneVerification(user, inputPhone) {
     codeHash: hashToken(code),
     expiresAt,
   });
-  await sendSms({ phone, message: `Ma xac thuc Do Thi Hoa Lac: ${code}. Ma co hieu luc 10 phut.` });
+  const delivery = await sendSms({
+    phone,
+    message: `Ma xac thuc Do Thi Hoa Lac: ${code}. Ma co hieu luc 10 phut.`,
+  });
+
+  if (delivery?.skipped) {
+    throw new ApiError(
+      503,
+      'Xác thực OTP qua SMS hiện chưa được kích hoạt.',
+      'SMS_PROVIDER_NOT_CONFIGURED',
+    );
+  }
+
   return {
     sent: true,
     phone,
