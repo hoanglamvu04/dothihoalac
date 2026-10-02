@@ -53,6 +53,22 @@ jobs:
             grep -RInE "server_name[^;]*dothihoalac\\.vn|root[[:space:]]+" \
               /etc/nginx/sites-enabled /etc/nginx/conf.d 2>/dev/null || true
 
+            echo "[origin/process diagnostics]"
+            echo "-- listeners"
+            ss -ltnp 2>/dev/null | grep -E ':(80|443|3000|4173|5173)[[:space:]]' || true
+            echo "-- web processes"
+            ps -eo pid,cmd | grep -E 'nginx|caddy|apache|httpd|vite|serve|node' | grep -v grep || true
+            echo "-- live headers"
+            curl -LIsS "https://dothihoalac.vn/?origin_diag=$(date +%s)" | head -n 40 || true
+            echo "-- local host header"
+            curl -IsS -H 'Host: dothihoalac.vn' http://127.0.0.1/ | head -n 30 || true
+            echo "-- all VerifyPhonePage bundles under /var/www"
+            find /var/www -type f -name 'VerifyPhonePage-*.js' -printf '%p %s bytes\n' 2>/dev/null | sort || true
+            echo "-- all PropertyStudioAdapter bundles under /var/www"
+            find /var/www -type f -name 'PropertyStudioAdapter-*.js' -printf '%p %s bytes\n' 2>/dev/null | sort || true
+            echo "-- all index.html roots under /var/www"
+            find /var/www -maxdepth 6 -type f -name index.html -printf '%p\n' 2>/dev/null | sort || true
+
             echo "[candidate frontend roots]"
             for dir in \
               /var/www/dothihoalac/client/dist \
