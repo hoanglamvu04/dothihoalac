@@ -112,7 +112,9 @@
 
   /* The drawer already owns mobile navigation while open. Keeping the fixed
      bottom bar visible only duplicates controls and covers the last settings. */
-  .app-shell:has(.dthl-mobile-nav) .mobile-bottom-nav {
+  .app-shell:has(.dthl-mobile-nav) .mobile-bottom-nav,
+  body.dthl-mobile-drawer-open .mobile-bottom-nav {
+    display: none !important;
     opacity: 0 !important;
     visibility: hidden !important;
     transform: translateY(18px) !important;
