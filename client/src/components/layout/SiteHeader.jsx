@@ -819,18 +819,22 @@ export default function SiteHeader() {
   ]);
 
   useEffect(() => {
+    const body = document.body;
+
     if (!mobileOpen) {
+      body.classList.remove('dthl-mobile-drawer-open');
       return undefined;
     }
 
     const previousOverflow =
-      document.body.style.overflow;
+      body.style.overflow;
 
-    document.body.style.overflow = 'hidden';
+    body.classList.add('dthl-mobile-drawer-open');
+    body.style.overflow = 'hidden';
 
     return () => {
-      document.body.style.overflow =
-        previousOverflow;
+      body.classList.remove('dthl-mobile-drawer-open');
+      body.style.overflow = previousOverflow;
     };
   }, [mobileOpen]);
 
