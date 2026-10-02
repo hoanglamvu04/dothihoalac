@@ -16,7 +16,10 @@ import {
 } from '../contents/content.service.js';
 
 import { env } from '../../config/env.js';
-import { normalizePhone } from '../../utils/normalizePhone.js';
+import {
+  isVietnamesePhone,
+  normalizePhone,
+} from '../../utils/normalizePhone.js';
 import {
   parsePagination,
   buildPaginationMeta,
@@ -32,6 +35,60 @@ const LISTING_PRIORITY = {
 
 const LISTING_DURATIONS = new Set([15, 30, 60]);
 const PROPERTY_DRAFT_TITLE = 'Bản nháp bất động sản';
+
+function requireVietnameseContactPhone(value) {
+  const phone = normalizePhone(value);
+
+  if (!isVietnamesePhone(phone)) {
+    throw new ApiError(
+      422,
+      'Số điện thoại liên hệ không hợp lệ. Vui lòng nhập số Việt Nam gồm 10 chữ số.',
+      'CONTACT_PHONE_INVALID',
+    );
+  }
+
+  return phone;
+}
+
+async function syncAccountPhone(userId, inputPhone) {
+  const phone = requireVietnameseContactPhone(inputPhone);
+
+  const duplicate = await User.exists({
+    phone,
+    _id: { $ne: userId },
+    deletedAt: null,
+  });
+
+  if (duplicate) {
+    throw new ApiError(
+      409,
+      'Số điện thoại này đang được sử dụng bởi tài khoản khác.',
+      'PHONE_EXISTS',
+    );
+  }
+
+  const account = await User.findById(userId).select(
+    'phone phoneVerifiedAt emailVerifiedAt',
+  );
+
+  if (!account) {
+    throw new ApiError(
+      404,
+      'Tài khoản không tồn tại.',
+      'USER_NOT_FOUND',
+    );
+  }
+
+  if (account.phone !== phone) {
+    account.phone = phone;
+    // Đổi số mà không qua OTP thì số mới chỉ được lưu để liên hệ,
+    // không được coi là đã xác thực.
+    account.phoneVerifiedAt = null;
+    await account.save();
+  }
+
+  return { account, phone };
+}
 
 function escapeRegex(value) {
   return String(value || '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
@@ -307,23 +364,16 @@ export async function editorDetail(id, userId) {
 
 /** Tạo tin bất động sản mới theo flow cũ khi biểu mẫu đã đủ dữ liệu. */
 export async function create(user, data) {
-  if (!user.phoneVerifiedAt) {
+  if (!user.emailVerifiedAt) {
     throw new ApiError(
       403,
-      'Bạn phải xác thực số điện thoại trước khi đăng tin.',
-      'PHONE_VERIFICATION_REQUIRED',
+      'Bạn cần xác thực email trước khi đăng tin bất động sản.',
+      'EMAIL_VERIFICATION_REQUIRED',
     );
   }
 
-  const normalizedContactPhone = normalizePhone(data.contactPhone);
-
-  if (normalizedContactPhone !== user.phone) {
-    throw new ApiError(
-      422,
-      'Số liên hệ phải là số điện thoại đã xác thực của tài khoản.',
-      'CONTACT_PHONE_NOT_VERIFIED',
-    );
-  }
+  const { phone: normalizedContactPhone } =
+    await syncAccountPhone(user._id, data.contactPhone);
 
   if (!data.isNegotiable && data.price <= 0) {
     throw new ApiError(
@@ -372,6 +422,11 @@ export async function create(user, data) {
 export async function update(id, userId, data) {
   const content = await getOwnedContentOrThrow(id, userId, 'property');
   assertEditable(content);
+
+  if (data.contactPhone !== undefined) {
+    const synced = await syncAccountPhone(userId, data.contactPhone);
+    data.contactPhone = synced.phone;
+  }
 
   let property = await PropertyListing.findOne({ contentId: id });
 
@@ -460,7 +515,7 @@ export async function submit(id, userId) {
   const [property, body, user] = await Promise.all([
     PropertyListing.findOne({ contentId: id }).lean(),
     ContentBody.findOne({ contentId: id }).lean(),
-    User.findById(userId).select('phone phoneVerifiedAt').lean(),
+    User.findById(userId).select('emailVerifiedAt').lean(),
   ]);
 
   if (!propertyIsComplete(content, property, body)) {
@@ -471,21 +526,15 @@ export async function submit(id, userId) {
     );
   }
 
-  if (!user?.phoneVerifiedAt) {
+  if (!user?.emailVerifiedAt) {
     throw new ApiError(
       403,
-      'Bạn phải xác thực số điện thoại trước khi gửi tin duyệt.',
-      'PHONE_VERIFICATION_REQUIRED',
+      'Bạn cần xác thực email trước khi gửi tin bất động sản đi duyệt.',
+      'EMAIL_VERIFICATION_REQUIRED',
     );
   }
 
-  if (normalizePhone(property.contactPhone) !== user.phone) {
-    throw new ApiError(
-      422,
-      'Số liên hệ phải là số điện thoại đã xác thực của tài khoản.',
-      'CONTACT_PHONE_NOT_VERIFIED',
-    );
-  }
+  await syncAccountPhone(userId, property.contactPhone);
 
   content.status = 'pending_review';
   await content.save();
