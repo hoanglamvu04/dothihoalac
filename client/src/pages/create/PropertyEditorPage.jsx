@@ -66,7 +66,10 @@ import {
 } from '../../utils/constants';
 import { PROPERTY_POST_TYPES } from '../../utils/propertyPosting';
 import { mediaUrl } from '../../utils/media';
-import { toNumber } from '../../utils/validators';
+import {
+  isVietnamesePhone,
+  toNumber,
+} from '../../utils/validators';
 
 import './PropertyEditorPage.css';
 
@@ -331,9 +334,10 @@ export default function PropertyEditorPage() {
   const propertySource = source.property || source;
   const localDraftKey = `${LOCAL_DRAFT_PREFIX}${editingId || location.pathname}`;
 
-  const phoneVerified = Boolean(
-    user?.phone &&
-      (user?.phoneVerifiedAt || user?.phoneVerified || user?.isPhoneVerified),
+  const emailVerified = Boolean(
+    user?.emailVerifiedAt ||
+      user?.emailVerified ||
+      user?.isEmailVerified,
   );
 
   const initialForm = useMemo(() => {
@@ -411,11 +415,19 @@ export default function PropertyEditorPage() {
   }, [refreshUser]);
 
   useEffect(() => {
-    const nextPhone = phoneVerified ? user?.phone || '' : '';
-
     setForm((current) => {
-      const nextName = current.contactName || user?.displayName || '';
-      const nextEmail = current.contactEmail || user?.email || '';
+      const nextPhone =
+        current.contactPhone ||
+        user?.phone ||
+        '';
+      const nextName =
+        current.contactName ||
+        user?.displayName ||
+        '';
+      const nextEmail =
+        current.contactEmail ||
+        user?.email ||
+        '';
 
       if (
         current.contactPhone === nextPhone &&
@@ -432,7 +444,7 @@ export default function PropertyEditorPage() {
         contactEmail: nextEmail,
       };
     });
-  }, [phoneVerified, user?.displayName, user?.email, user?.phone]);
+  }, [user?.displayName, user?.email, user?.phone]);
 
   const change = (key, value) => {
     setForm((current) => ({ ...current, [key]: value }));
@@ -596,7 +608,10 @@ export default function PropertyEditorPage() {
         nextErrors.contactName = 'Vui lòng nhập tên liên hệ.';
       }
       if (!form.contactPhone.trim()) {
-        nextErrors.contactPhone = 'Tài khoản chưa có số điện thoại đã xác thực.';
+        nextErrors.contactPhone = 'Vui lòng nhập số điện thoại liên hệ.';
+      } else if (!isVietnamesePhone(form.contactPhone)) {
+        nextErrors.contactPhone =
+          'Số điện thoại không hợp lệ. Vui lòng nhập số Việt Nam gồm 10 chữ số.';
       }
       if (
         form.contactEmail &&
@@ -844,27 +859,27 @@ export default function PropertyEditorPage() {
     }
   };
 
-  if (!phoneVerified) {
+  if (!emailVerified) {
     return (
       <main className="property-verification-page">
-        <Seo title="Xác thực số điện thoại" />
+        <Seo title="Xác thực email" />
         <section className="property-verification-card">
           <span className="property-verification-card__icon">
-            <Phone size={31} />
+            <Mail size={31} />
           </span>
           <span className="property-verification-card__eyebrow">
             Điều kiện đăng tin
           </span>
-          <h1>Xác thực số điện thoại</h1>
+          <h1>Xác thực email</h1>
           <p>
-            Tin bất động sản chỉ được đăng bằng số điện thoại đã xác thực để
-            hạn chế tin rác và bảo vệ người dùng.
+            Bạn cần xác thực email trước khi đăng tin bất động sản. Số điện
+            thoại chỉ cần nhập đúng định dạng và chưa bắt buộc xác thực OTP.
           </p>
           <div className="property-verification-card__note">
             <ShieldCheck size={19} />
             <span>
-              Số điện thoại xác thực sẽ được sử dụng làm thông tin liên hệ
-              chính trên tin đăng.
+              Số điện thoại bạn nhập trong biểu mẫu sẽ được dùng làm thông tin
+              liên hệ và lưu vào tài khoản, nhưng không được đánh dấu là đã xác thực.
             </span>
           </div>
           <div className="property-verification-card__actions">
@@ -877,10 +892,10 @@ export default function PropertyEditorPage() {
             </Link>
             <Link
               className="property-post-button property-post-button--primary"
-              to="/xac-thuc-so-dien-thoai"
+              to="/xac-thuc-email"
             >
               <BadgeCheck size={17} />
-              Xác thực số điện thoại
+              Xác thực email
             </Link>
           </div>
         </section>
