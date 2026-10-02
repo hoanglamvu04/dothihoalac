@@ -43,5 +43,49 @@ jobs:
             cd /var/www/dothihoalac
             git fetch origin main
             git reset --hard origin/main
+
+            echo "===== DTHL FRONTEND SERVING DIAGNOSTICS ====="
+            echo "[repo]"
+            pwd
+            git rev-parse --short HEAD
+
+            echo "[nginx sites mentioning dothihoalac.vn]"
+            grep -RInE "server_name[^;]*dothihoalac\\.vn|root[[:space:]]+" \
+              /etc/nginx/sites-enabled /etc/nginx/conf.d 2>/dev/null || true
+
+            echo "[candidate frontend roots]"
+            for dir in \
+              /var/www/dothihoalac/client/dist \
+              /var/www/dothihoalac/frontend/dist \
+              /var/www/dothihoalac/dist \
+              /var/www/html; do
+              if [ -d "$dir" ]; then
+                echo "--- $dir"
+                ls -lah "$dir" | head -n 12 || true
+                find "$dir/assets" -maxdepth 1 -type f \
+                  \( -name 'VerifyPhonePage-*.js' -o -name 'PropertyStudioAdapter-*.js' \) \
+                  -printf '%f\n' 2>/dev/null | sort || true
+              fi
+            done
+
+            echo "[live homepage asset references before deploy]"
+            curl -LfsS "https://dothihoalac.vn/?deploy_diag=$(date +%s)" \
+              | grep -oE '/assets/[^"[:space:]]+\\.(js|css)' \
+              | head -n 20 || true
+
             cd client
             bash ./deploy.sh
+
+            echo "[live lazy assets after deploy]"
+            for asset in dist/assets/VerifyPhonePage-*.js dist/assets/PropertyStudioAdapter-*.js; do
+              [ -f "$asset" ] || continue
+              name="$(basename "$asset")"
+              echo "LOCAL $name $(sha256sum "$asset" | awk '{print $1}')"
+              if curl -LfsS "https://dothihoalac.vn/assets/$name?deploy_diag=$(date +%s)" \
+                -o "/tmp/$name"; then
+                echo "LIVE  $name $(sha256sum "/tmp/$name" | awk '{print $1}')"
+              else
+                echo "LIVE  $name NOT_SERVED"
+              fi
+              rm -f "/tmp/$name"
+            done
