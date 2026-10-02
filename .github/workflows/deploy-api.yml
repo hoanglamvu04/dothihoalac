@@ -14,7 +14,7 @@ on:
         type: string
 
 concurrency:
-  group: deploy-dthl-api-production
+  group: deploy-dthl-production
   cancel-in-progress: false
 
 jobs:
