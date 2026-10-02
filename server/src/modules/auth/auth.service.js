@@ -6,7 +6,11 @@ import PasswordResetRequest from './passwordReset.model.js';
 import { assignRoleBySlug, getUserAuthorization } from '../roles/role.service.js';
 import { ROLES } from '../../constants/roles.js';
 import { env } from '../../config/env.js';
-import { sendEmail } from '../../services/email.service.js';
+import {
+  isEmailConfigured,
+  sendEmail,
+  verifyEmailDelivery,
+} from '../../services/email.service.js';
 import { sendSms } from '../../services/sms.service.js';
 import {
   signAccessToken,
@@ -246,22 +250,91 @@ export async function confirmPhoneVerification(user, inputPhone, code) {
 }
 
 export async function forgotPassword(email) {
-  const user = await User.findOne({ email, deletedAt: null });
-  if (!user) return { accepted: true };
-  await PasswordResetRequest.updateMany({ userId: user._id, usedAt: null }, { usedAt: new Date() });
-  const token = randomToken(32);
-  const expiresAt = new Date(Date.now() + 30 * 60 * 1000);
-  await PasswordResetRequest.create({ userId: user._id, tokenHash: hashToken(token), expiresAt });
-  const resetUrl = `${env.APP_URL}/dat-lai-mat-khau/${token}`;
-  await sendEmail({
-    to: user.email,
-    subject: 'Đặt lại mật khẩu Đô Thị Hòa Lạc',
-    template: 'resetPassword',
-    variables: { resetUrl, expiresAt: expiresAt.toLocaleString('vi-VN') },
+  const allowDevFallback =
+    env.NODE_ENV !== 'production' &&
+    env.EXPOSE_DEV_TOKENS;
+
+  const emailReady =
+    isEmailConfigured() &&
+    (await verifyEmailDelivery());
+
+  if (!emailReady && !allowDevFallback) {
+    throw new ApiError(
+      503,
+      'Dịch vụ email đang tạm thời chưa sẵn sàng. Vui lòng thử lại sau.',
+      'EMAIL_DELIVERY_UNAVAILABLE',
+    );
+  }
+
+  const user = await User.findOne({
+    email,
+    deletedAt: null,
   });
+
+  if (!user) {
+    return { accepted: true };
+  }
+
+  await PasswordResetRequest.updateMany(
+    {
+      userId: user._id,
+      usedAt: null,
+    },
+    {
+      usedAt: new Date(),
+    },
+  );
+
+  const token = randomToken(32);
+  const expiresAt = new Date(
+    Date.now() + 30 * 60 * 1000,
+  );
+
+  await PasswordResetRequest.create({
+    userId: user._id,
+    tokenHash: hashToken(token),
+    expiresAt,
+  });
+
+  const clientBaseUrl = env.CLIENT_URL.replace(
+    /\/+$/,
+    '',
+  );
+
+  const resetUrl =
+    `${clientBaseUrl}/dat-lai-mat-khau/${encodeURIComponent(
+      token,
+    )}`;
+
+  if (emailReady) {
+    try {
+      await sendEmail({
+        to: user.email,
+        subject:
+          'Đặt lại mật khẩu Đô Thị Hòa Lạc',
+        template: 'resetPassword',
+        variables: {
+          resetUrl,
+          expiresAt:
+            expiresAt.toLocaleString('vi-VN'),
+        },
+        text:
+          `Bạn vừa yêu cầu đặt lại mật khẩu Đô Thị Hòa Lạc. Mở liên kết sau trong vòng 30 phút: ${resetUrl}`,
+      });
+    } catch {
+      throw new ApiError(
+        503,
+        'Chưa thể gửi email đặt lại mật khẩu. Vui lòng thử lại sau.',
+        'EMAIL_DELIVERY_FAILED',
+      );
+    }
+  }
+
   return {
     accepted: true,
-    ...(env.EXPOSE_DEV_TOKENS && env.NODE_ENV !== 'production' ? { devToken: token } : {}),
+    ...(allowDevFallback
+      ? { devToken: token }
+      : {}),
   };
 }
 
