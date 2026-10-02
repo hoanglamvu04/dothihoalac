@@ -35,6 +35,7 @@ import { PageLoading } from '../../components/common/Loading';
 import { articleApi } from '../../api/content.api';
 import { formatDateTime } from '../../utils/formatters';
 import { mediaUrl } from '../../utils/media';
+import { buildNewsArticleJsonLd } from '../../utils/structuredData';
 
 import './ArticleDetailPage.css';
 import './ArticlePopularSidebar.css';
@@ -389,6 +390,28 @@ export default function ArticleDetailPage() {
   const publishedAt = item?.publishedAt || item?.createdAt;
   const updatedAt = item?.updatedAt;
 
+  const articleJsonLd = useMemo(
+    () =>
+      buildNewsArticleJsonLd({
+        item,
+        title: displayTitle,
+        description: seoDescription,
+        imageUrl: coverUrl,
+        authorName,
+        publishedAt,
+        updatedAt,
+      }),
+    [
+      item,
+      displayTitle,
+      seoDescription,
+      coverUrl,
+      authorName,
+      publishedAt,
+      updatedAt,
+    ],
+  );
+
   const wasUpdated = useMemo(() => {
     if (!updatedAt || !publishedAt) return false;
 
@@ -451,7 +474,14 @@ export default function ArticleDetailPage() {
 
   return (
     <section className="article-view-page">
-      <Seo title={displayTitle} description={seoDescription} />
+      <Seo
+        title={displayTitle}
+        description={seoDescription}
+        canonical={`/tin-tuc/${item.slug}`}
+        image={coverUrl}
+        type="article"
+        jsonLd={articleJsonLd}
+      />
 
       <div className="article-reading-progress" aria-hidden="true">
         <span style={{ transform: `scaleX(${readingProgress})` }} />

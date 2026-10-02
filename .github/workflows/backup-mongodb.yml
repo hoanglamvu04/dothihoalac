@@ -1,15 +1,12 @@
-name: Deploy DTHL API VPS
+name: Backup DTHL MongoDB
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'server/**'
+  schedule:
+    - cron: '15 20 * * *'
   workflow_dispatch:
     inputs:
       confirm:
-        description: 'Type DEPLOY_DTHL_API to confirm the manual VPS deploy'
+        description: 'Type BACKUP_DTHL_DB to confirm the manual backup'
         required: true
         type: string
 
@@ -18,7 +15,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  deploy:
+  backup:
     runs-on: ubuntu-latest
 
     steps:
@@ -26,12 +23,12 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         shell: bash
         run: |
-          if [ "${{ inputs.confirm }}" != "DEPLOY_DTHL_API" ]; then
+          if [ "${{ inputs.confirm }}" != "BACKUP_DTHL_DB" ]; then
             echo "Manual dispatch rejected: confirmation text is incorrect."
             exit 1
           fi
 
-      - name: Deploy Backend VPS
+      - name: Create MongoDB backup on VPS
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VPS_HOST }}
@@ -40,12 +37,7 @@ jobs:
           script: |
             set -euo pipefail
             cd /var/www/dothihoalac
-            PREVIOUS_COMMIT="$(git rev-parse HEAD)"
             git fetch origin main
-            # deploy.sh used to be an untracked VPS-only file. Remove that stale
-            # copy so the tracked fail-safe script from main can replace it.
-            rm -f server/deploy.sh
             git reset --hard origin/main
-            export DTHL_PREVIOUS_COMMIT="$PREVIOUS_COMMIT"
             cd server
-            bash ./deploy.sh
+            bash ./scripts/backup-mongodb.sh

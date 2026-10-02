@@ -150,10 +150,37 @@ export async function revokeAllSessions(userId) {
 }
 
 export async function requestEmailVerification(user) {
-  if (user.emailVerifiedAt) return { alreadyVerified: true };
-  await VerificationRequest.deleteMany({ userId: user._id, type: 'email', verifiedAt: null });
+  if (user.emailVerifiedAt) {
+    return { alreadyVerified: true };
+  }
+
+  const allowDevFallback =
+    env.NODE_ENV !== 'production' &&
+    env.EXPOSE_DEV_TOKENS;
+
+  const emailReady =
+    isEmailConfigured() &&
+    (await verifyEmailDelivery());
+
+  if (!emailReady && !allowDevFallback) {
+    throw new ApiError(
+      503,
+      'Dịch vụ email đang tạm thời chưa sẵn sàng. Vui lòng thử lại sau.',
+      'EMAIL_DELIVERY_UNAVAILABLE',
+    );
+  }
+
+  await VerificationRequest.deleteMany({
+    userId: user._id,
+    type: 'email',
+    verifiedAt: null,
+  });
+
   const code = randomNumericCode(6);
-  const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
+  const expiresAt = new Date(
+    Date.now() + 15 * 60 * 1000,
+  );
+
   await VerificationRequest.create({
     userId: user._id,
     type: 'email',
@@ -161,16 +188,36 @@ export async function requestEmailVerification(user) {
     codeHash: hashToken(code),
     expiresAt,
   });
-  await sendEmail({
-    to: user.email,
-    subject: 'Xác thực email Đô Thị Hòa Lạc',
-    template: 'verifyEmail',
-    variables: { code, expiresAt: expiresAt.toLocaleString('vi-VN') },
-  });
+
+  if (emailReady) {
+    try {
+      await sendEmail({
+        to: user.email,
+        subject: 'Xác thực email Đô Thị Hòa Lạc',
+        template: 'verifyEmail',
+        variables: {
+          code,
+          expiresAt:
+            expiresAt.toLocaleString('vi-VN'),
+        },
+        text:
+          `Mã xác thực email Đô Thị Hòa Lạc của bạn là ${code}. Mã có hiệu lực trong 15 phút.`,
+      });
+    } catch {
+      throw new ApiError(
+        503,
+        'Chưa thể gửi mã xác thực email. Vui lòng thử lại sau.',
+        'EMAIL_DELIVERY_FAILED',
+      );
+    }
+  }
+
   return {
-    sent: true,
+    sent: emailReady,
     expiresAt,
-    ...(env.EXPOSE_DEV_TOKENS && env.NODE_ENV !== 'production' ? { devCode: code } : {}),
+    ...(allowDevFallback
+      ? { devCode: code }
+      : {}),
   };
 }
 

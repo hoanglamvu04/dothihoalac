@@ -54,6 +54,8 @@ import {
 import { propertyApi } from '../../api/content.api';
 import { apiErrorMessage } from '../../api/http';
 import { useToast } from '../../context/ToastContext';
+import { mediaUrl } from '../../utils/media';
+import { buildRealEstateListingJsonLd } from '../../utils/structuredData';
 
 import {
   DIRECTIONS,
@@ -244,6 +246,38 @@ export default function PropertyDetailPage() {
   const directionLabel =
     DIRECTIONS[property.direction] || 'Chưa cập nhật';
 
+  const propertyImageUrl = useMemo(
+    () =>
+      mediaUrl(
+        gallery[0] ||
+          item?.thumbnailMediaId,
+      ),
+    [
+      gallery,
+      item?.thumbnailMediaId,
+    ],
+  );
+
+  const propertyJsonLd = useMemo(
+    () =>
+      buildRealEstateListingJsonLd({
+        item,
+        property,
+        description:
+          item?.summary ||
+          `${transactionLabel} tại ${address}`,
+        address,
+        imageUrl: propertyImageUrl,
+      }),
+    [
+      item,
+      property,
+      transactionLabel,
+      address,
+      propertyImageUrl,
+    ],
+  );
+
   const initialBookmarked = Boolean(
     item?.viewer?.bookmarked ||
     item?.viewer?.isBookmarked ||
@@ -366,7 +400,16 @@ export default function PropertyDetailPage() {
 
   return (
     <section ref={pageRef} className="property-detail-page property-detail-page--reference-v2">
-      <Seo title={item.title} description={item.summary} />
+      <Seo
+        title={item.title}
+        description={
+          item.summary ||
+          `${transactionLabel} tại ${address}`
+        }
+        canonical={`/bat-dong-san/${item.slug}`}
+        image={propertyImageUrl}
+        jsonLd={propertyJsonLd}
+      />
 
       <div className="property-reading-progress" aria-hidden="true">
         <span style={{ transform: `scaleX(${readingProgress})` }} />
