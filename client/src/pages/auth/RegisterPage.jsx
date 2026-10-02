@@ -31,6 +31,7 @@ import Seo from '../../components/common/Seo';
 import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { apiErrorMessage } from '../../api/http';
+import { authApi } from '../../api/auth.api';
 
 import './RegisterPage.css';
 
@@ -314,14 +315,35 @@ export default function RegisterPage() {
     try {
       await register(payload);
 
-      toast.success(
-        'Đăng ký thành công. Hãy xác thực email.',
-      );
+      let verificationSent = false;
+
+      try {
+        const verification =
+          await authApi.requestEmailVerification();
+
+        verificationSent = Boolean(
+          verification?.sent ||
+          verification?.alreadyVerified,
+        );
+      } catch {
+        verificationSent = false;
+      }
+
+      if (verificationSent) {
+        toast.success(
+          'Đăng ký thành công. Mã xác thực đã được gửi tới email của bạn.',
+        );
+      } else {
+        toast.info(
+          'Tài khoản đã được tạo. Bạn có thể gửi lại mã xác thực ở bước tiếp theo.',
+        );
+      }
 
       navigate('/xac-thuc-email', {
         replace: true,
         state: {
           email: payload.email,
+          verificationSent,
         },
       });
     } catch (error) {
