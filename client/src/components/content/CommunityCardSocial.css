@@ -46,6 +46,17 @@
   margin-bottom: 0;
 }
 
+.community-feed-card__content {
+  min-width: 0;
+}
+
+.community-feed-card__header > .community-feed-card__text {
+  grid-column: 1 / -1;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
 .community-feed-card__author {
   min-width: 0;
 }
@@ -81,7 +92,7 @@
 }
 
 .community-feed-card__text {
-  padding: 9px 16px 15px;
+  padding: 9px 0 15px;
   color: #101512;
   font-size: 1.04rem;
   line-height: 1.62;
@@ -89,9 +100,13 @@
 }
 
 .community-feed-card__text p {
+  width: 100%;
+  min-width: 0;
   margin: 0;
   color: #101512;
   white-space: pre-line;
+  overflow-wrap: anywhere;
+  word-break: normal;
 }
 
 .community-feed-card__text button {
@@ -447,9 +462,17 @@
   }
 
   .community-feed-card__text {
-    padding: 8px 12px 12px;
+    padding: 7px 0 10px;
     font-size: 0.98rem;
     line-height: 1.58;
+  }
+
+  .community-feed-card__text button {
+    display: inline-flex;
+    align-items: center;
+    min-height: 30px;
+    margin-top: 6px;
+    padding: 0 2px;
   }
 
   .community-feed-card__stats,
