@@ -1,0 +1,36 @@
+/* Final mobile toast placement.
+ * The fixed bottom navigation sits above the viewport bottom and its featured
+ * middle button protrudes upward. Keep toast feedback above that entire area
+ * so the very first tap is always visible.
+ */
+@media (max-width: 760px) {
+  html body .toast-stack {
+    right: 12px !important;
+    bottom: calc(118px + env(safe-area-inset-bottom, 0px)) !important;
+    left: 12px !important;
+    z-index: 1800 !important;
+    width: auto !important;
+    max-width: none !important;
+    gap: 8px !important;
+    pointer-events: none;
+  }
+
+  html body .toast-stack .toast {
+    width: 100%;
+    min-width: 0;
+    box-sizing: border-box;
+    pointer-events: auto;
+  }
+
+  body.dthl-mobile-drawer-open .toast-stack {
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+@media (max-width: 390px) {
+  html body .toast-stack {
+    right: 10px !important;
+    left: 10px !important;
+    bottom: calc(114px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
