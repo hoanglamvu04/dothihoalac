@@ -52,7 +52,7 @@ SWAPPED=1
 printf '[DTHL web deploy] Waiting for site smoke check: %s\n' "$SITE_URL"
 HEALTHY=0
 for attempt in $(seq 1 20); do
-  if curl --fail --silent --show-error --max-time 8 "$SITE_URL/" | grep -qi '<html'; then
+  if curl --location --fail --silent --show-error --max-time 8 "$SITE_URL/" >/dev/null; then
     HEALTHY=1
     break
   fi

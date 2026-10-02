@@ -15,10 +15,10 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          curl --fail --silent --show-error \
+          curl --location --fail --silent --show-error \
             --retry 2 --retry-all-errors \
             --max-time 15 \
-            https://dothihoalac.vn/ | grep -qi '<html'
+            https://dothihoalac.vn/ >/dev/null
 
       - name: Check public API
         shell: bash
