@@ -59,7 +59,6 @@ const schema = new mongoose.Schema(
     },
     occurrences: {
       type: Number,
-      default: 1,
       min: 1,
     },
     firstSeenAt: {
