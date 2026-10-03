@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useEffect } from 'react';
 import {
   createBrowserRouter,
   createRoutesFromElements,
@@ -23,6 +23,8 @@ import GuestRoute from '../components/auth/GuestRoute';
 import AdminRoute from '../components/auth/AdminRoute';
 import EditorRouteId from '../components/routing/EditorRouteId';
 import { PageLoading } from '../components/common/Loading';
+import ErrorBoundary from '../components/common/ErrorBoundary';
+import { trackPageView } from '../utils/analytics';
 import { isPersistedContentId } from '../utils/content';
 
 const HomePage = lazy(() => import('../pages/public/HomePage'));
@@ -125,6 +127,14 @@ function LegacyStudioRedirect({ type }) {
 }
 
 function RouterEffects() {
+  const location = useLocation();
+
+  useEffect(() => {
+    trackPageView(
+      location.pathname + location.search,
+    );
+  }, [location.pathname, location.search]);
+
   return (
     <>
       <ScrollToTop />
@@ -304,16 +314,18 @@ const router = createBrowserRouter(
 
 export default function App() {
   return (
-    <BrandingProvider>
-      <ToastProvider>
-        <AuthProvider>
-          <TaxonomyProvider>
-            <Suspense fallback={<PageLoading />}>
-              <RouterProvider router={router} />
-            </Suspense>
-          </TaxonomyProvider>
-        </AuthProvider>
-      </ToastProvider>
-    </BrandingProvider>
+    <ErrorBoundary>
+      <BrandingProvider>
+        <ToastProvider>
+          <AuthProvider>
+            <TaxonomyProvider>
+              <Suspense fallback={<PageLoading />}>
+                <RouterProvider router={router} />
+              </Suspense>
+            </TaxonomyProvider>
+          </AuthProvider>
+        </ToastProvider>
+      </BrandingProvider>
+    </ErrorBoundary>
   );
 }
