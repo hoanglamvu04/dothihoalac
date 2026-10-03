@@ -6,11 +6,13 @@ import {
   bannerImpression,
   bannerClick,
   branding,
+  clientError,
 } from './system.controller.js';
 import asyncHandler from '../../utils/asyncHandler.js';
 
 const r = Router();
 
+r.post('/client-errors', asyncHandler(clientError));
 r.get('/home-feed', asyncHandler(homeFeed));
 r.get('/branding', asyncHandler(branding));
 r.get('/pages/:slug', asyncHandler(page));
