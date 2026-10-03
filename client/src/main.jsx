@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client';
 import App from './app/App';
 import { initializeSiteTheme } from './theme/siteTheme';
 import { initializeSitePalette } from './theme/sitePalette';
+import { initializeClientTelemetry } from './utils/telemetry';
+import { initializeAnalytics } from './utils/analytics';
 import './styles/tokens.css';
 import './styles/reset.css';
 import './styles/global.css';
@@ -82,6 +84,8 @@ import './features/jobEditorWizard';
 
 initializeSiteTheme();
 initializeSitePalette();
+initializeClientTelemetry();
+initializeAnalytics();
 
 const root = createRoot(document.getElementById('root'));
 const enableStrictMode = import.meta.env.VITE_REACT_STRICT_MODE === 'true';
