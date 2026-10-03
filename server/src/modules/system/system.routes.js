@@ -9,10 +9,11 @@ import {
   clientError,
 } from './system.controller.js';
 import asyncHandler from '../../utils/asyncHandler.js';
+import { clientErrorLimiter } from '../../middlewares/rateLimit.middleware.js';
 
 const r = Router();
 
-r.post('/client-errors', asyncHandler(clientError));
+r.post('/client-errors', clientErrorLimiter, asyncHandler(clientError));
 r.get('/home-feed', asyncHandler(homeFeed));
 r.get('/branding', asyncHandler(branding));
 r.get('/pages/:slug', asyncHandler(page));
