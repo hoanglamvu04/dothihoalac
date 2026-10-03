@@ -139,6 +139,11 @@ export const adminApi = {
   deleteBanner: async (id) =>
     unwrap(await api.delete(`/admin/system/banners/${id}`)),
 
+  operationsOverview: async (params = {}) =>
+    unwrap(await api.get('/admin/system/operations', { params })),
+  resolveSystemError: async (id) =>
+    unwrap(await api.patch(`/admin/system/errors/${id}/resolve`)),
+
   activityLogs: async (params = {}) =>
     unwrapList(await api.get('/admin/system/activity-logs', { params })),
 };

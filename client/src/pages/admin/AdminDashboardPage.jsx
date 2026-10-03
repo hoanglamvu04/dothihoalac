@@ -1,13 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import {
+  Activity,
+  AlertCircle,
   AlertTriangle,
   BarChart3,
   FileText,
   Flag,
   FolderKanban,
   MessageSquareWarning,
+  MonitorCheck,
   Plus,
+  Server,
   Users,
 } from 'lucide-react';
 
@@ -16,6 +20,7 @@ import { LoadingBlock } from '../../components/common/Loading';
 import ErrorState from '../../components/common/ErrorState';
 import { adminApi } from '../../api/admin.api';
 import { useAuth } from '../../context/AuthContext';
+import { formatDateTime } from '../../utils/formatters';
 
 const MODERATION_PERMISSIONS = [
   'approve_article',
@@ -42,6 +47,7 @@ function hasAnyPermission(user, permissions = []) {
 export default function AdminDashboardPage() {
   const { user } = useAuth();
   const [data, setData] = useState(null);
+  const [ops, setOps] = useState(null);
   const [error, setError] = useState(null);
 
   const canManageSystem = hasAnyPermission(user, ['manage_system']);
@@ -59,13 +65,17 @@ export default function AdminDashboardPage() {
       canManageSystem
         ? adminApi.projects({ page: 1, limit: 1 })
         : Promise.resolve({ meta: { summary: {} } }),
+      canManageSystem
+        ? adminApi.operationsOverview({ hours: 24 }).catch(() => null)
+        : Promise.resolve(null),
     ])
-      .then(([dashboard, projects]) => {
+      .then(([dashboard, projects, operations]) => {
         if (!active) return;
         setData({
           ...dashboard,
           projectSummary: projects?.meta?.summary || {},
         });
+        setOps(operations);
       })
       .catch((nextError) => {
         if (active) setError(nextError);
@@ -106,6 +116,18 @@ export default function AdminDashboardPage() {
 
   const projectSummary = data.projectSummary || {};
 
+  const resolveAlert = async (id) => {
+    await adminApi.resolveSystemError(id);
+    const nextOps = await adminApi.operationsOverview({ hours: 24 });
+    setOps(nextOps);
+  };
+
+  const formatUptime = (seconds = 0) => {
+    const hours = Math.floor(Number(seconds || 0) / 3600);
+    if (hours < 24) return `${hours} giờ`;
+    return `${Math.floor(hours / 24)} ngày ${hours % 24} giờ`;
+  };
+
   return (
     <div>
       <Seo title="Dashboard quản trị" />
@@ -135,6 +157,99 @@ export default function AdminDashboardPage() {
           </Link>
         ))}
       </div>
+
+      {canManageSystem && ops ? (
+        <section className="admin-ops-panel">
+          <div className="admin-ops-panel__head">
+            <div>
+              <p className="admin-kicker">Live system health</p>
+              <h2>Cảnh báo & truy vết sự cố</h2>
+              <p>
+                Tổng hợp lỗi frontend/backend trong 24 giờ gần nhất. Lỗi giống nhau
+                được gom theo fingerprint để dễ tìm nguyên nhân.
+              </p>
+            </div>
+            <span className={`admin-health-badge ${ops.health?.status === 'ok' ? 'is-ok' : 'is-warn'}`}>
+              <MonitorCheck size={16} />
+              {ops.health?.status === 'ok' ? 'Hệ thống ổn định' : 'Cần kiểm tra'}
+            </span>
+          </div>
+
+          <div className="admin-ops-metrics">
+            <article>
+              <AlertCircle size={20} />
+              <strong>{Number(ops.alerts?.unresolvedErrors || 0).toLocaleString('vi-VN')}</strong>
+              <span>Lỗi chưa xử lý</span>
+              <small>{Number(ops.alerts?.totalErrors || 0)} nhóm lỗi xuất hiện trong 24h</small>
+            </article>
+            <article>
+              <Activity size={20} />
+              <strong>{Number(ops.alerts?.frontendErrors || 0).toLocaleString('vi-VN')}</strong>
+              <span>Lỗi frontend 24h</span>
+              <small>Render, promise, API 5xx và lỗi trình duyệt</small>
+            </article>
+            <article>
+              <Server size={20} />
+              <strong>{Number(ops.alerts?.backendErrors || 0).toLocaleString('vi-VN')}</strong>
+              <span>Lỗi backend 24h</span>
+              <small>Request 5xx có requestId để truy log</small>
+            </article>
+            <article>
+              <MonitorCheck size={20} />
+              <strong>{formatUptime(ops.health?.uptimeSeconds)}</strong>
+              <span>API uptime</span>
+              <small>RAM RSS {Number(ops.health?.memoryMb?.rss || 0)} MB · DB {ops.health?.database || 'unknown'}</small>
+            </article>
+          </div>
+
+          <div className="admin-ops-grid">
+            <div className="admin-ops-card">
+              <h3>Cảnh báo gần đây</h3>
+              {(ops.recentErrors || []).length ? (
+                <div className="admin-alert-list">
+                  {ops.recentErrors.map((item) => (
+                    <article key={item._id}>
+                      <div>
+                        <span className={`admin-error-source is-${item.source}`}>
+                          {item.source === 'frontend' ? 'Frontend' : 'Backend'}
+                        </span>
+                        <strong>{item.message}</strong>
+                        <small>
+                          {item.route || 'Không rõ route'} · {formatDateTime(item.lastSeenAt)}
+                          {item.requestId ? ` · requestId: ${item.requestId}` : ''}
+                        </small>
+                        <small>
+                          Lặp lại {Number(item.occurrences || 1).toLocaleString('vi-VN')} lần
+                        </small>
+                      </div>
+                      <button type="button" onClick={() => resolveAlert(item._id)}>
+                        Đánh dấu đã xử lý
+                      </button>
+                    </article>
+                  ))}
+                </div>
+              ) : (
+                <div className="admin-alert success">
+                  Chưa ghi nhận lỗi chưa xử lý. Hệ thống đang sạch cảnh báo.
+                </div>
+              )}
+            </div>
+
+            <div className="admin-ops-card">
+              <h3>Tích hợp & dữ liệu vận hành</h3>
+              <dl className="admin-ops-status-list">
+                <div><dt>SMTP gửi mail</dt><dd>{ops.integrations?.smtpConfigured ? 'Sẵn sàng' : 'Chưa cấu hình'}</dd></div>
+                <div><dt>Cloudinary media</dt><dd>{ops.integrations?.cloudinaryConfigured ? 'Sẵn sàng' : 'Chưa cấu hình'}</dd></div>
+                <div><dt>SMS OTP</dt><dd>{ops.integrations?.smsEnabled ? 'Đang bật' : 'Đang tắt'}</dd></div>
+                <div><dt>Scheduler</dt><dd>{ops.integrations?.schedulerEnabled ? 'Đang chạy' : 'Đang tắt'}</dd></div>
+                <div><dt>User mới 24h</dt><dd>{Number(ops.activity?.newUsers || 0).toLocaleString('vi-VN')}</dd></div>
+                <div><dt>Nội dung chờ duyệt</dt><dd>{Number(ops.activity?.pendingContent || 0).toLocaleString('vi-VN')}</dd></div>
+                <div><dt>Báo cáo cần xử lý</dt><dd>{Number(ops.activity?.pendingReports || 0).toLocaleString('vi-VN')}</dd></div>
+              </dl>
+            </div>
+          </div>
+        </section>
+      ) : null}
 
       <div className="admin-overview-grid">
         <section>

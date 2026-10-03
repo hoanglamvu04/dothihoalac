@@ -5,6 +5,10 @@ on:
     - cron: '*/30 * * * *'
   workflow_dispatch:
 
+permissions:
+  contents: read
+  issues: write
+
 jobs:
   smoke:
     runs-on: ubuntu-latest
@@ -12,6 +16,8 @@ jobs:
 
     steps:
       - name: Check public website
+        id: web
+        continue-on-error: true
         shell: bash
         run: |
           set -euo pipefail
@@ -21,6 +27,8 @@ jobs:
             https://dothihoalac.vn/ >/dev/null
 
       - name: Check public API
+        id: api
+        continue-on-error: true
         shell: bash
         run: |
           set -euo pipefail
@@ -32,3 +40,85 @@ jobs:
           )"
           echo "$BODY"
           echo "$BODY" | grep -q '"status":"ok"'
+
+      - name: Open or update outage alert
+        if: steps.web.outcome == 'failure' || steps.api.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = '[AUTO] DTHL production smoke monitor failed';
+            const detail = [
+              'Production smoke monitor detected a failure.',
+              '',
+              '- Website: \${{ steps.web.outcome }}',
+              '- API: \${{ steps.api.outcome }}',
+              '- Run: \${{ github.server_url }}/\${{ github.repository }}/actions/runs/\${{ github.run_id }}',
+              '- Checked at: ' + new Date().toISOString(),
+            ].join('\n');
+
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 100,
+            });
+
+            const existing = issues.find(
+              (issue) => !issue.pull_request && issue.title === title,
+            );
+
+            if (existing) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                body: detail,
+              });
+            } else {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title,
+                body: detail,
+              });
+            }
+
+      - name: Close outage alert after recovery
+        if: steps.web.outcome == 'success' && steps.api.outcome == 'success'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = '[AUTO] DTHL production smoke monitor failed';
+            const { data: issues } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 100,
+            });
+
+            const existing = issues.find(
+              (issue) => !issue.pull_request && issue.title === title,
+            );
+
+            if (existing) {
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                body: '✅ Production recovered at ' + new Date().toISOString() + '.',
+              });
+
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: existing.number,
+                state: 'closed',
+              });
+            }
+
+      - name: Fail workflow when production is unhealthy
+        if: steps.web.outcome == 'failure' || steps.api.outcome == 'failure'
+        shell: bash
+        run: |
+          echo "Production smoke check failed."
+          exit 1

@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
 import { logger } from '../config/logger.js';
 import ApiError from '../utils/ApiError.js';
+import { recordSystemError } from '../modules/system/observability.service.js';
 
 function normalizeError(error) {
   if (error instanceof ApiError) return error;
@@ -34,8 +35,32 @@ export function errorMiddleware(error, req, res, _next) {
     url: req.originalUrl,
     code: normalized.code,
   };
-  if (normalized.statusCode >= 500) logger.error({ ...logPayload, err: error }, 'Request failed');
-  else logger.warn({ ...logPayload, message: normalized.message }, 'Request rejected');
+  if (normalized.statusCode >= 500) {
+    logger.error({ ...logPayload, err: error }, 'Request failed');
+
+    void recordSystemError({
+      source: 'backend',
+      level: 'error',
+      message: error?.message || normalized.message,
+      stack: error?.stack || '',
+      route: req.originalUrl,
+      requestId: req.id,
+      userId: req.user?._id || null,
+      userAgent: req.headers?.['user-agent'] || '',
+      metadata: {
+        method: req.method,
+        code: normalized.code,
+        statusCode: normalized.statusCode,
+      },
+    }).catch((trackingError) => {
+      logger.warn(
+        { err: trackingError },
+        'Failed to persist system error event',
+      );
+    });
+  } else {
+    logger.warn({ ...logPayload, message: normalized.message }, 'Request rejected');
+  }
 
   return res.status(normalized.statusCode).json({
     success: false,

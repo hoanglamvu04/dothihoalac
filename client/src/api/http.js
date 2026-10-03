@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 import { resetBackendDiscovery, resolveApiBaseUrl } from './runtime.js';
+import { reportClientError } from '../utils/telemetry';
 
 function createHttpClient(timeout) {
   const client = axios.create({
@@ -79,6 +80,19 @@ api.interceptors.response.use(
       } catch {
         // AuthContext xử lý trạng thái chưa đăng nhập.
       }
+    }
+
+    if (
+      status >= 500 &&
+      !String(config.url || '').includes('/system/client-errors')
+    ) {
+      void reportClientError(error, {
+        kind: 'api.5xx',
+        method: String(config.method || 'get').toUpperCase(),
+        endpoint: String(config.url || ''),
+        status,
+        requestId: error.response?.data?.requestId || '',
+      });
     }
 
     if (import.meta.env.VITE_DEBUG_API === 'true') {

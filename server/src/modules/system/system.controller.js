@@ -1,6 +1,7 @@
 import * as s from './system.service.js';
 import { homeFeed as loadHomeFeed } from './homeFeed.service.js';
 import { sendCreated, sendSuccess } from '../../utils/apiResponse.js';
+import * as observability from './observability.service.js';
 
 export async function homeFeed(req, res) {
   res.set(
@@ -97,4 +98,30 @@ export async function deleteBanner(req, res) {
 export async function logs(req, res) {
   const r = await s.auditLogs(req.query);
   return sendSuccess(res, { data: r.items, meta: r.meta });
+}
+
+
+export async function clientError(req, res) {
+  await observability.recordClientError(req.body, req);
+  return sendSuccess(res, {
+    data: { accepted: true },
+  });
+}
+
+export async function operationsOverview(req, res) {
+  return sendSuccess(res, {
+    data: await observability.operationsOverview(
+      req.query.hours,
+    ),
+  });
+}
+
+export async function resolveSystemError(req, res) {
+  return sendSuccess(res, {
+    data: await observability.resolveSystemError(
+      req.params.id,
+      req.user._id,
+    ),
+    message: 'Đã đánh dấu cảnh báo là đã xử lý.',
+  });
 }

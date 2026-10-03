@@ -35,3 +35,9 @@ export const contentCreateLimiter = createLimiter({
   limit: 30,
   message: 'Bạn đã đăng quá nhiều nội dung trong thời gian ngắn.',
 });
+
+export const clientErrorLimiter = createLimiter({
+  windowMs: 15 * 60 * 1000,
+  limit: 30,
+  message: 'Quá nhiều báo cáo lỗi từ thiết bị này.',
+});
