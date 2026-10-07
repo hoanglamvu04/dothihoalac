@@ -9,9 +9,12 @@ const SITE_NAME = 'Đô Thị Hòa Lạc';
 const DEFAULT_DESCRIPTION =
   'Thông tin, cộng đồng, bất động sản và việc làm tại khu vực Hòa Lạc.';
 const DEFAULT_SOCIAL_IMAGE = `${SITE_ORIGIN}/Logo2.png`;
+const ORGANIZATION_ID = `${SITE_ORIGIN}/#organization`;
+const WEBSITE_ID = `${SITE_ORIGIN}/#website`;
 const PRIVATE_PATH_PREFIXES = [
   '/tai-khoan',
   '/admin',
+  '/quan-tri',
   '/studio',
   '/dang-bai',
   '/dang-nhap',
@@ -21,6 +24,15 @@ const PRIVATE_PATH_PREFIXES = [
   '/xac-thuc-email',
   '/xac-thuc-so-dien-thoai',
 ];
+
+const CANONICAL_ALIASES = new Map([
+  ['/dieu-khoan', '/dieu-khoan-su-dung'],
+  ['/chinh-sach-quyen-rieng', '/chinh-sach-quyen-rieng-tu'],
+  ['/trang/gioi-thieu', '/gioi-thieu'],
+  ['/trang/dieu-khoan-su-dung', '/dieu-khoan-su-dung'],
+  ['/trang/chinh-sach-quyen-rieng-tu', '/chinh-sach-quyen-rieng-tu'],
+  ['/trang/quy-dinh-dang-bai', '/quy-dinh-dang-bai'],
+]);
 
 function absoluteUrl(value = '') {
   const input = String(value || '').trim();
@@ -46,7 +58,23 @@ function normalizeCanonicalPath(pathname = '/') {
     path = `/tin-tuc/${articleAlias[1]}`;
   }
 
+  const communityAlias = path.match(/^\/cong-dong\/[^/]+\/([^/]+)\/?$/);
+  if (communityAlias?.[1]) {
+    path = `/cong-dong/${communityAlias[1]}`;
+  }
+
+  const propertyAlias = path.match(/^\/(?:bat-dong-san|nha-dat)\/[^/]+\/([^/]+)\/?$/);
+  if (propertyAlias?.[1]) {
+    path = `/bat-dong-san/${propertyAlias[1]}`;
+  }
+
+  const jobAlias = path.match(/^\/viec-lam\/[^/]+\/([^/]+)\/?$/);
+  if (jobAlias?.[1]) {
+    path = `/viec-lam/${jobAlias[1]}`;
+  }
+
   if (path.length > 1) path = path.replace(/\/+$/, '');
+  path = CANONICAL_ALIASES.get(path) || path;
   return path || '/';
 }
 
@@ -116,26 +144,12 @@ function compactJsonLd(value) {
   );
 }
 
-function defaultStructuredData({ title, description, canonicalUrl, currentPath }) {
-  const isArticle = /^\/tin-tuc\/[^/]+/.test(currentPath);
-
-  return {
-    '@context': 'https://schema.org',
-    '@type': isArticle ? 'Article' : 'WebPage',
-    name: title,
-    headline: isArticle ? title : undefined,
-    description,
-    url: canonicalUrl,
-    mainEntityOfPage: isArticle
-      ? { '@type': 'WebPage', '@id': canonicalUrl }
-      : undefined,
-    isPartOf: {
-      '@type': 'WebSite',
-      name: SITE_NAME,
-      url: SITE_ORIGIN,
-    },
-    publisher: {
+function globalStructuredData() {
+  return [
+    {
+      '@context': 'https://schema.org',
       '@type': 'Organization',
+      '@id': ORGANIZATION_ID,
       name: SITE_NAME,
       url: SITE_ORIGIN,
       logo: {
@@ -143,7 +157,54 @@ function defaultStructuredData({ title, description, canonicalUrl, currentPath }
         url: DEFAULT_SOCIAL_IMAGE,
       },
     },
+    {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      '@id': WEBSITE_ID,
+      name: SITE_NAME,
+      url: SITE_ORIGIN,
+      publisher: { '@id': ORGANIZATION_ID },
+      inLanguage: 'vi-VN',
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: {
+          '@type': 'EntryPoint',
+          urlTemplate: `${SITE_ORIGIN}/tim-kiem?q={search_term_string}`,
+        },
+        'query-input': 'required name=search_term_string',
+      },
+    },
+  ];
+}
+
+function defaultPageStructuredData({ title, description, canonicalUrl, currentPath }) {
+  const isArticle = /^\/tin-tuc\/[^/]+/.test(currentPath);
+
+  return {
+    '@context': 'https://schema.org',
+    '@type': isArticle ? 'Article' : 'WebPage',
+    '@id': `${canonicalUrl}#webpage`,
+    name: title,
+    headline: isArticle ? title : undefined,
+    description,
+    url: canonicalUrl,
+    inLanguage: 'vi-VN',
+    isPartOf: { '@id': WEBSITE_ID },
+    publisher: { '@id': ORGANIZATION_ID },
+    mainEntityOfPage: isArticle
+      ? { '@type': 'WebPage', '@id': canonicalUrl }
+      : undefined,
   };
+}
+
+function combineStructuredData(custom, page) {
+  const customItems = custom
+    ? Array.isArray(custom)
+      ? custom
+      : [custom]
+    : [page];
+
+  return [...globalStructuredData(), ...customItems];
 }
 
 export function useDocumentTitle(
@@ -197,14 +258,14 @@ export function useDocumentTitle(
     setNamedMeta('twitter:description', resolvedDescription);
     setNamedMeta('twitter:image', imageUrl);
 
+    const pageStructuredData = defaultPageStructuredData({
+      title: plainTitle,
+      description: resolvedDescription,
+      canonicalUrl,
+      currentPath,
+    });
     const structuredData = compactJsonLd(
-      jsonLd ||
-        defaultStructuredData({
-          title: plainTitle,
-          description: resolvedDescription,
-          canonicalUrl,
-          currentPath,
-        }),
+      combineStructuredData(jsonLd, pageStructuredData),
     );
 
     let script = document.head.querySelector('script[data-dthl-seo-jsonld="true"]');
