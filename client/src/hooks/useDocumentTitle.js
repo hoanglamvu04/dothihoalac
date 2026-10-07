@@ -23,6 +23,7 @@ const PRIVATE_PATH_PREFIXES = [
   '/dat-lai-mat-khau',
   '/xac-thuc-email',
   '/xac-thuc-so-dien-thoai',
+  '/cong-dong/create',
 ];
 
 const CANONICAL_ALIASES = new Map([
@@ -85,6 +86,10 @@ function shouldNoindexPath(pathname = '') {
   return PRIVATE_PATH_PREFIXES.some(
     (prefix) => normalized === prefix || normalized.startsWith(`${prefix}/`),
   );
+}
+
+function isAreaPath(pathname = '') {
+  return /^\/khu-vuc\/[^/]+\/?$/.test(String(pathname || ''));
 }
 
 function inferOpenGraphType(pathname, requestedType) {
@@ -156,6 +161,10 @@ function globalStructuredData() {
         '@type': 'ImageObject',
         url: DEFAULT_SOCIAL_IMAGE,
       },
+      areaServed: {
+        '@type': 'Place',
+        name: 'Hòa Lạc, Hà Nội, Việt Nam',
+      },
     },
     {
       '@context': 'https://schema.org',
@@ -179,6 +188,47 @@ function globalStructuredData() {
 
 function defaultPageStructuredData({ title, description, canonicalUrl, currentPath }) {
   const isArticle = /^\/tin-tuc\/[^/]+/.test(currentPath);
+  const isArea = isAreaPath(currentPath);
+
+  if (isArea) {
+    return {
+      '@context': 'https://schema.org',
+      '@type': 'CollectionPage',
+      '@id': `${canonicalUrl}#webpage`,
+      name: `${title} - Tin tức, bất động sản và cộng đồng`,
+      description,
+      url: canonicalUrl,
+      inLanguage: 'vi-VN',
+      isPartOf: { '@id': WEBSITE_ID },
+      publisher: { '@id': ORGANIZATION_ID },
+      about: {
+        '@type': 'Place',
+        '@id': `${canonicalUrl}#place`,
+        name: title,
+        containedInPlace: {
+          '@type': 'AdministrativeArea',
+          name: 'Hà Nội, Việt Nam',
+        },
+      },
+      breadcrumb: {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Trang chủ',
+            item: SITE_ORIGIN,
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: title,
+            item: canonicalUrl,
+          },
+        ],
+      },
+    };
+  }
 
   return {
     '@context': 'https://schema.org',
@@ -220,18 +270,25 @@ export function useDocumentTitle(
 ) {
   useEffect(() => {
     const plainTitle = String(title || SITE_NAME).trim() || SITE_NAME;
-    const fullTitle = plainTitle.includes(SITE_NAME)
-      ? plainTitle
-      : `${plainTitle} | ${SITE_NAME}`;
-    const resolvedDescription = String(description || DEFAULT_DESCRIPTION).trim();
     const currentPath = typeof window !== 'undefined'
       ? window.location.pathname || '/'
       : '/';
+    const areaPage = isAreaPath(currentPath);
+    const fullTitle = plainTitle.includes(SITE_NAME)
+      ? plainTitle
+      : areaPage
+        ? `${plainTitle}: Tin tức, BĐS & cộng đồng | ${SITE_NAME}`
+        : `${plainTitle} | ${SITE_NAME}`;
+    const resolvedDescription = String(description || DEFAULT_DESCRIPTION).trim();
     const canonicalPath = normalizeCanonicalPath(currentPath);
     const canonicalUrl = absoluteUrl(canonical || canonicalPath) || SITE_ORIGIN;
     const customImageUrl = absoluteUrl(image);
     const imageUrl = customImageUrl || DEFAULT_SOCIAL_IMAGE;
-    const effectiveNoindex = Boolean(noindex || shouldNoindexPath(currentPath));
+    const effectiveNoindex = Boolean(
+      noindex ||
+      shouldNoindexPath(currentPath) ||
+      plainTitle === 'Không tìm thấy khu vực',
+    );
     const openGraphType = inferOpenGraphType(currentPath, type);
 
     document.title = fullTitle;
