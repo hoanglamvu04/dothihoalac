@@ -86,12 +86,15 @@ export default function Seo({
   jsonLd = null,
 }) {
   const area = areaSeoOverrides(title, description);
+  const missingPage =
+    title === 'Không tìm thấy trang' ||
+    title === 'Không tìm thấy khu vực';
 
   useDocumentTitle(area?.title || title, area?.description || description, {
     canonical: area?.canonical || canonical,
     image,
     type,
-    noindex: Boolean(noindex || area?.noindex),
+    noindex: Boolean(noindex || area?.noindex || missingPage),
     jsonLd: area?.jsonLd || jsonLd,
   });
 
