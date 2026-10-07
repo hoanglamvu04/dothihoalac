@@ -34,15 +34,6 @@ const CORE_AREAS = [
   { slug: 'yen-xuan', name: 'Yên Xuân' },
 ];
 
-const SITEMAP_GROUPS = [
-  'pages',
-  'areas',
-  'news',
-  'community',
-  'properties',
-  'jobs',
-];
-
 function normalizeApiBase() {
   const explicitApi = String(process.env.VITE_API_URL || '')
     .trim()
@@ -101,7 +92,7 @@ async function fetchJson(url, attempts = 3) {
       const response = await fetch(url, {
         headers: {
           Accept: 'application/json',
-          'User-Agent': 'DTHL-Sitemap-Generator/2.0',
+          'User-Agent': 'DTHL-Sitemap-Generator/3.0',
         },
         signal: controller.signal,
       });
@@ -170,9 +161,7 @@ async function fetchAreas(apiBase) {
       (item) => item?.isActive !== false && String(item?.slug || '').trim(),
     );
 
-    const map = new Map(
-      CORE_AREAS.map((item) => [item.slug, item]),
-    );
+    const map = new Map(CORE_AREAS.map((item) => [item.slug, item]));
     active.forEach((item) => map.set(item.slug, item));
     return [...map.values()];
   } catch (error) {
@@ -202,24 +191,16 @@ function renderUrlEntry(entry) {
   ].join('\n');
 }
 
-function renderUrlSet(entries) {
+function uniqueEntries(entries) {
   const unique = new Map();
   entries.forEach((entry) => unique.set(entry.path, entry));
-
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${[...unique.values()]
-    .map(renderUrlEntry)
-    .join('\n')}\n</urlset>\n`;
+  return [...unique.values()];
 }
 
-function renderSitemapIndex(lastmod) {
-  const items = SITEMAP_GROUPS.map((group) => [
-    '  <sitemap>',
-    `    <loc>${xmlEscape(`${SITE_ORIGIN}/sitemap-${group}.xml`)}</loc>`,
-    `    <lastmod>${xmlEscape(lastmod)}</lastmod>`,
-    '  </sitemap>',
-  ].join('\n'));
-
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${items.join('\n')}\n</sitemapindex>\n`;
+function renderUrlSet(entries) {
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${uniqueEntries(entries)
+    .map(renderUrlEntry)
+    .join('\n')}\n</urlset>\n`;
 }
 
 async function safeCollection(apiBase, endpoint, label) {
@@ -259,10 +240,22 @@ const sitemapSets = {
   jobs: jobs.map((item) => dynamicEntry('/viec-lam', item, '0.8')),
 };
 
+const allEntries = uniqueEntries(Object.values(sitemapSets).flat());
 const currentFile = fileURLToPath(import.meta.url);
 const publicDir = path.resolve(path.dirname(currentFile), '..', 'public');
 await mkdir(publicDir, { recursive: true });
 
+// sitemap.xml is intentionally a single urlset instead of a sitemap index.
+// This is the most compatible form for Google Search Console and avoids
+// an additional fetch layer through CDN/hosting rewrites.
+await writeFile(
+  path.join(publicDir, 'sitemap.xml'),
+  renderUrlSet(allEntries),
+  'utf8',
+);
+
+// Keep split files for diagnostics and future scale, but Search Console only
+// needs sitemap.xml.
 for (const [group, entries] of Object.entries(sitemapSets)) {
   await writeFile(
     path.join(publicDir, `sitemap-${group}.xml`),
@@ -272,19 +265,15 @@ for (const [group, entries] of Object.entries(sitemapSets)) {
 }
 
 const generatedAt = new Date().toISOString();
-await writeFile(
-  path.join(publicDir, 'sitemap.xml'),
-  renderSitemapIndex(generatedAt),
-  'utf8',
-);
-
 const counts = Object.fromEntries(
   Object.entries(sitemapSets).map(([group, entries]) => [group, entries.length]),
 );
+counts.total = allEntries.length;
+
 await writeFile(
   path.join(publicDir, 'sitemap-status.json'),
   `${JSON.stringify({ generatedAt, apiBase, counts }, null, 2)}\n`,
   'utf8',
 );
 
-console.log(`[sitemap] Generated sitemap index: ${JSON.stringify(counts)}.`);
+console.log(`[sitemap] Generated single sitemap.xml urlset: ${JSON.stringify(counts)}.`);
