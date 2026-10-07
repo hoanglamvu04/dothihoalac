@@ -16,14 +16,18 @@ const strict =
   (String(process.env.SEO_SITEMAP_STRICT || '').toLowerCase() === 'true' ||
     ((isCi || isVercel) && siteOrigin === 'https://dothihoalac.vn'));
 
-const requiredFiles = [
-  'sitemap.xml',
+const diagnosticFiles = [
   'sitemap-pages.xml',
   'sitemap-areas.xml',
   'sitemap-news.xml',
   'sitemap-community.xml',
   'sitemap-properties.xml',
   'sitemap-jobs.xml',
+];
+
+const requiredFiles = [
+  'sitemap.xml',
+  ...diagnosticFiles,
   'sitemap-status.json',
 ];
 
@@ -32,16 +36,18 @@ for (const file of requiredFiles) {
   if (!value.trim()) throw new Error(`[seo] ${file} is empty.`);
 }
 
-const index = await readFile(path.join(publicDir, 'sitemap.xml'), 'utf8');
-if (!index.includes('<sitemapindex')) {
-  throw new Error('[seo] sitemap.xml must be a sitemap index.');
+const sitemap = await readFile(path.join(publicDir, 'sitemap.xml'), 'utf8');
+
+if (!sitemap.startsWith('<?xml version="1.0" encoding="UTF-8"?>')) {
+  throw new Error('[seo] sitemap.xml must start with a UTF-8 XML declaration.');
 }
 
-for (const file of requiredFiles.filter((item) => item.startsWith('sitemap-') && item.endsWith('.xml'))) {
-  const expected = `${siteOrigin}/${file}`;
-  if (!index.includes(expected)) {
-    throw new Error(`[seo] Sitemap index is missing ${expected}.`);
-  }
+if (!sitemap.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')) {
+  throw new Error('[seo] sitemap.xml must be a standard sitemap urlset.');
+}
+
+if (sitemap.includes('<sitemapindex')) {
+  throw new Error('[seo] sitemap.xml must not be a sitemap index for the Google compatibility build.');
 }
 
 const status = JSON.parse(
@@ -55,6 +61,10 @@ if (Number(counts.pages || 0) < 8) {
 
 if (Number(counts.areas || 0) < 6) {
   throw new Error(`[seo] Core area sitemap is incomplete: ${counts.areas || 0}.`);
+}
+
+if (Number(counts.total || 0) < Number(counts.pages || 0) + Number(counts.areas || 0)) {
+  throw new Error(`[seo] Combined sitemap total is invalid: ${counts.total || 0}.`);
 }
 
 if (strict) {
@@ -82,15 +92,26 @@ const privatePrefixes = [
   '/cong-dong/create',
 ];
 
-for (const file of requiredFiles.filter((item) => item.startsWith('sitemap-') && item.endsWith('.xml'))) {
+for (const prefix of privatePrefixes) {
+  if (sitemap.includes(`${siteOrigin}${prefix}`)) {
+    throw new Error(`[seo] Private/noindex route leaked into sitemap.xml: ${prefix}`);
+  }
+}
+
+for (const requiredRoute of ['/', '/tin-tuc', '/cong-dong', '/bat-dong-san', '/viec-lam']) {
+  const expected = `${siteOrigin}${requiredRoute}`;
+  if (!sitemap.includes(`<loc>${expected}</loc>`)) {
+    throw new Error(`[seo] sitemap.xml is missing required URL: ${expected}`);
+  }
+}
+
+for (const file of diagnosticFiles) {
   const xml = await readFile(path.join(publicDir, file), 'utf8');
-  for (const prefix of privatePrefixes) {
-    if (xml.includes(`${siteOrigin}${prefix}`)) {
-      throw new Error(`[seo] Private/noindex route leaked into ${file}: ${prefix}`);
-    }
+  if (!xml.includes('<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">')) {
+    throw new Error(`[seo] ${file} is not a valid urlset.`);
   }
 }
 
 console.log(
-  `[seo] Sitemap validation passed${strict ? ' (strict)' : ''}: ${JSON.stringify(counts)}.`,
+  `[seo] Single sitemap validation passed${strict ? ' (strict)' : ''}: ${JSON.stringify(counts)}.`,
 );
