@@ -28,6 +28,45 @@
       content="Tin tức, quy hoạch, cộng đồng, bất động sản, việc làm và đời sống Hòa Lạc."
     />
     <meta name="twitter:image" content="https://dothihoalac.vn/Logo2.png" />
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "Organization",
+            "@id": "https://dothihoalac.vn/#organization",
+            "name": "Đô Thị Hòa Lạc",
+            "url": "https://dothihoalac.vn/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://dothihoalac.vn/Logo2.png"
+            },
+            "areaServed": {
+              "@type": "Place",
+              "name": "Hòa Lạc, Hà Nội, Việt Nam"
+            }
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://dothihoalac.vn/#website",
+            "url": "https://dothihoalac.vn/",
+            "name": "Đô Thị Hòa Lạc",
+            "inLanguage": "vi-VN",
+            "publisher": {
+              "@id": "https://dothihoalac.vn/#organization"
+            },
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": {
+                "@type": "EntryPoint",
+                "urlTemplate": "https://dothihoalac.vn/tim-kiem?q={search_term_string}"
+              },
+              "query-input": "required name=search_term_string"
+            }
+          }
+        ]
+      }
+    </script>
     <link rel="preconnect" href="https://res.cloudinary.com" crossorigin />
     <link rel="dns-prefetch" href="//res.cloudinary.com" />
     <link rel="icon" type="image/png" href="/Logo.png" />
