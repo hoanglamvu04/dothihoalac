@@ -1,3 +1,16 @@
 User-agent: *
 Allow: /
+Disallow: /quan-tri
+Disallow: /admin
+Disallow: /tai-khoan
+Disallow: /studio
+Disallow: /dang-bai
+Disallow: /dang-nhap
+Disallow: /dang-ky
+Disallow: /quen-mat-khau
+Disallow: /dat-lai-mat-khau
+Disallow: /xac-thuc-email
+Disallow: /xac-thuc-so-dien-thoai
+Disallow: /tim-kiem
+
 Sitemap: https://dothihoalac.vn/sitemap.xml
