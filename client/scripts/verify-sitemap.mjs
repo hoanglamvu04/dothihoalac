@@ -8,9 +8,13 @@ const siteOrigin = String(process.env.VITE_SITE_URL || 'https://dothihoalac.vn')
   .trim()
   .replace(/\/+$/, '');
 const isCi = String(process.env.CI || '').toLowerCase() === 'true';
+const isVercel = String(process.env.VERCEL || '').toLowerCase() === '1';
+const allowStaticOnly =
+  String(process.env.SITEMAP_ALLOW_STATIC_ONLY || '').toLowerCase() === 'true';
 const strict =
-  String(process.env.SEO_SITEMAP_STRICT || '').toLowerCase() === 'true' ||
-  (isCi && siteOrigin === 'https://dothihoalac.vn');
+  !allowStaticOnly &&
+  (String(process.env.SEO_SITEMAP_STRICT || '').toLowerCase() === 'true' ||
+    ((isCi || isVercel) && siteOrigin === 'https://dothihoalac.vn'));
 
 const requiredFiles = [
   'sitemap.xml',
@@ -33,6 +37,13 @@ if (!index.includes('<sitemapindex')) {
   throw new Error('[seo] sitemap.xml must be a sitemap index.');
 }
 
+for (const file of requiredFiles.filter((item) => item.startsWith('sitemap-') && item.endsWith('.xml'))) {
+  const expected = `${siteOrigin}/${file}`;
+  if (!index.includes(expected)) {
+    throw new Error(`[seo] Sitemap index is missing ${expected}.`);
+  }
+}
+
 const status = JSON.parse(
   await readFile(path.join(publicDir, 'sitemap-status.json'), 'utf8'),
 );
@@ -52,6 +63,30 @@ if (strict) {
       throw new Error(
         `[seo] Strict sitemap validation failed: ${key} has no dynamic URLs.`,
       );
+    }
+  }
+}
+
+const privatePrefixes = [
+  '/quan-tri',
+  '/tai-khoan',
+  '/studio',
+  '/dang-bai',
+  '/dang-nhap',
+  '/dang-ky',
+  '/quen-mat-khau',
+  '/dat-lai-mat-khau',
+  '/xac-thuc-email',
+  '/xac-thuc-so-dien-thoai',
+  '/tim-kiem',
+  '/cong-dong/create',
+];
+
+for (const file of requiredFiles.filter((item) => item.startsWith('sitemap-') && item.endsWith('.xml'))) {
+  const xml = await readFile(path.join(publicDir, file), 'utf8');
+  for (const prefix of privatePrefixes) {
+    if (xml.includes(`${siteOrigin}${prefix}`)) {
+      throw new Error(`[seo] Private/noindex route leaked into ${file}: ${prefix}`);
     }
   }
 }
