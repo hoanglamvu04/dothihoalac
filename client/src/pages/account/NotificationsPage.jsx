@@ -24,6 +24,7 @@ import { useToast } from '../../context/ToastContext';
 import { formatRelativeTime } from '../../utils/formatters';
 
 import './AccountPages.css';
+import './NotificationsPage.css';
 
 function notificationType(item) {
   return String(item?.notificationType || item?.type || '').toLowerCase();
