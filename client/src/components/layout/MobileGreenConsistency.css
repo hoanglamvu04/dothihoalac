@@ -21,13 +21,11 @@
     color: var(--dthl-green);
     background: var(--dthl-green-soft);
   }
-}
 
-/* Mobile notification dropdown: show roughly four items, then scroll inside. */
-@media (max-width: 760px) {
-  .dthl-notification-list {
-    max-height: 336px;
-    overflow-y: auto;
-    overscroll-behavior: contain;
+  /* Home already has the persistent bottom navigation on mobile.
+   * Remove the duplicated shortcut strip below the hero to keep the page compact.
+   */
+  .dth-home .home-mobile-shortcuts {
+    display: none !important;
   }
 }
