@@ -10,83 +10,108 @@
   --ap-border: #dce7e0;
 }
 
-.account-notifications-page .account-page-heading__eyebrow,
+/* The runtime light theme still injects old warm/gold account colors with !important.
+ * Override them here with equal/higher specificity so /tai-khoan/thong-bao always
+ * follows the current Do Thi Hoa Lac green system. */
+html[data-dthl-theme='light'] .account-notifications-page,
+html[data-dthl-theme='system'] .account-notifications-page,
+.account-center-page .account-notifications-page {
+  --ap-green: #08743d !important;
+  --ap-green-hover: #066434 !important;
+  --ap-green-dark: #075f33 !important;
+  --ap-green-soft: #edf8f1 !important;
+  --ap-green-border: #d7ecde !important;
+  --ap-ink: #10261a !important;
+  --ap-text: #3d5044 !important;
+  --ap-muted: #748078 !important;
+  --ap-border: #dce7e0 !important;
+  color: var(--ap-ink) !important;
+}
+
+html[data-dthl-theme='light'] .account-notifications-page .account-page-heading__eyebrow,
+html[data-dthl-theme='system'] .account-notifications-page .account-page-heading__eyebrow,
+.account-notifications-page .account-page-heading__eyebrow {
+  color: #075f33 !important;
+}
+
 .account-notifications-page .account-page-button--soft,
 .account-notifications-page .account-filter-tabs button.is-active,
 .account-notifications-page .account-filter-tabs button:hover {
-  color: var(--ap-green-dark);
+  color: #075f33 !important;
+  background: #edf8f1 !important;
+  border-color: #d7ecde !important;
 }
 
-.account-notifications-page .account-page-button--soft,
-.account-notifications-page .account-filter-tabs button.is-active,
-.account-notifications-page .account-filter-tabs button:hover,
-.account-notifications-page .account-notification-item.is-unread,
 .account-notifications-page .account-notification-item__icon {
-  background: var(--ap-green-soft);
+  color: #075f33 !important;
+  background: #edf8f1 !important;
 }
 
 .account-notifications-page .account-notification-item.is-unread {
-  border-color: var(--ap-green-border);
-}
-
-.account-notifications-page .account-notification-item__icon {
-  color: var(--ap-green-dark);
+  border-color: #d7ecde !important;
+  background: #f3faf6 !important;
+  box-shadow: inset 3px 0 0 #08743d !important;
 }
 
 .account-notifications-page .account-page-card,
 .account-notifications-page .account-filter-tabs,
 .account-notifications-page .account-notification-item {
-  border-color: var(--ap-border);
-  background: #ffffff;
-  box-shadow: 0 5px 18px rgb(8 61 32 / 0.04);
+  border-color: #dce7e0 !important;
+  background: #ffffff !important;
+  box-shadow: 0 5px 18px rgb(8 61 32 / 0.04) !important;
 }
 
 .account-notifications-page .account-notification-item.is-unread {
-  background: #f3faf6;
-  box-shadow: inset 3px 0 0 var(--ap-green);
+  box-shadow: inset 3px 0 0 #08743d !important;
 }
 
 .account-notifications-page .account-page-button--neutral {
-  color: var(--ap-ink);
-  background: #eef2ef;
+  color: #10261a !important;
+  background: #eef2ef !important;
+  border-color: #dce7e0 !important;
 }
 
 .account-notifications-page .account-page-button--neutral:hover:not(:disabled) {
-  background: #e5ebe7;
+  background: #e5ebe7 !important;
 }
 
-/* Remove legacy warm/yellow accents inherited from older account themes. */
+.account-notifications-page .account-page-button--soft:disabled {
+  color: #6e7f75 !important;
+  background: #f1f5f2 !important;
+  opacity: 0.62;
+}
+
 .account-center-page:has(.account-notifications-page) {
-  --account-green: #08743d;
-  --account-green-dark: #075f33;
-  --account-green-soft: #edf8f1;
-  --account-border: #dce7e0;
-  --account-ink: #10261a;
-  --account-muted: #748078;
-  background: #f4f7f5;
+  --account-green: #08743d !important;
+  --account-green-dark: #075f33 !important;
+  --account-green-soft: #edf8f1 !important;
+  --account-border: #dce7e0 !important;
+  --account-ink: #10261a !important;
+  --account-muted: #748078 !important;
+  background: #f4f7f5 !important;
 }
 
 .account-center-page:has(.account-notifications-page) .account-center-warning {
-  border-color: #d7ecde;
-  color: #075f33;
-  background: #f1f8f4;
+  border-color: #d7ecde !important;
+  color: #075f33 !important;
+  background: #f1f8f4 !important;
 }
 
 .account-center-page:has(.account-notifications-page) .account-center-warning button {
-  color: #075f33;
-  background: #e6f3eb;
+  color: #075f33 !important;
+  background: #e6f3eb !important;
 }
 
 .account-center-page:has(.account-notifications-page) .account-shell-nav > a.is-active,
 .account-center-page:has(.account-notifications-page) .account-shell-nav__more a.is-active,
 .account-center-page:has(.account-notifications-page) .account-shell-nav__more > summary.is-active,
 .account-center-page:has(.account-notifications-page) .account-shell-nav__more.is-active > summary {
-  color: #075f33;
-  background: #edf8f1;
-  box-shadow: inset 4px 0 0 #08743d;
+  color: #075f33 !important;
+  background: #edf8f1 !important;
+  box-shadow: inset 4px 0 0 #08743d !important;
 }
 
 .account-center-page:has(.account-notifications-page) [class*='gold'],
 .account-center-page:has(.account-notifications-page) [class*='yellow'] {
-  filter: none;
+  filter: none !important;
 }
