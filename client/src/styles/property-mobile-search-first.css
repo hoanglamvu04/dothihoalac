@@ -1,0 +1,177 @@
+/* Mobile-first property discovery: keep the first screen calm and progressive. */
+@media (max-width: 720px) {
+  .properties-page .properties-hero {
+    padding: 22px 14px 14px !important;
+  }
+
+  .properties-page .properties-hero__content {
+    padding-bottom: 12px !important;
+  }
+
+  .properties-page .properties-hero__eyebrow {
+    margin-bottom: 5px !important;
+    font-size: 0.58rem !important;
+    letter-spacing: 0.065em !important;
+  }
+
+  .properties-page .properties-hero h1 {
+    font-size: clamp(1.85rem, 9.6vw, 2.45rem) !important;
+    line-height: 1.02 !important;
+  }
+
+  .properties-page .properties-hero__content p {
+    margin-top: 8px !important;
+    max-width: 100% !important;
+    font-size: 0.72rem !important;
+    line-height: 1.45 !important;
+  }
+
+  .properties-mobile-search-first {
+    position: relative;
+    z-index: 5;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    min-height: 46px;
+    margin: 0 0 8px;
+    overflow: hidden;
+    border: 1px solid var(--property-border);
+    border-radius: 13px;
+    background: #fff;
+    box-shadow: 0 5px 16px rgb(16 51 35 / 0.07);
+  }
+
+  .properties-mobile-search-first input {
+    width: 100%;
+    min-width: 0;
+    min-height: 46px;
+    padding: 0 12px;
+    border: 0;
+    outline: 0;
+    color: var(--property-ink);
+    background: transparent;
+    font-size: 0.72rem;
+  }
+
+  .properties-mobile-search-first input::placeholder {
+    color: #89938d;
+  }
+
+  .properties-mobile-search-first button {
+    min-width: 58px;
+    margin: 5px;
+    padding: 0 12px;
+    border: 0;
+    border-radius: 9px;
+    color: #fff;
+    background: var(--property-green);
+    font-size: 0.68rem;
+    font-weight: 800;
+  }
+
+  .properties-page .properties-hero__finder {
+    grid-template-columns: minmax(0, 1fr) 112px !important;
+    min-height: 58px !important;
+    padding: 6px !important;
+    gap: 6px !important;
+    border-radius: 13px !important;
+    box-shadow: 0 5px 16px rgb(16 51 35 / 0.07) !important;
+    backdrop-filter: none !important;
+  }
+
+  .properties-page .properties-hero__finder > label:nth-of-type(n + 2) {
+    display: none !important;
+  }
+
+  .properties-page .properties-hero__finder > label:first-of-type {
+    min-height: 48px !important;
+    padding: 4px 9px !important;
+    border: 0 !important;
+    border-radius: 9px !important;
+    background: #f8faf9 !important;
+  }
+
+  .properties-page .properties-hero__finder > label:first-of-type > span {
+    margin-bottom: 1px !important;
+    font-size: 0.56rem !important;
+  }
+
+  .properties-page .properties-hero__finder > label:first-of-type > div {
+    gap: 5px !important;
+  }
+
+  .properties-page .properties-hero__finder > button {
+    grid-column: auto !important;
+    min-height: 48px !important;
+    margin: 0 !important;
+    padding: 0 10px !important;
+    gap: 0 !important;
+    border-radius: 9px !important;
+    font-size: 0 !important;
+    box-shadow: none !important;
+  }
+
+  .properties-page .properties-hero__finder > button > svg {
+    display: none !important;
+  }
+
+  .properties-page .properties-hero__finder > button::after {
+    content: 'Bộ lọc';
+    font-size: 0.7rem;
+    font-weight: 800;
+  }
+
+  .properties-page .properties-type-rail {
+    padding: 10px 14px 6px !important;
+    gap: 7px !important;
+  }
+
+  .properties-page .properties-type-rail button {
+    min-height: 36px !important;
+    padding-inline: 10px !important;
+    gap: 5px !important;
+    border-radius: 999px !important;
+    font-size: 0.61rem !important;
+  }
+
+  .properties-page .properties-type-rail button svg {
+    width: 14px !important;
+    height: 14px !important;
+  }
+
+  .properties-page .properties-featured-areas {
+    padding: 10px 14px 17px !important;
+  }
+
+  .properties-page .properties-featured-areas > header {
+    margin-bottom: 8px !important;
+  }
+
+  .properties-page .properties-featured-areas__grid {
+    margin-right: -14px !important;
+    padding-right: 14px !important;
+    gap: 9px !important;
+  }
+
+  .properties-page .properties-featured-areas__grid > button,
+  .properties-page .properties-featured-areas__grid > button:nth-child(n) {
+    flex-basis: 158px !important;
+  }
+
+  .properties-page .properties-featured-areas__media {
+    height: 88px !important;
+  }
+
+  .properties-page .properties-toolbar__advanced {
+    display: none !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .properties-page .properties-hero__content p {
+    display: none !important;
+  }
+
+  .properties-page .properties-hero {
+    padding-top: 18px !important;
+  }
+}
