@@ -7,6 +7,7 @@ import DeferredCommunityQuickComposer from '../community/DeferredCommunityQuickC
 import AdSlot from '../ads/AdSlot';
 
 import './PublicInteractionFixes.css';
+import './MobileGreenConsistency.css';
 
 const PrimaryNavigation = lazy(() => import('./PrimaryNavigation'));
 const CommunityAdRails = lazy(() => import('../community/CommunityAdRails'));
