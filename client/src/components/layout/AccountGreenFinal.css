@@ -1,0 +1,164 @@
+/* Final account-center palette contract.
+   Keep every /tai-khoan surface on the current DTHL green/white system and
+   neutralize legacy gold/earth overrides loaded by older account styles. */
+
+html[data-dthl-theme='light'] body .account-center-page {
+  --account-green: #08743d !important;
+  --account-green-dark: #075f33 !important;
+  --account-green-soft: #edf8f1 !important;
+  --account-border: #dce7e0 !important;
+  --account-ink: #10261a !important;
+  --account-muted: #748078 !important;
+  --account-desktop-green: #08743d !important;
+  --account-desktop-green-soft: #edf8f1 !important;
+  --account-desktop-gold: #08743d !important;
+}
+
+html[data-dthl-theme='light'] body .account-center-page .account-page-view {
+  --ap-green: #08743d !important;
+  --ap-green-hover: #066434 !important;
+  --ap-green-dark: #075f33 !important;
+  --ap-green-soft: #edf8f1 !important;
+  --ap-green-border: #d7ecde !important;
+  --ap-border: #dce7e0 !important;
+  --ap-ink: #10261a !important;
+  --ap-text: #3d5044 !important;
+  --ap-muted: #748078 !important;
+}
+
+html[data-dthl-theme='light'] body .account-center-page .account-overview-v2 {
+  --aov-accent: #08743d !important;
+  --aov-accent-dark: #075f33 !important;
+  --aov-accent-soft: #edf8f1 !important;
+  --aov-border: #dce7e0 !important;
+}
+
+html[data-dthl-theme='light'] body .account-center-page .profile-settings-page {
+  --profile-green: #08743d !important;
+  --profile-green-hover: #066434 !important;
+  --profile-green-dark: #075f33 !important;
+  --profile-green-soft: #edf8f1 !important;
+  --profile-green-border: #d7ecde !important;
+  --profile-border: #dce7e0 !important;
+}
+
+html[data-dthl-theme='light'] body .account-center-page :is(
+  .account-page-heading__eyebrow,
+  .account-overview-v2__topline span,
+  .account-overview-v2__section-heading > a,
+  .account-overview-v2__details-link,
+  .account-shell-nav > a.is-active,
+  .account-shell-nav__more a.is-active,
+  .account-shell-nav__more > summary.is-active,
+  .account-shell-nav__more.is-active > summary,
+  .profile-settings-field label em,
+  .profile-settings-note > svg,
+  .profile-settings-savebar__status > span.is-changed
+) {
+  color: #075f33 !important;
+}
+
+html[data-dthl-theme='light'] body .account-center-page :is(
+  .account-shell-nav > a.is-active,
+  .account-shell-nav__more a.is-active,
+  .account-shell-nav__more > summary.is-active,
+  .account-shell-nav__more.is-active > summary,
+  .account-shell-nav > a:hover,
+  .account-shell-nav__more a:hover,
+  .account-shell-nav__more summary:hover,
+  .account-filter-tabs button.is-active,
+  .account-filter-tabs button:hover,
+  .account-page-button--soft,
+  .account-notification-item.is-unread,
+  .account-notification-item__icon,
+  .account-overview-v2__highlight-grid article > span,
+  .account-overview-v2__field-icon,
+  .account-overview-v2__quick > a > svg,
+  .profile-settings-savebar__status > span.is-changed
+) {
+  background: #edf8f1 !important;
+}
+
+html[data-dthl-theme='light'] body .account-center-page :is(
+  .account-shell-nav > a.is-active,
+  .account-shell-nav__more a.is-active,
+  .account-shell-nav__more > summary.is-active,
+  .account-shell-nav__more.is-active > summary
+) {
+  box-shadow: inset 4px 0 0 #08743d !important;
+}
+
+html[data-dthl-theme='light'] body .account-center-page .account-shell-identity__title > span {
+  color: #fff !important;
+  background: #08743d !important;
+  box-shadow: 0 0 0 3px rgb(8 116 61 / 0.15) !important;
+}
+
+html[data-dthl-theme='light'] body .account-center-page .account-shell-cover__fallback {
+  background:
+    radial-gradient(circle at 82% 23%, rgb(255 255 255 / 0.08) 0 28px, transparent 29px),
+    radial-gradient(circle at 88% 76%, rgb(255 255 255 / 0.06) 0 58px, transparent 59px),
+    linear-gradient(135deg, #075f33 0%, #08743d 58%, #064f2b 100%) !important;
+}
+
+html[data-dthl-theme='light'] body .account-center-page .account-overview-v2__completion > span,
+html[data-dthl-theme='light'] body .account-center-page .account-overview-v2__community-cta > a,
+html[data-dthl-theme='light'] body .account-center-page .account-page-button--primary {
+  background: #08743d !important;
+}
+
+html[data-dthl-theme='light'] body .account-center-page .account-overview-v2__community-cta {
+  border-color: #d7ecde !important;
+  background: #f3faf6 !important;
+}
+
+html[data-dthl-theme='light'] body .account-center-page .profile-settings-card__heading-icon {
+  border-color: #d7ecde !important;
+  color: #075f33 !important;
+  background: #edf8f1 !important;
+}
+
+html[data-dthl-theme='light'] body .account-center-page .profile-settings-input:focus-within,
+html[data-dthl-theme='light'] body .account-center-page .profile-settings-field textarea:focus {
+  border-color: #08743d !important;
+  box-shadow: 0 0 0 3px rgb(8 116 61 / 0.1) !important;
+}
+
+html[data-dthl-theme='light'] body .account-center-page .profile-settings-note {
+  border-color: #dce7e0 !important;
+  background: #f7faf8 !important;
+}
+
+html[data-dthl-theme='light'] body .account-center-page .profile-settings-button--primary:hover:not(:disabled) {
+  border-color: #066434 !important;
+  color: #fff !important;
+  background: #066434 !important;
+}
+
+html[data-dthl-theme='light'] body .account-center-page .profile-unsaved-dialog__icon {
+  color: #075f33 !important;
+  background: #edf8f1 !important;
+}
+
+html[data-dthl-theme='light'] body .account-center-page .account-center-warning {
+  border-color: #d7ecde !important;
+  color: #075f33 !important;
+  background: #f3faf6 !important;
+}
+
+html[data-dthl-theme='light'] body .account-center-page .account-center-warning button {
+  color: #075f33 !important;
+  background: #e6f3eb !important;
+}
+
+@media (max-width: 760px) {
+  html[data-dthl-theme='light'] body .account-center-page .account-overview-v2__tabs a,
+  html[data-dthl-theme='light'] body .account-center-page .account-overview-v2__tabs a svg {
+    color: #075f33 !important;
+  }
+
+  html[data-dthl-theme='light'] body .account-center-page .account-mobile-dock a.is-active,
+  html[data-dthl-theme='light'] body .account-center-page .account-mobile-dock a.is-active svg {
+    color: #075f33 !important;
+  }
+}
