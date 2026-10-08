@@ -21,11 +21,20 @@
     color: var(--dthl-green);
     background: var(--dthl-green-soft);
   }
+}
 
-  /* Home already has the persistent bottom navigation on mobile.
-   * Remove the duplicated shortcut strip below the hero to keep the page compact.
-   */
-  .dth-home .home-mobile-shortcuts {
-    display: none !important;
-  }
+/* Home already has the persistent bottom navigation on mobile.
+ * The duplicated quick-navigation strip below the hero is removed completely.
+ * Keep this rule outside media queries so it cannot be re-enabled by later
+ * HomePage responsive styles or an unexpected viewport/emulation width.
+ */
+.dth-home nav.home-mobile-shortcuts,
+.dth-home .home-mobile-shortcuts[aria-label='Khám phá nhanh'] {
+  display: none !important;
+  visibility: hidden !important;
+  height: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
 }
