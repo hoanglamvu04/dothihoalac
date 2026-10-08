@@ -106,6 +106,12 @@
   html body .app-shell .properties-page .properties-type-rail::-webkit-scrollbar {
     display: none;
   }
+
+  /* Mobile already has area selection in the compact finder and the
+   advanced filter sheet, so the featured-area carousel is redundant. */
+  html body .app-shell .properties-page .properties-featured-areas {
+    display: none !important;
+  }
 }
 
 @media (max-width: 390px) {
