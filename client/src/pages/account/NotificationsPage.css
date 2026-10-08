@@ -1,0 +1,92 @@
+.account-notifications-page {
+  --ap-green: #08743d;
+  --ap-green-hover: #066434;
+  --ap-green-dark: #075f33;
+  --ap-green-soft: #edf8f1;
+  --ap-green-border: #d7ecde;
+  --ap-ink: #10261a;
+  --ap-text: #3d5044;
+  --ap-muted: #748078;
+  --ap-border: #dce7e0;
+}
+
+.account-notifications-page .account-page-heading__eyebrow,
+.account-notifications-page .account-page-button--soft,
+.account-notifications-page .account-filter-tabs button.is-active,
+.account-notifications-page .account-filter-tabs button:hover {
+  color: var(--ap-green-dark);
+}
+
+.account-notifications-page .account-page-button--soft,
+.account-notifications-page .account-filter-tabs button.is-active,
+.account-notifications-page .account-filter-tabs button:hover,
+.account-notifications-page .account-notification-item.is-unread,
+.account-notifications-page .account-notification-item__icon {
+  background: var(--ap-green-soft);
+}
+
+.account-notifications-page .account-notification-item.is-unread {
+  border-color: var(--ap-green-border);
+}
+
+.account-notifications-page .account-notification-item__icon {
+  color: var(--ap-green-dark);
+}
+
+.account-notifications-page .account-page-card,
+.account-notifications-page .account-filter-tabs,
+.account-notifications-page .account-notification-item {
+  border-color: var(--ap-border);
+  background: #ffffff;
+  box-shadow: 0 5px 18px rgb(8 61 32 / 0.04);
+}
+
+.account-notifications-page .account-notification-item.is-unread {
+  background: #f3faf6;
+  box-shadow: inset 3px 0 0 var(--ap-green);
+}
+
+.account-notifications-page .account-page-button--neutral {
+  color: var(--ap-ink);
+  background: #eef2ef;
+}
+
+.account-notifications-page .account-page-button--neutral:hover:not(:disabled) {
+  background: #e5ebe7;
+}
+
+/* Remove legacy warm/yellow accents inherited from older account themes. */
+.account-center-page:has(.account-notifications-page) {
+  --account-green: #08743d;
+  --account-green-dark: #075f33;
+  --account-green-soft: #edf8f1;
+  --account-border: #dce7e0;
+  --account-ink: #10261a;
+  --account-muted: #748078;
+  background: #f4f7f5;
+}
+
+.account-center-page:has(.account-notifications-page) .account-center-warning {
+  border-color: #d7ecde;
+  color: #075f33;
+  background: #f1f8f4;
+}
+
+.account-center-page:has(.account-notifications-page) .account-center-warning button {
+  color: #075f33;
+  background: #e6f3eb;
+}
+
+.account-center-page:has(.account-notifications-page) .account-shell-nav > a.is-active,
+.account-center-page:has(.account-notifications-page) .account-shell-nav__more a.is-active,
+.account-center-page:has(.account-notifications-page) .account-shell-nav__more > summary.is-active,
+.account-center-page:has(.account-notifications-page) .account-shell-nav__more.is-active > summary {
+  color: #075f33;
+  background: #edf8f1;
+  box-shadow: inset 4px 0 0 #08743d;
+}
+
+.account-center-page:has(.account-notifications-page) [class*='gold'],
+.account-center-page:has(.account-notifications-page) [class*='yellow'] {
+  filter: none;
+}
