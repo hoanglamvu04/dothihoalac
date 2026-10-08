@@ -79,8 +79,10 @@ import './styles/jobs-mobile-card-final.css';
 import './styles/job-detail-actions-final.css';
 import './styles/property-mobile-layout-final.css';
 import './styles/toast-mobile-final.css';
+import './styles/property-mobile-search-first.css';
 import './features/propertyMarketplacePaging';
 import './features/jobEditorWizard';
+import './features/propertyMobileSearchFirst';
 
 initializeSiteTheme();
 initializeSitePalette();
