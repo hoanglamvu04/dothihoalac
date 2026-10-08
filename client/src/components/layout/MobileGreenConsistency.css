@@ -1,0 +1,24 @@
+/* Keep the mobile header/drawer palette aligned with the main navigation green. */
+@media (max-width: 900px) {
+  :root {
+    --dthl-green: #08743d;
+    --dthl-green-hover: #066434;
+    --dthl-green-dark: #075f33;
+    --dthl-green-deep: #083d20;
+    --dthl-green-soft: #edf8f1;
+    --dthl-green-soft-strong: #d7ecde;
+  }
+
+  .dthl-mobile-nav-upgrade__link:hover,
+  .dthl-mobile-nav-upgrade__link.is-active,
+  .dthl-mobile-nav-upgrade__category:hover,
+  .dthl-mobile-nav-upgrade__category.is-active {
+    color: var(--dthl-green);
+  }
+
+  .dthl-mobile-nav-upgrade__toggle:hover,
+  .dthl-mobile-nav-upgrade__toggle[aria-expanded='true'] {
+    color: var(--dthl-green);
+    background: var(--dthl-green-soft);
+  }
+}
