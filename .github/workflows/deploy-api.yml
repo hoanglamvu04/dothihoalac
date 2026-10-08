@@ -1,15 +1,13 @@
-name: Deploy DTHL API VPS
+name: Deploy Do Thi Hoa Lac VPS
 
 on:
   push:
     branches:
       - main
-    paths:
-      - 'server/**'
   workflow_dispatch:
     inputs:
       confirm:
-        description: 'Type DEPLOY_DTHL_API to confirm the manual VPS deploy'
+        description: 'Type DEPLOY_DTHL to confirm the manual VPS deploy'
         required: true
         type: string
 
@@ -26,26 +24,47 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         shell: bash
         run: |
-          if [ "${{ inputs.confirm }}" != "DEPLOY_DTHL_API" ]; then
+          if [ "${{ inputs.confirm }}" != "DEPLOY_DTHL" ]; then
             echo "Manual dispatch rejected: confirmation text is incorrect."
             exit 1
           fi
 
-      - name: Deploy Backend VPS
+      - name: Deploy full stack to VPS
         uses: appleboy/ssh-action@v1.0.3
         with:
           host: ${{ secrets.VPS_HOST }}
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
+          script_stop: true
+          command_timeout: 20m
           script: |
             set -euo pipefail
-            cd /var/www/dothihoalac
+
+            APP_DIR=/var/www/dothihoalac
+            cd "$APP_DIR"
+
             PREVIOUS_COMMIT="$(git rev-parse HEAD)"
+            echo "Previous revision: $PREVIOUS_COMMIT"
+
             git fetch origin main
-            # deploy.sh used to be an untracked VPS-only file. Remove that stale
-            # copy so the tracked fail-safe script from main can replace it.
-            rm -f server/deploy.sh
+            TARGET_COMMIT="$(git rev-parse origin/main)"
+            echo "Target revision: $TARGET_COMMIT"
+
+            # Remove any old VPS-only deploy scripts so tracked versions from main win.
+            rm -f server/deploy.sh client/deploy.sh
             git reset --hard origin/main
+
+            # Backend first: keep API healthy before publishing the new frontend.
             export DTHL_PREVIOUS_COMMIT="$PREVIOUS_COMMIT"
-            cd server
+            cd "$APP_DIR/server"
             bash ./deploy.sh
+
+            # Frontend: build into a temporary dist and swap only after build succeeds.
+            cd "$APP_DIR/client"
+            DTHL_SITE_URL=https://dothihoalac.vn bash ./deploy.sh
+
+            echo "Final checks"
+            curl --fail --silent --show-error --max-time 8 http://127.0.0.1:5000/api/v1/health >/dev/null
+            curl --location --fail --silent --show-error --max-time 10 https://dothihoalac.vn/ >/dev/null
+
+            echo "Do Thi Hoa Lac deploy completed successfully: $TARGET_COMMIT"
