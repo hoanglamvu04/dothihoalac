@@ -23,6 +23,17 @@
   }
 }
 
+/* Mobile notification dropdown: keep roughly four notifications visible,
+ * then scroll inside the list instead of letting the dropdown grow tall.
+ */
+@media (max-width: 760px) {
+  .dthl-notification-list {
+    max-height: 336px !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+  }
+}
+
 /* Home already has the persistent bottom navigation on mobile.
  * The duplicated quick-navigation strip below the hero is removed completely.
  * Keep this rule outside media queries so it cannot be re-enabled by later
