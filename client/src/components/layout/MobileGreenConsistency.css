@@ -22,3 +22,12 @@
     background: var(--dthl-green-soft);
   }
 }
+
+/* Mobile notification dropdown: show roughly four items, then scroll inside. */
+@media (max-width: 760px) {
+  .dthl-notification-list {
+    max-height: 336px;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
