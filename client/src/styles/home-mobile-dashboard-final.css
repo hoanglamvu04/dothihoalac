@@ -1,0 +1,236 @@
+/* Final mobile homepage polish.
+ * Loaded after the legacy/page layers so the compact Home composition and
+ * persistent bottom navigation stay stable on phones.
+ */
+@media (max-width: 760px) {
+  /* Home already has a persistent bottom navigation. Never show the duplicated
+     shortcut rail under the hero again. */
+  html body .app-shell .home-reference-v2 nav.home-mobile-shortcuts,
+  html body .app-shell .home-reference-v2 .home-mobile-shortcuts[aria-label='Khám phá nhanh'] {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    border: 0 !important;
+  }
+
+  /* Leave enough room for the fixed navigation without wasting vertical space. */
+  .app-shell.app-shell--with-mobile-bottom-nav {
+    padding-bottom: calc(78px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .mobile-bottom-nav {
+    right: 8px !important;
+    bottom: calc(7px + env(safe-area-inset-bottom, 0px)) !important;
+    left: 8px !important;
+  }
+
+  .mobile-bottom-nav__inner {
+    min-height: 62px !important;
+    padding: 3px 5px 4px !important;
+    border-radius: 22px !important;
+    box-shadow: 0 8px 24px rgb(16 51 35 / 0.12) !important;
+  }
+
+  .mobile-bottom-nav__item {
+    min-height: 56px !important;
+    padding: 6px 2px 4px !important;
+    gap: 2px !important;
+    font-size: 10px !important;
+  }
+
+  .mobile-bottom-nav__icon {
+    width: 32px !important;
+    height: 30px !important;
+    border-radius: 10px !important;
+  }
+
+  .mobile-bottom-nav__item.is-featured {
+    padding-top: 2px !important;
+  }
+
+  .mobile-bottom-nav__item.is-featured .mobile-bottom-nav__icon {
+    width: 50px !important;
+    height: 50px !important;
+    margin-top: -20px !important;
+    margin-bottom: 0 !important;
+    border-width: 4px !important;
+    box-shadow: 0 6px 16px rgb(16 51 35 / 0.2) !important;
+  }
+
+  /* Urban spotlight: one nearly-full card with a deliberate small peek of the
+     next card, and predictable snap when swiping. */
+  html body .app-shell .home-reference-v2 .home-reference-spotlight-grid {
+    display: flex !important;
+    padding-right: 22px !important;
+    overflow-x: auto !important;
+    gap: 9px !important;
+    scroll-snap-type: x mandatory !important;
+    scroll-padding-left: 0 !important;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+  }
+
+  html body .app-shell .home-reference-v2 .home-reference-spotlight-grid::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-spotlight-story {
+    flex: 0 0 calc(100% - 34px) !important;
+    scroll-snap-align: start !important;
+    scroll-snap-stop: always;
+  }
+
+  /* Jobs: reuse the same employer thumbnail used by the dedicated Jobs page.
+     The fallback briefcase remains visible only when the item has no image. */
+  html body .app-shell .home-reference-v2 .home-reference-panel--jobs {
+    padding-bottom: 2px !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-reference-job-list {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: 7px !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-job-story {
+    display: grid !important;
+    grid-template-columns: 44px minmax(0, 1fr) auto !important;
+    align-items: center !important;
+    min-height: 72px !important;
+    padding: 7px 8px !important;
+    gap: 8px !important;
+    border-radius: 11px !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-job-story__icon {
+    display: grid !important;
+    place-items: center !important;
+    width: 42px !important;
+    height: 42px !important;
+    overflow: hidden !important;
+    border: 1px solid #d8e5dd !important;
+    border-radius: 10px !important;
+    color: #08743d !important;
+    background: #edf8f1 !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-job-story__icon.has-media {
+    background: #fff !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-job-story__icon .content-image,
+  html body .app-shell .home-reference-v2 .home-job-story__icon .content-image img,
+  html body .app-shell .home-reference-v2 .home-job-story__company-image {
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 100% !important;
+    min-height: 100% !important;
+    border-radius: 0 !important;
+    object-fit: cover !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-job-story__body {
+    min-width: 0 !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-job-story__type {
+    color: #08743d !important;
+    font-size: 9px !important;
+    font-weight: 800 !important;
+    line-height: 1.1 !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-job-story h3 {
+    display: -webkit-box !important;
+    margin: 2px 0 0 !important;
+    overflow: hidden !important;
+    font-size: 13px !important;
+    font-weight: 790 !important;
+    line-height: 1.24 !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 2 !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-job-story p {
+    margin: 2px 0 0 !important;
+    overflow: hidden !important;
+    color: #6d7b72 !important;
+    font-size: 10px !important;
+    line-height: 1.2 !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-job-story__meta {
+    display: flex !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    margin-top: 4px !important;
+    gap: 3px 8px !important;
+    color: #728078 !important;
+    font-size: 9px !important;
+    line-height: 1.15 !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-job-story__meta span {
+    display: inline-flex !important;
+    align-items: center !important;
+    min-width: 0 !important;
+    gap: 3px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-job-story__meta svg {
+    flex: 0 0 auto !important;
+    color: #2c9460 !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-job-story__salary {
+    max-width: none !important;
+    color: #08743d !important;
+    font-size: 10px !important;
+    font-weight: 820 !important;
+    line-height: 1.15 !important;
+    text-align: right !important;
+    white-space: nowrap !important;
+  }
+
+  /* Give Community a clear visual break after the jobs block. */
+  html body .app-shell .home-reference-v2 .home-reference-community {
+    margin-top: 16px !important;
+  }
+}
+
+@media (max-width: 370px) {
+  .mobile-bottom-nav__item {
+    font-size: 9px !important;
+  }
+
+  .mobile-bottom-nav__item.is-featured .mobile-bottom-nav__icon {
+    width: 46px !important;
+    height: 46px !important;
+    margin-top: -17px !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-job-story {
+    grid-template-columns: 40px minmax(0, 1fr) auto !important;
+    padding-inline: 6px !important;
+    gap: 7px !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-job-story__icon {
+    width: 38px !important;
+    height: 38px !important;
+  }
+
+  html body .app-shell .home-reference-v2 .home-job-story__salary {
+    font-size: 9px !important;
+  }
+}
