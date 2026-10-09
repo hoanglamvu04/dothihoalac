@@ -12,6 +12,7 @@ import {
   Bookmark,
   BriefcaseBusiness,
   Building2,
+  CalendarDays,
   Clock3,
   Eye,
   GraduationCap,
@@ -34,6 +35,7 @@ import { LoadingBlock } from '../../components/common/Loading';
 import { systemApi } from '../../api/system.api';
 import {
   formatCurrency,
+  formatDate,
   formatNumber,
   formatRelativeTime,
   truncate,
@@ -341,15 +343,30 @@ function jobSalary(item) {
 function HomeJobStory({ item }) {
   const job = item?.job || {};
   const href = contentPath(item);
+  const companyName = job.companyName || 'Nhà tuyển dụng';
+  const companyFallback = <BriefcaseBusiness size={22} aria-hidden="true" />;
+
   return (
     <article className="home-job-story">
-      <span className="home-job-story__icon"><BriefcaseBusiness size={18} /></span>
+      <span className={`home-job-story__icon${item.thumbnailMediaId ? ' has-media' : ''}`}>
+        <ContentImage
+          media={item.thumbnailMediaId}
+          alt={`${companyName} - hình ảnh nhà tuyển dụng`}
+          className="home-job-story__company-image"
+          width={72}
+          height={72}
+          fallback={companyFallback}
+        />
+      </span>
       <div className="home-job-story__body">
         <span className="home-job-story__type">{JOB_TYPES[job.jobType] || 'Việc làm'}</span>
         <h3><Link to={href}>{item.title}</Link></h3>
-        <p>{job.companyName || 'Nhà tuyển dụng'}</p>
+        <p>{companyName}</p>
         <div className="home-job-story__meta">
           <span><MapPin size={11} /> {job.workLocation || item.primaryAreaId?.name || 'Hòa Lạc'}</span>
+          {job.deadline ? (
+            <span><CalendarDays size={11} /> Hạn {formatDate(job.deadline)}</span>
+          ) : null}
         </div>
       </div>
       <strong className="home-job-story__salary">{jobSalary(item)}</strong>
