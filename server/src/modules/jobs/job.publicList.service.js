@@ -88,6 +88,7 @@ export async function listPublicJobs(query = {}) {
               title: 1,
               summary: 1,
               primaryAreaId: 1,
+              thumbnailMediaId: 1,
               publishedAt: 1,
               createdAt: 1,
             },
@@ -114,6 +115,28 @@ export async function listPublicJobs(query = {}) {
     });
   }
 
+  const preferThumbnail =
+    limit <= 2 &&
+    !queryText &&
+    !query.sort &&
+    !query.type &&
+    !query.experienceLevel &&
+    !query.area;
+
+  if (preferThumbnail) {
+    pipeline.push({
+      $addFields: {
+        __hasThumbnail: {
+          $cond: [
+            { $ne: [{ $ifNull: ['$content.thumbnailMediaId', null] }, null] },
+            1,
+            0,
+          ],
+        },
+      },
+    });
+  }
+
   if (query.sort === 'deadline_asc') {
     pipeline.push({
       $sort: {
@@ -133,6 +156,7 @@ export async function listPublicJobs(query = {}) {
   } else {
     pipeline.push({
       $sort: {
+        ...(preferThumbnail ? { __hasThumbnail: -1 } : {}),
         'content.publishedAt': -1,
         'content.createdAt': -1,
         'content._id': -1,
@@ -164,7 +188,7 @@ export async function listPublicJobs(query = {}) {
 
   const jobMap = new Map(
     rows.map((row) => {
-      const { content: _content, ...job } = row;
+      const { content: _content, __hasThumbnail: _hasThumbnail, ...job } = row;
       return [idString(job.contentId), job];
     }),
   );
