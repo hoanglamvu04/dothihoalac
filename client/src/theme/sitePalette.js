@@ -6,8 +6,8 @@ export const SITE_PALETTES = [
   {
     id: 'earth',
     label: 'DTHL',
-    description: 'Hệ màu cố định của DTHL: xanh đậm #103323, vàng đất #B59965 trên nền trắng.',
-    swatches: ['#103323', '#B59965', '#FFFFFF'],
+    description: 'Hệ màu cố định của DTHL: xanh #0D3B2A, đỏ logo #B43B32 trên nền trắng trung tính.',
+    swatches: ['#0D3B2A', '#B43B32', '#FAFBFA'],
   },
 ];
 
@@ -25,8 +25,8 @@ function syncThemeColor() {
   meta.setAttribute(
     'content',
     document.documentElement.dataset.dthlTheme === 'dark'
-      ? '#103323'
-      : '#FFFFFF',
+      ? '#0D3B2A'
+      : '#FAFBFA',
   );
 }
 
