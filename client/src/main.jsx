@@ -81,6 +81,9 @@ import './styles/home-mobile-dashboard-final.css';
  */
 import './styles/dthl-palette-contract.css';
 
+/* Jobs desktop composition fixes sit after the brand contract. */
+import './styles/jobs-featured-density.css';
+
 /* Home-only composition fixes that must sit after the brand contract. */
 import './styles/home-property-price-overlay.css';
 
