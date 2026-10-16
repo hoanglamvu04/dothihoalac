@@ -38,7 +38,7 @@ function FooterSocialLinks({ className = '' }) {
           aria-label="Facebook Đô Thị Hòa Lạc"
           title="Facebook"
         >
-          <Facebook size={18} />
+          <Facebook size={19} />
         </a>
       ) : null}
 
@@ -50,7 +50,7 @@ function FooterSocialLinks({ className = '' }) {
           aria-label="YouTube Đô Thị Hòa Lạc"
           title="YouTube"
         >
-          <Youtube size={18} />
+          <Youtube size={19} />
         </a>
       ) : null}
 
@@ -61,7 +61,7 @@ function FooterSocialLinks({ className = '' }) {
         aria-label="XSpace Việt Nam"
         title="XSpace Việt Nam"
       >
-        <UsersRound size={18} />
+        <UsersRound size={19} />
       </a>
     </div>
   );
@@ -77,6 +77,8 @@ export default function SiteFooter() {
   return (
     <footer className="site-footer">
       <div className="site-footer__main">
+        <div className="site-footer__decor" aria-hidden="true" />
+
         <div className="container site-footer__grid">
           <section className="site-footer__brand">
             <Link
@@ -96,24 +98,24 @@ export default function SiteFooter() {
               cho người sống, làm việc và đầu tư tại Hòa Lạc.
             </p>
 
+            <div className="site-footer__brand-divider" aria-hidden="true" />
+
             <p className="site-footer__operator">
               <span>Vận hành bởi</span>
               <a href={xspaceUrl} target="_blank" rel="noopener noreferrer">
                 <strong>Công ty Cổ phần XSpace Việt Nam</strong>
               </a>
             </p>
-
-            <FooterSocialLinks className="site-footer__social--brand" />
           </section>
 
           <section className="site-footer__column site-footer__contact-column">
-            <h3>Liên hệ</h3>
+            <h3>Thông tin liên hệ</h3>
             <span className="site-footer__heading-rule" aria-hidden="true" />
 
             <div className="site-footer__contact-list">
               <div className="site-footer__contact-item">
                 <span className="site-footer__contact-icon" aria-hidden="true">
-                  <MapPin size={18} />
+                  <MapPin size={20} />
                 </span>
                 <div>
                   <strong>Khu vực</strong>
@@ -123,7 +125,7 @@ export default function SiteFooter() {
 
               <div className="site-footer__contact-item">
                 <span className="site-footer__contact-icon" aria-hidden="true">
-                  <Phone size={18} />
+                  <Phone size={20} />
                 </span>
                 <div>
                   <strong>Hotline</strong>
@@ -133,7 +135,7 @@ export default function SiteFooter() {
 
               <div className="site-footer__contact-item">
                 <span className="site-footer__contact-icon" aria-hidden="true">
-                  <Mail size={18} />
+                  <Mail size={20} />
                 </span>
                 <div>
                   <strong>Email</strong>
@@ -151,11 +153,22 @@ export default function SiteFooter() {
               {navigationLinks.map((item) => (
                 <Link key={item.to} to={item.to}>
                   <span>{item.label}</span>
-                  <ChevronRight size={15} aria-hidden="true" />
+                  <ChevronRight size={17} aria-hidden="true" />
                 </Link>
               ))}
             </div>
           </nav>
+
+          <section className="site-footer__column site-footer__connect">
+            <h3>Kết nối với chúng tôi</h3>
+            <span className="site-footer__heading-rule" aria-hidden="true" />
+
+            <p>
+              Cập nhật tin tức mới nhất về Hòa Lạc qua các kênh cộng đồng của chúng tôi.
+            </p>
+
+            <FooterSocialLinks className="site-footer__social--connect" />
+          </section>
         </div>
       </div>
 
@@ -170,7 +183,7 @@ export default function SiteFooter() {
           <p>
             <span>© {currentYear} Đô Thị Hòa Lạc.</span>
             <a href={xspaceUrl} target="_blank" rel="noopener noreferrer">
-              XSpace Việt Nam
+              Công ty Cổ phần XSpace Việt Nam
             </a>
           </p>
 
@@ -182,7 +195,7 @@ export default function SiteFooter() {
             title="Lên đầu trang"
           >
             <span className="site-footer__back-top-icon">
-              <ArrowUp size={17} />
+              <ArrowUp size={19} />
             </span>
             <span>Lên đầu trang</span>
           </button>
