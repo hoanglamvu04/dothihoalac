@@ -65,7 +65,7 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-discussion-list a
   padding: 0 9px;
   border: 1px solid #dfe5e1;
   border-radius: 999px;
-  color: #5d605b;
+  color: #17201c;
   background: #ffffff;
   font-size: 0.61rem;
   font-weight: 720;
@@ -75,7 +75,7 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-discussion-list a
 .news-topic-chips a:hover,
 .news-topic-chips a.is-active {
   border-color: #b03525;
-  color: #171917;
+  color: #0d3b2a;
   background: #faefed;
 }
 
@@ -100,7 +100,7 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-discussion-list a
   gap: 5px;
   border: 1px solid #dfe5e1;
   border-radius: 8px;
-  color: #4f534e;
+  color: #17201c;
   background: #fff;
   font-size: 0.62rem;
   font-weight: 700;
@@ -119,7 +119,7 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-discussion-list a
 
 .news-area-links a:hover {
   border-color: #cbd7d0;
-  color: #171917;
+  color: #0d3b2a;
   background: #eef4f1;
 }
 
