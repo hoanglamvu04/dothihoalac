@@ -33,7 +33,14 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-rail-card__head {
   border-bottom-color: #b03525;
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-rail-card__head span,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-rail-card__head span {
+  color: #b03525;
+  font-size: 0.9rem;
+  font-weight: 820;
+  letter-spacing: 0.045em;
+  line-height: 1.15;
+}
+
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-rail-card__head > a {
   color: #b03525;
   font-size: 0.64rem;
@@ -41,8 +48,9 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-rail-card__head >
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-rail-card__head h2 {
   color: #181a18;
-  font-size: 1.08rem;
-  line-height: 1.22;
+  font-size: 0.82rem;
+  font-weight: 780;
+  line-height: 1.25;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-rail-article:hover .news-rail-article__copy strong,
