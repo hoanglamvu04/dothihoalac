@@ -37,24 +37,52 @@ function getPriceLabel(params) {
   return 'Mức giá';
 }
 
+function getFilterCount(params) {
+  const simpleKeys = [
+    'area',
+    'propertyType',
+    'ownerType',
+    'legalStatus',
+    'transactionType',
+  ];
+  let count = simpleKeys.reduce((total, key) => total + (params.get(key) ? 1 : 0), 0);
+
+  if (params.get('minPrice') || params.get('maxPrice')) count += 1;
+  if (params.get('minArea') || params.get('maxArea')) count += 1;
+
+  return count;
+}
+
 function quickFilterMarkup() {
   const params = new URL(window.location.href).searchParams;
   const sort = params.get('sort') || '';
   const area = params.get('area');
   const propertyType = params.get('propertyType');
-  const ownerType = params.get('ownerType');
+  const filterCount = getFilterCount(params);
+  const sortLabel =
+    sort === 'price_asc'
+      ? 'Giá tăng dần'
+      : sort === 'price_desc'
+        ? 'Giá giảm dần'
+        : 'Mới nhất';
 
   return `
     <div class="properties-mobile-quick-filter__grid">
-      <button type="button" data-open-filter="price"><span class="qf-icon">₫</span><span>${getPriceLabel(params)}</span><span class="qf-chevron">⌄</span></button>
-      <button type="button" data-open-filter="area"><span class="qf-icon">⌖</span><span>${area ? 'Đã chọn khu vực' : 'Khu vực'}</span><span class="qf-chevron">⌄</span></button>
-      <button type="button" data-open-filter="owner"><span class="qf-icon">⌂</span><span>${ownerType ? 'Đơn vị đã chọn' : 'Đơn vị đăng tin'}</span><span class="qf-chevron">⌄</span></button>
-      <button type="button" data-open-filter="type"><span class="qf-icon">▦</span><span>${propertyType ? 'Loại BĐS đã chọn' : 'Loại bất động sản'}</span><span class="qf-chevron">⌄</span></button>
+      <button type="button" data-open-filter="area" class="${area ? 'is-active' : ''}">
+        <span>${area ? 'Khu vực đã chọn' : 'Khu vực'}</span><span class="qf-chevron">⌄</span>
+      </button>
+      <button type="button" data-open-filter="price" class="${params.get('minPrice') || params.get('maxPrice') ? 'is-active' : ''}">
+        <span>${getPriceLabel(params)}</span><span class="qf-chevron">⌄</span>
+      </button>
+      <button type="button" data-open-filter="type" class="${propertyType ? 'is-active' : ''}">
+        <span>${propertyType ? 'Loại BĐS đã chọn' : 'Loại BĐS'}</span><span class="qf-chevron">⌄</span>
+      </button>
+      <button type="button" data-open-filter="all" class="${filterCount ? 'is-active' : ''}">
+        <span>Bộ lọc${filterCount ? ` (${filterCount})` : ''}</span><span class="qf-chevron">⌄</span>
+      </button>
     </div>
-    <button type="button" class="properties-mobile-quick-filter__sort" data-sort>
-      <span>⇅</span>
-      <span>${sort === 'price_asc' ? 'Giá tăng dần' : sort === 'price_desc' ? 'Giá giảm dần' : 'Sắp xếp'}</span>
-      <span>⌄</span>
+    <button type="button" class="properties-mobile-quick-filter__sort${sort ? ' is-active' : ''}" data-sort>
+      <span>${sortLabel}</span><span class="qf-sort-icon">⇅</span>
     </button>
   `;
 }
@@ -75,7 +103,7 @@ function enhancePropertyPage() {
     form.setAttribute('role', 'search');
     form.innerHTML = `
       <span class="properties-mobile-search-first__icon" aria-hidden="true">⌕</span>
-      <input type="search" inputmode="search" autocomplete="off" aria-label="Tìm bất động sản theo từ khóa" placeholder="Tìm theo từ khóa..." />
+      <input type="search" inputmode="search" autocomplete="off" aria-label="Tìm bất động sản theo từ khóa" placeholder="Tìm bất động sản..." />
       <button type="submit">Tìm</button>
     `;
 
