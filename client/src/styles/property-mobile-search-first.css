@@ -1,168 +1,469 @@
-/* Mobile-first property discovery: compact search + quick filters. */
+/* Mobile-first property discovery: compact search, filters and results. */
 @media (max-width: 720px) {
-  .properties-page .properties-hero {
-    padding: 18px 14px 12px !important;
+  html body .app-shell .properties-page {
+    padding-bottom: calc(88px + env(safe-area-inset-bottom, 0px)) !important;
+    background: #f7faf8 !important;
   }
 
-  .properties-page .properties-hero__content {
-    padding-bottom: 10px !important;
-  }
-
-  .properties-page .properties-hero__eyebrow {
-    margin-bottom: 5px !important;
-    font-size: 0.58rem !important;
-    letter-spacing: 0.065em !important;
-  }
-
-  .properties-page .properties-hero h1 {
-    font-size: clamp(1.85rem, 9.6vw, 2.45rem) !important;
-    line-height: 1.02 !important;
-  }
-
-  .properties-page .properties-hero__content p {
-    margin-top: 8px !important;
+  html body .app-shell .properties-page .properties-page__container {
+    width: 100% !important;
     max-width: 100% !important;
-    font-size: 0.72rem !important;
-    line-height: 1.45 !important;
+    overflow-x: clip !important;
+    background: #f7faf8 !important;
   }
 
-  .properties-mobile-search-first {
-    position: relative;
-    z-index: 5;
-    display: grid;
-    grid-template-columns: 22px minmax(0, 1fr) auto;
-    align-items: center;
-    min-height: 46px;
-    margin: 0 0 9px;
-    overflow: hidden;
-    border: 1px solid #dfe7e2;
-    border-radius: 14px;
-    background: #fff;
-    box-shadow: 0 4px 14px rgb(16 51 35 / 0.055);
+  /* Compact hero: keep the market identity, remove the oversized desktop feel. */
+  html body .app-shell .properties-page .properties-hero {
+    min-height: 0 !important;
+    height: auto !important;
+    padding: 16px 12px 12px !important;
+    overflow: visible !important;
+    background: #f7faf8 !important;
   }
 
-  .properties-mobile-search-first__icon {
-    padding-left: 11px;
-    color: #819087;
-    font-size: 1rem;
-    line-height: 1;
+  html body .app-shell .properties-page .properties-hero__background {
+    width: 100% !important;
+    opacity: 0.08 !important;
+    filter: saturate(0.65) contrast(0.92) !important;
   }
 
-  .properties-mobile-search-first input {
-    width: 100%;
-    min-width: 0;
-    min-height: 46px;
-    padding: 0 8px 0 7px;
-    border: 0;
-    outline: 0;
-    color: var(--property-ink);
-    background: transparent;
-    font-size: 0.72rem;
+  html body .app-shell .properties-page .properties-hero__shade {
+    background: linear-gradient(180deg, rgb(247 250 248 / 0.9), rgb(247 250 248 / 0.98)) !important;
   }
 
-  .properties-mobile-search-first input::placeholder { color: #89938d; }
-
-  .properties-mobile-search-first button {
-    min-width: 54px;
-    min-height: 36px;
-    margin: 5px;
-    padding: 0 11px;
-    border: 0;
-    border-radius: 10px;
-    color: #fff;
-    background: #0b5b36;
-    font-size: 0.66rem;
-    font-weight: 800;
+  html body .app-shell .properties-page .properties-hero__content {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding: 0 0 10px !important;
   }
 
-  .properties-mobile-quick-filter {
-    position: relative;
-    z-index: 5;
-    display: grid;
-    gap: 7px;
-    padding: 10px;
-    border: 1px solid #dfe7e2;
-    border-radius: 15px;
-    background: rgb(248 251 249 / 0.96);
-    box-shadow: 0 5px 16px rgb(16 51 35 / 0.06);
+  html body .app-shell .properties-page .properties-hero__eyebrow {
+    margin-bottom: 5px !important;
+    gap: 6px !important;
+    color: #a53b32 !important;
+    font-size: 10.5px !important;
+    font-weight: 820 !important;
+    line-height: 1.25 !important;
+    letter-spacing: 0.07em !important;
   }
 
-  .properties-mobile-quick-filter__grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 7px;
+  html body .app-shell .properties-page .properties-hero__eyebrow svg {
+    width: 14px !important;
+    height: 14px !important;
   }
 
-  .properties-mobile-quick-filter button {
-    display: grid;
-    grid-template-columns: 17px minmax(0, 1fr) 12px;
-    align-items: center;
-    min-width: 0;
-    min-height: 38px;
-    padding: 0 9px;
-    gap: 6px;
-    border: 1px solid #dce5df;
-    border-radius: 999px;
-    color: #263c30;
-    background: #fff;
-    box-shadow: 0 1px 2px rgb(16 51 35 / 0.025);
-    font-size: 0.61rem;
-    font-weight: 730;
-    text-align: left;
+  html body .app-shell .properties-page .properties-hero h1 {
+    max-width: 100% !important;
+    margin: 0 !important;
+    color: #0d462d !important;
+    font-size: clamp(30px, 8.4vw, 36px) !important;
+    font-weight: 850 !important;
+    line-height: 1.02 !important;
+    letter-spacing: -0.045em !important;
+    overflow-wrap: normal !important;
   }
 
-  .properties-mobile-quick-filter button:active {
-    background: #edf5f0;
-    transform: scale(0.99);
-  }
-
-  .properties-mobile-quick-filter .qf-icon {
-    color: #9d3d35;
-    font-size: 0.68rem;
-    font-weight: 800;
-    text-align: center;
-  }
-
-  .properties-mobile-quick-filter .qf-chevron {
-    color: #6d7b73;
-    font-size: 0.72rem;
-    text-align: right;
-  }
-
-  .properties-mobile-quick-filter__sort {
-    width: 100%;
-    grid-template-columns: 17px minmax(0, 1fr) 12px !important;
-    border-radius: 11px !important;
-  }
-
-  .properties-page .properties-hero__finder {
+  html body .app-shell .properties-page .properties-hero__content p {
     display: none !important;
   }
 
-  .properties-page .properties-type-rail {
-    padding: 10px 14px 6px !important;
-    gap: 7px !important;
+  /* Search sits directly under the title and becomes the primary action. */
+  html body .app-shell .properties-page .properties-mobile-search-first {
+    position: relative !important;
+    z-index: 8 !important;
+    display: grid !important;
+    grid-template-columns: 24px minmax(0, 1fr) auto !important;
+    align-items: center !important;
+    min-height: 46px !important;
+    margin: 0 !important;
+    overflow: hidden !important;
+    border: 1px solid #d8e3dc !important;
+    border-radius: 13px !important;
+    background: #fff !important;
+    box-shadow: 0 4px 14px rgb(16 51 35 / 0.055) !important;
   }
 
-  .properties-page .properties-type-rail button {
+  html body .app-shell .properties-page .properties-mobile-search-first__icon {
+    padding-left: 11px !important;
+    color: #7b8981 !important;
+    font-size: 16px !important;
+    line-height: 1 !important;
+  }
+
+  html body .app-shell .properties-page .properties-mobile-search-first input {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 46px !important;
+    padding: 0 8px !important;
+    border: 0 !important;
+    outline: 0 !important;
+    color: #183126 !important;
+    background: transparent !important;
+    font-size: 14px !important;
+  }
+
+  html body .app-shell .properties-page .properties-mobile-search-first input::placeholder {
+    color: #8a9690 !important;
+  }
+
+  html body .app-shell .properties-page .properties-mobile-search-first button {
+    min-width: 58px !important;
+    min-height: 36px !important;
+    margin: 5px !important;
+    padding: 0 13px !important;
+    border: 0 !important;
+    border-radius: 10px !important;
+    color: #fff !important;
+    background: #0b5b36 !important;
+    font-size: 13px !important;
+    font-weight: 800 !important;
+  }
+
+  /* One horizontal quick-filter rail replaces the large duplicated finder. */
+  html body .app-shell .properties-page .properties-mobile-quick-filter {
+    position: relative !important;
+    z-index: 8 !important;
+    display: flex !important;
+    align-items: center !important;
+    width: calc(100% + 12px) !important;
+    margin: 8px -12px 0 0 !important;
+    padding: 0 12px 2px 0 !important;
+    gap: 7px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    scroll-snap-type: x proximity !important;
+    scrollbar-width: none !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  html body .app-shell .properties-page .properties-mobile-quick-filter::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  html body .app-shell .properties-page .properties-mobile-quick-filter__grid {
+    display: contents !important;
+  }
+
+  html body .app-shell .properties-page .properties-mobile-quick-filter button {
+    display: inline-flex !important;
+    flex: 0 0 auto !important;
+    align-items: center !important;
+    justify-content: center !important;
+    min-width: 0 !important;
+    min-height: 36px !important;
+    max-width: 164px !important;
+    padding: 0 12px !important;
+    gap: 7px !important;
+    overflow: hidden !important;
+    border: 1px solid #d9e3dd !important;
+    border-radius: 999px !important;
+    color: #32463a !important;
+    background: #fff !important;
+    box-shadow: none !important;
+    font-size: 12px !important;
+    font-weight: 720 !important;
+    line-height: 1 !important;
+    text-align: left !important;
+    scroll-snap-align: start !important;
+    white-space: nowrap !important;
+  }
+
+  html body .app-shell .properties-page .properties-mobile-quick-filter button > span:first-child {
+    min-width: 0 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  html body .app-shell .properties-page .properties-mobile-quick-filter button.is-active {
+    border-color: #9fc3ae !important;
+    color: #0b5b36 !important;
+    background: #eef7f1 !important;
+  }
+
+  html body .app-shell .properties-page .properties-mobile-quick-filter button:active {
+    background: #edf5f0 !important;
+    transform: scale(0.985) !important;
+  }
+
+  html body .app-shell .properties-page .properties-mobile-quick-filter .qf-chevron,
+  html body .app-shell .properties-page .properties-mobile-quick-filter .qf-sort-icon {
+    flex: 0 0 auto !important;
+    color: #6f7e75 !important;
+    font-size: 12px !important;
+  }
+
+  html body .app-shell .properties-page .properties-mobile-quick-filter__sort {
+    border-color: #cfded5 !important;
+  }
+
+  /* Critical: the legacy desktop finder must never reappear on phones. */
+  html body .app-shell .properties-page .properties-hero__finder,
+  html body .app-shell .properties-page form.properties-hero__finder[aria-hidden='true'] {
+    display: none !important;
+    visibility: hidden !important;
+    width: 0 !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    border: 0 !important;
+  }
+
+  /* Property type chips: one tidy scroll row. */
+  html body .app-shell .properties-page .properties-type-rail {
+    display: flex !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 !important;
+    padding: 8px 12px 9px !important;
+    gap: 7px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    background: #fff !important;
+    border-top: 1px solid #edf1ee !important;
+    border-bottom: 1px solid #e4ebe6 !important;
+    overscroll-behavior-inline: contain;
+    scrollbar-width: none !important;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  html body .app-shell .properties-page .properties-type-rail::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  html body .app-shell .properties-page .properties-type-rail button {
+    flex: 0 0 auto !important;
     min-height: 34px !important;
-    padding-inline: 10px !important;
+    padding: 0 11px !important;
     gap: 5px !important;
     border-radius: 999px !important;
-    font-size: 0.59rem !important;
+    font-size: 11.5px !important;
+    font-weight: 730 !important;
+    white-space: nowrap !important;
   }
 
-  .properties-page .properties-type-rail button svg {
+  html body .app-shell .properties-page .properties-type-rail button svg {
     width: 13px !important;
     height: 13px !important;
   }
 
-  .properties-page .properties-toolbar__advanced {
+  html body .app-shell .properties-page .properties-featured-areas {
     display: none !important;
+  }
+
+  /* Results become the next visual block immediately after the chip rail. */
+  html body .app-shell .properties-page .properties-market-shell {
+    margin: 8px 8px 18px !important;
+    overflow: hidden !important;
+    border: 1px solid #e0e7e2 !important;
+    border-radius: 14px !important;
+    background: #fff !important;
+    box-shadow: 0 4px 16px rgb(16 51 35 / 0.04) !important;
+  }
+
+  /* Quick filters already expose the advanced sheet and sorting. Keep only the
+     compact list/grid switch here to avoid duplicated controls. */
+  html body .app-shell .properties-page .properties-toolbar {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important;
+    min-height: 0 !important;
+    padding: 8px 9px 0 !important;
+    border: 0 !important;
+    background: #fff !important;
+  }
+
+  html body .app-shell .properties-page .properties-toolbar__filters {
+    display: none !important;
+  }
+
+  html body .app-shell .properties-page .properties-toolbar__views {
+    display: inline-flex !important;
+    width: auto !important;
+    padding: 2px !important;
+    gap: 2px !important;
+    border: 1px solid #e1e8e3 !important;
+    border-radius: 9px !important;
+    background: #f5f8f6 !important;
+  }
+
+  html body .app-shell .properties-page .properties-toolbar__views button {
+    flex: 0 0 auto !important;
+    min-height: 30px !important;
+    padding: 0 9px !important;
+    gap: 5px !important;
+    border: 0 !important;
+    border-radius: 7px !important;
+    font-size: 11px !important;
+  }
+
+  html body .app-shell .properties-page .properties-results {
+    padding: 0 9px 12px !important;
+  }
+
+  html body .app-shell .properties-page .properties-results__header {
+    display: block !important;
+    min-height: 0 !important;
+    padding: 10px 1px 9px !important;
+  }
+
+  html body .app-shell .properties-page .properties-results__eyebrow {
+    gap: 5px !important;
+    font-size: 10.5px !important;
+  }
+
+  html body .app-shell .properties-page .properties-results__header h2 {
+    margin-top: 4px !important;
+    font-size: 17px !important;
+    line-height: 1.25 !important;
+  }
+
+  html body .app-shell .properties-page .properties-results__controls {
+    display: none !important;
+  }
+
+  html body .app-shell .properties-page .properties-active-filters {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    margin: 0 -9px 9px !important;
+    padding: 0 9px 2px !important;
+    gap: 6px !important;
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
+  }
+
+  html body .app-shell .properties-page .properties-active-filters::-webkit-scrollbar {
+    display: none !important;
+  }
+
+  html body .app-shell .properties-page .properties-active-filters > span {
+    display: none !important;
+  }
+
+  html body .app-shell .properties-page .properties-active-filters button {
+    flex: 0 0 auto !important;
+    min-height: 30px !important;
+    padding-inline: 9px !important;
+    font-size: 10.5px !important;
+    white-space: nowrap !important;
+  }
+
+  html body .app-shell .properties-page .properties-grid.is-list,
+  html body .app-shell .properties-page .properties-grid.is-grid {
+    grid-template-columns: 1fr !important;
+    gap: 11px !important;
+  }
+
+  html body .app-shell .properties-page .properties-grid.is-list .property-card,
+  html body .app-shell .properties-page .properties-grid.is-grid .property-card {
+    display: flex !important;
+    overflow: hidden !important;
+    flex-direction: column !important;
+    border-radius: 12px !important;
+    box-shadow: none !important;
+  }
+
+  html body .app-shell .properties-page .properties-grid.is-list .property-card__image,
+  html body .app-shell .properties-page .properties-grid.is-grid .property-card__image {
+    height: 190px !important;
+    min-height: 190px !important;
+  }
+
+  html body .app-shell .properties-page .property-card__body {
+    padding: 11px 12px 12px !important;
+  }
+
+  html body .app-shell .properties-page .property-card__heading {
+    grid-template-columns: 1fr !important;
+    gap: 5px !important;
+  }
+
+  html body .app-shell .properties-page .property-card__heading h3 {
+    display: -webkit-box !important;
+    overflow: hidden !important;
+    font-size: 14px !important;
+    line-height: 1.35 !important;
+    -webkit-box-orient: vertical !important;
+    -webkit-line-clamp: 2 !important;
+  }
+
+  html body .app-shell .properties-page .property-card__price {
+    font-size: 16px !important;
+  }
+
+  html body .app-shell .properties-page .properties-sidebar {
+    display: none !important;
+  }
+
+  /* Bottom-sheet filter: compact header/footer and comfortable tap targets. */
+  html body .properties-filter-modal-layer {
+    align-items: end !important;
+    padding: 0 !important;
+  }
+
+  html body .properties-filter-modal {
+    width: 100% !important;
+    max-height: 86dvh !important;
+    border-radius: 18px 18px 0 0 !important;
+  }
+
+  html body .properties-filter-modal__header {
+    min-height: 58px !important;
+    padding: 0 14px !important;
+  }
+
+  html body .properties-filter-modal__body {
+    padding: 2px 14px 12px !important;
+  }
+
+  html body .properties-filter-modal__section {
+    padding: 14px 0 !important;
+  }
+
+  html body .properties-filter-modal__section h3 {
+    margin-bottom: 10px !important;
+    font-size: 16px !important;
+  }
+
+  html body .properties-filter-modal__footer {
+    min-height: 60px !important;
+    padding: 8px 14px calc(8px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  html body .properties-filter-modal__footer button {
+    min-height: 42px !important;
   }
 }
 
-@media (max-width: 480px) {
-  .properties-page .properties-hero__content p { display: none !important; }
-  .properties-page .properties-hero { padding-top: 16px !important; }
+@media (max-width: 390px) {
+  html body .app-shell .properties-page .properties-hero {
+    padding-inline: 10px !important;
+  }
+
+  html body .app-shell .properties-page .properties-hero h1 {
+    font-size: clamp(28px, 8.2vw, 33px) !important;
+  }
+
+  html body .app-shell .properties-page .properties-mobile-quick-filter {
+    width: calc(100% + 10px) !important;
+    margin-right: -10px !important;
+    padding-right: 10px !important;
+  }
+
+  html body .app-shell .properties-page .properties-mobile-quick-filter button {
+    min-height: 35px !important;
+    padding-inline: 10px !important;
+    font-size: 11.5px !important;
+  }
+
+  html body .app-shell .properties-page .properties-grid.is-list .property-card__image,
+  html body .app-shell .properties-page .properties-grid.is-grid .property-card__image {
+    height: 178px !important;
+    min-height: 178px !important;
+  }
 }
