@@ -1,10 +1,9 @@
 /* Final footer guard.
- * This file is imported late in main.jsx and owns the last-resort footer
- * palette. Legacy theme rules used stronger !important selectors and could
- * still paint headings/icons gold even though SiteFooter.css was corrected.
+ * Imported late so old theme rules cannot reintroduce gold/yellow footer colors.
+ * The former bottom footer bar was removed from the component; legal links now
+ * live directly below the operator line in the brand column.
  */
 
-/* ---------- desktop + shared palette guard ---------- */
 html body .app-shell .site-footer {
   --footer-primary: #0d3b2a !important;
   --footer-primary-hover: #164c37 !important;
@@ -35,8 +34,7 @@ html body .app-shell .site-footer .site-footer__contact-icon {
 
 html body .app-shell .site-footer .site-footer__contact-icon svg,
 html body .app-shell .site-footer .site-footer__links > a svg,
-html body .app-shell .site-footer .site-footer__social > a svg,
-html body .app-shell .site-footer .site-footer__back-top-icon svg {
+html body .app-shell .site-footer .site-footer__social > a svg {
   color: currentColor !important;
   stroke: currentColor !important;
 }
@@ -56,10 +54,7 @@ html body .app-shell .site-footer .site-footer__description {
 }
 
 html body .app-shell .site-footer .site-footer__links > a,
-html body .app-shell .site-footer .site-footer__connect p,
-html body .app-shell .site-footer .site-footer__bottom-links a,
-html body .app-shell .site-footer .site-footer__bottom p,
-html body .app-shell .site-footer .site-footer__back-top {
+html body .app-shell .site-footer .site-footer__connect p {
   color: #eef4f1 !important;
   -webkit-text-fill-color: #eef4f1 !important;
 }
@@ -69,9 +64,7 @@ html body .app-shell .site-footer .site-footer__links > a svg {
 }
 
 html body .app-shell .site-footer .site-footer__links > a:hover,
-html body .app-shell .site-footer .site-footer__contact-item a:hover,
-html body .app-shell .site-footer .site-footer__bottom-links a:hover,
-html body .app-shell .site-footer .site-footer__back-top:hover {
+html body .app-shell .site-footer .site-footer__contact-item a:hover {
   color: #ffffff !important;
   -webkit-text-fill-color: #ffffff !important;
 }
@@ -93,161 +86,68 @@ html body .app-shell .site-footer .site-footer__social > a:hover {
   background: rgb(180 59 50 / 0.11) !important;
 }
 
-html body .app-shell .site-footer .site-footer__back-top-icon {
-  border-color: rgb(221 229 225 / 0.22) !important;
-  color: #c2d5cb !important;
-  background: rgb(13 59 42 / 0.22) !important;
-  box-shadow: none !important;
-}
-
-html body .app-shell .site-footer .site-footer__back-top:hover .site-footer__back-top-icon {
-  border-color: rgb(180 59 50 / 0.62) !important;
-  color: #ffffff !important;
-  background: rgb(180 59 50 / 0.12) !important;
-}
-
 html body .app-shell .site-footer .site-footer__brand-divider {
   background: linear-gradient(90deg, rgb(180 59 50 / 0.52), rgb(13 59 42 / 0.42), transparent) !important;
 }
 
-/* ---------- mobile geometry guard ---------- */
+/* Legal links now sit under “Vận hành bởi”. */
+html body .app-shell .site-footer .site-footer__legal-links {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  margin-top: 16px !important;
+  gap: 0 !important;
+}
+
+html body .app-shell .site-footer .site-footer__legal-links a {
+  position: relative !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 14px 0 0 !important;
+  color: rgb(199 214 206 / 0.76) !important;
+  -webkit-text-fill-color: rgb(199 214 206 / 0.76) !important;
+  font-size: 11.5px !important;
+  font-weight: 560 !important;
+  line-height: 1.4 !important;
+  white-space: nowrap !important;
+}
+
+html body .app-shell .site-footer .site-footer__legal-links a + a {
+  padding-left: 14px !important;
+}
+
+html body .app-shell .site-footer .site-footer__legal-links a + a::before {
+  position: absolute;
+  top: 50%;
+  left: 0;
+  width: 1px;
+  height: 13px;
+  background: rgb(221 229 225 / 0.2) !important;
+  content: '';
+  transform: translateY(-50%);
+}
+
+html body .app-shell .site-footer .site-footer__legal-links a:hover {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
 @media (max-width: 720px) {
-  html body .app-shell .site-footer .site-footer__bottom {
-    position: relative !important;
-  }
-
-  html body .app-shell .site-footer .site-footer__bottom-inner {
-    display: grid !important;
-    grid-template-columns: minmax(0, 1fr) 34px !important;
-    grid-template-areas:
-      "legal legal"
-      "copy top" !important;
-    align-items: center !important;
-    width: calc(100% - 24px) !important;
-    min-height: 0 !important;
-    margin-inline: auto !important;
-    padding: 14px 0 20px !important;
-    gap: 10px 10px !important;
-  }
-
-  html body .app-shell .site-footer .site-footer__bottom-links {
-    grid-area: legal !important;
-    display: flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    flex-wrap: wrap !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    margin: 0 !important;
+  html body .app-shell .site-footer .site-footer__legal-links {
+    margin-top: 12px !important;
     gap: 6px 12px !important;
   }
 
-  html body .app-shell .site-footer .site-footer__bottom-links a,
-  html body .app-shell .site-footer .site-footer__bottom-links a + a {
-    position: static !important;
-    display: inline-flex !important;
-    width: auto !important;
-    min-width: 0 !important;
-    min-height: 0 !important;
-    margin: 0 !important;
+  html body .app-shell .site-footer .site-footer__legal-links a,
+  html body .app-shell .site-footer .site-footer__legal-links a + a {
     padding: 0 !important;
     font-size: 9px !important;
-    line-height: 1.35 !important;
-    white-space: nowrap !important;
   }
 
-  html body .app-shell .site-footer .site-footer__bottom-links a + a::before {
+  html body .app-shell .site-footer .site-footer__legal-links a + a::before {
     display: none !important;
-  }
-
-  html body .app-shell .site-footer .site-footer__bottom p {
-    grid-area: copy !important;
-    display: block !important;
-    min-width: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    color: rgb(235 243 238 / 0.82) !important;
-    font-size: 9.5px !important;
-    line-height: 1.4 !important;
-    text-align: center !important;
-    white-space: normal !important;
-  }
-
-  html body .app-shell .site-footer .site-footer__bottom p > span,
-  html body .app-shell .site-footer .site-footer__bottom p > a {
-    display: block !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    line-height: 1.4 !important;
-  }
-
-  html body .app-shell .site-footer .site-footer__bottom p > a {
-    margin-top: 2px !important;
-    color: rgb(245 249 247 / 0.94) !important;
-    font-weight: 650 !important;
-  }
-
-  html body .app-shell .site-footer .site-footer__bottom p > span::before {
-    display: none !important;
-    content: none !important;
-  }
-
-  html body .app-shell .site-footer .site-footer__back-top {
-    grid-area: top !important;
-    align-self: center !important;
-    justify-self: end !important;
-    display: grid !important;
-    place-items: center !important;
-    width: 32px !important;
-    height: 32px !important;
-    min-width: 32px !important;
-    min-height: 32px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    gap: 0 !important;
-    font-size: 0 !important;
-  }
-
-  html body .app-shell .site-footer .site-footer__back-top > span:last-child {
-    display: none !important;
-  }
-
-  html body .app-shell .site-footer .site-footer__back-top-icon {
-    width: 32px !important;
-    height: 32px !important;
-  }
-
-  html body .app-shell .site-footer .site-footer__back-top-icon svg {
-    width: 15px !important;
-    height: 15px !important;
-  }
-}
-
-@media (max-width: 390px) {
-  html body .app-shell .site-footer .site-footer__bottom-inner {
-    width: calc(100% - 18px) !important;
-    grid-template-columns: minmax(0, 1fr) 30px !important;
-    padding-bottom: 22px !important;
-    gap: 9px 8px !important;
-  }
-
-  html body .app-shell .site-footer .site-footer__bottom-links {
-    gap: 5px 9px !important;
-  }
-
-  html body .app-shell .site-footer .site-footer__bottom-links a {
-    font-size: 8.5px !important;
-  }
-
-  html body .app-shell .site-footer .site-footer__bottom p {
-    font-size: 9px !important;
-  }
-
-  html body .app-shell .site-footer .site-footer__back-top,
-  html body .app-shell .site-footer .site-footer__back-top-icon {
-    width: 30px !important;
-    height: 30px !important;
-    min-width: 30px !important;
-    min-height: 30px !important;
   }
 }
