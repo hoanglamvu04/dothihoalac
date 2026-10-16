@@ -1,113 +1,464 @@
 /* =========================================================
-   JOB CARD SEMANTIC COLOR SYSTEM
-   Keep the page predominantly white/neutral while giving job types a
-   consistent visual identity that matches the discovery cards above.
+   JOBS PAGE — FINAL DESKTOP VISUAL CONTRACT
+   One restrained layer for the jobs route. Keep the page predominantly
+   white/green and use logo red only for hierarchy, salary and small accents.
+   Legacy featured-card fix layers are intentionally not required here.
 ========================================================= */
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .jobs-results__main .job-card {
-  align-items: center;
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page {
+  --jobs-green: #0d3b2a;
+  --jobs-green-hover: #164c37;
+  --jobs-green-dark: #0d3b2a;
+  --jobs-green-soft: #edf3ef;
+  --jobs-green-soft-strong: #dbe7e0;
+  --jobs-ink: #17201c;
+  --jobs-text: #435149;
+  --jobs-muted: #64736b;
+  --jobs-border: #dde5e1;
+  --jobs-border-soft: #edf1ef;
+  --jobs-background: #fafbfa;
+  --jobs-shadow: none;
+  --jobs-shadow-soft: none;
+  color: #17201c;
+  background: #fafbfa;
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .jobs-results__main .job-card__icon {
+/* ---------- hierarchy ---------- */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page :is(
+  .jobs-section-heading > div > span,
+  .jobs-panel-heading > div > span,
+  .jobs-results__eyebrow,
+  .jobs-safety-card__eyebrow
+) {
+  color: #b43b32;
+  font-weight: 820;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page :is(
+  .jobs-section-heading h2,
+  .jobs-panel-heading h2,
+  .jobs-results__header h2
+) {
+  color: #17201c;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page :is(
+  .jobs-section-heading > button,
+  .jobs-panel-heading > a
+) {
+  color: #0d3b2a;
+  font-size: 0.68rem;
+  font-weight: 760;
+}
+
+/* ---------- search ---------- */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-market-search {
+  border-color: #d7e1dc;
+  background: rgb(255 255 255 / 0.98);
+  box-shadow: 0 12px 32px rgb(13 59 42 / 0.09);
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-market-search > button {
+  background: #0d3b2a;
+  box-shadow: none;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-market-search > button:hover {
+  background: #164c37;
+  box-shadow: none;
+}
+
+/* ---------- discovery: remove rainbow UI, keep one brand language ---------- */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-discovery {
+  margin-top: 17px;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-discovery__grid {
+  gap: 8px;
+  margin-top: 10px;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-discovery__grid > button {
+  grid-template-columns: 36px minmax(0, 1fr);
+  min-height: 58px;
+  padding: 8px 10px;
+  gap: 9px;
+  border-color: #dde5e1;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: none;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-discovery__grid > button:hover {
+  border-color: #b9cbc1;
+  background: #f7faf8;
+  box-shadow: none;
+  transform: translateY(-1px);
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-discovery__grid > button.is-active {
+  border-color: #b43b32;
+  background: #fffafa;
+  box-shadow: inset 0 -2px 0 #b43b32;
+  transform: none;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-discovery__icon,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-discovery__icon:is(
+  .is-green,
+  .is-blue,
+  .is-cyan,
+  .is-orange,
+  .is-violet,
+  .is-amber,
+  .is-pink
+) {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #d9e5de;
+  border-radius: 9px;
+  color: #0d3b2a;
+  background: #edf3ef;
+  box-shadow: none;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-discovery__grid strong {
+  color: #17201c;
+  font-size: 0.67rem;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-discovery__grid small {
+  color: #738078;
+  font-size: 0.55rem;
+}
+
+/* ---------- highlight strip ---------- */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-market-highlights {
+  grid-template-columns: minmax(300px, 0.72fr) minmax(0, 1.78fr);
+  gap: 12px;
+  margin-top: 14px;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell :is(
+  .jobs-employers-panel,
+  .jobs-featured-panel,
+  .jobs-results__main,
+  .jobs-safety-card
+) {
+  border-color: #dde5e1;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: none;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-employers-panel,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-featured-panel {
+  padding: 15px;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-employers-panel__companies {
+  gap: 7px;
+  margin-top: 10px;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-employers-panel__companies button {
+  min-height: 76px;
+  padding: 8px 7px;
+  border-color: #e1e8e4;
+  border-radius: 9px;
+  background: #fbfcfb;
+  box-shadow: none;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-employers-panel__companies button:hover {
+  border-color: #c6d6ce;
+  background: #f4f8f6;
+  box-shadow: none;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-employer-avatar {
+  width: 50px;
+  height: 50px;
+  border-color: #d7e1dc;
+  border-radius: 10px;
+  background: #edf3ef;
+  box-shadow: none;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-employers-panel__companies strong {
+  color: #435149;
+  font-size: 0.59rem;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-employer-cta {
+  min-height: 70px;
+  padding: 11px 12px;
+  margin-top: 10px;
+  border: 1px solid #dce6e1;
+  background: #f6f9f7;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-employer-cta::after {
+  display: none;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-employer-cta strong {
+  color: #17201c;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-employer-cta > a {
+  background: #0d3b2a;
+}
+
+/* Featured jobs: readable cards, larger company image, restrained badge. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-featured-panel__grid {
+  gap: 8px;
+  margin-top: 10px;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-featured-card .job-card {
+  border-color: #e1e8e4 !important;
+  background: #ffffff !important;
+  box-shadow: none !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-featured-card .job-card:hover {
+  border-color: #b9cbc1 !important;
+  background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-featured-card .job-card__icon {
+  border: 1px solid #dce5e0;
+  color: #0d3b2a;
+  background: #edf3ef;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-featured-card .job-card__company-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page .job-card__type-badge {
+  min-height: 24px;
+  padding: 4px 9px;
+  border: 1px solid #d8e5de;
+  border-radius: 999px;
+  color: #0d3b2a;
+  background: #edf3ef;
+  font-weight: 760;
+  line-height: 1;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-featured-card .job-card h3 a,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-results__main .job-card h3 a {
+  color: #17201c;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-featured-card .job-card h3 a:hover,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-results__main .job-card h3 a:hover {
+  color: #0d3b2a;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-featured-card .job-card__body > strong,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-results__main .job-card__body > strong {
+  color: #64736b;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page .job-card__salary {
+  color: #b43b32;
+  font-weight: 820;
+}
+
+/* ---------- results: use the wide desktop row instead of leaving dead space ---------- */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-results {
+  grid-template-columns: minmax(0, 1fr) 262px;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-results__main {
+  padding: 15px;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-results-controls__types button:hover,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-results-controls__types button.is-active {
+  border-color: #0d3b2a;
+  color: #ffffff;
+  background: #0d3b2a;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-list {
+  gap: 8px;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page .jobs-results__main .job-card {
+  grid-template-columns: 74px minmax(0, 1fr);
+  align-items: center;
+  min-height: 112px;
+  padding: 12px 14px;
+  gap: 14px;
+  border-color: #e0e7e3;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: none;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page .jobs-results__main .job-card:hover {
+  border-color: #b7c9bf;
+  box-shadow: 0 7px 20px rgb(13 59 42 / 0.055);
+  transform: translateY(-1px);
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page .jobs-results__main .job-card__icon {
+  width: 62px;
+  height: 62px;
+  border: 1px solid #d9e4de;
+  border-radius: 11px;
+  color: #0d3b2a;
+  background: #edf3ef;
+  overflow: hidden;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page .jobs-results__main .job-card__company-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page .jobs-results__main .job-card__body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(132px, auto);
+  grid-template-areas:
+    'badge salary'
+    'title salary'
+    'company salary'
+    'meta meta';
+  align-items: start;
+  column-gap: 22px;
+  min-width: 0;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page .jobs-results__main .job-card__type-badge {
+  grid-area: badge;
+  justify-self: start;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page .jobs-results__main .job-card h3 {
+  grid-area: title;
+  margin-top: 5px;
+  color: #17201c;
+  font-size: 0.82rem;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page .jobs-results__main .job-card__body > strong {
+  grid-area: company;
+  margin-top: 3px;
+  font-size: 0.6rem;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page .jobs-results__main .job-card__salary {
+  grid-area: salary;
   align-self: center;
-  justify-self: center;
-  color: #2d4938 !important;
-  background: #f1f5f2 !important;
-  border: 1px solid #e1e8e3 !important;
+  justify-self: end;
+  margin: 0;
+  color: #b43b32;
+  font-size: 0.76rem;
+  text-align: right;
+  white-space: nowrap;
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card__icon svg {
-  color: #2d4938 !important;
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page .jobs-results__main .job-card__body > div:last-child {
+  grid-area: meta;
+  margin-top: 8px;
+  padding-top: 7px;
+  border-top: 1px solid #edf1ef;
+  color: #64736b;
 }
 
-/* Main job titles use the same deep green family as the detail page.
-   Avoid blue as a primary visual accent in the jobs product. */
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card h3 a {
-  color: #315f45 !important;
-  transition: color 150ms ease;
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page .jobs-results__main .job-card__body > div:last-child svg {
+  color: #0d3b2a;
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card h3 a:hover {
-  color: #214532 !important;
+/* ---------- safety rail: compact support content, not a competing hero ---------- */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-safety-card {
+  padding: 15px;
+  border-color: #dde5e1;
+  background: #ffffff;
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card__body > strong {
-  color: #68645d !important;
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-safety-card__art {
+  height: 62px;
+  margin: 0 0 8px;
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card__type-badge {
-  display: inline-flex;
-  align-items: center;
-  min-height: 25px;
-  padding: 4px 10px !important;
-  border: 1px solid transparent !important;
-  border-radius: 999px !important;
-  font-weight: 780 !important;
-  line-height: 1 !important;
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-safety-card__art > span:first-child {
+  top: 0;
+  left: 0;
+  width: 54px;
+  height: 54px;
+  color: #0d3b2a;
+  background: #edf3ef;
 }
 
-/* Full-time — same green family as the discovery icon. */
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card--full_time .job-card__type-badge {
-  color: #2f6747 !important;
-  background: #eaf4ee !important;
-  border-color: #d7e9de !important;
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-safety-card__art > span:last-child {
+  right: 4px;
+  bottom: 0;
+  width: 46px;
+  height: 46px;
+  color: #b43b32;
+  background: #faefed;
 }
 
-/* Part-time — category colour only; blue is not used for titles or hierarchy. */
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card--part_time .job-card__type-badge {
-  color: #416f86 !important;
-  background: #edf5f8 !important;
-  border-color: #d9e8ee !important;
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-safety-card h3 {
+  color: #17201c;
+  font-size: 0.84rem;
 }
 
-/* Internship — teal/cyan. */
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card--internship .job-card__type-badge {
-  color: #39756f !important;
-  background: #eaf6f4 !important;
-  border-color: #d6ebe7 !important;
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-safety-card > p,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-safety-card li {
+  color: #64736b;
 }
 
-/* Construction — brand-adjacent amber. */
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card--construction .job-card__type-badge {
-  color: #8a6729 !important;
-  background: #faf3e6 !important;
-  border-color: #eadbbc !important;
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-safety-card li svg {
+  color: #b43b32;
 }
 
-/* Service — restrained rose. */
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card--service .job-card__type-badge {
-  color: #955962 !important;
-  background: #f9edef !important;
-  border-color: #ecdadd !important;
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-safety-card > a {
+  border-color: #c9d5cf;
+  color: #0d3b2a;
+  background: #ffffff;
 }
 
-/* Student jobs — muted violet. */
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card--student .job-card__type-badge {
-  color: #6d6079 !important;
-  background: #f0edf4 !important;
-  border-color: #e2dce8 !important;
+/* ---------- responsive reset for the mobile card contract imported later ---------- */
+@media (max-width: 1080px) {
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-market-highlights {
+    grid-template-columns: minmax(280px, 0.78fr) minmax(0, 1.55fr);
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-results {
+    grid-template-columns: minmax(0, 1fr) 245px;
+  }
 }
 
-/* Temporary — soft orange. */
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card--temporary .job-card__type-badge {
-  color: #9a623b !important;
-  background: #fbf0e8 !important;
-  border-color: #eedccf !important;
-}
+@media (max-width: 900px) {
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-market-highlights,
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-results {
+    grid-template-columns: 1fr;
+  }
 
-/* Any future/unknown type stays neutral rather than inheriting a random tone. */
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card--other .job-card__type-badge {
-  color: #5e625e !important;
-  background: #f1f2f0 !important;
-  border-color: #e2e3df !important;
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-safety-card {
+    position: static;
+    max-height: none;
+  }
 }
 
 @media (max-width: 760px) {
-  html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .jobs-results__main .job-card {
-    align-items: center;
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page .jobs-results__main .job-card__body {
+    display: block;
   }
 
-  html[data-dthl-theme='light'][data-dthl-palette='earth'] .jobs-page .job-card h3 a {
-    color: #315f45 !important;
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-discovery__grid {
+    gap: 7px;
   }
 }
