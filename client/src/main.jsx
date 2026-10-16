@@ -31,13 +31,10 @@ import './styles/home-community-card-clamp.css';
 import './pages/public/PropertiesPage.system.css';
 import './pages/public/PropertyMarketplace.reference.css';
 import './pages/public/PropertyMarketplace.sidebar-full.css';
-import './pages/public/JobsPage.earth.css';
-import './styles/public-earth-system.css';
 import './styles/site-palettes.css';
 import './styles/header-topbar-removal.css';
 import './styles/jobs-card-color-system.css';
 import './styles/job-detail-green-system.css';
-import './styles/jobs-reference-gold.css';
 import './styles/article-flat-editorial-fix.css';
 import './styles/property-marketplace-controls.css';
 import './styles/property-reference-20260908.css';
@@ -77,8 +74,8 @@ import './styles/home-mobile-dashboard-final.css';
 
 /*
  * Single final brand contract.
- * Legacy palette hardening / white-gold / earth-header layers were removed
- * from the import chain to stop competing !important rules.
+ * Old earth/gold hardening layers are intentionally not imported anymore.
+ * This prevents competing !important rules from reintroducing stale colors.
  */
 import './styles/dthl-palette-contract.css';
 
