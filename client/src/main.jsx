@@ -35,9 +35,6 @@ import './pages/public/JobsPage.earth.css';
 import './styles/public-earth-system.css';
 import './styles/site-palettes.css';
 import './styles/header-topbar-removal.css';
-import './styles/earth-premium-header.css';
-import './styles/minimal-white-gold.css';
-import './styles/minimal-white-gold-fixes.css';
 import './styles/jobs-card-color-system.css';
 import './styles/job-detail-green-system.css';
 import './styles/jobs-reference-gold.css';
@@ -68,10 +65,6 @@ import './pages/public/NewsMarkedTypography.css';
 import './styles/home-mobile-shortcuts-fix.css';
 import './styles/job-editor-wizard.css';
 import './styles/job-editor-wizard-type-scale.css';
-/* Final brand layers must remain after every route/page stylesheet. */
-import './styles/site-palette-hardening.css';
-import './styles/dthl-palette-contract.css';
-import './styles/dthl-white-canvas.css';
 import './styles/marketplace-green-red-final.css';
 import './styles/footer-mobile-final.css';
 import './styles/news-mobile-type-final.css';
@@ -81,6 +74,14 @@ import './styles/property-mobile-layout-final.css';
 import './styles/toast-mobile-final.css';
 import './styles/property-mobile-search-first.css';
 import './styles/home-mobile-dashboard-final.css';
+
+/*
+ * Single final brand contract.
+ * Legacy palette hardening / white-gold / earth-header layers were removed
+ * from the import chain to stop competing !important rules.
+ */
+import './styles/dthl-palette-contract.css';
+
 import './features/propertyMarketplacePaging';
 import './features/jobEditorWizard';
 import './features/propertyMobileSearchFirst';
