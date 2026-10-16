@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 
 import {
-  ArrowUp,
   ChevronRight,
   Facebook,
   Mail,
@@ -68,12 +67,6 @@ function FooterSocialLinks({ className = '' }) {
 }
 
 export default function SiteFooter() {
-  const currentYear = new Date().getFullYear();
-
-  const scrollToTop = () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
   return (
     <footer className="site-footer">
       <div className="site-footer__main">
@@ -106,6 +99,12 @@ export default function SiteFooter() {
                 <strong>Công ty Cổ phần XSpace Việt Nam</strong>
               </a>
             </p>
+
+            <nav className="site-footer__legal-links" aria-label="Chính sách footer">
+              <Link to="/dieu-khoan">Điều khoản</Link>
+              <Link to="/chinh-sach-quyen-rieng">Quyền riêng tư</Link>
+              <Link to="/quy-dinh-dang-bai">Quy định đăng bài</Link>
+            </nav>
           </section>
 
           <section className="site-footer__column site-footer__contact-column">
@@ -169,36 +168,6 @@ export default function SiteFooter() {
 
             <FooterSocialLinks className="site-footer__social--connect" />
           </section>
-        </div>
-      </div>
-
-      <div className="site-footer__bottom">
-        <div className="container site-footer__bottom-inner">
-          <nav className="site-footer__bottom-links" aria-label="Chính sách footer">
-            <Link to="/dieu-khoan">Điều khoản</Link>
-            <Link to="/chinh-sach-quyen-rieng">Quyền riêng tư</Link>
-            <Link to="/quy-dinh-dang-bai">Quy định đăng bài</Link>
-          </nav>
-
-          <p>
-            <span>© {currentYear} Đô Thị Hòa Lạc.</span>
-            <a href={xspaceUrl} target="_blank" rel="noopener noreferrer">
-              Công ty Cổ phần XSpace Việt Nam
-            </a>
-          </p>
-
-          <button
-            type="button"
-            className="site-footer__back-top"
-            onClick={scrollToTop}
-            aria-label="Lên đầu trang"
-            title="Lên đầu trang"
-          >
-            <span className="site-footer__back-top-icon">
-              <ArrowUp size={19} />
-            </span>
-            <span>Lên đầu trang</span>
-          </button>
         </div>
       </div>
     </footer>
