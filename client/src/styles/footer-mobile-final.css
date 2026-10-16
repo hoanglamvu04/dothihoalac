@@ -1,7 +1,116 @@
-/* Final mobile footer guard.
- * Imported after every theme layer so legacy footer rules cannot reflow or
- * overlap the compact mobile footer.
+/* Final footer guard.
+ * This file is imported late in main.jsx and owns the last-resort footer
+ * palette. Legacy theme rules used stronger !important selectors and could
+ * still paint headings/icons gold even though SiteFooter.css was corrected.
  */
+
+/* ---------- desktop + shared palette guard ---------- */
+html body .app-shell .site-footer {
+  --footer-primary: #0d3b2a !important;
+  --footer-primary-hover: #164c37 !important;
+  --footer-accent: #b43b32 !important;
+  --footer-accent-hover: #9e3029 !important;
+  --footer-text: #f4f8f6 !important;
+  --footer-muted: rgb(199 214 206 / 0.72) !important;
+  --footer-border: rgb(221 229 225 / 0.14) !important;
+}
+
+html body .app-shell .site-footer .site-footer__column h3 {
+  color: #f4f8f6 !important;
+  text-shadow: none !important;
+  -webkit-text-fill-color: #f4f8f6 !important;
+}
+
+html body .app-shell .site-footer .site-footer__heading-rule {
+  background: linear-gradient(90deg, #b43b32 0 56%, #164c37 56% 100%) !important;
+  box-shadow: none !important;
+}
+
+html body .app-shell .site-footer .site-footer__contact-icon {
+  border-color: rgb(221 229 225 / 0.14) !important;
+  color: #b8cdc2 !important;
+  background: rgb(13 59 42 / 0.34) !important;
+  box-shadow: none !important;
+}
+
+html body .app-shell .site-footer .site-footer__contact-icon svg,
+html body .app-shell .site-footer .site-footer__links > a svg,
+html body .app-shell .site-footer .site-footer__social > a svg,
+html body .app-shell .site-footer .site-footer__back-top-icon svg {
+  color: currentColor !important;
+  stroke: currentColor !important;
+}
+
+html body .app-shell .site-footer .site-footer__contact-item strong,
+html body .app-shell .site-footer .site-footer__operator strong {
+  color: #f4f8f6 !important;
+  -webkit-text-fill-color: #f4f8f6 !important;
+}
+
+html body .app-shell .site-footer .site-footer__contact-item a,
+html body .app-shell .site-footer .site-footer__contact-item > div > span,
+html body .app-shell .site-footer .site-footer__operator,
+html body .app-shell .site-footer .site-footer__description {
+  color: rgb(199 214 206 / 0.78) !important;
+  -webkit-text-fill-color: rgb(199 214 206 / 0.78) !important;
+}
+
+html body .app-shell .site-footer .site-footer__links > a,
+html body .app-shell .site-footer .site-footer__connect p,
+html body .app-shell .site-footer .site-footer__bottom-links a,
+html body .app-shell .site-footer .site-footer__bottom p,
+html body .app-shell .site-footer .site-footer__back-top {
+  color: #eef4f1 !important;
+  -webkit-text-fill-color: #eef4f1 !important;
+}
+
+html body .app-shell .site-footer .site-footer__links > a svg {
+  color: #8ca297 !important;
+}
+
+html body .app-shell .site-footer .site-footer__links > a:hover,
+html body .app-shell .site-footer .site-footer__contact-item a:hover,
+html body .app-shell .site-footer .site-footer__bottom-links a:hover,
+html body .app-shell .site-footer .site-footer__back-top:hover {
+  color: #ffffff !important;
+  -webkit-text-fill-color: #ffffff !important;
+}
+
+html body .app-shell .site-footer .site-footer__links > a:hover svg {
+  color: #b43b32 !important;
+}
+
+html body .app-shell .site-footer .site-footer__social > a {
+  border-color: rgb(221 229 225 / 0.16) !important;
+  color: #b9cec3 !important;
+  background: rgb(255 255 255 / 0.025) !important;
+  box-shadow: none !important;
+}
+
+html body .app-shell .site-footer .site-footer__social > a:hover {
+  border-color: rgb(180 59 50 / 0.7) !important;
+  color: #ffffff !important;
+  background: rgb(180 59 50 / 0.11) !important;
+}
+
+html body .app-shell .site-footer .site-footer__back-top-icon {
+  border-color: rgb(221 229 225 / 0.22) !important;
+  color: #c2d5cb !important;
+  background: rgb(13 59 42 / 0.22) !important;
+  box-shadow: none !important;
+}
+
+html body .app-shell .site-footer .site-footer__back-top:hover .site-footer__back-top-icon {
+  border-color: rgb(180 59 50 / 0.62) !important;
+  color: #ffffff !important;
+  background: rgb(180 59 50 / 0.12) !important;
+}
+
+html body .app-shell .site-footer .site-footer__brand-divider {
+  background: linear-gradient(90deg, rgb(180 59 50 / 0.52), rgb(13 59 42 / 0.42), transparent) !important;
+}
+
+/* ---------- mobile geometry guard ---------- */
 @media (max-width: 720px) {
   html body .app-shell .site-footer .site-footer__bottom {
     position: relative !important;
