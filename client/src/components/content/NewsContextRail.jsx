@@ -374,9 +374,40 @@ function AreaCard({ areas, category }) {
   );
 }
 
+function EcosystemThumb({ item, type }) {
+  const image = mediaUrl(item?.thumbnailMediaId);
+  const Icon = type === 'job' ? BriefcaseBusiness : House;
+
+  return (
+    <span
+      className="news-ecosystem-links__icon"
+      style={image ? {
+        width: 62,
+        height: 54,
+        overflow: 'hidden',
+        padding: 0,
+        background: '#edf2ee',
+      } : undefined}
+    >
+      {image ? (
+        <img
+          src={image}
+          alt={item?.title || ''}
+          loading="lazy"
+          style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }}
+        />
+      ) : (
+        <Icon size={18} aria-hidden="true" />
+      )}
+    </span>
+  );
+}
+
 function EcosystemCard({ jobs, properties }) {
   const job = jobs?.[0];
   const property = properties?.[0];
+  const jobImage = mediaUrl(job?.thumbnailMediaId);
+  const propertyImage = mediaUrl(property?.thumbnailMediaId);
 
   return (
     <section className="news-rail-card news-ecosystem-card">
@@ -388,8 +419,11 @@ function EcosystemCard({ jobs, properties }) {
       </header>
 
       <div className="news-ecosystem-links">
-        <Link to={job ? contentPath(job) : '/viec-lam'}>
-          <span className="news-ecosystem-links__icon"><BriefcaseBusiness size={18} /></span>
+        <Link
+          to={job ? contentPath(job) : '/viec-lam'}
+          style={jobImage ? { gridTemplateColumns: '62px minmax(0, 1fr) 16px' } : undefined}
+        >
+          <EcosystemThumb item={job} type="job" />
           <span>
             <small>Việc làm mới</small>
             <strong>{job?.title || 'Khám phá việc làm tại Hòa Lạc'}</strong>
@@ -398,8 +432,11 @@ function EcosystemCard({ jobs, properties }) {
           <ArrowRight size={15} />
         </Link>
 
-        <Link to={property ? contentPath(property) : '/bat-dong-san'}>
-          <span className="news-ecosystem-links__icon"><House size={18} /></span>
+        <Link
+          to={property ? contentPath(property) : '/bat-dong-san'}
+          style={propertyImage ? { gridTemplateColumns: '62px minmax(0, 1fr) 16px' } : undefined}
+        >
+          <EcosystemThumb item={property} type="property" />
           <span>
             <small>Bất động sản mới</small>
             <strong>{property?.title || 'Khám phá bất động sản Hòa Lạc'}</strong>
