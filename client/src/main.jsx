@@ -56,8 +56,6 @@ import './styles/jobs-featured-compact.css';
 import './styles/jobs-featured-icon-align-fix.css';
 import './styles/job-detail-reaction-alignment.css';
 import './pages/public/ArticleNewsroomStandard.css';
-import './pages/public/NewsReferenceSizing.css';
-import './pages/public/NewsImageFrameFix.css';
 import './pages/public/NewsMarkedTypography.css';
 import './styles/home-mobile-shortcuts-fix.css';
 import './styles/job-editor-wizard.css';
@@ -71,6 +69,12 @@ import './styles/property-mobile-layout-final.css';
 import './styles/toast-mobile-final.css';
 import './styles/property-mobile-search-first.css';
 import './styles/home-mobile-dashboard-final.css';
+
+/*
+ * News card geometry is owned by the route-level ArticlesPage styles.
+ * Do not globally import NewsReferenceSizing/NewsImageFrameFix here: those
+ * legacy layers force inset padding and fixed media frames over full-bleed cards.
+ */
 
 /*
  * Single final brand contract.
