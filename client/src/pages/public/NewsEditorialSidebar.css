@@ -43,7 +43,8 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-rail-card__head s
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-rail-card__head > a {
   color: #b03525;
-  font-size: 0.64rem;
+  font-size: 0.74rem;
+  font-weight: 760;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-rail-card__head h2 {
