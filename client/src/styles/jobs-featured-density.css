@@ -1,7 +1,8 @@
 /* =========================================================
    JOBS FEATURED — DENSITY CONTRACT
    Desktop-only layout for the "Việc làm đáng chú ý" strip.
-   Keeps all job information but removes the tall stacked-card feeling.
+   Featured jobs intentionally omit company thumbnails: the strip is for quick
+   scanning, while full job cards below keep their company image.
 ========================================================= */
 
 @media (min-width: 901px) {
@@ -30,34 +31,16 @@
 
   html[data-dthl-theme='light'][data-dthl-palette='earth']
     .app-shell .jobs-page .jobs-featured-card .job-card {
-    display: grid !important;
-    grid-template-columns: 44px minmax(0, 1fr) !important;
-    align-items: start !important;
+    display: block !important;
     min-height: 0 !important;
     height: auto !important;
     padding: 10px 11px !important;
-    gap: 10px !important;
   }
 
+  /* The featured strip does not need a repeated company thumbnail. */
   html[data-dthl-theme='light'][data-dthl-palette='earth']
     .app-shell .jobs-page .jobs-featured-card .job-card__icon {
-    align-self: start !important;
-    justify-self: start !important;
-    width: 44px !important;
-    min-width: 44px !important;
-    height: 44px !important;
-    min-height: 44px !important;
-    margin: 0 !important;
-    overflow: hidden;
-    border-radius: 10px !important;
-  }
-
-  html[data-dthl-theme='light'][data-dthl-palette='earth']
-    .app-shell .jobs-page .jobs-featured-card .job-card__company-image {
-    display: block;
-    width: 100% !important;
-    height: 100% !important;
-    object-fit: cover;
+    display: none !important;
   }
 
   html[data-dthl-theme='light'][data-dthl-palette='earth']
