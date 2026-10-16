@@ -1,0 +1,155 @@
+/* =========================================================
+   JOBS FEATURED — DENSITY CONTRACT
+   Desktop-only layout for the "Việc làm đáng chú ý" strip.
+   Keeps all job information but removes the tall stacked-card feeling.
+========================================================= */
+
+@media (min-width: 901px) {
+  html[data-dthl-theme='light'][data-dthl-palette='earth']
+    .app-shell .jobs-page .jobs-market-highlights {
+    align-items: start;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth']
+    .app-shell .jobs-page .jobs-featured-panel {
+    align-self: start;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth']
+    .app-shell .jobs-page .jobs-featured-panel__grid {
+    align-items: start;
+    grid-auto-rows: auto;
+    gap: 8px;
+    margin-top: 9px;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth']
+    .app-shell .jobs-page .jobs-featured-card {
+    height: auto;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth']
+    .app-shell .jobs-page .jobs-featured-card .job-card {
+    display: grid !important;
+    grid-template-columns: 44px minmax(0, 1fr) !important;
+    align-items: start !important;
+    min-height: 0 !important;
+    height: auto !important;
+    padding: 10px 11px !important;
+    gap: 10px !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth']
+    .app-shell .jobs-page .jobs-featured-card .job-card__icon {
+    align-self: start !important;
+    justify-self: start !important;
+    width: 44px !important;
+    min-width: 44px !important;
+    height: 44px !important;
+    min-height: 44px !important;
+    margin: 0 !important;
+    overflow: hidden;
+    border-radius: 10px !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth']
+    .app-shell .jobs-page .jobs-featured-card .job-card__company-image {
+    display: block;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth']
+    .app-shell .jobs-page .jobs-featured-card .job-card__body {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'badge badge'
+      'title title'
+      'company salary'
+      'meta meta';
+    align-items: center;
+    column-gap: 8px;
+    min-width: 0;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth']
+    .app-shell .jobs-page .jobs-featured-card .job-card__type-badge {
+    grid-area: badge;
+    justify-self: start;
+    min-height: 22px !important;
+    padding: 3px 8px !important;
+    font-size: 0.55rem !important;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth']
+    .app-shell .jobs-page .jobs-featured-card .job-card h3 {
+    grid-area: title;
+    display: -webkit-box;
+    min-height: 2.55em;
+    margin: 5px 0 0 !important;
+    overflow: hidden;
+    font-size: 0.72rem !important;
+    line-height: 1.28 !important;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth']
+    .app-shell .jobs-page .jobs-featured-card .job-card__body > strong {
+    grid-area: company;
+    display: block;
+    min-width: 0;
+    margin-top: 5px !important;
+    overflow: hidden;
+    font-size: 0.56rem !important;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth']
+    .app-shell .jobs-page .jobs-featured-card .job-card__salary {
+    grid-area: salary;
+    justify-self: end;
+    margin: 5px 0 0 !important;
+    font-size: 0.61rem !important;
+    white-space: nowrap;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth']
+    .app-shell .jobs-page .jobs-featured-card .job-card__body > div:last-child {
+    grid-area: meta;
+    display: flex !important;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 4px 8px !important;
+    margin-top: 7px !important;
+    padding-top: 7px;
+    border-top: 1px solid #edf1ef;
+    font-size: 0.52rem !important;
+    line-height: 1.3;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth']
+    .app-shell .jobs-page .jobs-featured-card .job-card__body > div:last-child > span {
+    display: flex;
+    align-items: center;
+    min-width: 0;
+    gap: 4px;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth']
+    .app-shell .jobs-page .jobs-featured-card .job-card__body > div:last-child > span:first-child {
+    flex: 1 1 120px;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth']
+    .app-shell .jobs-page .jobs-featured-card .job-card__meta-text {
+    display: block;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}
