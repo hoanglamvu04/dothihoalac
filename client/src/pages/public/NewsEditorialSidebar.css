@@ -280,6 +280,7 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-discussion-list a
 ========================================================= */
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .news-story--feed {
+  position: relative;
   grid-template-columns: 205px minmax(0, 1fr);
   min-height: 148px;
   padding: 12px 0;
@@ -293,12 +294,51 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .n
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .news-story--feed h3 {
+  margin-top: 0;
   font-size: 0.96rem;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .news-story--feed p {
   margin: 5px 0 7px;
   -webkit-line-clamp: 2;
+}
+
+/* Move the feed category pill onto the thumbnail, matching the requested
+   top-right image placement instead of consuming text-column space. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .news-story--feed .news-story__kicker {
+  position: absolute;
+  z-index: 3;
+  top: 20px;
+  left: 197px;
+  display: flex;
+  max-width: 185px;
+  transform: translateX(-100%);
+  pointer-events: none;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .news-story--feed .news-story__kicker span {
+  overflow: hidden;
+  max-width: 100%;
+  padding: 4px 9px;
+  border: 1px solid #b43b32;
+  border-radius: 999px;
+  color: #9e3029;
+  background: rgb(255 255 255 / 0.94);
+  box-shadow: 0 2px 8px rgb(23 32 28 / 0.08);
+  font-size: 0.58rem;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  backdrop-filter: blur(4px);
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .news-story--feed .news-story__kicker i {
+  padding: 4px 7px;
+  border-radius: 999px;
+  color: #ffffff;
+  background: #b43b32;
+  box-shadow: 0 2px 8px rgb(23 32 28 / 0.08);
+  white-space: nowrap;
 }
 
 /* =========================================================
@@ -374,6 +414,17 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .n
   html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .news-story--feed .news-story__image,
   html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .news-story--feed .news-story__image-fallback {
     height: 105px;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .news-story--feed .news-story__kicker {
+    top: 18px;
+    left: 112px;
+    max-width: 106px;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .news-story--feed .news-story__kicker span {
+    padding: 3px 7px;
+    font-size: 0.51rem;
   }
 
   html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .news-story--feed p {
