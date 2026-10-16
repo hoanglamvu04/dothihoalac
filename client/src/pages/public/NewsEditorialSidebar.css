@@ -334,15 +334,15 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .n
   -webkit-line-clamp: 2;
 }
 
-/* Keep the category pill fully inside the image at a stable top-left inset. */
+/* Pin the category pill flush against the image's right edge. */
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .news-story--feed .news-story__kicker {
   position: absolute;
   z-index: 3;
   top: 12px;
-  left: 12px;
+  left: 235px;
   display: flex;
   max-width: 205px;
-  transform: none;
+  transform: translateX(-100%);
   pointer-events: none;
 }
 
@@ -457,8 +457,9 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .n
 
   html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .news-story--feed .news-story__kicker {
     top: 8px;
-    left: 8px;
+    left: 128px;
     max-width: 112px;
+    transform: translateX(-100%);
   }
 
   html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .news-story--feed .news-story__kicker span {
