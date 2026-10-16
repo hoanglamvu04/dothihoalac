@@ -79,6 +79,9 @@ import './styles/home-mobile-dashboard-final.css';
  */
 import './styles/dthl-palette-contract.css';
 
+/* Home-only composition fixes that must sit after the brand contract. */
+import './styles/home-property-price-overlay.css';
+
 import './features/propertyMarketplacePaging';
 import './features/jobEditorWizard';
 import './features/propertyMobileSearchFirst';
