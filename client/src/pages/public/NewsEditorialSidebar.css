@@ -276,21 +276,52 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-discussion-list a
 }
 
 /* =========================================================
-   COMPACT THE LONG FEED SLIGHTLY
+   FULL-BLEED HORIZONTAL NEWS FEED CARDS
 ========================================================= */
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .news-stream__list {
+  gap: 10px;
+  margin-top: 10px;
+}
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .news-story--feed {
   position: relative;
-  grid-template-columns: 205px minmax(0, 1fr);
-  min-height: 148px;
-  padding: 12px 0;
-  gap: 14px;
+  grid-template-columns: 235px minmax(0, 1fr);
+  align-items: stretch;
+  min-height: 168px;
+  padding: 0;
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid #dfe5e1;
+  border-radius: 12px;
+  background: #ffffff;
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .news-story--feed .news-story__media,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .news-story--feed .news-story__media {
+  align-self: stretch;
+  width: 100%;
+  height: 100%;
+  min-height: 168px;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 0;
+  background: #edf2ee;
+}
+
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .news-story--feed .news-story__image,
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .news-story--feed .news-story__image-fallback {
-  height: 132px;
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 168px;
+  border-radius: 0;
+  object-fit: cover;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .news-story--feed .news-story__body {
+  justify-content: center;
+  min-width: 0;
+  padding: 14px 16px;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .news-story--feed h3 {
@@ -303,15 +334,14 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .n
   -webkit-line-clamp: 2;
 }
 
-/* Move the feed category pill onto the thumbnail, matching the requested
-   top-right image placement instead of consuming text-column space. */
+/* Category pill sits inside the image, inset from the top-right edge. */
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .news-story--feed .news-story__kicker {
   position: absolute;
   z-index: 3;
-  top: 20px;
-  left: 197px;
+  top: 12px;
+  left: 223px;
   display: flex;
-  max-width: 185px;
+  max-width: 205px;
   transform: translateX(-100%);
   pointer-events: none;
 }
@@ -404,22 +434,31 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .n
     display: none;
   }
 
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .news-stream__list {
+    gap: 8px;
+  }
+
   html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .news-story--feed {
-    grid-template-columns: 118px minmax(0, 1fr);
-    min-height: 116px;
-    gap: 10px;
+    grid-template-columns: 128px minmax(0, 1fr);
+    min-height: 120px;
+    gap: 0;
   }
 
   html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .news-story--feed .news-story__media,
   html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .news-story--feed .news-story__image,
   html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .news-story--feed .news-story__image-fallback {
-    height: 105px;
+    height: 100%;
+    min-height: 120px;
+  }
+
+  html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .news-story--feed .news-story__body {
+    padding: 10px 12px;
   }
 
   html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .news-story--feed .news-story__kicker {
-    top: 18px;
-    left: 112px;
-    max-width: 106px;
+    top: 8px;
+    left: 120px;
+    max-width: 112px;
   }
 
   html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-content-layout .news-story--feed .news-story__kicker span {
