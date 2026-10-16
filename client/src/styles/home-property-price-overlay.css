@@ -1,0 +1,54 @@
+/* =========================================================
+   HOME PROPERTY PRICE OVERLAY
+   Keep the price visible at the top-right of each property image instead of
+   spending horizontal space in the metadata row below the title.
+========================================================= */
+
+.home-reference-v2 .home-property-story {
+  position: relative;
+}
+
+.home-reference-v2 .home-property-story__row > strong {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: max-content;
+  max-width: calc(100% - 128px);
+  min-height: 32px;
+  margin: 0;
+  padding: 6px 10px;
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 0.72);
+  border-radius: 9px;
+  color: var(--brand-accent, #b43b32);
+  background: rgb(255 255 255 / 0.94);
+  box-shadow: 0 4px 14px rgb(13 59 42 / 0.12);
+  backdrop-filter: blur(8px);
+  font-size: 14px;
+  font-weight: 850;
+  line-height: 1.1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+/* Once the price leaves the flow, the location can use the full metadata row. */
+.home-reference-v2 .home-property-story__row {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (max-width: 760px) {
+  .home-reference-v2 .home-property-story__row > strong {
+    top: 9px;
+    right: 9px;
+    max-width: calc(100% - 118px);
+    min-height: 30px;
+    padding: 5px 9px;
+    border-radius: 8px;
+    font-size: 13px;
+  }
+}
