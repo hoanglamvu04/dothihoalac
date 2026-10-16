@@ -1,147 +1,164 @@
-/* Final DTHL logo color contract.
- * Visual direction: clean Google-like white surfaces, strong logo green,
- * neutral near-black text and restrained logo-red accents.
- *
- * Primary green: #0E3323
- * Accent red:   #B03525
- * Main text:    #171A18
- */
+/* =========================================================
+   DTHL BRAND CONTRACT — 2026
+
+   This is the only final color override layer.
+   It is intentionally imported last in main.jsx so old route CSS cannot win
+   with stale green/gold declarations.
+
+   Green = structure / primary actions
+   Red   = logo accent / active underline / badges / editorial highlights
+========================================================= */
 
 html[data-dthl-palette='earth'] {
-  /* Canonical brand tokens. --brand-gold remains as a compatibility alias
-     because older route styles already consume that variable. */
-  --brand-primary: #0e3323 !important;
-  --brand-primary-hover: #164a34 !important;
-  --brand-accent: #b03525 !important;
-  --brand-gold: #b03525 !important;
-  --brand-canvas: #ffffff !important;
+  --brand-primary: #0d3b2a !important;
+  --brand-primary-hover: #164c37 !important;
+  --brand-accent: #b43b32 !important;
+  --brand-accent-hover: #9e3029 !important;
+  --brand-primary-soft: #edf3ef !important;
+  --brand-accent-soft: #faefed !important;
+  --brand-canvas: #fafbfa !important;
   --brand-surface: #ffffff !important;
   --brand-surface-2: #f7f9f8 !important;
-  --brand-surface-3: #eef4f1 !important;
-  --brand-border: #dfe5e1 !important;
-  --brand-border-strong: #cbd7d0 !important;
-  --brand-text: #171a18 !important;
-  --brand-muted: #68736d !important;
-  --brand-primary-soft: #eef4f1 !important;
-  --brand-gold-soft: #faefed !important;
-  --brand-accent-soft: #faefed !important;
-  --brand-shadow: 0 1px 2px rgb(14 51 35 / 0.06), 0 4px 14px rgb(14 51 35 / 0.05) !important;
+  --brand-surface-3: #edf3ef !important;
+  --brand-border: #dde5e1 !important;
+  --brand-border-strong: #c9d5cf !important;
+  --brand-text: #17201c !important;
+  --brand-muted: #64736b !important;
+  --brand-shadow: 0 1px 2px rgb(13 59 42 / 0.05), 0 8px 24px rgb(13 59 42 / 0.06) !important;
 
-  /* Legacy earth tokens are kept so old components inherit the logo palette
-     without needing a route-by-route rewrite. */
-  --earth-brand: #0e3323 !important;
-  --earth-brand-dark: #0e3323 !important;
-  --earth-dark: #0e3323 !important;
-  --earth-bg: #ffffff !important;
-  --earth-card: #ffffff !important;
-  --earth-text: #171a18 !important;
-  --earth-muted: #68736d !important;
-  --earth-soft: #f7f9f8 !important;
-  --earth-green: #0e3323 !important;
-  --earth-border: #dfe5e1 !important;
-  --earth-border-strong: #cbd7d0 !important;
+  /* Compatibility aliases. Old “gold/earth” tokens now mean logo red. */
+  --brand-gold: var(--brand-accent) !important;
+  --brand-gold-soft: var(--brand-accent-soft) !important;
+  --earth-brand: var(--brand-primary) !important;
+  --earth-brand-dark: var(--brand-primary) !important;
+  --earth-dark: var(--brand-primary) !important;
+  --earth-bg: var(--brand-canvas) !important;
+  --earth-card: var(--brand-surface) !important;
+  --earth-text: var(--brand-text) !important;
+  --earth-muted: var(--brand-muted) !important;
+  --earth-soft: var(--brand-surface-2) !important;
+  --earth-green: var(--brand-primary) !important;
+  --earth-border: var(--brand-border) !important;
+  --earth-border-strong: var(--brand-border-strong) !important;
+
+  --dthl-green: var(--brand-primary) !important;
+  --dthl-green-hover: var(--brand-primary-hover) !important;
+  --dthl-green-dark: var(--brand-primary) !important;
+  --dthl-green-deep: var(--brand-primary) !important;
+  --dthl-green-soft: var(--brand-primary-soft) !important;
+  --dthl-green-soft-strong: #dbe7e0 !important;
+  --dthl-earth: var(--brand-accent) !important;
+  --dthl-earth-dark: var(--brand-accent-hover) !important;
+  --dthl-earth-mid: var(--brand-accent) !important;
+  --dthl-earth-soft: var(--brand-accent-soft) !important;
+  --dthl-earth-border: #ecc9c5 !important;
+  --dthl-danger: var(--brand-accent) !important;
 }
 
-/* Google-like form treatment: white input surfaces, neutral border and a calm
-   brand-green focus ring instead of the previous cream/gold focus state. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] {
+  --dthl-mode-canvas: var(--brand-canvas) !important;
+  --dthl-mode-surface: var(--brand-surface) !important;
+  --dthl-mode-surface-2: var(--brand-surface-2) !important;
+  --dthl-mode-surface-3: var(--brand-surface-3) !important;
+  --dthl-mode-border: var(--brand-border) !important;
+  --dthl-mode-border-strong: var(--brand-border-strong) !important;
+  --dthl-mode-ink: var(--brand-text) !important;
+  --dthl-mode-text: #435149 !important;
+  --dthl-mode-muted: var(--brand-muted) !important;
+  --dthl-mode-brand: var(--brand-primary) !important;
+  --dthl-mode-brand-dark: var(--brand-primary-hover) !important;
+  --dthl-mode-brand-soft: var(--brand-primary-soft) !important;
+  --dthl-mode-green: var(--brand-primary) !important;
+  --dthl-mode-accent: var(--brand-accent) !important;
+  --dthl-mode-accent-soft: var(--brand-accent-soft) !important;
+  --dthl-mode-shadow: var(--brand-shadow) !important;
+}
+
+/* ---------- global light canvas ---------- */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(body, #root, .app-shell, .main-content) {
+  color: var(--brand-text) !important;
+  background-color: var(--brand-canvas) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] ::selection {
+  color: #ffffff;
+  background: var(--brand-primary);
+}
+
 html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(input, select, textarea) {
-  border-color: #dfe5e1 !important;
-  color: #171a18 !important;
+  border-color: var(--brand-border) !important;
+  color: var(--brand-text) !important;
   background: #ffffff !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(input, select, textarea):focus {
-  border-color: #0e3323 !important;
-  box-shadow: 0 0 0 3px rgb(14 51 35 / 0.11) !important;
+  border-color: var(--brand-primary) !important;
+  box-shadow: 0 0 0 3px rgb(13 59 42 / 0.11) !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(a, button, input, select, textarea):focus-visible {
-  outline-color: #0e3323 !important;
+  outline-color: var(--brand-primary) !important;
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-notification-badge {
-  border-color: #ffffff !important;
-  color: #ffffff !important;
-  background: #b03525 !important;
-}
-
-/* Primary navigation: neutral white/green system.
- * Red remains reserved for the logo/critical accents rather than navigation.
- */
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link {
-  color: #171a18 !important;
-}
-
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__icon {
-  border-color: #dfe5e1 !important;
-  color: #0e3323 !important;
-  background: #f7f9f8 !important;
-}
-
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link:hover,
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link.is-active {
-  border-color: #cbd7d0 !important;
-  color: #0e3323 !important;
-  background: #eef4f1 !important;
-}
-
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link:hover .dthl-primary-nav__icon,
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link.is-active .dthl-primary-nav__icon {
-  border-color: #0e3323 !important;
-  color: #ffffff !important;
-  background: #0e3323 !important;
-  box-shadow: 0 2px 6px rgb(14 51 35 / 0.14) !important;
-}
-
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link.is-active {
-  box-shadow: inset 0 -3px 0 #0e3323 !important;
-}
-
+/* ---------- header ---------- */
 html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
-  .dthl-primary-nav__submenu,
-  .dthl-theme-toggle,
-  .dthl-user-menu__trigger,
-  .dthl-icon-button,
-  .dthl-mobile-menu-button
+  .dthl-header,
+  .dthl-header-main,
+  .dthl-header-nav,
+  .dthl-header-nav-upgrade
 ) {
-  border-color: #dfe5e1 !important;
-  color: #171a18 !important;
+  border-color: var(--brand-border) !important;
   background: #ffffff !important;
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__submenu strong,
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__submenu a {
-  color: #171a18 !important;
-  border-color: #e8ece9 !important;
-}
-
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__submenu a:hover,
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-theme-toggle:hover {
-  color: #0e3323 !important;
-  background: #eef4f1 !important;
-}
-
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search__submit {
-  border-color: #0e3323 !important;
-  color: #ffffff !important;
-  background: #0e3323 !important;
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search {
+  border-color: var(--brand-border) !important;
+  background: #ffffff !important;
   box-shadow: none !important;
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search__submit:hover:not(:disabled) {
-  border-color: #164a34 !important;
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search:hover,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search:focus-within {
+  border-color: #b8cbc1 !important;
+  box-shadow: 0 0 0 3px rgb(13 59 42 / 0.08) !important;
+}
+
+/* Search is the intentional red CTA from the approved mockup. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search__submit {
+  border-color: var(--brand-accent) !important;
   color: #ffffff !important;
-  background: #164a34 !important;
+  background: var(--brand-accent) !important;
+  box-shadow: 0 6px 15px rgb(180 59 50 / 0.16) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search__submit:hover:not(:disabled) {
+  border-color: var(--brand-accent-hover) !important;
+  background: var(--brand-accent-hover) !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-header-search__submit:disabled {
-  border-color: #dfe5e1 !important;
-  color: #87918b !important;
-  background: #f3f5f4 !important;
+  border-color: var(--brand-accent) !important;
+  color: #ffffff !important;
+  background: var(--brand-accent) !important;
+  opacity: 0.58 !important;
 }
 
-/* Keep primary actions green on hover. Red is an accent, not a destructive
-   interaction color for ordinary navigation/actions. */
+/* Registration/post actions stay green so red remains an accent. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .dthl-register-button,
+  .dthl-post-button,
+  .dthl-mobile-post-button,
+  .button-primary,
+  .btn-primary,
+  .primary-button,
+  [class*='button--primary']
+) {
+  border-color: var(--brand-primary) !important;
+  color: #ffffff !important;
+  background: var(--brand-primary) !important;
+  box-shadow: none !important;
+}
+
 html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
   .dthl-register-button,
   .dthl-post-button,
@@ -151,190 +168,321 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
   .primary-button,
   [class*='button--primary']
 ):hover:not(:disabled) {
-  border-color: #164a34 !important;
+  border-color: var(--brand-primary-hover) !important;
   color: #ffffff !important;
-  background: #164a34 !important;
+  background: var(--brand-primary-hover) !important;
 }
 
-/* Community: intentionally restrained. The route uses white surfaces,
-   logo green for structure/actions and logo red only for small semantic
-   accents. This final contract removes the older tan/gold dashboard cast. */
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page {
-  --c-green: #0e3323 !important;
-  --c-green-2: #0e3323 !important;
-  --c-green-soft: #eef4f1 !important;
-  --c-gold: #b03525 !important;
-  --c-ink: #171a18 !important;
-  --c-text: #4f5c55 !important;
-  --c-muted: #68736d !important;
-  --c-line: #dfe5e1 !important;
-  --c-surface: #ffffff !important;
-  --c-surface-2: #f7f9f8 !important;
-  --c-canvas: #ffffff !important;
-
-  --community-green: #0e3323 !important;
-  --community-green-hover: #164a34 !important;
-  --community-green-dark: #0e3323 !important;
-  --community-green-soft: #eef4f1 !important;
-  --community-ink: #171a18 !important;
-  --community-text: #4f5c55 !important;
-  --community-muted: #68736d !important;
-  --community-border: #dfe5e1 !important;
-  --community-border-soft: #edf1ef !important;
-  --community-surface: #ffffff !important;
-  --community-bg: #ffffff !important;
-
-  color: #171a18 !important;
-  background: #ffffff !important;
-}
-
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page :is(
-  .community-reference-card,
-  .community-reference-composer,
-  .community-card,
-  .community-social-empty
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .dthl-icon-button,
+  .dthl-mobile-menu-button,
+  .dthl-user-menu__trigger,
+  .dthl-theme-toggle
 ) {
-  border-color: #dfe5e1 !important;
+  border-color: var(--brand-border) !important;
+  color: var(--brand-text) !important;
   background: #ffffff !important;
-  box-shadow: 0 1px 2px rgb(14 51 35 / 0.04), 0 3px 12px rgb(14 51 35 / 0.035) !important;
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-left-primary :is(a, button) {
-  color: #313a35 !important;
-  background: transparent !important;
-}
-
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-left-primary :is(a:hover, button:hover),
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-left-primary a.is-active {
-  color: #0e3323 !important;
-  background: #eef4f1 !important;
-}
-
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-left-primary__icon {
-  color: #0e3323 !important;
-  background: #eef4f1 !important;
-}
-
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-left-primary a.is-active .community-left-primary__icon {
-  color: #ffffff !important;
-  background: #0e3323 !important;
-}
-
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page :is(
-  .community-discovery-list__icon,
-  .community-discovery-list__topic-dot,
-  .community-popular-item__media,
-  .community-social-empty > span
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .dthl-icon-button:hover,
+  .dthl-icon-button.is-active,
+  .dthl-mobile-menu-button:hover,
+  .dthl-user-menu__trigger:hover,
+  .dthl-theme-toggle:hover
 ) {
-  color: #0e3323 !important;
-  background: #eef4f1 !important;
+  border-color: #c9d5cf !important;
+  color: var(--brand-primary) !important;
+  background: var(--brand-primary-soft) !important;
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-discovery-list button:hover,
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-discovery-list button.is-active {
-  color: #0e3323 !important;
-  background: #f3f7f5 !important;
-}
-
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-reference-composer__prompt {
-  border-color: #e2e7e4 !important;
-  color: #68736d !important;
-  background: #f7f9f8 !important;
-}
-
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-reference-composer__actions > a {
-  border-color: #dfe5e1 !important;
-  color: #4f5c55 !important;
-  background: #ffffff !important;
-}
-
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-reference-composer__actions > a svg {
-  color: #0e3323 !important;
-}
-
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-reference-composer__actions > a:hover {
-  border-color: #cbd7d0 !important;
-  color: #0e3323 !important;
-  background: #f3f7f5 !important;
-}
-
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-reference-composer__actions > .community-reference-composer__submit {
-  border-color: #0e3323 !important;
-  color: #ffffff !important;
-  background: #0e3323 !important;
-}
-
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-reference-composer__actions > .community-reference-composer__submit:hover {
-  border-color: #164a34 !important;
-  color: #ffffff !important;
-  background: #164a34 !important;
-}
-
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-reference-feed-tabs nav :is(button, a),
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-reference-filter-trigger {
-  border-color: #dfe5e1 !important;
-  color: #56625b !important;
-  background: #ffffff !important;
-}
-
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-reference-feed-tabs nav :is(button:hover, button.is-active, a:hover),
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-reference-filter-trigger:hover {
-  border-color: #0e3323 !important;
-  color: #ffffff !important;
-  background: #0e3323 !important;
-}
-
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-reference-filter-trigger strong {
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-notification-badge {
   border-color: #ffffff !important;
   color: #ffffff !important;
-  background: #b03525 !important;
+  background: var(--brand-accent) !important;
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-feed-card__type {
-  border-color: color-mix(in srgb, #b03525 42%, white) !important;
-  color: #8f2c21 !important;
-  background: #faefed !important;
+/* ---------- primary navigation ---------- */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .dthl-primary-nav__link,
+  .dthl-header-nav__link,
+  .dthl-header-nav-upgrade__link
+) {
+  color: var(--brand-text) !important;
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-reference-active-filters button:not(.community-reference-active-filters__clear) {
-  border-color: #cbd7d0 !important;
-  color: #0e3323 !important;
-  background: #eef4f1 !important;
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__icon {
+  border-color: var(--brand-border) !important;
+  color: var(--brand-primary) !important;
+  background: var(--brand-surface-2) !important;
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-feed-action:hover {
-  color: #0e3323 !important;
-  background: #f3f7f5 !important;
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .dthl-primary-nav__link:hover,
+  .dthl-primary-nav__link.is-active,
+  .dthl-header-nav__link:hover,
+  .dthl-header-nav__link.is-active,
+  .dthl-header-nav-upgrade__link:hover,
+  .dthl-header-nav-upgrade__link.is-active
+) {
+  border-color: var(--brand-border-strong) !important;
+  color: var(--brand-primary) !important;
+  background: var(--brand-primary-soft) !important;
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-feed-like.is-active {
-  color: #b03525 !important;
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link.is-active {
+  box-shadow: inset 0 -3px 0 var(--brand-accent) !important;
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-reference-card h2 {
-  color: #0e3323 !important;
-}
-
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-member-item__copy small {
-  color: #68736d !important;
-}
-
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-join-card__actions a {
-  border-color: #0e3323 !important;
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__link.is-active .dthl-primary-nav__icon {
+  border-color: var(--brand-primary) !important;
   color: #ffffff !important;
-  background: #0e3323 !important;
+  background: var(--brand-primary) !important;
+  box-shadow: 0 2px 6px rgb(13 59 42 / 0.14) !important;
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page .community-join-card__actions a + a {
-  color: #0e3323 !important;
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .dthl-header-nav__link.is-active::after,
+  .dthl-header-nav-upgrade__link.is-active::after
+) {
+  background: var(--brand-accent) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .dthl-primary-nav__submenu,
+  .dthl-header-submenu,
+  .dthl-user-menu__panel,
+  .dthl-notification-panel,
+  .dthl-header-preferences__panel,
+  .dthl-mobile-nav__panel
+) {
+  border-color: var(--brand-border) !important;
+  color: var(--brand-text) !important;
+  background: #ffffff !important;
+  box-shadow: var(--brand-shadow) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-nav__submenu a:hover {
+  color: var(--brand-primary) !important;
+  background: var(--brand-primary-soft) !important;
+}
+
+/* ---------- mobile navigation ---------- */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-mobile__item {
+  border-color: var(--brand-border) !important;
+  color: var(--brand-text) !important;
   background: #ffffff !important;
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page :is(
-  .community-discovery-section + .community-discovery-section,
-  .community-popular-item,
-  .community-member-item,
-  .community-feed-card__actions
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-mobile__icon {
+  color: var(--brand-primary) !important;
+  background: var(--brand-primary-soft) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-mobile__item.is-active {
+  border-color: var(--brand-border-strong) !important;
+  color: var(--brand-primary) !important;
+  background: var(--brand-primary-soft) !important;
+  box-shadow: inset 0 -3px 0 var(--brand-accent) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .dthl-primary-mobile__item.is-active .dthl-primary-mobile__icon {
+  color: #ffffff !important;
+  background: var(--brand-primary) !important;
+}
+
+/* ---------- home ---------- */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(.home-reference-v2, .dth-home.home-ref) {
+  --hr-canvas: var(--brand-canvas) !important;
+  --hr-surface: #ffffff !important;
+  --hr-surface-2: var(--brand-surface-2) !important;
+  --hr-surface-3: var(--brand-primary-soft) !important;
+  --hr-border: var(--brand-border) !important;
+  --hr-border-strong: var(--brand-border-strong) !important;
+  --hr-ink: var(--brand-text) !important;
+  --hr-text: #435149 !important;
+  --hr-muted: var(--brand-muted) !important;
+  --hr-brand: var(--brand-accent) !important;
+  --hr-brand-dark: var(--brand-accent-hover) !important;
+  --hr-brand-soft: var(--brand-accent-soft) !important;
+  --hr-green: var(--brand-primary) !important;
+  --hr-shadow: var(--brand-shadow) !important;
+
+  --home-green: var(--brand-primary) !important;
+  --home-green-dark: var(--brand-primary-hover) !important;
+  --home-green-soft: var(--brand-primary-soft) !important;
+  --home-ink: var(--brand-text) !important;
+  --home-text: #435149 !important;
+  --home-muted: var(--brand-muted) !important;
+  --home-border: var(--brand-border) !important;
+  --home-surface: #ffffff !important;
+  --home-page: var(--brand-canvas) !important;
+
+  color: var(--brand-text) !important;
+  background: var(--brand-canvas) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .home-reference-main,
+  .home-ref-top,
+  .home-ref-community-section,
+  .home-ref-property-section
 ) {
-  border-color: #e3e8e5 !important;
+  background: var(--brand-canvas) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .home-reference-panel,
+  .home-ref-panel,
+  .home-ref-community-shell,
+  .home-ref-property-shell,
+  .home-mobile-shortcuts
+) {
+  border-color: var(--brand-border) !important;
+  background: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .home-pill--gold {
+  color: #ffffff !important;
+  background: var(--brand-accent) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .home-ref-section-header > a,
+  .home-reference-heading-link,
+  .home-ref-property-title > a
+) {
+  color: var(--brand-accent) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .home-ref-section-header > a:hover,
+  .home-reference-heading-link:hover,
+  .home-ref-property-title > a:hover
+) {
+  color: var(--brand-accent-hover) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .home-ref-section-header::before,
+  .home-hero-card__dots span.is-active
+) {
+  background: var(--brand-accent) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .home-job-story__salary,
+  .home-property-story__row > strong
+) {
+  color: var(--brand-accent) !important;
+}
+
+/* ---------- route token bridges ---------- */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-hub {
+  --news-green: var(--brand-primary) !important;
+  --news-green-dark: var(--brand-primary-hover) !important;
+  --news-green-soft: var(--brand-primary-soft) !important;
+  --news-gold: var(--brand-accent) !important;
+  --news-accent: var(--brand-accent) !important;
+  --news-ink: var(--brand-text) !important;
+  --news-text: #435149 !important;
+  --news-muted: var(--brand-muted) !important;
+  --news-border: var(--brand-border) !important;
+  --news-surface: #ffffff !important;
+  --news-background: var(--brand-canvas) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(.jobs-page, .jobs-marketplace-page, .job-detail-page) {
+  --jobs-green: var(--brand-primary) !important;
+  --jobs-green-dark: var(--brand-primary-hover) !important;
+  --jobs-green-soft: var(--brand-primary-soft) !important;
+  --jobs-gold: var(--brand-accent) !important;
+  --jobs-accent: var(--brand-accent) !important;
+  --jobs-ink: var(--brand-text) !important;
+  --jobs-muted: var(--brand-muted) !important;
+  --jobs-border: var(--brand-border) !important;
+  --jobs-background: var(--brand-canvas) !important;
+  --job-background: var(--brand-canvas) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(.properties-page, .property-detail-page) {
+  --property-green: var(--brand-primary) !important;
+  --property-green-dark: var(--brand-primary-hover) !important;
+  --property-green-soft: var(--brand-primary-soft) !important;
+  --property-gold: var(--brand-accent) !important;
+  --property-accent: var(--brand-accent) !important;
+  --property-ink: var(--brand-text) !important;
+  --property-muted: var(--brand-muted) !important;
+  --property-border: var(--brand-border) !important;
+  --property-background: var(--brand-canvas) !important;
+  --property-detail-background: var(--brand-canvas) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .community-social-page {
+  --c-green: var(--brand-primary) !important;
+  --c-green-2: var(--brand-primary-hover) !important;
+  --c-green-soft: var(--brand-primary-soft) !important;
+  --c-gold: var(--brand-accent) !important;
+  --c-ink: var(--brand-text) !important;
+  --c-text: #435149 !important;
+  --c-muted: var(--brand-muted) !important;
+  --c-line: var(--brand-border) !important;
+  --c-surface: #ffffff !important;
+  --c-surface-2: var(--brand-surface-2) !important;
+  --c-canvas: var(--brand-canvas) !important;
+
+  --community-green: var(--brand-primary) !important;
+  --community-green-hover: var(--brand-primary-hover) !important;
+  --community-green-dark: var(--brand-primary) !important;
+  --community-green-soft: var(--brand-primary-soft) !important;
+  --community-ink: var(--brand-text) !important;
+  --community-text: #435149 !important;
+  --community-muted: var(--brand-muted) !important;
+  --community-border: var(--brand-border) !important;
+  --community-surface: #ffffff !important;
+  --community-bg: var(--brand-canvas) !important;
+}
+
+/* ---------- restrained red accents ---------- */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .community-feed-like.is-active,
+  .community-reference-filter-trigger strong,
+  .badge--danger,
+  .status-badge--danger,
+  .is-danger
+) {
+  color: var(--brand-accent) !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .community-reference-filter-trigger strong,
+  .badge--danger,
+  .status-badge--danger
+) {
+  border-color: var(--brand-accent) !important;
+  color: #ffffff !important;
+  background: var(--brand-accent) !important;
+}
+
+/* No legacy gold/tan page wash in the light theme. */
+html[data-dthl-theme='light'][data-dthl-palette='earth'] :is(
+  .home-reference-v2,
+  .news-hub,
+  .article-view-page,
+  .properties-page,
+  .property-detail-page,
+  .jobs-page,
+  .jobs-marketplace-page,
+  .job-detail-page,
+  .community-social-page,
+  .community-detail-page,
+  .area-page,
+  .search-page,
+  .static-page-view,
+  .contact-page,
+  .lead-page,
+  .public-member-page
+) {
+  background-color: var(--brand-canvas) !important;
+  background-image: none !important;
 }
