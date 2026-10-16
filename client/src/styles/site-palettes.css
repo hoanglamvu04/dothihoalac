@@ -1,90 +1,105 @@
 /* =========================================================
    DTHL FIXED BRAND PALETTE — 2026
-   Single brand system only:
-   - Deep green: #103323
-   - Earth gold: #B59965
-   - White canvas: #FFFFFF
-   - #F9F1E3 is reserved for soft highlight surfaces only
+
+   One source of color truth:
+   - Primary green: #0D3B2A
+   - Green hover:   #164C37
+   - Logo red:      #B43B32
+   - Red hover:     #9E3029
+   - Canvas:        #FAFBFA
+
+   Legacy variable names are intentionally bridged here so older route CSS can
+   consume the new palette without another hardening layer.
 ========================================================= */
 
 html[data-dthl-palette='earth'] {
-  --dthl-palette-brand: #103323;
-  --dthl-palette-accent: #b59965;
-  --dthl-palette-canvas: #ffffff;
+  --dthl-palette-brand: #0d3b2a;
+  --dthl-palette-brand-hover: #164c37;
+  --dthl-palette-accent: #b43b32;
+  --dthl-palette-accent-hover: #9e3029;
+  --dthl-palette-canvas: #fafbfa;
   --dthl-palette-surface: #ffffff;
-  --dthl-palette-surface-2: #ffffff;
-  --dthl-palette-surface-3: #f9f1e3;
-  --dthl-palette-border: color-mix(in srgb, #103323 14%, white);
-  --dthl-palette-border-strong: color-mix(in srgb, #103323 22%, white);
-  --dthl-palette-ink: #103323;
-  --dthl-palette-text: color-mix(in srgb, #103323 70%, white);
-  --dthl-palette-muted: color-mix(in srgb, #103323 48%, white);
-  --dthl-palette-brand-hover: color-mix(in srgb, #103323 86%, #b59965);
-  --dthl-palette-brand-dark: #103323;
-  --dthl-palette-brand-soft: color-mix(in srgb, #103323 7%, white);
-  --dthl-palette-accent-soft: color-mix(in srgb, #b59965 14%, #f9f1e3);
-  --dthl-palette-shadow: 0 10px 30px rgb(16 51 35 / 0.08);
+  --dthl-palette-surface-2: #f7f9f8;
+  --dthl-palette-surface-3: #edf3ef;
+  --dthl-palette-border: #dde5e1;
+  --dthl-palette-border-strong: #c9d5cf;
+  --dthl-palette-ink: #17201c;
+  --dthl-palette-text: #435149;
+  --dthl-palette-muted: #64736b;
+  --dthl-palette-brand-dark: #0d3b2a;
+  --dthl-palette-brand-soft: #edf3ef;
+  --dthl-palette-accent-soft: #faefed;
+  --dthl-palette-shadow: 0 10px 30px rgb(13 59 42 / 0.08);
+
+  /* Compatibility aliases used by older public pages. */
+  --dthl-brand-force: var(--dthl-palette-brand);
+  --dthl-brand-force-hover: var(--dthl-palette-brand-hover);
+  --dthl-brand-force-dark: var(--dthl-palette-brand-dark);
+  --dthl-brand-force-soft: var(--dthl-palette-brand-soft);
+  --dthl-brand-force-border: var(--dthl-palette-border-strong);
+
+  --dthl-green: var(--dthl-palette-brand);
+  --dthl-green-hover: var(--dthl-palette-brand-hover);
+  --dthl-green-dark: var(--dthl-palette-brand);
+  --dthl-green-deep: var(--dthl-palette-brand);
+  --dthl-green-soft: var(--dthl-palette-brand-soft);
+  --dthl-green-soft-strong: #dbe7e0;
+
+  /* Old earth/gold variables now map to the logo red accent. */
+  --dthl-earth: var(--dthl-palette-accent);
+  --dthl-earth-dark: var(--dthl-palette-accent-hover);
+  --dthl-earth-mid: var(--dthl-palette-accent);
+  --dthl-earth-light: #d77a73;
+  --dthl-earth-soft: var(--dthl-palette-accent-soft);
+  --dthl-earth-border: #ecc9c5;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] {
-  --dthl-mode-canvas: var(--dthl-palette-canvas) !important;
-  --dthl-mode-surface: var(--dthl-palette-surface) !important;
-  --dthl-mode-surface-2: var(--dthl-palette-surface-2) !important;
-  --dthl-mode-surface-3: var(--dthl-palette-surface-3) !important;
-  --dthl-mode-border: var(--dthl-palette-border) !important;
-  --dthl-mode-border-strong: var(--dthl-palette-border-strong) !important;
-  --dthl-mode-ink: var(--dthl-palette-ink) !important;
-  --dthl-mode-text: var(--dthl-palette-text) !important;
-  --dthl-mode-muted: var(--dthl-palette-muted) !important;
-  --dthl-mode-brand: var(--dthl-palette-brand) !important;
-  --dthl-mode-brand-dark: var(--dthl-palette-brand) !important;
-  --dthl-mode-brand-soft: var(--dthl-palette-brand-soft) !important;
-  --dthl-mode-green: var(--dthl-palette-brand) !important;
-  --dthl-mode-shadow: var(--dthl-palette-shadow) !important;
+  --dthl-mode-canvas: var(--dthl-palette-canvas);
+  --dthl-mode-surface: var(--dthl-palette-surface);
+  --dthl-mode-surface-2: var(--dthl-palette-surface-2);
+  --dthl-mode-surface-3: var(--dthl-palette-surface-3);
+  --dthl-mode-border: var(--dthl-palette-border);
+  --dthl-mode-border-strong: var(--dthl-palette-border-strong);
+  --dthl-mode-ink: var(--dthl-palette-ink);
+  --dthl-mode-text: var(--dthl-palette-text);
+  --dthl-mode-muted: var(--dthl-palette-muted);
+  --dthl-mode-brand: var(--dthl-palette-brand);
+  --dthl-mode-brand-dark: var(--dthl-palette-brand);
+  --dthl-mode-brand-soft: var(--dthl-palette-brand-soft);
+  --dthl-mode-green: var(--dthl-palette-brand);
+  --dthl-mode-accent: var(--dthl-palette-accent);
+  --dthl-mode-accent-soft: var(--dthl-palette-accent-soft);
+  --dthl-mode-shadow: var(--dthl-palette-shadow);
+
+  --dthl-ink: var(--dthl-mode-ink);
+  --dthl-text: var(--dthl-mode-text);
+  --dthl-muted: var(--dthl-mode-muted);
+  --dthl-border: var(--dthl-mode-border);
+  --dthl-background: var(--dthl-mode-canvas);
 }
 
 html[data-dthl-theme='dark'][data-dthl-palette='earth'] {
-  --dthl-mode-canvas: color-mix(in srgb, #103323 84%, black) !important;
-  --dthl-mode-surface: color-mix(in srgb, #103323 74%, black) !important;
-  --dthl-mode-surface-2: color-mix(in srgb, #103323 66%, black) !important;
-  --dthl-mode-surface-3: color-mix(in srgb, #103323 58%, black) !important;
-  --dthl-mode-border: color-mix(in srgb, #b59965 28%, #103323) !important;
-  --dthl-mode-border-strong: color-mix(in srgb, #b59965 42%, #103323) !important;
-  --dthl-mode-ink: #f9f1e3 !important;
-  --dthl-mode-text: color-mix(in srgb, #f9f1e3 82%, #103323) !important;
-  --dthl-mode-muted: color-mix(in srgb, #f9f1e3 58%, #103323) !important;
-  --dthl-mode-brand: #b59965 !important;
-  --dthl-mode-brand-dark: #b59965 !important;
-  --dthl-mode-brand-soft: color-mix(in srgb, #b59965 16%, transparent) !important;
-  --dthl-mode-green: #b59965 !important;
-  --dthl-mode-shadow: 0 14px 38px rgb(0 0 0 / 0.28) !important;
-}
+  --dthl-mode-canvas: #0b1f17;
+  --dthl-mode-surface: #102a20;
+  --dthl-mode-surface-2: #153328;
+  --dthl-mode-surface-3: #1b3b2f;
+  --dthl-mode-border: #345247;
+  --dthl-mode-border-strong: #46675b;
+  --dthl-mode-ink: #f4f7f5;
+  --dthl-mode-text: #d7e0db;
+  --dthl-mode-muted: #9aaba2;
+  --dthl-mode-brand: #7fb79d;
+  --dthl-mode-brand-dark: #9ac7b2;
+  --dthl-mode-brand-soft: rgb(127 183 157 / 0.14);
+  --dthl-mode-green: #7fb79d;
+  --dthl-mode-accent: #d77a73;
+  --dthl-mode-accent-soft: rgb(180 59 50 / 0.18);
+  --dthl-mode-shadow: 0 14px 38px rgb(0 0 0 / 0.28);
 
-/* Legacy variable names are bridged to the same two-color brand system. */
-html[data-dthl-palette='earth'] {
-  --dthl-brand-force: #103323 !important;
-  --dthl-brand-force-hover: color-mix(in srgb, #103323 86%, #b59965) !important;
-  --dthl-brand-force-dark: #103323 !important;
-  --dthl-brand-force-soft: var(--dthl-palette-brand-soft) !important;
-  --dthl-brand-force-border: var(--dthl-palette-border-strong) !important;
-
-  --dthl-green: #103323 !important;
-  --dthl-green-hover: color-mix(in srgb, #103323 86%, #b59965) !important;
-  --dthl-green-dark: #103323 !important;
-  --dthl-green-deep: #103323 !important;
-  --dthl-green-soft: var(--dthl-palette-brand-soft) !important;
-  --dthl-green-soft-strong: var(--dthl-palette-surface-3) !important;
-
-  --dthl-earth: #b59965 !important;
-  --dthl-earth-dark: color-mix(in srgb, #b59965 76%, #103323) !important;
-  --dthl-earth-mid: #b59965 !important;
-  --dthl-earth-light: color-mix(in srgb, #b59965 54%, white) !important;
-  --dthl-earth-soft: var(--dthl-palette-accent-soft) !important;
-  --dthl-earth-border: color-mix(in srgb, #b59965 30%, white) !important;
-
-  --dthl-ink: var(--dthl-mode-ink) !important;
-  --dthl-text: var(--dthl-mode-text) !important;
-  --dthl-muted: var(--dthl-mode-muted) !important;
-  --dthl-border: var(--dthl-mode-border) !important;
-  --dthl-background: var(--dthl-mode-canvas) !important;
+  --dthl-ink: var(--dthl-mode-ink);
+  --dthl-text: var(--dthl-mode-text);
+  --dthl-muted: var(--dthl-mode-muted);
+  --dthl-border: var(--dthl-mode-border);
+  --dthl-background: var(--dthl-mode-canvas);
 }
