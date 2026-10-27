@@ -1,0 +1,31 @@
+/* Align news-feed category labels to the top of each card instead of vertically centering them. */
+
+.news-hub .news-story--feed .news-story__body {
+  justify-content: flex-start;
+  padding-top: 1px;
+  padding-bottom: 1px;
+}
+
+.news-hub .news-story--feed .news-story__kicker {
+  margin-top: 0;
+  margin-bottom: 2px;
+}
+
+.news-hub .news-story--feed h3 {
+  margin-top: 2px;
+}
+
+@media (max-width: 680px) {
+  .news-hub .news-story--feed .news-story__body {
+    justify-content: flex-start;
+    padding-top: 0;
+  }
+
+  .news-hub .news-story--feed .news-story__kicker {
+    margin-bottom: 1px;
+  }
+
+  .news-hub .news-story--feed h3 {
+    margin-top: 2px;
+  }
+}
