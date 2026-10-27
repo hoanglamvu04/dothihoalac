@@ -1,107 +1,619 @@
-/* Account overview responsive integration and shell-token bridge. */
+/* Mobile account overview inspired by the compact DTHL dashboard reference. */
 
-.account-center-page.is-overview {
-  --account-green: #0e3323;
-  --account-green-dark: #0e3323;
-  --account-green-soft: #eef4f1;
-  --account-border: #dfe5e1;
-  --account-ink: #17231d;
-  --account-muted: #718078;
-  --account-desktop-surface: #ffffff;
-  --account-desktop-surface-2: #f7f9f8;
-  --account-desktop-canvas: #ffffff;
-  --account-desktop-border: #dfe5e1;
-  --account-desktop-ink: #17231d;
-  --account-desktop-text: #4f5c55;
-  --account-desktop-muted: #718078;
-  --account-desktop-green: #0e3323;
-  --account-desktop-green-soft: #eef4f1;
-  --account-desktop-gold: #b03525;
-
-  background: #fff;
+.account-overview-mobile {
+  display: none;
 }
 
 @media (max-width: 760px) {
   .account-center-page.is-overview {
-    --account-mobile-green: #0e3323;
-    --account-mobile-green-dark: #0e3323;
-    --account-mobile-soft: #eef4f1;
-    --account-mobile-border: #dfe5e1;
-    --account-mobile-muted: #718078;
+    --account-ref-green: #08743d;
+    --account-ref-green-dark: #065f33;
+    --account-ref-ink: #17221c;
+    --account-ref-muted: #6f7b74;
+    --account-ref-border: #e3eae6;
+    --account-ref-canvas: #f3f8f5;
 
-    background: #fff !important;
+    padding-top: 10px !important;
+    background:
+      radial-gradient(circle at 12% 4%, rgb(126 218 165 / 0.11), transparent 26%),
+      linear-gradient(180deg, #f8fbf9 0%, var(--account-ref-canvas) 100%) !important;
+  }
+
+  .account-center-page.is-overview .account-center-container {
+    width: min(calc(100% - 18px), 440px) !important;
   }
 
   .account-center-page.is-overview .account-center-workspace {
-    margin-top: 12px;
+    margin-top: 10px !important;
   }
 
-  .account-center-page.is-overview .account-center-content {
+  .account-overview-v2 {
+    gap: 0 !important;
+  }
+
+  .account-overview-v2__desktop-dashboard {
+    display: none !important;
+  }
+
+  .account-overview-mobile {
+    display: grid;
+    gap: 12px;
+  }
+
+  .account-overview-mobile a {
+    text-decoration: none;
+  }
+
+  /* Completion hero */
+  .account-overview-mobile__completion {
+    position: relative;
+    display: grid;
+    grid-template-columns: 82px minmax(0, 1fr);
+    align-items: center;
+    min-height: 132px;
+    padding: 16px;
+    gap: 14px;
+    overflow: hidden;
+    border-radius: 20px;
+    color: #fff;
+    background:
+      radial-gradient(circle at 88% 18%, rgb(255 255 255 / 0.11) 0 58px, transparent 59px),
+      linear-gradient(135deg, #0a7c43 0%, #056636 62%, #04562f 100%);
+    box-shadow: 0 14px 30px rgb(5 84 45 / 0.17);
+  }
+
+  .account-overview-mobile__completion::after {
+    position: absolute;
+    right: -22px;
+    bottom: -34px;
+    width: 180px;
+    height: 106px;
+    border-radius: 32px 32px 0 0;
+    content: '';
+    opacity: 0.16;
+    background:
+      linear-gradient(90deg, transparent 8%, #d8f4e2 8% 17%, transparent 17% 23%, #d8f4e2 23% 31%, transparent 31% 40%, #d8f4e2 40% 50%, transparent 50% 58%, #d8f4e2 58% 68%, transparent 68%);
+    transform: skewX(-8deg);
+    pointer-events: none;
+  }
+
+  .account-overview-mobile__ring {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    background: conic-gradient(
+      #dff8e7 var(--completion-angle),
+      rgb(255 255 255 / 0.18) 0
+    );
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.15);
+  }
+
+  .account-overview-mobile__ring::before {
+    position: absolute;
+    inset: 9px;
+    border-radius: 50%;
+    content: '';
+    background: #08703c;
+  }
+
+  .account-overview-mobile__ring > div {
+    position: relative;
+    z-index: 1;
+  }
+
+  .account-overview-mobile__ring strong {
+    font-size: 20px;
+    font-weight: 850;
+    letter-spacing: -0.04em;
+  }
+
+  .account-overview-mobile__completion-copy {
+    position: relative;
+    z-index: 1;
+    min-width: 0;
+    padding-right: 4px;
+  }
+
+  .account-overview-mobile__completion-copy strong {
+    display: block;
+    font-size: 18px;
+    font-weight: 820;
+    line-height: 1.18;
+    letter-spacing: -0.03em;
+  }
+
+  .account-overview-mobile__completion-copy p {
+    max-width: 250px;
+    margin: 7px 0 0;
+    color: rgb(255 255 255 / 0.82);
+    font-size: 12.5px;
+    line-height: 1.45;
+  }
+
+  .account-overview-mobile__completion-link {
+    position: relative;
+    z-index: 2;
+    grid-column: 2;
+    justify-self: start;
+    display: inline-flex;
+    align-items: center;
+    min-height: 38px;
+    padding: 0 13px;
+    margin-top: -2px;
+    gap: 4px;
+    border-radius: 999px;
+    color: #0a6537;
+    background: #eaf9ef;
+    font-size: 12px;
+    font-weight: 780;
+  }
+
+  /* Three account-state cards */
+  .account-overview-mobile__status-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .account-overview-mobile__status {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 132px;
+    padding: 12px 10px 11px;
+    border: 1px solid var(--account-ref-border);
+    border-radius: 17px;
+    color: var(--account-ref-ink);
+    background: rgb(255 255 255 / 0.93);
+    box-shadow: 0 7px 20px rgb(23 68 42 / 0.055);
+  }
+
+  .account-overview-mobile__status-icon {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    margin-bottom: 10px;
+    border-radius: 12px;
+  }
+
+  .account-overview-mobile__status-icon.is-green {
+    color: #08743d;
+    background: #e9f8ee;
+  }
+
+  .account-overview-mobile__status-icon.is-blue {
+    color: #1777c9;
+    background: #eaf4ff;
+  }
+
+  .account-overview-mobile__status strong,
+  .account-overview-mobile__status b {
+    display: block;
+    padding-right: 8px;
+    color: #1f2923;
+    font-size: 12.5px;
+    font-weight: 790;
+    line-height: 1.22;
+  }
+
+  .account-overview-mobile__status b {
+    margin-top: 3px;
+    font-size: 12px;
+  }
+
+  .account-overview-mobile__status small {
+    display: block;
+    margin-top: 5px;
+    color: var(--account-ref-muted);
+    font-size: 10.5px;
+    line-height: 1.35;
+  }
+
+  .account-overview-mobile__status-arrow {
+    position: absolute;
+    top: 13px;
+    right: 8px;
+    color: #74817a;
+  }
+
+  /* Main four actions */
+  .account-overview-mobile__actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    padding: 10px;
+    gap: 8px;
+    border: 1px solid var(--account-ref-border);
+    border-radius: 20px;
+    background: rgb(255 255 255 / 0.9);
+    box-shadow: 0 8px 22px rgb(23 68 42 / 0.05);
+  }
+
+  .account-overview-mobile__action {
+    display: grid;
+    grid-template-columns: 42px minmax(0, 1fr) 18px;
+    align-items: center;
+    min-height: 78px;
+    padding: 10px;
+    gap: 9px;
+    border-radius: 15px;
+    color: #202a24;
+  }
+
+  .account-overview-mobile__action > span {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 14px;
+  }
+
+  .account-overview-mobile__action > div {
     min-width: 0;
   }
 
-  .account-center-page.is-overview .account-mobile-header {
-    border-color: #dfe5e1;
-    box-shadow: 0 5px 16px rgb(14 51 35 / 0.045);
+  .account-overview-mobile__action strong,
+  .account-overview-mobile__action small {
+    display: block;
   }
 
-  .account-center-page.is-overview .account-mobile-header > a {
-    color: #0e3323;
-  }
-
-  .account-center-page.is-overview .account-mobile-header > strong {
-    color: #17231d;
+  .account-overview-mobile__action strong {
     font-size: 13.5px;
+    font-weight: 800;
+    line-height: 1.2;
   }
 
-  .account-center-page.is-overview .account-shell-profile {
-    border-color: #dfe5e1;
-    box-shadow: 0 8px 24px rgb(14 51 35 / 0.055);
+  .account-overview-mobile__action small {
+    margin-top: 4px;
+    overflow: hidden;
+    color: #68736d;
+    font-size: 10.5px;
+    line-height: 1.28;
+    text-overflow: ellipsis;
   }
 
-  .account-center-page.is-overview .account-shell-avatar {
-    box-shadow: 0 6px 18px rgb(14 51 35 / 0.14);
+  .account-overview-mobile__action > svg {
+    justify-self: end;
+    color: #77847d;
   }
 
-  .account-center-page.is-overview .account-shell-identity__title h1 {
-    color: #17231d;
-    font-size: 19px;
-  }
-
-  .account-center-page.is-overview .account-shell-identity__title > span {
+  .account-overview-mobile__action.is-create {
     color: #fff;
-    background: #0e3323;
+    background: linear-gradient(135deg, #0aa556, #03723c);
+    box-shadow: 0 9px 20px rgb(4 120 62 / 0.2);
   }
 
-  .account-center-page.is-overview .account-shell-identity > p {
-    color: #718078;
-    font-size: 12.5px;
+  .account-overview-mobile__action.is-create > span {
+    color: #08743d;
+    background: #dff8e7;
+    box-shadow: 0 0 0 5px rgb(223 248 231 / 0.12);
   }
 
-  .account-center-page.is-overview .account-shell-identity__meta span {
-    min-height: 26px;
-    padding-inline: 9px;
-    color: #4f5c55;
-    background: #eef4f1;
+  .account-overview-mobile__action.is-create small,
+  .account-overview-mobile__action.is-create > svg {
+    color: rgb(255 255 255 / 0.82);
+  }
+
+  .account-overview-mobile__action.is-posts {
+    background: linear-gradient(135deg, #f2f8ff, #eaf3ff);
+  }
+
+  .account-overview-mobile__action.is-posts > span {
+    color: #1175d1;
+    background: #dcecff;
+  }
+
+  .account-overview-mobile__action.is-saved {
+    background: linear-gradient(135deg, #fff8e9, #fff2d9);
+  }
+
+  .account-overview-mobile__action.is-saved > span {
+    color: #d98200;
+    background: #ffedc5;
+  }
+
+  .account-overview-mobile__action.is-notification {
+    background: linear-gradient(135deg, #fff2f3, #ffe6e9);
+  }
+
+  .account-overview-mobile__action.is-notification > span {
+    color: #e43145;
+    background: #ffdce0;
+  }
+
+  /* Community banner */
+  .account-overview-mobile__community {
+    position: relative;
+    min-height: 168px;
+    overflow: hidden;
+    padding: 17px 16px;
+    border: 1px solid #d7e9df;
+    border-radius: 20px;
+    background:
+      linear-gradient(100deg, rgb(237 250 242 / 0.98) 0 53%, rgb(214 240 231 / 0.86) 72%, rgb(197 231 223 / 0.78) 100%);
+    box-shadow: 0 8px 22px rgb(23 68 42 / 0.045);
+  }
+
+  .account-overview-mobile__community-copy {
+    position: relative;
+    z-index: 2;
+    max-width: 64%;
+  }
+
+  .account-overview-mobile__community-copy > small {
+    color: #1e7446;
+    font-size: 10px;
+    font-weight: 820;
+    letter-spacing: 0.14em;
+  }
+
+  .account-overview-mobile__community-copy > strong {
+    display: block;
+    margin-top: 6px;
+    color: #10251a;
+    font-size: 19px;
+    font-weight: 850;
+    line-height: 1.08;
+    letter-spacing: -0.035em;
+  }
+
+  .account-overview-mobile__community-copy > p {
+    margin: 7px 0 0;
+    color: #627068;
+    font-size: 11.5px;
+    line-height: 1.4;
+  }
+
+  .account-overview-mobile__community-copy > a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 38px;
+    padding: 0 14px;
+    margin-top: 10px;
+    gap: 7px;
+    border-radius: 999px;
+    color: #fff;
+    background: linear-gradient(135deg, #0aa456, #08743d);
+    font-size: 12px;
+    font-weight: 780;
+    box-shadow: 0 7px 16px rgb(8 116 61 / 0.18);
+  }
+
+  .account-overview-mobile__community-art {
+    position: absolute;
+    z-index: 1;
+    right: -18px;
+    bottom: -9px;
+    width: 46%;
+    height: 94%;
+    overflow: hidden;
+    border-radius: 50% 0 0 0;
+    background:
+      radial-gradient(circle at 52% 36%, #fefefe 0 13px, transparent 14px),
+      radial-gradient(circle at 70% 52%, #0b8d4b 0 7px, transparent 8px),
+      radial-gradient(circle at 38% 68%, #40a967 0 16px, transparent 17px),
+      linear-gradient(180deg, #cfecec 0 45%, #8bc89e 46% 54%, #5da879 55% 100%);
+    opacity: 0.95;
+  }
+
+  .account-overview-mobile__community-art span {
+    position: absolute;
+    bottom: 0;
+    border-radius: 4px 4px 0 0;
+    background: linear-gradient(180deg, #f4f7f5, #cbd9d0);
+    box-shadow: inset 0 -10px 0 rgb(30 116 67 / 0.1);
+  }
+
+  .account-overview-mobile__community-art span:nth-child(1) {
+    right: 18%;
+    width: 22px;
+    height: 80px;
+  }
+
+  .account-overview-mobile__community-art span:nth-child(2) {
+    right: 34%;
+    width: 32px;
+    height: 104px;
+  }
+
+  .account-overview-mobile__community-art span:nth-child(3) {
+    right: 54%;
+    width: 18px;
+    height: 67px;
+  }
+
+  /* Quick management */
+  .account-overview-mobile__manage {
+    padding: 13px;
+    border: 1px solid var(--account-ref-border);
+    border-radius: 20px;
+    background: rgb(255 255 255 / 0.94);
+    box-shadow: 0 8px 22px rgb(23 68 42 / 0.045);
+  }
+
+  .account-overview-mobile__manage-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    gap: 12px;
+  }
+
+  .account-overview-mobile__manage-heading h3 {
+    margin: 0;
+    color: #18251e;
+    font-size: 16px;
+    font-weight: 830;
+    letter-spacing: -0.025em;
+  }
+
+  .account-overview-mobile__manage-heading > a {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    color: #6d7871;
+    font-size: 9.5px;
+    font-weight: 650;
+    white-space: nowrap;
+  }
+
+  .account-overview-mobile__manage-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .account-overview-mobile__manage-grid > a {
+    display: grid;
+    grid-template-columns: 38px minmax(0, 1fr) 16px;
+    align-items: center;
+    min-width: 0;
+    min-height: 78px;
+    padding: 9px;
+    gap: 8px;
+    border: 1px solid #e8eeea;
+    border-radius: 13px;
+    color: #263129;
+    background: #fff;
+  }
+
+  .account-overview-mobile__manage-grid > a > span {
+    display: grid;
+    place-items: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+  }
+
+  .account-overview-mobile__manage-grid > a > div {
+    min-width: 0;
+  }
+
+  .account-overview-mobile__manage-grid strong,
+  .account-overview-mobile__manage-grid small {
+    display: block;
+  }
+
+  .account-overview-mobile__manage-grid strong {
+    font-size: 11.5px;
+    font-weight: 790;
+    line-height: 1.22;
+  }
+
+  .account-overview-mobile__manage-grid small {
+    margin-top: 3px;
+    color: #7a857e;
+    font-size: 9.5px;
+    line-height: 1.28;
+  }
+
+  .account-overview-mobile__manage-grid > a > svg {
+    justify-self: end;
+    color: #7b8780;
+  }
+
+  .account-overview-mobile__manage-grid > a.is-green > span {
+    color: #078143;
+    background: #e5f8ec;
+  }
+
+  .account-overview-mobile__manage-grid > a.is-blue > span {
+    color: #287dd2;
+    background: #e8f3ff;
+  }
+
+  .account-overview-mobile__manage-grid > a.is-purple > span {
+    color: #8a46cf;
+    background: #f2e8ff;
+  }
+
+  .account-overview-mobile__manage-grid > a.is-orange > span {
+    color: #e77716;
+    background: #fff0dd;
+  }
+
+  .account-overview-mobile__manage-grid > a.is-red > span {
+    color: #e23547;
+    background: #ffe7eb;
+  }
+
+  .account-overview-mobile__manage-grid > a.is-teal > span {
+    color: #168a63;
+    background: #e4f7f0;
+  }
+}
+
+@media (max-width: 390px) {
+  .account-overview-mobile__completion {
+    grid-template-columns: 72px minmax(0, 1fr);
+    padding: 14px;
+    gap: 11px;
+  }
+
+  .account-overview-mobile__ring {
+    width: 70px;
+    height: 70px;
+  }
+
+  .account-overview-mobile__ring strong {
+    font-size: 18px;
+  }
+
+  .account-overview-mobile__completion-copy strong {
+    font-size: 16px;
+  }
+
+  .account-overview-mobile__completion-copy p {
+    font-size: 11.5px;
+  }
+
+  .account-overview-mobile__status {
+    min-height: 126px;
+    padding-inline: 8px;
+  }
+
+  .account-overview-mobile__status strong,
+  .account-overview-mobile__status b {
     font-size: 11px;
   }
 
-  .account-center-page.is-overview .account-shell-button {
-    min-height: 39px;
-    font-size: 12.5px;
+  .account-overview-mobile__status small {
+    font-size: 9.5px;
   }
 
-  .account-center-page.is-overview .account-mobile-dock {
-    border-top-color: #e5e4df;
-    box-shadow: 0 -8px 28px rgb(48 43 34 / 0.06);
+  .account-overview-mobile__action {
+    grid-template-columns: 38px minmax(0, 1fr) 15px;
+    padding: 8px;
+    gap: 7px;
   }
 
-  .account-center-page.is-overview .account-mobile-dock > a {
-    color: #777b77;
-    font-size: 10px;
+  .account-overview-mobile__action > span {
+    width: 38px;
+    height: 38px;
   }
 
-  .account-center-page.is-overview .account-mobile-dock > a.is-active {
-    color: #0e3323;
+  .account-overview-mobile__action strong {
+    font-size: 12px;
+  }
+
+  .account-overview-mobile__action small {
+    font-size: 9.5px;
+  }
+
+  .account-overview-mobile__community-copy {
+    max-width: 68%;
+  }
+
+  .account-overview-mobile__community-copy > strong {
+    font-size: 17px;
+  }
+
+  .account-overview-mobile__manage-grid {
+    grid-template-columns: 1fr;
   }
 }
