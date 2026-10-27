@@ -403,6 +403,10 @@ export default function AccountProfileShell({ profile, onProfileChange }) {
             </div>
           </div>
 
+          <p className="account-shell-mobile-bio">
+            {profile?.bio || 'Cùng xây dựng cộng đồng Hòa Lạc ngày càng phát triển và văn minh hơn.'}
+          </p>
+
           <div className="account-shell-profile__actions">
             <Link className="account-shell-button account-shell-button--ghost" to="/tai-khoan/ho-so">
               <Pencil size={17} />
