@@ -105,6 +105,12 @@
   margin: 0 -16px -16px;
 }
 
+/* Separate the first related article from the red heading rule. */
+.news-context-rail > .news-rail-card:first-child > .news-rail-article-list,
+.news-context-rail > .news-rail-card:first-child > .news-rail-loading {
+  margin-top: 12px;
+}
+
 .news-rail-article {
   display: grid;
   grid-template-columns: 112px minmax(0, 1fr);
