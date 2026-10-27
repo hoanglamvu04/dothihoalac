@@ -185,7 +185,10 @@ function isNavigationActive(
   }
 
   if (item.match === 'property') {
-    return pathname.startsWith('/nha-dat');
+    return (
+      pathname.startsWith('/nha-dat') ||
+      pathname.startsWith('/bat-dong-san')
+    );
   }
 
   if (item.match === 'job') {
