@@ -738,3 +738,26 @@
     box-shadow: 0 7px 18px rgb(17 70 42 / 0.09) !important;
   }
 }
+
+
+/* Mobile hero simplification: remove benefit chips and decorative artwork. */
+@media (max-width: 760px) {
+  .jobs-page .jobs-market-hero__chips,
+  .jobs-page .jobs-market-hero__art {
+    display: none !important;
+  }
+
+  .jobs-page .jobs-market-hero__copy {
+    padding-bottom: 22px !important;
+  }
+
+  .jobs-page .jobs-market-search {
+    margin-top: 10px !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .jobs-page .jobs-market-hero__copy {
+    padding-bottom: 19px !important;
+  }
+}
