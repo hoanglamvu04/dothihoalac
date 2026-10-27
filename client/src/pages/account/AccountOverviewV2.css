@@ -89,6 +89,10 @@
   box-shadow: var(--aov-shadow);
 }
 
+.account-overview-v2__tabs--mobile {
+  display: none;
+}
+
 .account-overview-v2__tabs a {
   position: relative;
   display: inline-flex;
@@ -449,7 +453,12 @@
     font-size: 12.5px;
   }
 
-  .account-overview-v2__tabs {
+  .account-overview-v2__tabs--desktop {
+    display: none;
+  }
+
+  .account-overview-v2__tabs--mobile {
+    display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
     overflow: visible;
     border-radius: 16px;
@@ -477,18 +486,15 @@
     height: 22px;
   }
 
-  .account-overview-v2__tabs .account-overview-v2__tab-create {
+  .account-overview-v2__tabs--mobile a {
     color: var(--aov-accent-dark);
     background: #fff;
   }
 
-  .account-overview-v2__tabs .account-overview-v2__tab-create:hover {
+  .account-overview-v2__tabs--mobile a:hover,
+  .account-overview-v2__tabs--mobile a:active {
     color: var(--aov-accent-dark);
     background: var(--aov-accent-soft);
-  }
-
-  .account-overview-v2__tabs .account-overview-v2__tab-property {
-    display: none;
   }
 
   .account-overview-v2__section {
