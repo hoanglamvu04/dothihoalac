@@ -419,7 +419,7 @@ body:has(.dthl-header.is-compact:not(.is-hidden))
 
 .account-center-page.is-subpage .bookmarks-hero__eyebrow {
   margin-bottom: 4px;
-  color: var(--account-green);
+  color: var(--brand-accent, #b43b32);
   font-size: 0.62rem;
 }
 

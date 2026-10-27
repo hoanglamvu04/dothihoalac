@@ -1,5 +1,5 @@
 /* =========================================================
-   ACCOUNT ACTIVITY — CLEAN WHITE / INK / GOLD
+   ACCOUNT ACTIVITY — CLEAN WHITE / INK / BRAND RED
    Shared by:
    /tai-khoan/hoat-dong
    /tai-khoan/hoat-dong/tim-kiem
@@ -8,15 +8,16 @@
 ========================================================= */
 
 .activity-page {
-  --activity-gold: #b59965;
-  --activity-gold-dark: #846a3f;
-  --activity-gold-soft: #f8f6f1;
+  --activity-accent: var(--brand-accent, #b43b32);
+  --activity-accent-hover: var(--brand-accent-hover, #9e3029);
+  --activity-accent-soft: var(--brand-accent-soft, #faefed);
+  --activity-accent-border: #ecc9c5;
   --activity-ink: #202320;
   --activity-text: #505550;
   --activity-muted: #7d827d;
-  --activity-border: #e5e4df;
+  --activity-border: #dde5e1;
   --activity-surface: #ffffff;
-  --activity-surface-soft: #fafaf8;
+  --activity-surface-soft: #f7f9f8;
   --activity-danger: #b84a43;
 
   display: grid;
@@ -46,14 +47,14 @@
   min-height: 96px;
   padding: 4px 2px 18px;
   gap: 20px;
-  border-bottom: 1px solid #e7e6e1;
+  border-bottom: 1px solid #dde5e1;
 }
 
 .activity-page__heading > div:first-child > span {
   display: inline-flex;
   align-items: center;
   gap: 7px;
-  color: #9c7e4c;
+  color: var(--activity-accent);
   font-size: 12.5px;
   font-weight: 800;
   letter-spacing: 0.07em;
@@ -103,9 +104,9 @@
 }
 
 .activity-page__actions button:hover:not(:disabled) {
-  border-color: #cdbd9f;
+  border-color: var(--activity-accent-border);
   color: #2d302d;
-  background: #faf8f4;
+  background: #fff7f6;
 }
 
 .activity-page__actions button.is-danger {
@@ -146,8 +147,8 @@
 }
 
 .activity-summary > a:hover {
-  border-color: #d8ccb8;
-  background: #fdfcf9;
+  border-color: var(--activity-accent-border);
+  background: #fff7f6;
   transform: translateY(-1px);
 }
 
@@ -156,10 +157,10 @@
   place-items: center;
   width: 46px;
   height: 46px;
-  border: 1px solid #e6dfd3;
+  border: 1px solid var(--activity-accent-border);
   border-radius: 12px;
-  color: var(--activity-gold-dark);
-  background: var(--activity-gold-soft);
+  color: var(--activity-accent-hover);
+  background: var(--activity-accent-soft);
 }
 
 .activity-summary strong,
@@ -202,7 +203,7 @@
   min-height: 70px;
   padding: 14px 18px;
   gap: 14px;
-  border-bottom: 1px solid #e9e8e3;
+  border-bottom: 1px solid #edf1ee;
 }
 
 .activity-card__heading strong,
@@ -234,7 +235,7 @@
   min-height: 96px;
   padding: 14px 16px;
   gap: 13px;
-  border-bottom: 1px solid #ecebe7;
+  border-bottom: 1px solid #edf1ee;
   background: #fff;
   transition: background 140ms ease;
 }
@@ -244,7 +245,7 @@
 }
 
 .activity-row:hover {
-  background: #fcfbf8;
+  background: #fff7f6;
 }
 
 .activity-row__icon {
@@ -252,15 +253,15 @@
   place-items: center;
   width: 46px;
   height: 46px;
-  border: 1px solid #e6e1d8;
+  border: 1px solid #dde5e1;
   border-radius: 12px;
   color: #6a6f6a;
-  background: #fafaf8;
+  background: #f7f9f8;
 }
 
 .activity-row__icon--search {
-  color: #80683f;
-  background: #faf7f1;
+  color: var(--activity-accent);
+  background: var(--activity-accent-soft);
 }
 
 .activity-row__icon--comment {
@@ -269,9 +270,9 @@
 }
 
 .activity-row__icon--like {
-  color: #a0525b;
+  color: var(--activity-accent);
   background: #fff7f8;
-  border-color: #efe0e2;
+  border-color: var(--activity-accent-border);
 }
 
 .activity-row__content {
@@ -322,9 +323,9 @@
   margin-top: 9px;
   padding: 7px;
   gap: 10px;
-  border: 1px solid #ecebe6;
+  border: 1px solid #edf1ee;
   border-radius: 10px;
-  background: #fafaf8;
+  background: #f7f9f8;
 }
 
 .activity-row__thumb {
@@ -333,7 +334,7 @@
   height: 46px;
   border-radius: 8px;
   object-fit: cover;
-  background: #eeeeea;
+  background: #edf1ee;
 }
 
 .activity-row__target > span {
@@ -367,7 +368,7 @@
 }
 
 .activity-row:hover .activity-row__arrow {
-  color: var(--activity-gold-dark);
+  color: var(--activity-accent-hover);
 }
 
 .activity-card > .empty-state,
@@ -387,15 +388,19 @@
 }
 
 .activity-page .pagination button:hover:not(:disabled) {
-  border-color: #cdbd9f;
-  background: #faf8f4;
+  border-color: var(--activity-accent-border);
+  background: #fff7f6;
 }
 
 .activity-page .pagination button.is-active,
 .activity-page .pagination button[aria-current='page'] {
-  border-color: var(--activity-gold);
-  color: #1f221f;
-  background: var(--activity-gold);
+  border-color: var(--activity-accent);
+  color: #fff;
+  background: var(--activity-accent);
+}
+
+.activity-page .pagination button:is(.is-active, [aria-current='page']) > span {
+  color: #fff;
 }
 
 /* Responsive */

@@ -1,14 +1,14 @@
 .bookmarks-page {
-  --bookmarks-accent: #b59965;
-  --bookmarks-accent-hover: #9f8252;
-  --bookmarks-accent-soft: #f8f6f1;
-  --bookmarks-accent-border: #e6dfd3;
+  --bookmarks-accent: var(--brand-accent, #b43b32);
+  --bookmarks-accent-hover: var(--brand-accent-hover, #9e3029);
+  --bookmarks-accent-soft: var(--brand-accent-soft, #faefed);
+  --bookmarks-accent-border: #ecc9c5;
   --bookmarks-ink: #202320;
   --bookmarks-text: #505550;
   --bookmarks-muted: #7d827d;
-  --bookmarks-border: #e5e4df;
+  --bookmarks-border: #dde5e1;
   --bookmarks-surface: #ffffff;
-  --bookmarks-surface-soft: #fafaf8;
+  --bookmarks-surface-soft: #f7f9f8;
 
   display: grid;
   width: 100%;
@@ -64,7 +64,7 @@
   align-items: center;
   margin-bottom: 7px;
   gap: 6px;
-  color: #9c7e4c;
+  color: var(--bookmarks-accent);
   font-size: 12.5px;
   font-weight: 780;
   letter-spacing: 0.07em;
@@ -120,7 +120,7 @@
 
 .bookmarks-primary-action:hover {
   border-color: var(--bookmarks-accent);
-  color: #1f221f !important;
+  color: #fff !important;
   background: var(--bookmarks-accent);
 }
 
@@ -131,8 +131,8 @@
 }
 
 .bookmarks-secondary-action:hover:not(:disabled) {
-  border-color: #cdbd9f;
-  background: #faf8f4;
+  border-color: var(--bookmarks-accent-border);
+  background: #fff7f6;
 }
 
 .bookmarks-secondary-action:disabled {
@@ -176,7 +176,7 @@
   height: 44px;
   border: 1px solid var(--bookmarks-accent-border);
   border-radius: 11px;
-  color: #8f7548;
+  color: var(--bookmarks-accent);
   background: var(--bookmarks-accent-soft);
 }
 
@@ -229,7 +229,7 @@
   align-items: center;
   margin-bottom: 6px;
   gap: 6px;
-  color: #9c7e4c;
+  color: var(--bookmarks-accent);
   font-size: 12px;
   font-weight: 780;
   letter-spacing: 0.07em;
@@ -273,8 +273,8 @@
 }
 
 .bookmarks-content-card__header > button:hover:not(:disabled) {
-  border-color: #cdbd9f;
-  background: #faf8f4;
+  border-color: var(--bookmarks-accent-border);
+  background: #fff7f6;
 }
 
 .bookmarks-content-card__header > button:disabled {
@@ -300,7 +300,7 @@
 .bookmarks-list__item {
   min-width: 0;
   overflow: hidden;
-  border: 1px solid #e2e2dd;
+  border: 1px solid #dde5e1;
   border-radius: 12px;
   background: #fff;
   box-shadow: none;
@@ -308,8 +308,8 @@
 }
 
 .bookmarks-list__item:hover {
-  border-color: #cdbd9f;
-  background: #fffdfa;
+  border-color: var(--bookmarks-accent-border);
+  background: #fff7f6;
 }
 
 .bookmarks-list__saved-time {
@@ -318,15 +318,15 @@
   min-height: 36px;
   padding: 7px 12px;
   gap: 6px;
-  border-bottom: 1px solid #e7e6e1;
+  border-bottom: 1px solid #dde5e1;
   color: #858a85;
-  background: #fafaf8;
+  background: #f7f9f8;
   font-size: 12.5px;
   line-height: 1.4;
 }
 
 .bookmarks-list__saved-time svg {
-  color: #967a4a;
+  color: var(--bookmarks-accent);
 }
 
 .bookmarks-list__item :is(.generic-content-card, .content-card) {
@@ -366,10 +366,10 @@
   padding: 12px 14px;
   margin-bottom: 13px;
   gap: 8px;
-  border: 1px solid #ead6a3;
+  border: 1px solid var(--bookmarks-accent-border);
   border-radius: 10px;
-  color: #75591f;
-  background: #fff9e8;
+  color: var(--bookmarks-accent-hover);
+  background: var(--bookmarks-accent-soft);
 }
 
 .bookmarks-warning svg {
@@ -437,7 +437,7 @@
 
 .bookmarks-error button:hover {
   border-color: var(--bookmarks-accent);
-  color: #1f221f;
+  color: #fff;
   background: var(--bookmarks-accent);
 }
 
@@ -472,14 +472,18 @@
 }
 
 .bookmarks-pagination .pagination button:hover:not(:disabled) {
-  border-color: #cdbd9f;
-  background: #faf8f4;
+  border-color: var(--bookmarks-accent-border);
+  background: #fff7f6;
 }
 
 .bookmarks-pagination .pagination button.is-active {
   border-color: var(--bookmarks-accent);
-  color: #1f221f;
+  color: #fff;
   background: var(--bookmarks-accent);
+}
+
+.bookmarks-pagination .pagination button.is-active > span {
+  color: #fff;
 }
 
 /* =========================================================
@@ -518,13 +522,13 @@
   height: 44px;
   border: 1px solid var(--bookmarks-accent-border);
   border-radius: 11px;
-  color: #8f7548;
+  color: var(--bookmarks-accent);
   background: var(--bookmarks-accent-soft);
 }
 
 .bookmarks-discovery__header small {
   display: block;
-  color: #9c7e4c;
+  color: var(--bookmarks-accent);
   font-size: 12px;
   font-weight: 780;
   letter-spacing: 0.07em;
@@ -563,8 +567,8 @@
 }
 
 .bookmarks-discovery__header > a:hover {
-  border-color: #cdbd9f;
-  background: #faf8f4;
+  border-color: var(--bookmarks-accent-border);
+  background: #fff7f6;
 }
 
 .bookmarks-discovery__grid {
@@ -582,15 +586,15 @@
   min-height: 126px;
   padding: 14px 36px 14px 14px;
   gap: 11px;
-  border: 1px solid #e3e3de;
+  border: 1px solid #dde5e1;
   border-radius: 12px;
   background: var(--bookmarks-surface-soft);
   transition: border-color 150ms ease, background 150ms ease;
 }
 
 .bookmarks-discovery__grid > a:hover {
-  border-color: #cdbd9f;
-  background: #fffdfa;
+  border-color: var(--bookmarks-accent-border);
+  background: #fff7f6;
 }
 
 .bookmarks-discovery__grid > a > span {
@@ -599,9 +603,9 @@
   flex: 0 0 auto;
   width: 42px;
   height: 42px;
-  border: 1px solid #e8e2d8;
+  border: 1px solid var(--bookmarks-accent-border);
   border-radius: 10px;
-  color: #8d754c;
+  color: var(--bookmarks-accent);
   background: #fff;
 }
 
@@ -629,7 +633,7 @@
 }
 
 .bookmarks-discovery__grid > a:hover .bookmarks-discovery__arrow {
-  color: #8f7548;
+  color: var(--bookmarks-accent);
   transform: translateX(2px);
 }
 

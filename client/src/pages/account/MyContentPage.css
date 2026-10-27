@@ -2,11 +2,13 @@
   --my-content-ink: #202320;
   --my-content-text: #555b55;
   --my-content-muted: #7d827d;
-  --my-content-border: #e4e3de;
+  --my-content-border: #dde5e1;
   --my-content-surface: #ffffff;
-  --my-content-surface-soft: #fafaf8;
-  --my-content-gold: #b59965;
-  --my-content-gold-soft: #f8f6f1;
+  --my-content-surface-soft: #f7f9f8;
+  --my-content-accent: var(--brand-accent, #b43b32);
+  --my-content-accent-hover: var(--brand-accent-hover, #9e3029);
+  --my-content-accent-soft: var(--brand-accent-soft, #faefed);
+  --my-content-accent-border: #ecc9c5;
 
   display: grid;
   width: 100%;
@@ -53,7 +55,7 @@
 
 .my-content-hero > div > span,
 .my-content-card__type {
-  color: #9a7d4c;
+  color: var(--my-content-accent);
   font-size: 12.5px;
   font-weight: 800;
   letter-spacing: 0.07em;
@@ -95,9 +97,9 @@
 }
 
 .my-content-create:hover {
-  border-color: var(--my-content-gold);
-  color: #1f221f;
-  background: var(--my-content-gold);
+  border-color: var(--my-content-accent);
+  color: #fff;
+  background: var(--my-content-accent);
 }
 
 /* =========================================================
@@ -144,14 +146,14 @@
 
 .my-content-tabs button:hover {
   color: #303430;
-  background: #f6f6f3;
+  background: #f7f9f8;
 }
 
 .my-content-tabs button.is-active {
-  border-color: #e4ddcf;
-  color: #252825;
-  background: var(--my-content-gold-soft);
-  box-shadow: inset 0 -2px 0 var(--my-content-gold);
+  border-color: var(--my-content-accent-border);
+  color: var(--my-content-accent-hover);
+  background: var(--my-content-accent-soft);
+  box-shadow: inset 0 -2px 0 var(--my-content-accent);
 }
 
 .my-content-toolbar__right {
@@ -202,9 +204,9 @@
 }
 
 .my-content-toolbar__right button:hover {
-  border-color: #cdbd9f;
+  border-color: var(--my-content-accent-border);
   color: #303430;
-  background: #faf8f4;
+  background: #fff7f6;
 }
 
 .my-content-summary {
@@ -237,7 +239,7 @@
 }
 
 .my-content-card:hover {
-  border-color: #d7d2c8;
+  border-color: var(--my-content-accent-border);
   box-shadow: 0 9px 24px rgb(20 23 20 / 0.055);
   transform: translateY(-1px);
 }
@@ -249,7 +251,7 @@
   place-items: center;
   overflow: hidden;
   color: #919691;
-  background: #f3f3f0;
+  background: #f2f6f3;
   font-size: 13px;
 }
 
@@ -279,7 +281,7 @@
 }
 
 .my-content-card__media-type.is-property {
-  background: rgb(151 111 57 / 0.9);
+  background: rgb(180 59 50 / 0.9);
 }
 
 .my-content-card__media-type.is-job,
@@ -353,7 +355,7 @@
 }
 
 .my-content-card__date svg {
-  color: #8f7548;
+  color: var(--my-content-accent);
 }
 
 .my-content-card__actions {
@@ -361,7 +363,7 @@
   flex-wrap: wrap;
   padding: 10px 12px 12px;
   gap: 7px;
-  border-top: 1px solid #ecebe7;
+  border-top: 1px solid #edf1ee;
   background: #fcfcfb;
 }
 
@@ -384,9 +386,9 @@
 
 .my-content-card__actions a:hover,
 .my-content-card__actions button:hover:not(:disabled) {
-  border-color: #cdbd9f;
+  border-color: var(--my-content-accent-border);
   color: #303430;
-  background: #faf8f4;
+  background: #fff7f6;
 }
 
 .my-content-card__actions button:disabled {
@@ -407,7 +409,7 @@
   background: #fff1ef;
 }
 
-/* Pagination follows the same white / ink / gold hierarchy. */
+/* Pagination uses the brand-red selection with white foreground. */
 .my-content-page > .pagination button {
   border-color: #dfdfda;
   color: #363a36;
@@ -415,15 +417,19 @@
 }
 
 .my-content-page > .pagination button:hover:not(:disabled) {
-  border-color: #cdbd9f;
-  background: #faf8f4;
+  border-color: var(--my-content-accent-border);
+  background: #fff7f6;
 }
 
 .my-content-page > .pagination button.is-active,
 .my-content-page > .pagination button[aria-current='page'] {
-  border-color: var(--my-content-gold);
-  color: #1f221f;
-  background: var(--my-content-gold);
+  border-color: var(--my-content-accent);
+  color: #fff;
+  background: var(--my-content-accent);
+}
+
+.my-content-page > .pagination button:is(.is-active, [aria-current='page']) > span {
+  color: #fff;
 }
 
 /* =========================================================
@@ -465,7 +471,7 @@
 
   .account-center-page.is-subpage .my-content-hero > div > span {
     margin: 0 !important;
-    color: #9a7d4c !important;
+    color: var(--my-content-accent) !important;
     font-size: 12px !important;
     letter-spacing: 0.07em !important;
   }
@@ -525,10 +531,10 @@
   }
 
   .account-center-page.is-subpage .my-content-tabs button.is-active {
-    border-color: #e4ddcf !important;
-    color: #252825 !important;
-    background: var(--my-content-gold-soft) !important;
-    box-shadow: inset 0 -2px 0 var(--my-content-gold) !important;
+    border-color: var(--my-content-accent-border) !important;
+    color: var(--my-content-accent-hover) !important;
+    background: var(--my-content-accent-soft) !important;
+    box-shadow: inset 0 -2px 0 var(--my-content-accent) !important;
   }
 
   .account-center-page.is-subpage .my-content-toolbar__right {
@@ -650,7 +656,7 @@
     flex-wrap: nowrap !important;
     padding: 0 !important;
     gap: 0 !important;
-    border-top: 1px solid #ecebe7 !important;
+    border-top: 1px solid #edf1ee !important;
     background: #fff !important;
   }
 
@@ -661,7 +667,7 @@
     padding: 0 7px !important;
     gap: 5px !important;
     border: 0 !important;
-    border-right: 1px solid #ecebe7 !important;
+    border-right: 1px solid #edf1ee !important;
     border-radius: 0 !important;
     color: #494e49 !important;
     background: #fff !important;
