@@ -78,7 +78,6 @@
 }
 
 .home-reference-v2 .home-side-story h3,
-.home-reference-v2 .home-latest-story h3,
 .home-reference-v2 .home-spotlight-story h3,
 .home-reference-v2 .home-job-story h3,
 .home-reference-v2 .home-community-story > p,
@@ -87,7 +86,6 @@
   line-height: var(--leading-snug) !important;
 }
 
-.home-reference-v2 .home-latest-story h3,
 .home-reference-v2 .home-job-story h3,
 .home-reference-v2 .home-property-story h3 {
   font-weight: 720 !important;
@@ -416,8 +414,7 @@
   }
 
   .home-reference-v2 .home-side-story h3,
-  .home-reference-v2 .home-latest-story h3,
-  .home-reference-v2 .home-spotlight-story h3,
+    .home-reference-v2 .home-spotlight-story h3,
   .home-reference-v2 .home-job-story h3,
   .home-reference-v2 .home-community-story > p,
   .home-reference-v2 .home-property-story h3 {

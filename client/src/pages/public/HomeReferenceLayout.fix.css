@@ -64,7 +64,7 @@
   white-space: nowrap;
 }
 
-/* ---------- three dashboard panels ---------- */
+/* ---------- dashboard panels ---------- */
 .home-reference-v2 .home-reference-dashboard {
   align-items: stretch;
 }
@@ -73,11 +73,6 @@
   min-height: 360px;
 }
 
-.home-reference-v2 .home-latest-story {
-  min-height: 136px;
-}
-
-.home-reference-v2 .home-latest-story h3,
 .home-reference-v2 .home-spotlight-story h3 {
   -webkit-line-clamp: 2;
 }
@@ -269,10 +264,6 @@
     min-height: 0;
   }
 
-  .home-reference-v2 .home-latest-story {
-    min-height: 120px;
-  }
-
   .home-reference-v2 .home-job-story {
     grid-template-columns: 52px minmax(0, 1fr) minmax(82px, auto);
     min-height: 86px;
@@ -421,20 +412,6 @@
 /* Dashboard */
 .home-reference-v2 .home-reference-panel {
   min-height: 400px;
-}
-
-.home-reference-v2 .home-latest-story {
-  min-height: 136px;
-}
-
-.home-reference-v2 .home-latest-story h3 {
-  font-size: 14px;
-  line-height: 1.35;
-}
-
-.home-reference-v2 .home-latest-story .home-card-meta {
-  margin-top: 7px;
-  font-size: 11.5px;
 }
 
 .home-reference-v2 .home-spotlight-story h3 {
@@ -606,13 +583,11 @@
     font-size: 12px;
   }
 
-  .home-reference-v2 .home-latest-story h3,
   .home-reference-v2 .home-spotlight-story h3,
   .home-reference-v2 .home-job-story h3 {
     font-size: 14px;
   }
 
-  .home-reference-v2 .home-latest-story .home-card-meta,
   .home-reference-v2 .home-spotlight-story .home-card-meta,
   .home-reference-v2 .home-job-story__meta {
     font-size: 11px;

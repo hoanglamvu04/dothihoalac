@@ -302,21 +302,6 @@ function HomeSideStory({ item }) {
   );
 }
 
-function HomeLatestStory({ item }) {
-  const href = contentPath(item);
-  return (
-    <article className="home-latest-story">
-      <Link to={href} className="home-latest-story__image">
-        <ContentImage media={item.thumbnailMediaId} alt={item.title} ratio="wide" />
-      </Link>
-      <div>
-        <h3><Link to={href}>{item.title}</Link></h3>
-        <MetaLine item={item} />
-      </div>
-    </article>
-  );
-}
-
 function HomeSpotlightStory({ item }) {
   const href = contentPath(item);
   return (
@@ -539,7 +524,6 @@ export default function HomePage() {
 
   const leadArticle = data.articles[0] || null;
   const sideArticles = data.articles.slice(1, 4);
-  const latestArticles = data.articles.slice(4, 8);
   const spotlightArticles = data.articles.slice(8, 12);
   const communityItems = data.community.slice(0, 4);
   const propertyItems = data.properties.slice(0, 4);
@@ -578,23 +562,6 @@ export default function HomePage() {
           <MobileQuickNav />
 
           <div className="home-reference-dashboard">
-            <section className="home-reference-panel home-reference-panel--latest">
-              <SectionHeader title="Tin nổi bật" to="/tin-tuc" />
-              <SectionState
-                loading={loading.articles}
-                error={errors.articles}
-                items={latestArticles}
-                onRetry={retryLoad}
-                emptyTitle="Chưa có tin mới"
-              >
-                <div className="home-reference-latest-list">
-                  {latestArticles.map((item, index) => (
-                    <HomeLatestStory key={getItemKey(item, 'latest', index)} item={item} />
-                  ))}
-                </div>
-              </SectionState>
-            </section>
-
             <section className="home-reference-panel home-reference-panel--spotlight">
               <SectionHeader title="Tiêu điểm phát triển đô thị" to="/tin-tuc?category=quy-hoach" />
               <SectionState
