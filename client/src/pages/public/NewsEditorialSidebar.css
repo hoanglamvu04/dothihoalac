@@ -244,24 +244,17 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-discussion-list a
 
 .news-tip-cta {
   display: grid;
-  grid-template-columns: 40px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1fr);
+  grid-auto-rows: max-content;
+  align-self: start;
+  align-content: start;
   padding: 14px;
-  gap: 8px 12px;
+  gap: 8px;
   border: 1px solid #d7e3dc;
   border-radius: 11px;
   background:
     radial-gradient(circle at 92% 5%, rgb(176 53 37 / 0.07), transparent 35%),
     linear-gradient(145deg, #ffffff, #eef4f1);
-}
-
-.news-tip-cta > span {
-  display: grid;
-  width: 40px;
-  height: 40px;
-  place-items: center;
-  border-radius: 50%;
-  color: #b03525;
-  background: #faefed;
 }
 
 .news-tip-cta > div {
@@ -286,7 +279,6 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-discussion-list a
 }
 
 .news-tip-cta p {
-  grid-column: 1 / -1;
   margin: 5px 0 0;
   color: #6d706a;
   font-size: 0.62rem;
@@ -294,12 +286,11 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-discussion-list a
 }
 
 .news-tip-cta > a {
-  grid-column: 1 / -1;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 36px;
-  margin-top: 2px;
+  min-height: 46px;
+  margin-top: 0;
   gap: 6px;
   border-radius: 7px;
   color: #fff;

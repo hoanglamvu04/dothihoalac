@@ -14,7 +14,6 @@ import {
   MapPin,
   MessageCircle,
   Newspaper,
-  Send,
   Snowflake,
   Sun,
   Tags,
@@ -452,7 +451,6 @@ function EcosystemCard({ jobs, properties }) {
 function NewsTipCard() {
   return (
     <section className="news-tip-cta">
-      <span><Send size={18} /></span>
       <div>
         <small>Góp tin địa phương</small>
         <strong>Bạn có tin mới?</strong>
