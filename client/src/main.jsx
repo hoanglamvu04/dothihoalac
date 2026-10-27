@@ -87,6 +87,9 @@ import './styles/jobs-featured-density.css';
 /* Home-only composition fixes that must sit after the brand contract. */
 import './styles/home-property-price-overlay.css';
 
+/* Final phone-only shell. Keep last so mobile layout contracts stay authoritative. */
+import './styles/mobile-shell-v2.css';
+
 import './features/propertyMarketplacePaging';
 import './features/jobEditorWizard';
 import './features/propertyMobileSearchFirst';
