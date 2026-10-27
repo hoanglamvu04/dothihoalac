@@ -1,0 +1,329 @@
+/* Mobile shell v2
+ * Final phone-only layer for the public site. Keep this file imported last.
+ * It standardizes the app shell without changing desktop composition.
+ */
+
+@media (max-width: 760px) {
+  html {
+    scroll-padding-top: 68px;
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    overflow-x: hidden;
+  }
+
+  .app-shell,
+  .main-content {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .main-content {
+    overflow-x: clip;
+  }
+
+  .dthl-container {
+    width: calc(100% - 20px) !important;
+  }
+
+  /* Compact, app-like top bar. */
+  .dthl-header {
+    background: rgba(255, 255, 255, 0.96);
+  }
+
+  .dthl-header.is-scrolled:not(.is-hidden) {
+    box-shadow: 0 7px 20px rgb(16 51 35 / 0.08) !important;
+  }
+
+  .dthl-header-main {
+    border-bottom: 1px solid rgb(16 51 35 / 0.08);
+    background: rgba(255, 255, 255, 0.96) !important;
+    backdrop-filter: blur(16px) saturate(135%);
+    -webkit-backdrop-filter: blur(16px) saturate(135%);
+  }
+
+  .dthl-header-main__inner,
+  .dthl-header.is-compact .dthl-header-main__inner {
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    min-height: 60px !important;
+    gap: 8px !important;
+  }
+
+  .dthl-brand {
+    min-width: 0;
+    gap: 8px !important;
+  }
+
+  .dthl-brand__mark,
+  .dthl-header.is-compact .dthl-brand__mark {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 11px !important;
+    box-shadow: 0 6px 16px rgb(31 163 75 / 0.16) !important;
+  }
+
+  .dthl-brand__content {
+    min-width: 0;
+  }
+
+  .dthl-brand__content strong {
+    max-width: min(47vw, 168px) !important;
+    font-size: 0.92rem !important;
+    font-weight: 760 !important;
+    letter-spacing: -0.016em;
+  }
+
+  .dthl-header-actions {
+    gap: 5px !important;
+  }
+
+  .dthl-icon-button,
+  .dthl-mobile-menu-button,
+  .dthl-header.is-compact .dthl-icon-button,
+  .dthl-header.is-compact .dthl-mobile-menu-button {
+    width: 40px !important;
+    height: 40px !important;
+    border: 1px solid rgb(16 51 35 / 0.08) !important;
+    border-radius: 12px !important;
+    background: #f7faf8 !important;
+    box-shadow: none !important;
+  }
+
+  .dthl-icon-button:active,
+  .dthl-mobile-menu-button:active {
+    transform: scale(0.96);
+  }
+
+  /* Phone drawer: safe-area aware and easier to scan with one thumb. */
+  .dthl-mobile-nav__backdrop {
+    background: rgb(6 30 18 / 0.46) !important;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+  }
+
+  .dthl-mobile-nav__panel {
+    width: min(92vw, 390px) !important;
+    height: 100dvh !important;
+    padding:
+      calc(14px + env(safe-area-inset-top, 0px))
+      14px
+      calc(26px + env(safe-area-inset-bottom, 0px)) !important;
+    overscroll-behavior: contain;
+    background: #ffffff !important;
+    box-shadow: -18px 0 46px rgb(8 61 32 / 0.16) !important;
+  }
+
+  .dthl-mobile-nav__header {
+    min-height: 44px !important;
+    margin-bottom: 12px !important;
+  }
+
+  .dthl-mobile-nav__header strong {
+    font-size: 1.06rem !important;
+    font-weight: 780 !important;
+  }
+
+  .dthl-mobile-nav__header button {
+    width: 40px !important;
+    height: 40px !important;
+    border-radius: 12px !important;
+  }
+
+  .dthl-mobile-search {
+    min-height: 50px !important;
+    margin-bottom: 12px !important;
+    padding: 4px 5px 4px 12px !important;
+    border-color: #dbe6df !important;
+    border-radius: 14px !important;
+    background: #f7faf8 !important;
+    box-shadow: none !important;
+  }
+
+  .dthl-mobile-search input {
+    height: 40px !important;
+    font-size: 16px !important;
+  }
+
+  .dthl-mobile-search button {
+    min-width: 42px;
+    height: 40px !important;
+    border-radius: 11px !important;
+  }
+
+  .dthl-mobile-nav__links {
+    gap: 4px !important;
+  }
+
+  .dthl-mobile-nav__link {
+    min-height: 50px !important;
+    padding: 0 13px !important;
+    border-radius: 12px !important;
+    font-size: 0.92rem !important;
+    font-weight: 690 !important;
+  }
+
+  .dthl-mobile-nav__link.is-active {
+    box-shadow: inset 3px 0 0 var(--dthl-palette-brand, #103323) !important;
+  }
+
+  .dthl-mobile-nav__divider {
+    margin: 14px 0 !important;
+  }
+
+  .dthl-mobile-header-settings {
+    padding: 11px !important;
+    margin-top: 12px;
+    border-radius: 13px !important;
+    background: #f6faf8 !important;
+  }
+
+  .dthl-mobile-header-settings__modes {
+    margin-top: 9px !important;
+    gap: 6px !important;
+  }
+
+  .dthl-mobile-header-settings__modes button,
+  .dthl-mobile-header-settings__compact {
+    min-height: 44px !important;
+    font-size: 0.72rem !important;
+  }
+
+  .dthl-mobile-auth a,
+  .dthl-mobile-account a,
+  .dthl-mobile-account button {
+    min-height: 48px !important;
+  }
+
+  /* Avoid iOS focus zoom in public forms. */
+  .app-shell input,
+  .app-shell select,
+  .app-shell textarea {
+    font-size: max(16px, 1em);
+  }
+
+  /* Bottom navigation is the primary mobile navigation surface. */
+  .app-shell.app-shell--with-mobile-bottom-nav {
+    padding-bottom: calc(82px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+
+  .mobile-bottom-nav {
+    right: 8px !important;
+    bottom: calc(7px + env(safe-area-inset-bottom, 0px)) !important;
+    left: 8px !important;
+  }
+
+  .mobile-bottom-nav__inner {
+    min-height: 62px !important;
+    padding: 4px 5px 5px !important;
+    border: 1px solid rgb(16 51 35 / 0.1) !important;
+    border-radius: 21px !important;
+    background: rgb(255 255 255 / 0.96) !important;
+    box-shadow: 0 10px 28px rgb(16 51 35 / 0.14) !important;
+    backdrop-filter: blur(18px) saturate(140%);
+    -webkit-backdrop-filter: blur(18px) saturate(140%);
+  }
+
+  .mobile-bottom-nav__item {
+    min-height: 54px !important;
+    padding: 5px 2px 3px !important;
+    gap: 3px !important;
+    color: #53675c !important;
+    font-size: 10.5px !important;
+    font-weight: 680 !important;
+    letter-spacing: -0.01em;
+  }
+
+  .mobile-bottom-nav__icon {
+    width: 31px !important;
+    height: 29px !important;
+    border-radius: 9px !important;
+  }
+
+  .mobile-bottom-nav__item.is-active:not(.is-featured) {
+    color: #0b6b3b !important;
+  }
+
+  .mobile-bottom-nav__item.is-active:not(.is-featured) .mobile-bottom-nav__icon {
+    color: #0b6b3b !important;
+    background: #eaf6ef !important;
+  }
+
+  .mobile-bottom-nav__item.is-featured {
+    padding-top: 1px !important;
+    color: #0b5f36 !important;
+    font-weight: 800 !important;
+  }
+
+  .mobile-bottom-nav__item.is-featured .mobile-bottom-nav__icon {
+    width: 48px !important;
+    height: 48px !important;
+    margin-top: -19px !important;
+    margin-bottom: 0 !important;
+    border: 4px solid #ffffff !important;
+    color: #ffffff !important;
+    background: linear-gradient(145deg, #14924f, #0b6b3b) !important;
+    box-shadow: 0 7px 17px rgb(11 107 59 / 0.28) !important;
+  }
+
+  .mobile-bottom-nav__item.is-featured:active .mobile-bottom-nav__icon {
+    transform: scale(0.95);
+  }
+
+  .dthl-notification-panel {
+    top: 66px !important;
+    right: 8px !important;
+    left: 8px !important;
+    width: auto !important;
+    max-height: calc(100dvh - 76px - env(safe-area-inset-bottom, 0px)) !important;
+    border-radius: 16px !important;
+  }
+
+  .dthl-notification-list {
+    max-height: calc(100dvh - 300px - env(safe-area-inset-bottom, 0px)) !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .dthl-mobile-nav__panel {
+    width: 100% !important;
+  }
+
+  .dthl-mobile-header-settings__modes {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 370px) {
+  .dthl-container {
+    width: calc(100% - 16px) !important;
+  }
+
+  .dthl-brand__content strong {
+    max-width: 132px !important;
+    font-size: 0.88rem !important;
+  }
+
+  .mobile-bottom-nav {
+    right: 6px !important;
+    left: 6px !important;
+  }
+
+  .mobile-bottom-nav__item {
+    font-size: 9.5px !important;
+  }
+
+  .mobile-bottom-nav__item.is-featured .mobile-bottom-nav__icon {
+    width: 46px !important;
+    height: 46px !important;
+    margin-top: -18px !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) and (max-width: 760px) {
+  .dthl-icon-button,
+  .dthl-mobile-menu-button,
+  .mobile-bottom-nav__icon {
+    transition: none !important;
+  }
+}
