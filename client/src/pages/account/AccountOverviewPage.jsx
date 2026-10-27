@@ -133,7 +133,7 @@ export default function AccountOverviewPage() {
           <Bookmark size={16} />
           Đã lưu
         </Link>
-        <Link to="/tai-khoan/tin-nha-dat">
+        <Link className="account-overview-v2__tab-property" to="/tai-khoan/tin-nha-dat">
           <Home size={16} />
           Tin BĐS
         </Link>
@@ -252,6 +252,13 @@ export default function AccountOverviewPage() {
           <span>
             <strong>Quản lý bài đăng</strong>
             <small>Bài viết, tin BĐS và việc làm của bạn.</small>
+          </span>
+        </Link>
+        <Link className="account-overview-v2__quick-property" to="/tai-khoan/tin-nha-dat">
+          <Home size={19} />
+          <span>
+            <strong>Tin bất động sản</strong>
+            <small>Quản lý các tin nhà đất bạn đã đăng.</small>
           </span>
         </Link>
         <Link to="/tai-khoan/da-luu">
