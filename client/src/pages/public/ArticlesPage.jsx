@@ -49,6 +49,7 @@ import './NewsPortalEnhancements.css';
 import './NewsEditorialSidebar.css';
 import './NewsFilterModern.css';
 import './NewsHeaderRefresh.css';
+import './NewsStoryAlignment.css';
 
 const PAGE_SIZE = 12;
 const MOBILE_FILTER_QUERY = '(max-width: 680px)';
