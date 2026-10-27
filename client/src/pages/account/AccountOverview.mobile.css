@@ -613,7 +613,40 @@
     font-size: 17px;
   }
 
-  .account-overview-mobile__manage-grid {
-    grid-template-columns: 1fr;
+  .account-overview-mobile__manage-grid > a {
+    grid-template-columns: 34px minmax(0, 1fr) 14px;
+    padding: 8px;
+    gap: 7px;
+  }
+
+  .account-overview-mobile__manage-grid > a > span {
+    width: 34px;
+    height: 34px;
+  }
+
+  .account-overview-mobile__manage-grid strong {
+    font-size: 10.5px;
+  }
+
+  .account-overview-mobile__manage-grid small {
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 760px) {
+  body:has(.account-center-page.is-overview) .mobile-bottom-nav__inner {
+    min-height: 66px !important;
+    border-radius: 23px !important;
+  }
+
+  body:has(.account-center-page.is-overview)
+    .mobile-bottom-nav__item.is-featured
+    .mobile-bottom-nav__icon {
+    width: 52px !important;
+    height: 52px !important;
+    margin-top: -21px !important;
+    border-radius: 50% !important;
+    border-width: 4px !important;
+    box-shadow: 0 8px 20px rgb(8 116 61 / 0.28) !important;
   }
 }
