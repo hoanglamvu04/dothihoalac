@@ -1138,6 +1138,30 @@
   font-weight: 820;
 }
 
+/* The posting card has a dark surface. Keep its text legible when the
+   global light/earth palette applies generic dark sidebar/link colors. */
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .app-shell .properties-page .properties-sidebar .properties-post-card > h3 {
+  color: #ffffff !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .app-shell .properties-page .properties-sidebar .properties-post-card > p {
+  color: #e4eee8 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .app-shell .properties-page .properties-sidebar .properties-post-card > a {
+  color: #ffffff !important;
+  background: #b03525 !important;
+}
+
+html[data-dthl-theme='light'][data-dthl-palette='earth']
+  .app-shell .properties-page .properties-sidebar .properties-post-card > a:is(:hover, :focus-visible) {
+  color: #ffffff !important;
+  background: #922b20 !important;
+}
+
 /* PAGINATION + EMPTY */
 .properties-pagination {
   display: flex;
