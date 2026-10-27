@@ -327,7 +327,6 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell :is(
   color: #0e3323 !important;
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-discovery__grid > button,
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell :is(
   .jobs-employers-panel,
   .jobs-featured-panel,
@@ -339,14 +338,11 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell :is(
   box-shadow: var(--jobs-shadow-soft) !important;
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-discovery__grid > button:hover,
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-discovery__grid > button.is-active {
-  border-color: #cbd7d0 !important;
-  background: #eef4f1 !important;
-  box-shadow: 0 8px 22px rgb(14 51 35 / 0.07) !important;
-}
-
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-discovery__grid strong,
+/*
+ * Job-type discovery buttons intentionally keep their semantic background
+ * and text colors from JobsPage / JobsPage.mobile. Do not force the shared
+ * white marketplace panel surface onto these filters.
+ */
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page .job-card h3,
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .app-shell .jobs-page .jobs-results__main .job-card h3 {
   color: #0e3323 !important;
