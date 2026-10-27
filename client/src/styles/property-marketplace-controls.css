@@ -84,10 +84,6 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-post-card {
     linear-gradient(145deg, #1a1c1a, #0f110f) !important;
 }
 
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-post-card > svg {
-  color: #ffffff !important;
-}
-
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-post-card a {
   color: #171a18 !important;
   background: #b03525 !important;
@@ -425,16 +421,18 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-pagination 
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-pagination .pagination > button.is-active,
-html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-pagination .pagination > button[aria-current='page'] {
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-pagination .pagination > button[aria-current='page'],
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-pagination .pagination > button.is-active:hover,
+html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-pagination .pagination > button[aria-current='page']:hover {
   border-color: #0e3323 !important;
-  color: #171a18 !important;
+  color: #ffffff !important;
   background: #0e3323 !important;
   box-shadow: none !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-pagination .pagination > button.is-active > span,
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-pagination .pagination > button[aria-current='page'] > span {
-  color: #171a18 !important;
+  color: #ffffff !important;
 }
 
 html[data-dthl-theme='light'][data-dthl-palette='earth'] .properties-pagination .pagination > button:disabled {

@@ -1163,7 +1163,6 @@ export default function PropertiesPage() {
                 </section>
 
                 <section className="properties-sidebar-card properties-post-card">
-                  <Building2 size={28} />
                   <h3>Đăng tin bất động sản</h3>
                   <p>Tiếp cận người tìm kiếm bất động sản tại Hòa Lạc trên cùng hệ thống.</p>
                   <Link to="/dang-bai/nha-dat">
