@@ -46,6 +46,7 @@ import './ArticlesPageV3.css';
 import './NewsPortalEnhancements.css';
 import './NewsEditorialSidebar.css';
 import './NewsFilterModern.css';
+import './NewsHeaderRefresh.css';
 
 const PAGE_SIZE = 12;
 const SORT_OPTIONS = [
