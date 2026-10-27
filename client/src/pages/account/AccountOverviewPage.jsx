@@ -120,7 +120,10 @@ export default function AccountOverviewPage() {
         </Link>
       </div>
 
-      <nav className="account-overview-v2__tabs" aria-label="Lối tắt tài khoản">
+      <nav
+        className="account-overview-v2__tabs account-overview-v2__tabs--desktop"
+        aria-label="Lối tắt tài khoản"
+      >
         <Link className="account-overview-v2__tab-create" to="/dang-bai">
           <Plus size={18} />
           Bài đăng mới
@@ -133,13 +136,35 @@ export default function AccountOverviewPage() {
           <Bookmark size={16} />
           Đã lưu
         </Link>
-        <Link className="account-overview-v2__tab-property" to="/tai-khoan/tin-nha-dat">
+        <Link to="/tai-khoan/tin-nha-dat">
           <Home size={16} />
           Tin BĐS
         </Link>
         <Link to="/tai-khoan/thong-bao">
           <Bell size={16} />
           Thông báo
+        </Link>
+      </nav>
+
+      <nav
+        className="account-overview-v2__tabs account-overview-v2__tabs--mobile"
+        aria-label="Lối tắt tài khoản trên điện thoại"
+      >
+        <Link to="/dang-bai">
+          <Plus size={21} />
+          <span>Bài mới</span>
+        </Link>
+        <Link to="/tai-khoan/noi-dung">
+          <FileText size={21} />
+          <span>Bài đăng</span>
+        </Link>
+        <Link to="/tai-khoan/da-luu">
+          <Bookmark size={21} />
+          <span>Đã lưu</span>
+        </Link>
+        <Link to="/tai-khoan/thong-bao">
+          <Bell size={21} />
+          <span>Thông báo</span>
         </Link>
       </nav>
 
