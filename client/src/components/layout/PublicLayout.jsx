@@ -106,10 +106,13 @@ function isAuthenticationPath(pathname) {
 }
 
 function showMobileBottomNavigation(pathname) {
+  if (pathname.startsWith('/dang-bai/')) {
+    return false;
+  }
+
   const hiddenPrefixes = [
     '/cong-dong/create',
     '/studio',
-    '/dang-bai',
     '/gui-tin',
     '/dang-nhap',
     '/dang-ky',
