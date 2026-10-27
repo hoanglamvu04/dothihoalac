@@ -57,6 +57,21 @@ const DESCRIPTION_MAX_LENGTH = 10000;
 
 const SOURCE_MAX_LENGTH = 2000;
 
+const TIP_STEPS = [
+  'Nội dung',
+  'Khu vực',
+  'Nguồn & hình ảnh',
+  'Liên hệ',
+  'Kiểm tra & gửi',
+];
+const STEP_VALIDATION_FIELDS = [
+  ['title', 'description'],
+  [],
+  ['source'],
+  ['contactEmail', 'allowContact'],
+  [],
+];
+
 const INITIAL_FORM = {
   title: '',
   description: '',
@@ -141,6 +156,8 @@ export default function NewsTipPage() {
 
   const [done, setDone] =
     useState(false);
+  const [activeStep, setActiveStep] = useState(1);
+  const [furthestStep, setFurthestStep] = useState(1);
 
   const [
     validationErrors,
@@ -432,6 +449,9 @@ export default function NewsTipPage() {
           parsed.media || null,
         );
 
+        setActiveStep(1);
+        setFurthestStep(1);
+        setValidationErrors({});
         setRestoredDraft(true);
 
         toast.success(
@@ -481,6 +501,8 @@ export default function NewsTipPage() {
     setForm(initialState.form);
     setMedia(initialState.media);
     setValidationErrors({});
+    setActiveStep(1);
+    setFurthestStep(1);
     setDone(false);
     setRestoredDraft(false);
     setHasLocalDraft(false);
@@ -502,7 +524,7 @@ export default function NewsTipPage() {
     );
   }, [toast]);
 
-  const validate = useCallback(() => {
+  const validate = useCallback((fields = null) => {
     const errors = {};
 
     const title =
@@ -572,10 +594,15 @@ export default function NewsTipPage() {
         'Vui lòng cung cấp số điện thoại hoặc email để Ban biên tập liên hệ.';
     }
 
-    setValidationErrors(errors);
+    const relevantErrors = Array.isArray(fields)
+      ? Object.fromEntries(
+          Object.entries(errors).filter(([key]) => fields.includes(key)),
+        )
+      : errors;
 
-    const firstError =
-      Object.values(errors)[0];
+    setValidationErrors(relevantErrors);
+
+    const firstError = Object.values(relevantErrors)[0];
 
     if (firstError) {
       formTopRef.current?.scrollIntoView(
@@ -592,6 +619,24 @@ export default function NewsTipPage() {
 
     return true;
   }, [form, toast]);
+
+  const goToStep = useCallback((target) => {
+    if (loading || target < 1 || target > TIP_STEPS.length || target === activeStep) {
+      return;
+    }
+    if (target > activeStep) {
+      for (let step = activeStep; step < target; step += 1) {
+        if (!validate(STEP_VALIDATION_FIELDS[step - 1])) {
+          setActiveStep(step);
+          return;
+        }
+      }
+    }
+    setValidationErrors({});
+    setActiveStep(target);
+    setFurthestStep((previous) => Math.max(previous, target));
+    formTopRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [activeStep, loading, validate]);
 
   const buildPayload =
     useCallback(
@@ -638,10 +683,27 @@ export default function NewsTipPage() {
     async (event) => {
       event.preventDefault();
 
-      if (
-        loading ||
-        !validate()
-      ) {
+      if (loading) {
+        return;
+      }
+      if (activeStep < TIP_STEPS.length) {
+        goToStep(activeStep + 1);
+        return;
+      }
+      if (!validate()) {
+        const titleLength = form.title.trim().length;
+        const descriptionLength = form.description.trim().length;
+        if (
+          titleLength < TITLE_MIN_LENGTH || titleLength > TITLE_MAX_LENGTH ||
+          descriptionLength < DESCRIPTION_MIN_LENGTH ||
+          descriptionLength > DESCRIPTION_MAX_LENGTH
+        ) {
+          setActiveStep(1);
+        } else if (form.source.length > SOURCE_MAX_LENGTH) {
+          setActiveStep(3);
+        } else {
+          setActiveStep(4);
+        }
         return;
       }
 
@@ -687,7 +749,10 @@ export default function NewsTipPage() {
       }
     },
     [
+      activeStep,
       buildPayload,
+      form,
+      goToStep,
       loading,
       toast,
       validate,
@@ -702,6 +767,8 @@ export default function NewsTipPage() {
       setForm(initialState.form);
       setMedia(initialState.media);
       setValidationErrors({});
+      setActiveStep(1);
+      setFurthestStep(1);
       setDone(false);
       setRestoredDraft(false);
       setHasLocalDraft(false);
@@ -745,6 +812,46 @@ export default function NewsTipPage() {
       done,
       navigate,
     ]);
+
+  const reviewGroups = [
+    {
+      step: 1,
+      title: 'Nội dung nguồn tin',
+      fields: [
+        ['Tiêu đề', form.title.trim()],
+        ['Nội dung sự việc', form.description.trim()],
+      ],
+    },
+    {
+      step: 2,
+      title: 'Khu vực và thời gian',
+      fields: [
+        [
+          'Khu vực',
+          areas.find((area) => String(area._id || area.id) === String(form.areaId))?.name,
+        ],
+        ['Thời gian xảy ra', form.eventTime ? form.eventTime.replace('T', ' ') : ''],
+      ],
+    },
+    {
+      step: 3,
+      title: 'Nguồn và tài liệu',
+      fields: [
+        ['Nguồn thông tin', form.source.trim()],
+        ['Ảnh minh họa', getMediaIds(media).length ? String(getMediaIds(media).length) + ' ảnh' : ''],
+      ],
+    },
+    {
+      step: 4,
+      title: 'Thông tin liên hệ riêng',
+      fields: [
+        ['Họ tên', form.contactName.trim()],
+        ['Số điện thoại', form.contactPhone.trim()],
+        ['Email', form.contactEmail.trim()],
+        ['Đồng ý liên hệ', form.allowContact ? 'Có' : 'Không'],
+      ],
+    },
+  ];
 
   return (
     <section className="news-tip-page">
@@ -878,7 +985,7 @@ export default function NewsTipPage() {
                     className="news-tip-primary-action"
                   >
                     <Send size={18} />
-                    Điền thông tin
+                    Bắt đầu gửi tin
                   </a>
 
                   <Link
@@ -997,8 +1104,51 @@ export default function NewsTipPage() {
                   id="news-tip-form"
                   className="news-tip-form"
                   onSubmit={submit}
+                  noValidate
                 >
-                  <section className="news-tip-card">
+                  
+                  <div className="news-tip-wizard">
+                    <div className="news-tip-wizard__heading">
+                      <span>Bước {activeStep} / {TIP_STEPS.length}</span>
+                      <strong>{TIP_STEPS[activeStep - 1]}</strong>
+                    </div>
+                    <div
+                      className="news-tip-wizard__progress"
+                      role="progressbar"
+                      aria-label="Tiến trình gửi tin"
+                      aria-valuemin={1}
+                      aria-valuemax={TIP_STEPS.length}
+                      aria-valuenow={activeStep}
+                    >
+                      <span style={{ width: String(activeStep * 100 / TIP_STEPS.length) + '%' }} />
+                    </div>
+                    <nav className="news-tip-wizard__steps" aria-label="Các bước gửi tin">
+                      {TIP_STEPS.map((name, index) => {
+                        const number = index + 1;
+                        return (
+                          <button
+                            key={name}
+                            type="button"
+                            className={[
+                              'news-tip-wizard__step',
+                              activeStep === number ? 'is-active' : '',
+                              activeStep > number ? 'is-complete' : '',
+                            ].filter(Boolean).join(' ')}
+                            disabled={loading || number > furthestStep}
+                            aria-current={activeStep === number ? 'step' : undefined}
+                            onClick={() => goToStep(number)}
+                          >
+                            <span className="news-tip-wizard__number">
+                              {number < activeStep ? <CheckCircle2 size={16} /> : number}
+                            </span>
+                            <span>{name}</span>
+                          </button>
+                        );
+                      })}
+                    </nav>
+                  </div>
+
+<section className="news-tip-card" hidden={activeStep !== 1}>
                     <header className="news-tip-card__heading">
                       <span>
                         <FileText
@@ -1096,7 +1246,7 @@ export default function NewsTipPage() {
 
                       <textarea
                         id="tip-description"
-                        rows="10"
+                        rows="7"
                         value={
                           form.description
                         }
@@ -1136,7 +1286,7 @@ export default function NewsTipPage() {
                     </div>
                   </section>
 
-                  <section className="news-tip-card">
+                  <section className="news-tip-card" hidden={activeStep !== 2}>
                     <header className="news-tip-card__heading">
                       <span>
                         <MapPin size={22} />
@@ -1248,7 +1398,7 @@ export default function NewsTipPage() {
                     </div>
                   </section>
 
-                  <section className="news-tip-card">
+                  <section className="news-tip-card" hidden={activeStep !== 3}>
                     <header className="news-tip-card__heading">
                       <span>
                         <ShieldCheck
@@ -1345,7 +1495,7 @@ export default function NewsTipPage() {
                     </div>
                   </section>
 
-                  <section className="news-tip-card">
+                  <section className="news-tip-card" hidden={activeStep !== 4}>
                     <header className="news-tip-card__heading">
                       <span>
                         <UserRound
@@ -1529,34 +1679,84 @@ export default function NewsTipPage() {
                     </div>
                   </section>
 
+
+                  <section className="news-tip-card news-tip-card--review" hidden={activeStep !== TIP_STEPS.length}>
+                    <header className="news-tip-card__heading">
+                      <span><FileCheck2 size={22} /></span>
+                      <div>
+                        <small>Bước 5</small>
+                        <h2>Kiểm tra và gửi tin</h2>
+                        <p>Rà soát thông tin trước khi gửi tới Ban biên tập.</p>
+                      </div>
+                    </header>
+                    <div className="news-tip-review">
+                      {reviewGroups.map((group) => (
+                        <section className="news-tip-review__group" key={group.step}>
+                          <div className="news-tip-review__group-heading">
+                            <h3>{group.title}</h3>
+                            <button type="button" onClick={() => goToStep(group.step)}>
+                              Chỉnh sửa
+                            </button>
+                          </div>
+                          <dl>
+                            {group.fields.map(([label, value]) => (
+                              <div key={label}>
+                                <dt>{label}</dt>
+                                <dd>{value || 'Chưa cung cấp'}</dd>
+                              </div>
+                            ))}
+                          </dl>
+                        </section>
+                      ))}
+                    </div>
+                    <div className="news-tip-privacy-notice">
+                      <ShieldCheck size={19} />
+                      <p>
+                        Ban biên tập sẽ kiểm duyệt trước khi đăng.
+                        Thông tin liên hệ không tự động công khai.
+                      </p>
+                    </div>
+                  </section>
+
                   <section className="news-tip-form-actions">
                     <div>
-                      <button
-                        type="button"
-                        disabled={loading}
-                        onClick={resetForm}
-                      >
-                        <RotateCcw
-                          size={17}
-                        />
+                      <button type="button" disabled={loading} onClick={resetForm}>
+                        <RotateCcw size={17} />
                         Đặt lại
                       </button>
-
                       <span>
                         {dirty
-                          ? 'Bạn đang có thay đổi chưa gửi.'
+                          ? 'Nội dung được tự lưu trên thiết bị khi nhập.'
                           : 'Biểu mẫu chưa có thay đổi mới.'}
                       </span>
                     </div>
-
-                    <Button
-                      type="submit"
-                      loading={loading}
-                      disabled={loading}
-                    >
-                      <Send size={18} />
-                      Gửi thông tin
-                    </Button>
+                    <div className="news-tip-form-actions__navigation">
+                      {activeStep > 1 ? (
+                        <button
+                          type="button"
+                          disabled={loading}
+                          onClick={() => goToStep(activeStep - 1)}
+                        >
+                          <ArrowLeft size={17} />
+                          Quay lại
+                        </button>
+                      ) : null}
+                      {activeStep < TIP_STEPS.length ? (
+                        <button
+                          type="button"
+                          className="news-tip-form-actions__next"
+                          disabled={loading}
+                          onClick={() => goToStep(activeStep + 1)}
+                        >
+                          Tiếp theo <ArrowRight size={18} />
+                        </button>
+                      ) : (
+                        <Button type="submit" loading={loading} disabled={loading}>
+                          <Send size={18} />
+                          Gửi thông tin
+                        </Button>
+                      )}
+                    </div>
                   </section>
                 </form>
               </main>
