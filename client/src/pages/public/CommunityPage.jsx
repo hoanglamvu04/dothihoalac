@@ -51,6 +51,7 @@ import { formatRelativeTime } from '../../utils/formatters';
 
 import './CommunityPageSocial.css';
 import './CommunityPageReferenceV3.css';
+import './CommunityPageRefresh.css';
 
 const FEED_TABS = [
   { key: 'all', label: 'Tất cả' },
