@@ -639,3 +639,48 @@
     display: none;
   }
 }
+
+
+/* Final mobile semantic tones for text-only job type filters. */
+@media (max-width: 760px) {
+  .jobs-page .jobs-discovery__grid > button.is-type-full_time {
+    color: #17643c;
+    border-color: #c7e3d0;
+    background: #edf8f1;
+  }
+
+  .jobs-page .jobs-discovery__grid > button.is-type-part_time {
+    color: #2f6399;
+    border-color: #cddff1;
+    background: #eef5fc;
+  }
+
+  .jobs-page .jobs-discovery__grid > button.is-type-internship {
+    color: #6e52a6;
+    border-color: #d9cfee;
+    background: #f4f0fb;
+  }
+
+  .jobs-page .jobs-discovery__grid > button.is-type-construction {
+    color: #876124;
+    border-color: #ead9b6;
+    background: #fff7e8;
+  }
+
+  .jobs-page .jobs-discovery__grid > button.is-type-service {
+    color: #a14b5f;
+    border-color: #edced5;
+    background: #fff0f3;
+  }
+
+  .jobs-page .jobs-discovery__grid > button.is-type-student {
+    color: #277269;
+    border-color: #c9e5df;
+    background: #edf8f6;
+  }
+
+  .jobs-page .jobs-discovery__grid > button.is-active {
+    border-width: 1.5px;
+    box-shadow: 0 7px 18px rgb(17 70 42 / 0.09);
+  }
+}
