@@ -279,10 +279,10 @@
   background: var(--ap-green-soft);
 }
 .account-session-item strong,
-.account-session-item span,
+.account-session-item > div > span:not(.account-session-item__current),
 .account-session-item small { display: block; }
 .account-session-item strong { font-size: 0.78rem; }
-.account-session-item span { margin-top: 3px; color: var(--ap-text); font-size: 0.66rem; }
+.account-session-item > div > span:not(.account-session-item__current) { margin-top: 3px; color: var(--ap-text); font-size: 0.66rem; }
 .account-session-item small { margin-top: 3px; color: var(--ap-muted); font-size: 0.62rem; }
 .account-session-item__current { display: inline-flex; align-items: center; margin-top: 6px; color: var(--ap-green-dark); font-size: 0.62rem; font-weight: 700; }
 
