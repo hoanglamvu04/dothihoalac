@@ -765,12 +765,24 @@
    TABLE OF CONTENTS
 ========================================================= */
 
+/* Keep the article index readable without changing other sidebar cards. */
+.static-page-toc .static-sidebar-heading h2 {
+  font-size: 0.95rem;
+  font-weight: 780;
+}
+
+.static-page-toc .static-sidebar-heading p {
+  color: var(--static-text);
+  font-size: 0.72rem;
+  line-height: 1.5;
+}
+
 .static-page-toc nav {
   display: grid;
 
-  max-height: 360px;
-  padding-top: 9px;
-  gap: 2px;
+  max-height: 420px;
+  padding-top: 12px;
+  gap: 4px;
 
   overflow-y: auto;
 
@@ -781,17 +793,18 @@
   position: relative;
 
   width: 100%;
-  min-height: 36px;
-  padding: 7px 8px 7px 16px;
+  min-height: 42px;
+  padding: 9px 10px 9px 19px;
 
   border: 0;
   border-radius: 8px;
 
-  color: var(--static-text);
+  color: var(--static-ink);
   background: transparent;
 
-  font-size: 0.62rem;
-  line-height: 1.4;
+  font-size: 0.85rem;
+  font-weight: 650;
+  line-height: 1.5;
   text-align: left;
 
   cursor: pointer;
@@ -803,11 +816,12 @@
 
 .static-page-toc button::before {
   position: absolute;
-  top: 15px;
-  left: 4px;
+  top: 50%;
+  left: 6px;
 
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
+  transform: translateY(-50%);
 
   border-radius: 50%;
 
@@ -824,23 +838,29 @@
     var(--static-green-soft);
 }
 
+.static-page-toc button:focus-visible {
+  outline: 2px solid var(--static-green-dark);
+  outline-offset: -2px;
+}
+
 .static-page-toc
   button.is-level-3 {
-  padding-left: 28px;
+  padding-left: 31px;
 
-  color: var(--static-muted);
+  color: var(--static-text);
 
-  font-size: 0.59rem;
+  font-size: 0.8rem;
+  font-weight: 560;
 }
 
 .static-page-toc
   button.is-level-3::before {
-  left: 16px;
+  left: 18px;
 
-  width: 4px;
-  height: 4px;
+  width: 5px;
+  height: 5px;
 
-  background: #9db2a4;
+  background: #8ca997;
 }
 
 /* =========================================================
@@ -1215,22 +1235,19 @@
   }
 
   .static-page-toc button {
-    min-height: 42px;
+    min-height: 44px;
     padding: 9px 10px 9px 20px;
-    font-size: 0.78rem;
-    line-height: 1.45;
+    font-size: 0.9rem;
+    line-height: 1.5;
   }
 
   .static-page-toc button::before {
-    top: 18px;
     left: 6px;
-    width: 5px;
-    height: 5px;
   }
 
   .static-page-toc button.is-level-3 {
     padding-left: 31px;
-    font-size: 0.74rem;
+    font-size: 0.84rem;
   }
 
   .static-page-toc button.is-level-3::before {
