@@ -107,36 +107,6 @@ export default function AccountOverviewPage() {
       <Seo title="Tổng quan tài khoản" />
 
       <div className="account-overview-mobile">
-        <section className="account-overview-mobile__completion">
-          <div
-            className="account-overview-mobile__ring"
-            style={{ '--completion-angle': `${Math.max(0, Math.min(completion, 100)) * 3.6}deg` }}
-            aria-label={`Hồ sơ hoàn thiện ${completion}%`}
-          >
-            <div>
-              <strong>{completion}%</strong>
-            </div>
-          </div>
-
-          <div className="account-overview-mobile__completion-copy">
-            <strong>
-              {completion >= 100
-                ? 'Hồ sơ tài khoản đã hoàn thiện'
-                : 'Hoàn thiện hồ sơ tài khoản'}
-            </strong>
-            <p>
-              {completion >= 80
-                ? 'Các thông tin quan trọng của tài khoản đã được cập nhật khá đầy đủ.'
-                : 'Bổ sung thêm thông tin để hồ sơ của bạn rõ ràng và đáng tin cậy hơn.'}
-            </p>
-          </div>
-
-          <Link to="/tai-khoan/ho-so" className="account-overview-mobile__completion-link">
-            Xem chi tiết
-            <ChevronRight size={16} />
-          </Link>
-        </section>
-
         <section className="account-overview-mobile__status-grid" aria-label="Trạng thái tài khoản">
           <Link to="/tai-khoan/bao-mat" className="account-overview-mobile__status">
             <span className="account-overview-mobile__status-icon is-green">
