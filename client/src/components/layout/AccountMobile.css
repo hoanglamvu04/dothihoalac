@@ -430,8 +430,8 @@
   .account-center-page.is-subpage .bookmarks-hero__eyebrow {
     margin-bottom: 3px !important;
     color: var(--account-mobile-green) !important;
-    font-size: 0.54rem !important;
-    letter-spacing: 0.06em;
+    font-size: 12px !important;
+    letter-spacing: 0.055em;
   }
 
   .account-center-page.is-subpage .account-page-heading h2,
@@ -440,7 +440,8 @@
   .account-center-page.is-subpage .bookmarks-hero h1 {
     margin: 0 !important;
     color: #172f21 !important;
-    font-size: 1rem !important;
+    font-size: 21px !important;
+    line-height: 1.18;
     letter-spacing: -0.025em !important;
   }
 
@@ -476,7 +477,8 @@
   .account-center-page.is-subpage .profile-settings-card__heading h2,
   .account-center-page.is-subpage .activity-card__heading strong,
   .account-center-page.is-subpage .bookmarks-content-card__header h2 {
-    font-size: 0.72rem !important;
+    font-size: 16px !important;
+    line-height: 1.28;
   }
 
   .account-center-page.is-subpage .account-page-card__header p,
@@ -484,8 +486,8 @@
   .account-center-page.is-subpage .activity-card__heading span,
   .account-center-page.is-subpage .bookmarks-content-card__header p {
     margin-top: 2px !important;
-    font-size: 0.54rem !important;
-    line-height: 1.4;
+    font-size: 13px !important;
+    line-height: 1.45;
   }
 
   /* Profile settings */
@@ -505,7 +507,7 @@
   .account-center-page .profile-settings-field label,
   .account-center-page .account-field label {
     margin-bottom: 5px !important;
-    font-size: 0.58rem !important;
+    font-size: 13px !important;
     font-weight: 720;
   }
 
@@ -522,13 +524,14 @@
   .account-center-page .profile-settings-input textarea,
   .account-center-page .account-input input,
   .account-center-page .account-input select {
-    font-size: 0.66rem !important;
+    font-size: 16px !important;
   }
 
   .account-center-page .profile-settings-field__hint,
   .account-center-page .account-field__hint {
     margin-top: 4px !important;
-    font-size: 0.51rem !important;
+    font-size: 12px !important;
+    line-height: 1.45;
   }
 
   .account-center-page .profile-settings-card__heading-icon {
@@ -558,18 +561,19 @@
   }
 
   .account-center-page .account-verification-card__content strong {
-    font-size: 0.62rem !important;
+    font-size: 14px !important;
   }
 
   .account-center-page .account-verification-card__content small,
   .account-center-page .account-verification-status {
-    font-size: 0.52rem !important;
+    font-size: 12.5px !important;
   }
 
   .account-center-page .account-verification-card__note {
     grid-column: 1 / -1;
     padding-top: 6px;
-    font-size: 0.51rem !important;
+    font-size: 12px !important;
+    line-height: 1.45;
   }
 
   .account-center-page .account-form-grid {
@@ -586,7 +590,7 @@
   .account-center-page .account-page-button {
     min-height: 40px !important;
     border-radius: 10px !important;
-    font-size: 0.62rem !important;
+    font-size: 13px !important;
   }
 
   /* My content */
@@ -594,7 +598,7 @@
     min-height: 36px !important;
     padding-inline: 9px !important;
     border-radius: 9px !important;
-    font-size: 0.58rem !important;
+    font-size: 13px !important;
   }
 
   .account-center-page .my-content-toolbar {
@@ -625,12 +629,12 @@
     min-height: 31px !important;
     padding-inline: 9px !important;
     border-radius: 999px !important;
-    font-size: 0.54rem !important;
+    font-size: 12px !important;
   }
 
   .account-center-page .my-content-summary {
     margin: 7px 2px !important;
-    font-size: 0.55rem !important;
+    font-size: 12px !important;
   }
 
   .account-center-page .my-content-grid {
@@ -677,7 +681,7 @@
     top: 9px;
     right: 9px;
     padding: 4px 6px;
-    font-size: 0.48rem;
+    font-size: 11px;
   }
 
   .account-center-page .my-content-card__body {
@@ -686,13 +690,13 @@
   }
 
   .account-center-page .my-content-card__type {
-    font-size: 0.5rem !important;
+    font-size: 11px !important;
   }
 
   .account-center-page .my-content-card__body h2 {
     margin: 2px 0 0 !important;
-    font-size: 0.68rem !important;
-    line-height: 1.35;
+    font-size: 14px !important;
+    line-height: 1.4;
   }
 
   .account-center-page .my-content-card__body p {
@@ -701,7 +705,7 @@
 
   .account-center-page .my-content-card__body small {
     margin-top: 4px !important;
-    font-size: 0.5rem !important;
+    font-size: 12px !important;
   }
 
   .account-center-page .my-content-card__actions {
@@ -719,7 +723,7 @@
     min-height: 30px !important;
     padding-inline: 8px !important;
     border-radius: 8px !important;
-    font-size: 0.53rem !important;
+    font-size: 12px !important;
   }
 
   /* Bookmarks */
@@ -741,7 +745,7 @@
     min-height: 34px !important;
     padding-inline: 9px !important;
     border-radius: 9px !important;
-    font-size: 0.56rem !important;
+    font-size: 12.5px !important;
   }
 
   .account-center-page .bookmarks-content-card__body {
@@ -762,11 +766,11 @@
 
   .account-center-page .bookmarks-list__saved-time {
     margin-bottom: 6px !important;
-    font-size: 0.49rem !important;
+    font-size: 11.5px !important;
   }
 
   .account-center-page .bookmarks-pagination > p {
-    font-size: 0.53rem !important;
+    font-size: 12px !important;
   }
 
   /* Activity */
@@ -782,7 +786,7 @@
     min-height: 32px !important;
     padding-inline: 8px !important;
     border-radius: 8px !important;
-    font-size: 0.54rem !important;
+    font-size: 13px !important;
   }
 
   .account-center-page .activity-summary {
@@ -814,11 +818,13 @@
   }
 
   .account-center-page .activity-summary strong {
-    font-size: 0.72rem !important;
+    font-size: 20px !important;
+    line-height: 1.05;
   }
 
   .account-center-page .activity-summary small {
-    font-size: 0.5rem !important;
+    font-size: 13px !important;
+    font-weight: 680;
   }
 
   .account-center-page .activity-list {
@@ -850,13 +856,15 @@
   }
 
   .account-center-page .activity-row__topline strong {
-    font-size: 0.6rem !important;
+    font-size: 15px !important;
+    line-height: 1.35;
   }
 
   .account-center-page .activity-row__topline time,
   .account-center-page .activity-row__content p,
   .account-center-page .activity-row__target small {
-    font-size: 0.49rem !important;
+    font-size: 12.5px !important;
+    line-height: 1.45;
   }
 
   .account-center-page .activity-row__target {
@@ -868,7 +876,8 @@
   }
 
   .account-center-page .activity-row__target b {
-    font-size: 0.56rem !important;
+    font-size: 14px !important;
+    line-height: 1.35;
   }
 
   /* Generic account lists */
@@ -911,5 +920,81 @@
 
   .account-mobile-dock > a {
     font-size: 0.48rem;
+  }
+}
+
+
+/* Mobile account readability pass: keep all account subpages comfortably legible. */
+@media (max-width: 760px) {
+  .account-center-page.is-subpage .account-session-item strong,
+  .account-center-page.is-subpage .account-notification-item strong,
+  .account-center-page.is-subpage .account-report-item strong {
+    font-size: 14px !important;
+    line-height: 1.35;
+  }
+
+  .account-center-page.is-subpage .account-session-item > div > span:not(.account-session-item__current),
+  .account-center-page.is-subpage .account-session-item small,
+  .account-center-page.is-subpage .account-notification-item p,
+  .account-center-page.is-subpage .account-notification-item time,
+  .account-center-page.is-subpage .account-report-item p,
+  .account-center-page.is-subpage .account-report-item blockquote,
+  .account-center-page.is-subpage .account-page-note,
+  .account-center-page.is-subpage .account-inline-alert {
+    font-size: 12.5px !important;
+    line-height: 1.5;
+  }
+
+  .account-center-page.is-subpage .account-filter-tabs button,
+  .account-center-page.is-subpage .account-verification-status,
+  .account-center-page.is-subpage .account-session-item__current {
+    font-size: 12px !important;
+  }
+
+  .account-center-page.is-subpage .account-stat-card strong {
+    font-size: 20px !important;
+  }
+
+  .account-center-page.is-subpage .account-stat-card small,
+  .account-center-page.is-subpage .account-quick-grid small {
+    font-size: 12.5px !important;
+  }
+
+  .account-center-page.is-subpage .account-quick-grid strong {
+    font-size: 14px !important;
+  }
+
+  .account-center-page.is-subpage .activity-row {
+    min-height: 78px !important;
+    padding: 12px 4px !important;
+    grid-template-columns: 38px minmax(0, 1fr) 20px !important;
+    gap: 10px !important;
+  }
+
+  .account-center-page.is-subpage .activity-row__icon {
+    width: 38px !important;
+    height: 38px !important;
+    border-radius: 11px !important;
+  }
+
+  .account-center-page.is-subpage .activity-summary > a {
+    min-height: 96px !important;
+    padding: 12px 6px !important;
+    gap: 6px !important;
+  }
+
+  .account-center-page.is-subpage .activity-summary > a > span {
+    width: 40px !important;
+    height: 40px !important;
+  }
+
+  .account-center-page.is-subpage .activity-card__heading {
+    padding-bottom: 12px !important;
+    margin-bottom: 4px !important;
+  }
+
+  .account-center-page.is-subpage .activity-page__actions button {
+    min-height: 42px !important;
+    padding-inline: 12px !important;
   }
 }
