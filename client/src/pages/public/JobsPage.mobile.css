@@ -641,60 +641,36 @@
 }
 
 
-/* Final mobile semantic tones for text-only job type filters. */
+/* Final mobile contract for job-type discovery.
+ * Desktop keeps the original icon cards from JobsPage.css.
+ */
 @media (max-width: 760px) {
-  .jobs-page .jobs-discovery__grid > button.is-type-full_time {
-    color: #17643c;
-    border-color: #c7e3d0;
-    background: #edf8f1;
+  .jobs-page .jobs-discovery__grid {
+    grid-auto-flow: column;
+    grid-auto-columns: minmax(118px, 31.8%);
+    grid-template-columns: none;
+    gap: 8px;
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scroll-snap-type: inline proximity;
+    scrollbar-width: none;
   }
 
-  .jobs-page .jobs-discovery__grid > button.is-type-part_time {
-    color: #2f6399;
-    border-color: #cddff1;
-    background: #eef5fc;
+  .jobs-page .jobs-discovery__grid::-webkit-scrollbar {
+    display: none;
   }
 
-  .jobs-page .jobs-discovery__grid > button.is-type-internship {
-    color: #6e52a6;
-    border-color: #d9cfee;
-    background: #f4f0fb;
-  }
-
-  .jobs-page .jobs-discovery__grid > button.is-type-construction {
-    color: #876124;
-    border-color: #ead9b6;
-    background: #fff7e8;
-  }
-
-  .jobs-page .jobs-discovery__grid > button.is-type-service {
-    color: #a14b5f;
-    border-color: #edced5;
-    background: #fff0f3;
-  }
-
-  .jobs-page .jobs-discovery__grid > button.is-type-student {
-    color: #277269;
-    border-color: #c9e5df;
-    background: #edf8f6;
-  }
-
-  .jobs-page .jobs-discovery__grid > button.is-active {
-    border-width: 1.5px;
-    box-shadow: 0 7px 18px rgb(17 70 42 / 0.09);
-  }
-}
-
-
-/* Mobile only: text-only job type labels. Desktop keeps the original icon cards. */
-@media (max-width: 760px) {
   .jobs-page .jobs-discovery__grid > button {
-    grid-template-columns: 1fr;
-    place-items: center;
-    align-content: center;
-    min-height: 72px;
-    padding: 10px 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 118px;
+    min-height: 62px;
+    padding: 8px 12px;
+    gap: 0;
+    border-radius: 12px;
     text-align: center;
+    scroll-snap-align: start;
   }
 
   .jobs-page .jobs-discovery__icon {
@@ -702,17 +678,63 @@
   }
 
   .jobs-page .jobs-discovery__grid > button > span:last-child {
-    width: 100%;
+    width: auto;
+    min-width: 0;
   }
 
   .jobs-page .jobs-discovery__grid strong {
+    display: block;
+    overflow: visible;
     font-size: 0.72rem;
-    line-height: 1.28;
+    font-weight: 790;
+    line-height: 1.2;
     text-align: center;
-    white-space: normal;
+    text-overflow: clip;
+    white-space: nowrap !important;
   }
 
   .jobs-page .jobs-discovery__grid small {
     display: none !important;
+  }
+
+  .jobs-page .jobs-discovery__grid > button.is-type-full_time {
+    color: #17643c !important;
+    border-color: #c4e1cd !important;
+    background: #eaf7ef !important;
+  }
+
+  .jobs-page .jobs-discovery__grid > button.is-type-part_time {
+    color: #2d6196 !important;
+    border-color: #c9dcef !important;
+    background: #ebf4fc !important;
+  }
+
+  .jobs-page .jobs-discovery__grid > button.is-type-internship {
+    color: #6c50a4 !important;
+    border-color: #d6cbed !important;
+    background: #f2edfa !important;
+  }
+
+  .jobs-page .jobs-discovery__grid > button.is-type-construction {
+    color: #855f22 !important;
+    border-color: #ead7ad !important;
+    background: #fff5e2 !important;
+  }
+
+  .jobs-page .jobs-discovery__grid > button.is-type-service {
+    color: #9e485c !important;
+    border-color: #eccbd3 !important;
+    background: #ffedf1 !important;
+  }
+
+  .jobs-page .jobs-discovery__grid > button.is-type-student {
+    color: #246f67 !important;
+    border-color: #c5e2dc !important;
+    background: #eaf7f4 !important;
+  }
+
+  .jobs-page .jobs-discovery__grid > button.is-active {
+    border-width: 1.5px !important;
+    box-shadow: 0 7px 18px rgb(17 70 42 / 0.09) !important;
   }
 }
