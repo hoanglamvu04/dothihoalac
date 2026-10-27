@@ -684,3 +684,35 @@
     box-shadow: 0 7px 18px rgb(17 70 42 / 0.09);
   }
 }
+
+
+/* Mobile only: text-only job type labels. Desktop keeps the original icon cards. */
+@media (max-width: 760px) {
+  .jobs-page .jobs-discovery__grid > button {
+    grid-template-columns: 1fr;
+    place-items: center;
+    align-content: center;
+    min-height: 72px;
+    padding: 10px 8px;
+    text-align: center;
+  }
+
+  .jobs-page .jobs-discovery__icon {
+    display: none !important;
+  }
+
+  .jobs-page .jobs-discovery__grid > button > span:last-child {
+    width: 100%;
+  }
+
+  .jobs-page .jobs-discovery__grid strong {
+    font-size: 0.72rem;
+    line-height: 1.28;
+    text-align: center;
+    white-space: normal;
+  }
+
+  .jobs-page .jobs-discovery__grid small {
+    display: none !important;
+  }
+}
