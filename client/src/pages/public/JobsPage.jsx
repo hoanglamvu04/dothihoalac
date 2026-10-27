@@ -748,7 +748,7 @@ export default function JobsPage() {
                 <button
                   type="button"
                   key={value}
-                  className={selected ? 'is-active' : ''}
+                  className={`is-type-${value}${selected ? ' is-active' : ''}`}
                   onClick={() => update('type', selected ? '' : value)}
                 >
                   <strong>{JOB_TYPES[value]}</strong>
