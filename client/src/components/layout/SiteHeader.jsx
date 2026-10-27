@@ -121,7 +121,7 @@ const HEADER_MODE_OPTIONS = [
   },
 ];
 
-const NOTIFICATION_PREVIEW_LIMIT = 12;
+const NOTIFICATION_PREVIEW_LIMIT = 5;
 
 function readHeaderPreferences() {
   if (typeof window === 'undefined') {
