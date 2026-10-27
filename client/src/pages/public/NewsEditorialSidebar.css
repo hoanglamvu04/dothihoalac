@@ -245,8 +245,8 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-discussion-list a
 .news-tip-cta {
   display: grid;
   grid-template-columns: 40px minmax(0, 1fr);
-  padding: 16px;
-  gap: 10px 12px;
+  padding: 14px;
+  gap: 8px 12px;
   border: 1px solid #d7e3dc;
   border-radius: 11px;
   background:
@@ -287,7 +287,7 @@ html[data-dthl-theme='light'][data-dthl-palette='earth'] .news-discussion-list a
 
 .news-tip-cta p {
   grid-column: 1 / -1;
-  margin: 8px 0 0;
+  margin: 5px 0 0;
   color: #6d706a;
   font-size: 0.62rem;
   line-height: 1.5;

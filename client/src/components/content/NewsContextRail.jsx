@@ -454,12 +454,12 @@ function NewsTipCard() {
     <section className="news-tip-cta">
       <span><Send size={18} /></span>
       <div>
-        <small>Cộng tác cùng Đô Thị Hòa Lạc</small>
-        <strong>Có thông tin tại Hòa Lạc?</strong>
-        <p>Gửi sự kiện, thay đổi địa bàn hoặc thông tin đáng chú ý cho ban biên tập.</p>
+        <small>Góp tin địa phương</small>
+        <strong>Bạn có tin mới?</strong>
+        <p>Chia sẻ sự kiện, thông tin đáng chú ý ở Hòa Lạc.</p>
       </div>
       <Link to="/gui-tin">
-        Gửi thông tin
+        Gửi tin ngay
         <ArrowRight size={14} />
       </Link>
     </section>
