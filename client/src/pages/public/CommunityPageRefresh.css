@@ -1,0 +1,131 @@
+/* Community desktop alignment + feed tab color refresh.
+ * Keeps the 3-column dashboard intact while restoring side-rail alignment.
+ */
+
+/* Side rails should begin level with the center composer. */
+@media (min-width: 941px) {
+  .community-social-page .community-reference-left,
+  .community-social-page .community-reference-right {
+    align-self: start !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    top: 112px !important;
+    transition: none !important;
+  }
+
+  body:has(.dthl-header.is-compact:not(.is-hidden))
+    .community-social-page
+    .community-reference-left,
+  body:has(.dthl-header.is-compact:not(.is-hidden))
+    .community-social-page
+    .community-reference-right {
+    top: 86px !important;
+  }
+
+  body:has(.dthl-header.is-hidden)
+    .community-social-page
+    .community-reference-left,
+  body:has(.dthl-header.is-hidden)
+    .community-social-page
+    .community-reference-right {
+    top: 14px !important;
+  }
+}
+
+/* Feed tabs: subtle semantic pastel surfaces instead of plain white pills. */
+.community-social-page .community-reference-feed-tabs nav :is(button, a) {
+  --community-tab-color: #52645a;
+  --community-tab-bg: #f7faf8;
+  --community-tab-border: #dfe8e3;
+  --community-tab-active-bg: #edf5f0;
+
+  border-color: var(--community-tab-border) !important;
+  color: var(--community-tab-color) !important;
+  background: var(--community-tab-bg) !important;
+  box-shadow: none !important;
+}
+
+.community-social-page .community-reference-feed-tabs nav :is(button, a):nth-child(1) {
+  --community-tab-color: #17643c;
+  --community-tab-bg: #edf8f1;
+  --community-tab-border: #cbe5d4;
+  --community-tab-active-bg: #dcefe3;
+}
+
+.community-social-page .community-reference-feed-tabs nav :is(button, a):nth-child(2) {
+  --community-tab-color: #a45135;
+  --community-tab-bg: #fff2ed;
+  --community-tab-border: #efd2c7;
+  --community-tab-active-bg: #f8dfd5;
+}
+
+.community-social-page .community-reference-feed-tabs nav :is(button, a):nth-child(3) {
+  --community-tab-color: #376a9f;
+  --community-tab-bg: #eef5fc;
+  --community-tab-border: #cfdfef;
+  --community-tab-active-bg: #dfeaf7;
+}
+
+.community-social-page .community-reference-feed-tabs nav :is(button, a):nth-child(4) {
+  --community-tab-color: #24736b;
+  --community-tab-bg: #edf8f6;
+  --community-tab-border: #cae5df;
+  --community-tab-active-bg: #dcefeb;
+}
+
+.community-social-page .community-reference-feed-tabs nav :is(button, a):nth-child(5) {
+  --community-tab-color: #6f52a6;
+  --community-tab-bg: #f4f0fb;
+  --community-tab-border: #d9cfed;
+  --community-tab-active-bg: #e8e0f5;
+}
+
+.community-social-page .community-reference-feed-tabs nav :is(button, a):nth-child(6) {
+  --community-tab-color: #8b6425;
+  --community-tab-bg: #fff7e9;
+  --community-tab-border: #eadbb9;
+  --community-tab-active-bg: #f7e8c9;
+}
+
+.community-social-page .community-reference-feed-tabs nav :is(button, a):nth-child(7) {
+  --community-tab-color: #a04d61;
+  --community-tab-bg: #fff1f4;
+  --community-tab-border: #edd0d8;
+  --community-tab-active-bg: #f8e0e6;
+}
+
+.community-social-page .community-reference-feed-tabs nav :is(button, a):hover {
+  border-color: var(--community-tab-color) !important;
+  color: var(--community-tab-color) !important;
+  background: var(--community-tab-active-bg) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 5px 12px rgb(18 62 38 / 0.05) !important;
+}
+
+.community-social-page .community-reference-feed-tabs nav button.is-active {
+  border-color: var(--community-tab-color) !important;
+  color: var(--community-tab-color) !important;
+  background: var(--community-tab-active-bg) !important;
+  box-shadow:
+    inset 0 0 0 1px color-mix(in srgb, var(--community-tab-color) 12%, transparent),
+    0 5px 12px rgb(18 62 38 / 0.05) !important;
+}
+
+.community-social-page .community-reference-filter-trigger {
+  border-color: #d8e4dd !important;
+  color: #315d48 !important;
+  background: #f3f8f5 !important;
+}
+
+.community-social-page .community-reference-filter-trigger:hover {
+  border-color: #9ec7af !important;
+  color: #155d38 !important;
+  background: #e8f4ed !important;
+}
+
+@media (max-width: 680px) {
+  .community-social-page .community-reference-feed-tabs nav :is(button, a) {
+    min-height: 38px !important;
+    padding-inline: 12px !important;
+  }
+}
