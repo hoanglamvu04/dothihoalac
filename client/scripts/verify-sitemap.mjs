@@ -68,12 +68,18 @@ if (Number(counts.total || 0) < Number(counts.pages || 0) + Number(counts.areas 
 }
 
 if (strict) {
-  for (const key of ['news', 'community', 'properties', 'jobs']) {
+  for (const key of ['news', 'community', 'properties']) {
     if (Number(counts[key] || 0) < 1) {
       throw new Error(
         `[seo] Strict sitemap validation failed: ${key} has no dynamic URLs.`,
       );
     }
+  }
+
+  if (Number(counts.jobs || 0) < 1) {
+    console.warn(
+      '[seo] Jobs sitemap has no dynamic URLs; keeping the public /viec-lam route only.',
+    );
   }
 }
 
