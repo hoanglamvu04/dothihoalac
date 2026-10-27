@@ -6,6 +6,7 @@ import {
   useState,
 } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 import {
   CalendarDays,
   Check,
@@ -21,6 +22,7 @@ import {
   SlidersHorizontal,
   Sparkles,
   TrendingUp,
+  X,
 } from 'lucide-react';
 
 import Seo from '../../components/common/Seo';
@@ -49,6 +51,7 @@ import './NewsFilterModern.css';
 import './NewsHeaderRefresh.css';
 
 const PAGE_SIZE = 12;
+const MOBILE_FILTER_QUERY = '(max-width: 680px)';
 const SORT_OPTIONS = [
   { value: '', label: 'Mới nhất' },
   { value: 'popular', label: 'Đọc nhiều' },
@@ -233,6 +236,185 @@ function FilterSelect({
   );
 }
 
+
+function MobileNewsFilterSheet({
+  initialFilters,
+  categoryOptions,
+  areaOptions,
+  taxonomyBusy,
+  onClose,
+  onApply,
+  triggerRef,
+}) {
+  const [draft, setDraft] = useState(() => ({ ...initialFilters }));
+  const dialogRef = useRef(null);
+  const activeCount = Object.values(draft).filter((value) => String(value || '').trim()).length;
+
+  const updateDraft = (key, value) => {
+    setDraft((current) => ({ ...current, [key]: value }));
+  };
+
+  useEffect(() => {
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    dialogRef.current?.focus();
+
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        onClose();
+        return;
+      }
+
+      if (event.key !== 'Tab' || !dialogRef.current) return;
+
+      const focusable = Array.from(dialogRef.current.querySelectorAll(
+        'button:not([disabled]), input:not([disabled]), select:not([disabled]), a[href]',
+      )).filter((element) => element.getClientRects().length);
+      if (!focusable.length) {
+        event.preventDefault();
+        return;
+      }
+
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && (document.activeElement === first || document.activeElement === dialogRef.current)) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (document.activeElement === last || document.activeElement === dialogRef.current)) {
+        event.preventDefault();
+        first.focus();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      document.removeEventListener('keydown', handleKeyDown);
+      triggerRef.current?.focus();
+    };
+  }, [onClose, triggerRef]);
+
+  return createPortal(
+    <div className="news-mobile-filter-layer">
+      <button
+        type="button"
+        className="news-mobile-filter-backdrop"
+        aria-label="Đóng bộ lọc tin tức"
+        onClick={onClose}
+      />
+      <section
+        id="news-mobile-filter-sheet"
+        ref={dialogRef}
+        className="news-mobile-filter-sheet"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="news-mobile-filter-title"
+        tabIndex={-1}
+      >
+        <header className="news-mobile-filter-sheet__header">
+          <div>
+            <SlidersHorizontal size={19} aria-hidden="true" />
+            <strong id="news-mobile-filter-title">Bộ lọc tin tức</strong>
+          </div>
+          <button type="button" aria-label="Đóng bộ lọc" onClick={onClose}>
+            <X size={21} aria-hidden="true" />
+          </button>
+        </header>
+
+        <div className="news-mobile-filter-sheet__body">
+          <section className="news-mobile-filter-sheet__group">
+            <h3>Chuyên mục & khu vực</h3>
+            <div className="news-mobile-filter-sheet__fields">
+              <FilterSelect
+                label="Chuyên mục"
+                Icon={Newspaper}
+                value={draft.category}
+                options={categoryOptions}
+                placeholder="Tất cả chuyên mục"
+                disabled={taxonomyBusy}
+                onChange={(value) => updateDraft('category', value)}
+              />
+              <FilterSelect
+                label="Khu vực"
+                Icon={MapPin}
+                value={draft.area}
+                options={areaOptions}
+                placeholder="Tất cả khu vực"
+                searchable
+                disabled={taxonomyBusy}
+                onChange={(value) => updateDraft('area', value)}
+              />
+            </div>
+          </section>
+
+          <section className="news-mobile-filter-sheet__group">
+            <h3>Thời gian & cách hiển thị</h3>
+            <div className="news-mobile-filter-sheet__fields">
+              <label className="news-filter-date">
+                <span><CalendarDays size={14} aria-hidden="true" /> Ngày đăng</span>
+                <input
+                  type="date"
+                  value={draft.date}
+                  onChange={(event) => updateDraft('date', event.target.value)}
+                />
+              </label>
+              <FilterSelect
+                label="Sắp xếp"
+                Icon={draft.sort === 'popular' ? TrendingUp : Clock3}
+                value={draft.sort}
+                options={SORT_OPTIONS}
+                placeholder="Mới nhất"
+                onChange={(value) => updateDraft('sort', value)}
+              />
+            </div>
+          </section>
+
+          <section className="news-mobile-filter-sheet__group">
+            <h3>Từ khóa</h3>
+            <label className="news-mobile-filter-sheet__keyword">
+              <Search size={17} aria-hidden="true" />
+              <input
+                type="search"
+                value={draft.q}
+                onChange={(event) => updateDraft('q', event.target.value)}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    event.preventDefault();
+                    onApply(draft);
+                  }
+                }}
+                aria-label="Từ khóa tìm tin"
+                placeholder="Tìm tin, dự án hoặc địa bàn..."
+              />
+            </label>
+          </section>
+        </div>
+
+        <footer className="news-mobile-filter-sheet__footer">
+          <button
+            type="button"
+            className="news-mobile-filter-sheet__reset"
+            onClick={() => setDraft({ category: '', area: '', date: '', sort: '', q: '' })}
+          >
+            <RotateCcw size={16} aria-hidden="true" />
+            Đặt lại bộ lọc
+          </button>
+          <button
+            type="button"
+            className="news-mobile-filter-sheet__apply"
+            onClick={() => onApply(draft)}
+          >
+            Xem kết quả
+            {activeCount ? <span>{activeCount}</span> : null}
+          </button>
+        </footer>
+      </section>
+    </div>,
+    document.body,
+  );
+}
+
 function StoryImage({ item, className = '', eager = false }) {
   return (
     <ContentImage
@@ -291,6 +473,21 @@ export default function ArticlesPage() {
     reload: reloadTaxonomy,
   } = useTaxonomy();
   const resultsRef = useRef(null);
+  const filterToggleRef = useRef(null);
+  const [isMobileViewport, setIsMobileViewport] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia(MOBILE_FILTER_QUERY).matches,
+  );
+  const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia(MOBILE_FILTER_QUERY);
+    const onChange = () => {
+      setIsMobileViewport(media.matches);
+      if (!media.matches) setMobileFiltersOpen(false);
+    };
+    media.addEventListener('change', onChange);
+    return () => media.removeEventListener('change', onChange);
+  }, []);
 
   const articleCategories = useMemo(
     () =>
@@ -309,6 +506,14 @@ export default function ArticlesPage() {
         }))
         .filter((item) => item.slug && item.label),
     [articleCategories],
+  );
+
+  const categoryOptions = useMemo(
+    () => [
+      { value: '', label: 'Tất cả chuyên mục' },
+      ...navigationCategories.map(({ slug, label }) => ({ value: slug, label })),
+    ],
+    [navigationCategories],
   );
 
   const areaOptions = useMemo(
@@ -449,7 +654,14 @@ export default function ArticlesPage() {
     }
   }, [reloadTaxonomy]);
 
+  const closeMobileFilters = useCallback(() => setMobileFiltersOpen(false), []);
+
   const toggleFilters = useCallback(() => {
+    if (isMobileViewport) {
+      setMobileFiltersOpen(true);
+      void refreshFilterTaxonomy();
+      return;
+    }
     if (filtersOpen) {
       setFiltersOpen(false);
       return;
@@ -457,7 +669,7 @@ export default function ArticlesPage() {
 
     setFiltersOpen(true);
     void refreshFilterTaxonomy();
-  }, [filtersOpen, refreshFilterTaxonomy]);
+  }, [filtersOpen, isMobileViewport, refreshFilterTaxonomy]);
 
   const onPageChange = useCallback(
     (page) => {
@@ -479,6 +691,7 @@ export default function ArticlesPage() {
   const currentPage = Number(result.meta?.page || 1);
   const totalPages = Math.max(1, Number(result.meta?.totalPages || 1));
   const hasSecondaryFilter = Boolean(area || date || sort || query);
+  const activeFilterCount = [category, area, date, sort, query].filter(Boolean).length;
   const editorialMode = currentPage === 1 && !hasSecondaryFilter;
 
   const leadStory = editorialMode ? result.items[0] : null;
@@ -505,6 +718,19 @@ export default function ArticlesPage() {
     updateUrl({ q: '', area: '', date: '', sort: '' });
     setFiltersOpen(false);
   };
+
+  const applyMobileFilters = useCallback((values) => {
+    const nextQuery = String(values.q || '').trim();
+    setSearchDraft(nextQuery);
+    updateUrl({
+      category: values.category,
+      area: values.area,
+      date: values.date,
+      sort: values.sort,
+      q: nextQuery,
+    });
+    setMobileFiltersOpen(false);
+  }, [updateUrl]);
 
   const taxonomyBusy = taxonomyLoading || filterTaxonomyRefreshing;
 
@@ -560,13 +786,16 @@ export default function ArticlesPage() {
           </nav>
 
           <button
+            ref={filterToggleRef}
             type="button"
-            className={filtersOpen || hasSecondaryFilter ? 'news-filter-toggle is-active' : 'news-filter-toggle'}
+            className={filtersOpen || mobileFiltersOpen || activeFilterCount ? 'news-filter-toggle is-active' : 'news-filter-toggle'}
             onClick={toggleFilters}
-            aria-expanded={filtersOpen}
+            aria-expanded={isMobileViewport ? mobileFiltersOpen : filtersOpen || hasSecondaryFilter}
+            aria-controls={isMobileViewport ? 'news-mobile-filter-sheet' : undefined}
           >
             <SlidersHorizontal size={16} />
             Bộ lọc
+            {activeFilterCount ? <span className="news-filter-toggle__count">{activeFilterCount}</span> : null}
           </button>
         </div>
 
@@ -701,6 +930,17 @@ export default function ArticlesPage() {
           </div>
         )}
       </div>
+      {isMobileViewport && mobileFiltersOpen ? (
+        <MobileNewsFilterSheet
+          initialFilters={{ category, area, date, sort, q: query }}
+          categoryOptions={categoryOptions}
+          areaOptions={areaOptions}
+          taxonomyBusy={taxonomyBusy}
+          onClose={closeMobileFilters}
+          onApply={applyMobileFilters}
+          triggerRef={filterToggleRef}
+        />
+      ) : null}
     </section>
   );
 }
