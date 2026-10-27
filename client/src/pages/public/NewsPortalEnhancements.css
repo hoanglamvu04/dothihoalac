@@ -64,6 +64,12 @@
   border-bottom: 2px solid var(--news-green-dark);
 }
 
+/* Make the related-news red divider span the card, without moving its heading. */
+.news-context-rail > .news-rail-card:first-child > .news-rail-card__head {
+  margin-inline: -16px;
+  padding-inline: 16px;
+}
+
 .news-rail-card__head > div {
   min-width: 0;
 }
@@ -418,6 +424,11 @@
 
   .news-rail-card {
     padding: 14px;
+  }
+
+  .news-context-rail > .news-rail-card:first-child > .news-rail-card__head {
+    margin-inline: -14px;
+    padding-inline: 14px;
   }
 
   .news-rail-article-list {
