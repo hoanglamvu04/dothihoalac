@@ -32,7 +32,6 @@ import {
   Search,
   ShieldCheck,
   SlidersHorizontal,
-  Sparkles,
   UsersRound,
   X,
 } from 'lucide-react';
@@ -79,37 +78,6 @@ const DISCOVERY_TYPES = [
   'service',
   'student',
 ];
-
-const JOB_TYPE_META = {
-  full_time: {
-    icon: BriefcaseBusiness,
-    tone: 'green',
-  },
-  part_time: {
-    icon: Clock3,
-    tone: 'blue',
-  },
-  internship: {
-    icon: GraduationCap,
-    tone: 'cyan',
-  },
-  temporary: {
-    icon: CalendarDays,
-    tone: 'orange',
-  },
-  student: {
-    icon: GraduationCap,
-    tone: 'violet',
-  },
-  construction: {
-    icon: Building2,
-    tone: 'amber',
-  },
-  service: {
-    icon: Sparkles,
-    tone: 'pink',
-  },
-};
 
 const SORT_OPTIONS = [
   {
@@ -774,8 +742,6 @@ export default function JobsPage() {
 
           <div className="jobs-discovery__grid">
             {DISCOVERY_TYPES.map((value) => {
-              const meta = JOB_TYPE_META[value] || JOB_TYPE_META.full_time;
-              const TypeIcon = meta.icon;
               const selected = currentType === value;
 
               return (
@@ -785,13 +751,7 @@ export default function JobsPage() {
                   className={selected ? 'is-active' : ''}
                   onClick={() => update('type', selected ? '' : value)}
                 >
-                  <span className={`jobs-discovery__icon is-${meta.tone}`}>
-                    <TypeIcon size={20} />
-                  </span>
-                  <span>
-                    <strong>{JOB_TYPES[value]}</strong>
-                    <small>{selected ? 'Đang lọc' : 'Xem cơ hội phù hợp'}</small>
-                  </span>
+                  <strong>{JOB_TYPES[value]}</strong>
                 </button>
               );
             })}
