@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import {
-  Compass,
+  Plus,
   House,
   Newspaper,
   UserRound,
@@ -25,11 +25,12 @@ const ITEMS = [
     prefetch: () => import('../../pages/public/ArticlesPage'),
   },
   {
-    to: '/tim-kiem',
-    label: 'Khám phá',
-    icon: Compass,
+    to: '/dang-bai',
+    label: 'Đăng bài',
+    icon: Plus,
     featured: true,
-    match: (pathname) => pathname === '/tim-kiem' || pathname.startsWith('/tim-kiem/'),
+    match: (pathname) => pathname === '/dang-bai' || pathname.startsWith('/dang-bai/'),
+    prefetch: () => import('../../pages/create/CreateHubPage'),
   },
   {
     to: '/cong-dong',
