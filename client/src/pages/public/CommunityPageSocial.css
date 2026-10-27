@@ -1171,3 +1171,150 @@ body:has(.dthl-header.is-hidden) .community-social-page {
     display: none;
   }
 }
+
+/* Mobile community filter: news/jobs-style bottom sheet. */
+.community-social-filter-drawer__header,
+.community-social-filter-drawer__actions { flex: 0 0 auto; }
+
+.community-social-filter-drawer__body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.community-social-filter-drawer__fields-area > h3,
+.community-social-filter-drawer__search-area > h3 { display: none; }
+
+.community-social-filter-drawer__search-area { order: -1; }
+
+@media (max-width: 680px) {
+  .community-social-page .community-social-filter-overlay {
+    background: rgb(6 23 14 / 0.56);
+    backdrop-filter: blur(3px);
+  }
+
+  .community-social-page .community-social-filter-drawer {
+    top: auto;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    display: grid;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    width: 100%;
+    height: min(92dvh, 740px);
+    max-height: 92dvh;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid #e1e8e3;
+    border-bottom: 0;
+    border-radius: 18px 18px 0 0;
+    background: #fff;
+    box-shadow: 0 -20px 75px rgb(4 21 12 / 0.27);
+    animation: community-filter-sheet-up 260ms cubic-bezier(0.2, 0.95, 0.25, 1) both;
+  }
+
+  .community-social-page .community-social-filter-drawer__header {
+    align-items: center;
+    min-height: 58px;
+    padding: 10px 14px;
+    border-bottom: 1px solid #e7ece8;
+  }
+
+  .community-social-page .community-social-filter-drawer__header > div { align-items: center; }
+
+  .community-social-page .community-social-filter-drawer__icon {
+    width: 34px;
+    height: 34px;
+  }
+
+  .community-social-page .community-social-filter-drawer__header h2 {
+    font-size: 15px;
+    font-weight: 800;
+  }
+
+  .community-social-page .community-social-filter-drawer__header p { display: none; }
+
+  .community-social-page .community-social-filter-drawer__close {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+  }
+
+  .community-social-page .community-social-filter-drawer__body {
+    padding: 15px 14px;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .community-social-page .community-social-filter-drawer__fields-area,
+  .community-social-page .community-social-filter-drawer__search-area {
+    display: grid;
+    gap: 12px;
+    padding-bottom: 17px;
+  }
+
+  .community-social-page .community-social-filter-drawer__search-area {
+    order: 1;
+    padding-top: 17px;
+    border-top: 1px solid #edf0ee;
+  }
+
+  .community-social-page .community-social-filter-drawer__fields-area > h3,
+  .community-social-page .community-social-filter-drawer__search-area > h3 {
+    display: block;
+    margin: 0;
+    color: #183122;
+    font-size: 13px;
+    font-weight: 800;
+  }
+
+  .community-social-page .community-social-filter-fields {
+    margin-top: 0;
+    gap: 12px;
+  }
+
+  .community-social-page .community-social-filter-field > span { font-size: 12px; }
+
+  .community-social-page .community-social-filter-field > div { min-height: 46px; }
+
+  .community-social-page .community-social-filter-field select {
+    min-height: 44px;
+    font-size: 13px;
+  }
+
+  .community-social-page .community-social-filter-search { margin-top: 0; }
+
+  .community-social-page .community-social-filter-drawer__actions {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.3fr);
+    margin-top: 0;
+    padding: 12px 14px max(12px, env(safe-area-inset-bottom));
+    gap: 9px;
+    border-top: 1px solid #e7ece8;
+    background: #fff;
+    box-shadow: 0 -8px 20px rgb(23 48 32 / 0.04);
+  }
+
+  .community-social-page .community-social-filter-drawer__actions button {
+    min-height: 46px;
+    min-width: 0;
+    padding-inline: 8px;
+    font-size: 12.5px;
+  }
+
+  .community-social-page .community-social-filter-drawer__actions button:last-child {
+    border-color: #0e3323;
+    color: #fff;
+    background: #0e3323;
+  }
+}
+
+@keyframes community-filter-sheet-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .community-social-page .community-social-filter-drawer { animation: none; }
+}

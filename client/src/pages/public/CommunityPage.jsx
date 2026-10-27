@@ -437,6 +437,21 @@ export default function CommunityPage() {
 
   const resultsRef = useRef(null);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [isMobileFilter, setIsMobileFilter] = useState(
+    () => typeof window !== 'undefined' && window.matchMedia('(max-width: 680px)').matches,
+  );
+  const [filterDraft, setFilterDraft] = useState({
+    type: '', category: '', area: '', sort: '', q: '',
+  });
+  const drawerRef = useRef(null);
+
+  useEffect(() => {
+    const media = window.matchMedia('(max-width: 680px)');
+    const updateMode = () => setIsMobileFilter(media.matches);
+    updateMode();
+    media.addEventListener('change', updateMode);
+    return () => media.removeEventListener('change', updateMode);
+  }, []);
   const [searchInput, setSearchInput] = useState(searchParams.get('q') || '');
 
   const communityCategories = useMemo(
@@ -466,6 +481,19 @@ export default function CommunityPage() {
   const currentArea = searchParams.get('area') || '';
   const currentSort = searchParams.get('sort') || '';
   const currentQuery = searchParams.get('q') || '';
+
+  const openFilters = useCallback(() => {
+    setFilterDraft({
+      type: currentType,
+      category: currentCategory,
+      area: currentArea,
+      sort: currentSort,
+      q: currentQuery,
+    });
+    setFiltersOpen(true);
+  }, [currentType, currentCategory, currentArea, currentSort, currentQuery]);
+
+  const closeFilters = useCallback(() => setFiltersOpen(false), []);
 
   const selectedCategory = useMemo(
     () => communityCategories.find(
@@ -546,18 +574,42 @@ export default function CommunityPage() {
     if (!filtersOpen) return undefined;
 
     const previousOverflow = document.body.style.overflow;
-    const handleEscape = (event) => {
-      if (event.key === 'Escape') setFiltersOpen(false);
+    const previousFocus = document.activeElement;
+    const handleKeyDown = (event) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        closeFilters();
+        return;
+      }
+      if (event.key !== 'Tab' || !drawerRef.current) return;
+      const items = Array.from(drawerRef.current.querySelectorAll(
+        'button:not([disabled]), input:not([disabled]), select:not([disabled])',
+      )).filter((item) => item.getClientRects().length);
+      if (!items.length) {
+        event.preventDefault();
+        return;
+      }
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (event.shiftKey && (document.activeElement === first || document.activeElement === drawerRef.current)) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && (document.activeElement === last || document.activeElement === drawerRef.current)) {
+        event.preventDefault();
+        first.focus();
+      }
     };
 
     document.body.style.overflow = 'hidden';
-    document.addEventListener('keydown', handleEscape);
+    drawerRef.current?.focus();
+    document.addEventListener('keydown', handleKeyDown);
 
     return () => {
       document.body.style.overflow = previousOverflow;
-      document.removeEventListener('keydown', handleEscape);
+      document.removeEventListener('keydown', handleKeyDown);
+      if (previousFocus?.isConnected) previousFocus.focus();
     };
-  }, [filtersOpen]);
+  }, [filtersOpen, closeFilters]);
 
   const clearAllFilters = useCallback(() => {
     setSearchInput('');
@@ -565,6 +617,35 @@ export default function CommunityPage() {
       ['type', 'category', 'area', 'sort', 'q', 'page'].forEach((key) => next.delete(key));
     });
   }, [setUrlParams]);
+
+  const setDrawerValue = (key, value) => {
+    if (isMobileFilter) setFilterDraft((current) => ({ ...current, [key]: value }));
+    else if (key === 'q') setSearchInput(value);
+    else update(key, value);
+  };
+
+  const resetDrawer = () => {
+    if (isMobileFilter) setFilterDraft({ type: '', category: '', area: '', sort: '', q: '' });
+    else clearAllFilters();
+  };
+
+  const applyDrawer = () => {
+    if (isMobileFilter) {
+      const query = filterDraft.q.trim();
+      setSearchInput(query);
+      setUrlParams((next) => {
+        ['type', 'category', 'area', 'sort', 'q'].forEach((key) => {
+          const value = key === 'q' ? query : filterDraft[key];
+          if (value) next.set(key, value);
+          else next.delete(key);
+        });
+        next.delete('page');
+      });
+    } else {
+      commitSearch(searchInput);
+    }
+    closeFilters();
+  };
 
   const setPage = useCallback((page) => {
     setUrlParams((next) => {
@@ -634,7 +715,7 @@ export default function CommunityPage() {
             currentCategory={currentCategory}
             onAreaChange={(value) => update('area', value)}
             onCategoryChange={(value) => update('category', value)}
-            onOpenFilters={() => setFiltersOpen(true)}
+            onOpenFilters={openFilters}
           />
 
           <div className="community-reference-center">
@@ -699,7 +780,9 @@ export default function CommunityPage() {
                 type="button"
                 className="community-reference-filter-trigger"
                 aria-label="Mở bộ lọc cộng đồng"
-                onClick={() => setFiltersOpen(true)}
+                aria-expanded={filtersOpen}
+                aria-controls="community-filter-dialog"
+                onClick={openFilters}
               >
                 <SlidersHorizontal size={16} />
                 {activeFilterCount ? <strong>{activeFilterCount}</strong> : null}
@@ -801,20 +884,23 @@ export default function CommunityPage() {
               type="button"
               className="community-social-filter-overlay"
               aria-label="Đóng bộ lọc"
-              onClick={() => setFiltersOpen(false)}
+              onClick={closeFilters}
             />
 
             <aside
+              id="community-filter-dialog"
+              ref={drawerRef}
               className="community-social-filter-drawer"
               role="dialog"
               aria-modal="true"
-              aria-label="Tìm và lọc bài cộng đồng"
+              aria-labelledby="community-filter-heading"
+              tabIndex={-1}
             >
               <header className="community-social-filter-drawer__header">
                 <div>
                   <span className="community-social-filter-drawer__icon"><Filter size={18} /></span>
                   <div>
-                    <h2>Tìm & lọc</h2>
+                    <h2 id="community-filter-heading">Bộ lọc cộng đồng</h2>
                     <p>Thu hẹp bảng tin theo nhu cầu của bạn.</p>
                   </div>
                 </div>
@@ -822,36 +908,21 @@ export default function CommunityPage() {
                   type="button"
                   className="community-social-filter-drawer__close"
                   aria-label="Đóng bộ lọc"
-                  onClick={() => setFiltersOpen(false)}
+                  onClick={closeFilters}
                 >
                   <X size={20} />
                 </button>
               </header>
 
-              <form
-                className="community-social-filter-search"
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  commitSearch(searchInput);
-                }}
-              >
-                <Search size={17} />
-                <input
-                  type="search"
-                  value={searchInput}
-                  onChange={(event) => setSearchInput(event.target.value)}
-                  placeholder="Tìm bài viết, câu hỏi, phản ánh..."
-                  aria-label="Tìm trong cộng đồng"
-                />
-                <button type="submit">Tìm</button>
-              </form>
-
+              <div className="community-social-filter-drawer__body">
+                <section className="community-social-filter-drawer__fields-area">
+                  <h3>Loại bài & khu vực</h3>
               <div className="community-social-filter-fields">
                 <label className="community-social-filter-field">
                   <span>Loại bài</span>
                   <div>
                     <MessageCircle size={17} />
-                    <select value={currentType} onChange={(event) => update('type', event.target.value)}>
+                    <select value={isMobileFilter ? filterDraft.type : currentType} onChange={(event) => setDrawerValue('type', event.target.value)}>
                       <option value="">Mọi loại bài</option>
                       {Object.entries(COMMUNITY_TYPES).map(([value, label]) => (
                         <option key={value} value={value}>{label}</option>
@@ -864,7 +935,7 @@ export default function CommunityPage() {
                   <span>Chủ đề</span>
                   <div>
                     <Tags size={17} />
-                    <select value={currentCategory} onChange={(event) => update('category', event.target.value)}>
+                    <select value={isMobileFilter ? filterDraft.category : currentCategory} onChange={(event) => setDrawerValue('category', event.target.value)}>
                       <option value="">Mọi chủ đề</option>
                       {communityCategories.map((item) => (
                         <option key={item._id || item.slug} value={taxonomyUrlValue(item)}>{item.name}</option>
@@ -877,7 +948,7 @@ export default function CommunityPage() {
                   <span>Khu vực</span>
                   <div>
                     <MapPin size={17} />
-                    <select value={currentArea} onChange={(event) => update('area', event.target.value)}>
+                    <select value={isMobileFilter ? filterDraft.area : currentArea} onChange={(event) => setDrawerValue('area', event.target.value)}>
                       <option value="">Mọi khu vực</option>
                       {areas.map((item) => (
                         <option key={item._id || item.slug} value={taxonomyUrlValue(item)}>{item.name}</option>
@@ -890,7 +961,7 @@ export default function CommunityPage() {
                   <span>Sắp xếp</span>
                   <div>
                     <TrendingUp size={17} />
-                    <select value={currentSort} onChange={(event) => update('sort', event.target.value)}>
+                    <select value={isMobileFilter ? filterDraft.sort : currentSort} onChange={(event) => setDrawerValue('sort', event.target.value)}>
                       <option value="">Mới nhất</option>
                       <option value="popular">Đang quan tâm</option>
                     </select>
@@ -898,20 +969,40 @@ export default function CommunityPage() {
                 </label>
               </div>
 
+                </section>
+                <section className="community-social-filter-drawer__search-area">
+                  <h3>Từ khóa</h3>
+              <form
+                className="community-social-filter-search"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  if (isMobileFilter) applyDrawer();
+                  else commitSearch(searchInput);
+                }}
+              >
+                <Search size={17} />
+                <input
+                  type="search"
+                  value={isMobileFilter ? filterDraft.q : searchInput}
+                  onChange={(event) => setDrawerValue('q', event.target.value)}
+                  placeholder="Tìm bài viết, câu hỏi, phản ánh..."
+                  aria-label="Tìm trong cộng đồng"
+                />
+                <button type="submit">Tìm</button>
+              </form>
+
+                </section>
+              </div>
               <div className="community-social-filter-drawer__actions">
-                <button type="button" onClick={clearAllFilters} disabled={!hasFilters && !searchInput}>
-                  <RotateCcw size={15} />
-                  Xóa lọc
-                </button>
                 <button
                   type="button"
-                  onClick={() => {
-                    commitSearch(searchInput);
-                    setFiltersOpen(false);
-                  }}
+                  onClick={resetDrawer}
+                  disabled={isMobileFilter ? !Object.values(filterDraft).some(Boolean) : !hasFilters && !searchInput}
                 >
-                  Xem kết quả
+                  <RotateCcw size={15} />
+                  Đặt lại bộ lọc
                 </button>
+                <button type="button" onClick={applyDrawer}>Xem kết quả</button>
               </div>
             </aside>
           </>
