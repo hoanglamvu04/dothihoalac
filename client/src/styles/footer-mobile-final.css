@@ -137,14 +137,14 @@ html body .app-shell .site-footer .site-footer__legal-links a:hover {
 
 @media (max-width: 720px) {
   html body .app-shell .site-footer .site-footer__legal-links {
-    margin-top: 12px !important;
-    gap: 6px 12px !important;
+    margin-top: 8px !important;
+    gap: 4px 10px !important;
   }
 
   html body .app-shell .site-footer .site-footer__legal-links a,
   html body .app-shell .site-footer .site-footer__legal-links a + a {
     padding: 0 !important;
-    font-size: 9px !important;
+    font-size: 8.8px !important;
   }
 
   html body .app-shell .site-footer .site-footer__legal-links a + a::before {
