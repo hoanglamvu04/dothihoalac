@@ -5,6 +5,10 @@ import path from 'node:path';
 
 import sanitizeHtml from 'sanitize-html';
 import sharp from 'sharp';
+import {
+  cleanImportedArticleMarkup,
+  cleanImportedArticleBlocks,
+} from './article.urlCleaner.js';
 
 import { env } from '../../config/env.js';
 import {
@@ -497,7 +501,7 @@ function candidateScore(candidate) {
   const firstTag = candidate.match(/^<[^>]+>/)?.[0] || '';
   const attrs = parseTagAttributes(firstTag);
   const hint = `${attrs.id || ''} ${attrs.class || ''}`;
-  const text = plainText(stripNoise(candidate));
+  const text = plainText(cleanImportedArticleMarkup(stripNoise(candidate)));
   const paragraphCount = (candidate.match(/<p\b/gi) || []).length;
   const headingCount = (candidate.match(/<h[1-4]\b/gi) || []).length;
   const imageCount = (candidate.match(/<img\b/gi) || []).length;
@@ -568,7 +572,7 @@ function imageUrlLooksUseful(url) {
 function markersToBlocks(articleHtml, baseUrl, title) {
   const images = [];
   const imageIndex = new Map();
-  let marked = stripNoise(articleHtml);
+  let marked = cleanImportedArticleMarkup(stripNoise(articleHtml));
 
   marked = marked.replace(/<img\b[^>]*>/gi, (tag) => {
     const source = imageSourceFromTag(tag);
@@ -613,22 +617,32 @@ function markersToBlocks(articleHtml, baseUrl, title) {
 
   const blocks = [];
   let textBuffer = '';
+  let blockType = 'p';
 
   const flushText = () => {
     const text = safeText(textBuffer, 12000);
     textBuffer = '';
     if (!text) return;
-    blocks.push({ type: 'p', text });
+    blocks.push({ type: blockType, text });
   };
 
-  for (const rawLine of decoded.split(/\n+/)) {
-    const line = safeText(rawLine, 12000);
-    if (!line) {
+  // Split on markers AND paragraph breaks. The previous split(/\n+/)
+  // discarded blank lines, merged entire articles into one paragraph and
+  // leaked [[DTHL_H2]] when source headings contained nested markup.
+  const chunks = decoded.split(
+    /(\[\[DTHL_(?:IMAGE_\d+|H2|H3|H4|QUOTE|LI|END)\]\]|\n{2,})/g,
+  );
+  const typeMap = { H2: 'h2', H3: 'h3', H4: 'h4', QUOTE: 'quote', LI: 'li' };
+
+  for (const chunk of chunks) {
+    if (!chunk) continue;
+
+    if (/^\n{2,}$/.test(chunk)) {
       flushText();
       continue;
     }
 
-    const imageMatch = line.match(/^\[\[DTHL_IMAGE_(\d+)\]\]$/);
+    const imageMatch = chunk.match(/^\[\[DTHL_IMAGE_(\d+)\]\]$/);
     if (imageMatch) {
       flushText();
       const image = images[Number(imageMatch[1])];
@@ -636,17 +650,20 @@ function markersToBlocks(articleHtml, baseUrl, title) {
       continue;
     }
 
-    const styledMatch = line.match(/^\[\[DTHL_(H2|H3|H4|QUOTE|LI)\]\](.*?)\[\[DTHL_END\]\]$/);
+    const styledMatch = chunk.match(/^\[\[DTHL_(H2|H3|H4|QUOTE|LI)\]\]$/);
     if (styledMatch) {
       flushText();
-      const text = safeText(styledMatch[2], 12000);
-      if (!text) continue;
-      const typeMap = { H2: 'h2', H3: 'h3', H4: 'h4', QUOTE: 'quote', LI: 'li' };
-      blocks.push({ type: typeMap[styledMatch[1]] || 'p', text });
+      blockType = typeMap[styledMatch[1]] || 'p';
       continue;
     }
 
-    textBuffer += `${textBuffer ? '\n' : ''}${line}`;
+    if (chunk === '[[DTHL_END]]') {
+      flushText();
+      blockType = 'p';
+      continue;
+    }
+
+    textBuffer += chunk;
   }
 
   flushText();
@@ -757,16 +774,25 @@ async function extractArticle(urlInput) {
 
   const articleHtml = chooseArticleHtml(html, jsonLd);
   let { blocks } = markersToBlocks(articleHtml, finalUrl, title);
+  let cleaned = cleanImportedArticleBlocks(blocks, { title, summary });
+  blocks = cleaned.blocks;
+  let removedBlocks = cleaned.removedBlocks;
   let textLength = blocks
     .filter((block) => block.type !== 'image')
     .reduce((sum, block) => sum + String(block.text || '').length, 0);
 
   if (textLength < 250 && jsonLd?.articleBody) {
-    blocks = safeText(jsonLd.articleBody, MAX_TEXT_CHARS)
-      .split(/\n{2,}/)
-      .map((text) => safeText(text, 12000))
-      .filter(Boolean)
-      .map((text) => ({ type: 'p', text }));
+    const structuredBody = plainText(jsonLd.articleBody, MAX_TEXT_CHARS);
+    cleaned = cleanImportedArticleBlocks(
+      structuredBody
+        .split(/\n{2,}/)
+        .map((text) => safeText(text, 12000))
+        .filter(Boolean)
+        .map((text) => ({ type: 'p', text })),
+      { title, summary },
+    );
+    blocks = cleaned.blocks;
+    removedBlocks += cleaned.removedBlocks;
     textLength = blocks.reduce((sum, block) => sum + block.text.length, 0);
   }
 
@@ -794,15 +820,10 @@ async function extractArticle(urlInput) {
     }
   }
 
-  blocks = blocks.filter((block, index) => {
-    if (block.type === 'image') return true;
-    const text = safeText(block.text, 12000);
-    if (!text) return false;
-    if (index < 4 && text.localeCompare(title, 'vi', { sensitivity: 'base' }) === 0) return false;
-    if (summary && index < 6 && text.localeCompare(summary, 'vi', { sensitivity: 'base' }) === 0) return false;
-    block.text = text;
-    return true;
-  });
+  // Final pass also excludes duplicate metadata if hero image was prepended.
+  cleaned = cleanImportedArticleBlocks(blocks, { title, summary });
+  blocks = cleaned.blocks;
+  removedBlocks += cleaned.removedBlocks;
 
   const seenImages = new Set();
   let keptImages = 0;
@@ -836,6 +857,11 @@ async function extractArticle(urlInput) {
     blocks,
     wordCount,
     imageCount: keptImages,
+    removedBlocks,
+    contentPreview: blocks
+      .filter((block) => block.type !== 'image')
+      .slice(0, 10)
+      .map((block) => ({ type: block.type, text: block.text.slice(0, 800) })),
   };
 }
 
@@ -1105,6 +1131,8 @@ export async function previewAdminArticleUrl(url) {
     publishedAt: extracted.publishedAt?.toISOString() || null,
     wordCount: extracted.wordCount,
     imageCount: extracted.imageCount,
+    removedBlocks: extracted.removedBlocks,
+    contentPreview: extracted.contentPreview,
     duplicate,
   };
 }
