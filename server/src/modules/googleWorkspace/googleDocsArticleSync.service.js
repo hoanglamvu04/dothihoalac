@@ -814,19 +814,10 @@ export async function syncGoogleDocsArticleContent({
         coverMediaId = stored.mediaId;
         coverUrl = stored.url;
 
-        /*
-         * URL importer luôn đặt ảnh đại diện ở vị trí ảnh đầu tiên của Docs.
-         * Ảnh này là cover/card/SEO, không phải một ảnh trong thân bài.
-         * Giữ một figure marker không có <img> để trang chi tiết biết thumbnail
-         * đã được đại diện trong body và không tự chèn cover lên đầu bài.
-         */
-        if (importedFromUrl) {
-          blocks.push({
-            type: 'cover-marker',
-            mediaId: stored.mediaId,
-          });
-          continue;
-        }
+        // The first Docs image is both cover/SEO and a genuine inline image.
+        // Public ArticleDetailPage detects the inline <img> by Media ID,
+        // so the standalone cover is not repeated. A marker-only figure hid
+        // the sole image of imported articles and must not be generated.
       }
 
       blocks.push({
