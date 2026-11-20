@@ -367,11 +367,11 @@ async function fetchPublicResource(
   let current = await assertSafePublicUrl(input);
 
   for (let redirectCount = 0; redirectCount <= MAX_REDIRECTS; redirectCount += 1) {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    const controller = new globalThis.AbortController();
+    const timer = globalThis.setTimeout(() => controller.abort(), timeoutMs);
 
     try {
-      const response = await fetch(current, {
+      const response = await globalThis.fetch(current, {
         method: 'GET',
         redirect: 'manual',
         headers: {
@@ -412,7 +412,7 @@ async function fetchPublicResource(
       }
       throw new ApiError(502, 'Không thể kết nối website nguồn.', 'ARTICLE_URL_FETCH_FAILED');
     } finally {
-      clearTimeout(timer);
+      globalThis.clearTimeout(timer);
     }
   }
 
@@ -742,7 +742,6 @@ async function extractArticle(urlInput) {
     );
     blocks = cleaned.blocks;
     removedBlocks += cleaned.removedBlocks;
-    textLength = blocks.reduce((sum, block) => sum + block.text.length, 0);
   }
 
   const heroImage = normalizeUrl(
@@ -1029,11 +1028,11 @@ async function populateGoogleDocument(accessToken, documentId, extracted, blocks
     });
   }
 
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 45000);
+  const controller = new globalThis.AbortController();
+  const timer = globalThis.setTimeout(() => controller.abort(), 45000);
 
   try {
-    const response = await fetch(
+    const response = await globalThis.fetch(
       `https://docs.googleapis.com/v1/documents/${encodeURIComponent(documentId)}:batchUpdate`,
       {
         method: 'POST',
@@ -1062,7 +1061,7 @@ async function populateGoogleDocument(accessToken, documentId, extracted, blocks
     }
     throw new ApiError(502, 'Không thể ghi nội dung URL vào Google Docs.', 'ARTICLE_URL_GOOGLE_DOC_NETWORK_ERROR');
   } finally {
-    clearTimeout(timer);
+    globalThis.clearTimeout(timer);
   }
 }
 
