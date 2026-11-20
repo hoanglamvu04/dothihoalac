@@ -337,6 +337,30 @@ export default function ArticleUrlImportButton({ disabled = false }) {
                   </div>
                 </div>
 
+                {Array.isArray(preview.contentPreview) && preview.contentPreview.length ? (
+                  <section className="article-url-import-clean-preview" aria-label="Nội dung đã lọc">
+                    <div className="article-url-import-clean-preview-head">
+                      <strong>Nội dung đã lọc — xem trước trước khi tạo Google Docs</strong>
+                      {Number(preview.removedBlocks || 0) > 0 ? (
+                        <span>Đã loại {preview.removedBlocks} đoạn trùng hoặc nhiễu</span>
+                      ) : null}
+                    </div>
+                    <div className="article-url-import-clean-preview-body">
+                      {preview.contentPreview.map((block, index) => (
+                        <p
+                          className={['h2', 'h3', 'h4'].includes(block.type) ? 'is-heading' : ''}
+                          key={`${index}-${block.type}`}
+                        >
+                          {block.text}
+                        </p>
+                      ))}
+                    </div>
+                    <small>
+                      Đây là các đoạn đầu sau khi lọc, không phải toàn bộ bài. Nếu vẫn thấy nội dung điều khiển của website, không nên tạo Google Docs.
+                    </small>
+                  </section>
+                ) : null}
+
                 <div className="article-url-import-origin">
                   <span>Nguồn</span>
                   <strong>
