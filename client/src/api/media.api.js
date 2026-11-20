@@ -1,19 +1,11 @@
 import { api, unwrap } from './http';
+import { uploadImageFile } from '../utils/imageUpload';
 
 export const mediaApi = {
   mine: async () => unwrap(await api.get('/media/mine')),
 
-  uploadImage: async (file, altText = '', folder = 'general') => {
-    const formData = new FormData();
-
-    formData.append('image', file);
-    formData.append('altText', altText);
-    formData.append('folder', folder);
-
-    return unwrap(
-      await api.post('/media/images', formData),
-    );
-  },
+  uploadImage: async (file, altText = '', folder = 'general') =>
+    uploadImageFile(file, { folder, altText }),
 
   uploadDocument: async (file) => {
     const formData = new FormData();
