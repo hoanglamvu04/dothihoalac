@@ -25,3 +25,8 @@ test('supports single-quoted attributes and refuses invalid IDs', () => {
   assert.equal(bodyContainsVisibleMediaId("<div data-media-id='" + mediaId + "'></div>", mediaId), false);
   assert.equal(bodyContainsVisibleMediaId("<img data-media-id='" + mediaId + "'>", 'invalid'), false);
 });
+
+test('a figure with a real img but media ID only on figure avoids duplicate cover', () => {
+  const html = '<figure class="article-inline-image" data-media-id="' + mediaId + '"><img src="https://example.vn/photo.jpg" alt="Hình ảnh họp"></figure>';
+  assert.equal(bodyContainsVisibleMediaId(html, mediaId), true);
+});
