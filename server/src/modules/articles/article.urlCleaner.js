@@ -23,7 +23,7 @@ const NOISE_ROLES = new Set([
   'search', 'complementary', 'button', 'listbox',
 ]);
 
-const CONTROL_LINE = /^(?:aa|a\s*[+-]|màu chữ\s*:?.*|cỡ chữ\s*:?.*|kích thước chữ\s*:?.*|phông chữ\s*:?.*|tùy chỉnh\s*:?.*|về mặc định|đặt lại mặc định|chế độ đọc\s*:?.*|tương phản\s*:?.*|#[a-f0-9]{3,8}|rất tốt\s*\(aaa\))$/iu;
+const CONTROL_LINE = /^(?:aa|a\s*[+-]|màu chữ\s*(?::\s*(?:tùy chỉnh|mặc định)?)?|cỡ chữ\s*(?::\s*(?:tùy chỉnh|mặc định)?)?|kích thước chữ\s*(?::\s*(?:tùy chỉnh|mặc định)?)?|phông chữ\s*(?::\s*(?:tùy chỉnh|mặc định)?)?|tùy chỉnh\s*:?.*|về mặc định|đặt lại mặc định|chế độ đọc\s*:?.*|tương phản(?:\s*:\s*.*)?|#[a-f0-9]{3,8}|rất tốt\s*\(aaa\))$/iu;
 const FOOTER_HEADING = /^(?:tin liên quan|bài viết liên quan|đọc thêm|có thể bạn quan tâm|cùng chuyên mục|bình luận|ý kiến bạn đọc|chia sẻ bài viết|đánh giá bài viết)\s*:?\s*$/iu;
 const TRACKING_LINE = /^(?:theo dõi chúng tôi|theo dõi trên|đăng ký nhận tin|đăng ký bản tin|quay về đầu trang|trở về trang chủ)\s*[.:!]?$/iu;
 
@@ -61,7 +61,13 @@ function isInterfaceWidget(frame) {
 }
 
 export function cleanImportedArticleMarkup(value = '') {
-  return sanitizeHtml(String(value || ''), {
+  // htmlparser2 normalizes boolean attributes to empty values; give hidden
+  // a nonempty marker so exclusiveFilter reliably detects hidden subtrees.
+  const markup = String(value || '').replace(
+    /(<[a-z][^>]*?)\s+hidden(?=\s|\/?>)/gi,
+    '$1 hidden="hidden"',
+  );
+  return sanitizeHtml(markup, {
     allowedTags: CONTENT_TAGS,
     allowedAttributes: {
       '*': ['class', 'id', 'role', 'aria-label', 'aria-hidden', 'hidden', 'style', 'data-testid'],
