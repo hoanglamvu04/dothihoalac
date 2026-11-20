@@ -8,6 +8,7 @@ import sharp from 'sharp';
 import {
   cleanImportedArticleMarkup,
   cleanImportedArticleBlocks,
+  parseImportedBlockMarkers,
 } from './article.urlCleaner.js';
 
 import { env } from '../../config/env.js';
@@ -615,59 +616,7 @@ function markersToBlocks(articleHtml, baseUrl, title) {
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 
-  const blocks = [];
-  let textBuffer = '';
-  let blockType = 'p';
-
-  const flushText = () => {
-    const text = safeText(textBuffer, 12000);
-    textBuffer = '';
-    if (!text) return;
-    blocks.push({ type: blockType, text });
-  };
-
-  // Split on markers AND paragraph breaks. The previous split(/\n+/)
-  // discarded blank lines, merged entire articles into one paragraph and
-  // leaked [[DTHL_H2]] when source headings contained nested markup.
-  const chunks = decoded.split(
-    /(\[\[DTHL_(?:IMAGE_\d+|H2|H3|H4|QUOTE|LI|END)\]\]|\n{2,})/g,
-  );
-  const typeMap = { H2: 'h2', H3: 'h3', H4: 'h4', QUOTE: 'quote', LI: 'li' };
-
-  for (const chunk of chunks) {
-    if (!chunk) continue;
-
-    if (/^\n{2,}$/.test(chunk)) {
-      flushText();
-      continue;
-    }
-
-    const imageMatch = chunk.match(/^\[\[DTHL_IMAGE_(\d+)\]\]$/);
-    if (imageMatch) {
-      flushText();
-      const image = images[Number(imageMatch[1])];
-      if (image) blocks.push({ type: 'image', ...image });
-      continue;
-    }
-
-    const styledMatch = chunk.match(/^\[\[DTHL_(H2|H3|H4|QUOTE|LI)\]\]$/);
-    if (styledMatch) {
-      flushText();
-      blockType = typeMap[styledMatch[1]] || 'p';
-      continue;
-    }
-
-    if (chunk === '[[DTHL_END]]') {
-      flushText();
-      blockType = 'p';
-      continue;
-    }
-
-    textBuffer += chunk;
-  }
-
-  flushText();
-  return { blocks, images };
+  return { blocks: parseImportedBlockMarkers(decoded, images), images };
 }
 
 function cleanTitle(value, sourceDomain) {
