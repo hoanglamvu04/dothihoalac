@@ -178,7 +178,7 @@ export async function uploadImageFile(
       },
     });
   } catch (error) {
-    throw new Error(imageUploadErrorMessage(error));
+    throw new Error(imageUploadErrorMessage(error), { cause: error });
   }
 
   const media = response?.data?.data;
