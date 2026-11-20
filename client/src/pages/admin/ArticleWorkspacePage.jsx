@@ -26,6 +26,7 @@ import ArticleBody from '../../components/content/ArticleBody';
 import ContentImage from '../../components/content/ContentImage';
 import { LoadingBlock } from '../../components/common/Loading';
 import { adminApi } from '../../api/admin.api';
+import { importArticleUrl } from '../../api/articleImport.api';
 import { apiErrorMessage } from '../../api/http';
 import { useToast } from '../../context/ToastContext';
 import { CONTENT_STATUS } from '../../utils/constants';
@@ -121,6 +122,7 @@ export default function ArticleWorkspacePage() {
   };
 
   const docUrl = item?.article?.googleDocUrl || '';
+  const importedSourceUrl = item?.article?.sourceCanonicalUrl || item?.article?.sourceUrl || '';
   const publicUrl = item?.slug ? `/tin-tuc/${encodeURIComponent(item.slug)}` : '';
   const published = item?.status === 'published';
   const customCoverId = form?.coverMode === 'custom' ? idOf(coverMedia) || form?.thumbnailMediaId : null;
@@ -163,6 +165,45 @@ export default function ArticleWorkspacePage() {
     } catch (error) {
       toast.error(apiErrorMessage(error));
     } finally {
+      setBusy('');
+    }
+  };
+
+  const recreateCleanImport = async () => {
+    if (busy || !importedSourceUrl) return;
+    const accepted = window.confirm(
+      'Tạo một bản nháp mới từ URL nguồn và thử tải lại ảnh? Bài viết cùng Google Docs hiện tại sẽ được GIỮ NGUYÊN. Hãy soát nội dung, ảnh và quyền sử dụng trước khi xuất bản bản mới.',
+    );
+    if (!accepted) return;
+
+    setBusy('reimport');
+    try {
+      const imported = await importArticleUrl({
+        url: importedSourceUrl,
+        includeImages: true,
+        force: true,
+      });
+      const newId = String(imported?.postId || '');
+      if (!newId) {
+        throw new Error('Máy chủ không trả về ID bản nháp mới.');
+      }
+
+      const uploaded = Number(imported?.imageCount || 0);
+      const skipped = Number(imported?.skippedImageCount || 0);
+      toast.success(`Đã tạo bản nháp mới. Lấy được ${uploaded} ảnh.`);
+      if (skipped) {
+        toast.error(`Có ${skipped} ảnh nguồn không tải được. Hãy thêm ảnh trực tiếp trong Media Library và kiểm tra quyền sử dụng.`);
+      }
+
+      try {
+        await adminApi.syncGoogleDoc(newId);
+      } catch (error) {
+        toast.info(`Bản nháp mới đã tạo nhưng chưa đồng bộ xong: ${apiErrorMessage(error)}`);
+      }
+
+      window.location.assign(`/quan-tri/bai-viet/${encodeURIComponent(newId)}`);
+    } catch (error) {
+      toast.error(apiErrorMessage(error, 'Không thể tái nhập bài viết từ nguồn.'));
       setBusy('');
     }
   };
@@ -324,11 +365,31 @@ export default function ArticleWorkspacePage() {
                 )}
                 {docUrl ? (
                   <button type="button" onClick={syncDocs} disabled={Boolean(busy)}>
-                    <RefreshCw size={16} /> {busy === 'sync' ? 'Đang đồng bộ…' : 'Đồng bộ ngay'}
+                    <RefreshCw size={16} /> {busy === 'sync' ? 'Đang đồng bộ…' : importedSourceUrl ? 'Đồng bộ & lọc nội dung' : 'Đồng bộ ngay'}
                   </button>
                 ) : null}
               </div>
             </div>
+
+            {importedSourceUrl ? (
+              <div className="article-url-repair-panel">
+                <strong>Nội dung nhập từ URL nguồn</strong>
+                <p>
+                  Bấm <b>Đồng bộ & lọc nội dung</b> để bỏ các phần thừa khỏi bản CMS hiện tại.
+                  Google Docs gốc không bị sửa và ảnh không có trong Docs không thể tự phục hồi bằng thao tác này.
+                </p>
+                <div className="article-url-repair-panel__actions">
+                  <button type="button" onClick={recreateCleanImport} disabled={Boolean(busy)}>
+                    <RefreshCw size={15} />
+                    {busy === 'reimport' ? 'Đang tái nhập từ nguồn…' : 'Tạo bản nháp sạch mới & tải lại ảnh'}
+                  </button>
+                  <a href={importedSourceUrl} target="_blank" rel="noopener noreferrer">
+                    <ExternalLink size={15} /> Mở bài nguồn
+                  </a>
+                </div>
+                <small>Bài viết này và Google Docs hiện tại sẽ không bị ghi đè. Soát bản mới trước khi xuất bản.</small>
+              </div>
+            ) : null}
 
             <div className="article-workspace-preview">
               <div className="article-workspace-preview__label"><Eye size={16} /> Bản xem nội dung đã đồng bộ</div>
