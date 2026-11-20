@@ -139,6 +139,17 @@ const schema = new mongoose.Schema(
       min: 0,
       default: 0,
     },
+    urlImportImageMediaIds: {
+      // Media copies created from source URLs when the Google Doc is first
+      // imported. These provide a safe fallback if Google image contentUri
+      // cannot be fetched during the first CMS synchronization.
+      type: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Media',
+      }],
+      default: [],
+    },
+
   },
   {
     timestamps: true,
