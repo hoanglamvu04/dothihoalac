@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 
 import { api } from '../../api/http';
+import { clipboardImageFiles, uploadImageFile } from '../../utils/imageUpload';
 
 import '../forms/RichTextEditor.css';
 import './CommunitySocialEditor.css';
@@ -294,26 +295,17 @@ export async function persistTemporaryCommunityMedia(
         );
       }
 
-      const formData = new FormData();
-      formData.append('image', entry.file);
-      formData.append('folder', uploadFolder);
-      formData.append('altText', entry.alt);
-
-      const response = await api.post('/media/images', formData, {
-        onUploadProgress(progressEvent) {
-          const fileRatio = progressEvent.total
-            ? progressEvent.loaded / progressEvent.total
-            : 0;
-          const overallRatio = (index + fileRatio) / figures.length;
+      const media = await uploadImageFile(entry.file, {
+        folder: uploadFolder,
+        altText: entry.alt,
+        onProgress(percent) {
           onProgress?.({
             current: index + 1,
             total: figures.length,
-            percent: Math.max(1, Math.round(overallRatio * 100)),
+            percent: Math.max(1, Math.round((index * 100 + percent) / figures.length)),
           });
         },
       });
-
-      const media = response?.data?.data;
       const item = createMediaItem(media, entry.alt);
 
       if (!item.id || !item.src) {
@@ -617,13 +609,7 @@ export default function CommunitySocialEditor({
     (event) => {
       if (disabled) return;
 
-      const clipboardItems = Array.from(
-        event.clipboardData?.items || [],
-      );
-      const imageFiles = clipboardItems
-        .filter((item) => item.type.startsWith('image/'))
-        .map((item) => item.getAsFile())
-        .filter(Boolean);
+      const imageFiles = clipboardImageFiles(event.clipboardData);
 
       if (imageFiles.length) {
         event.preventDefault();
