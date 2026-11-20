@@ -35,6 +35,7 @@ import { PageLoading } from '../../components/common/Loading';
 import { articleApi } from '../../api/content.api';
 import { formatDateTime } from '../../utils/formatters';
 import { mediaUrl } from '../../utils/media';
+import { bodyContainsVisibleMediaId } from '../../utils/articleMedia';
 import { buildNewsArticleJsonLd } from '../../utils/structuredData';
 
 import './ArticleDetailPage.css';
@@ -64,18 +65,6 @@ function mediaIdOf(value) {
       value?.id ||
       value ||
       '',
-  );
-}
-
-function bodyContainsMediaId(html, mediaId) {
-  const id = String(mediaId || '').trim();
-  if (!id) return false;
-
-  const source = String(html || '');
-
-  return (
-    source.includes(`data-media-id="${id}"`) ||
-    source.includes(`data-media-id='${id}'`)
   );
 }
 
@@ -346,7 +335,7 @@ export default function ArticleDetailPage() {
   );
 
   const coverIsInline = useMemo(
-    () => bodyContainsMediaId(bodyHtml, coverMediaId),
+    () => bodyContainsVisibleMediaId(bodyHtml, coverMediaId),
     [bodyHtml, coverMediaId],
   );
 
