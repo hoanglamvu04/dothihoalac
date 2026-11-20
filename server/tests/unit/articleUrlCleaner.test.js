@@ -4,6 +4,7 @@ import assert from 'node:assert/strict';
 import {
   cleanImportedArticleMarkup,
   cleanImportedArticleBlocks,
+  parseImportedBlockMarkers,
 } from '../../src/modules/articles/article.urlCleaner.js';
 
 test('URL import removes accessibility toolbar, hidden UI and related stories', () => {
@@ -88,4 +89,35 @@ test('URL import keeps image blocks and only trims related-article tail', () => 
     picture,
     { type: 'p', text: 'Nội dung thứ hai của tin tức.' },
   ]);
+});
+
+
+test('URL import parses real heading and paragraph boundaries without leaking sentinel tokens', () => {
+  const photo = { url: 'https://example.com/anh.webp', alt: 'Ảnh hiện trường' };
+  const source = [
+    'Đoạn mở đầu của bài.',
+    '',
+    '[[DTHL_H2]]',
+    'Phần nội dung kỳ họp',
+    '[[DTHL_END]]',
+    '',
+    'Đoạn thứ nhất.',
+    '',
+    'Đoạn thứ hai.',
+    '',
+    '[[DTHL_IMAGE_0]]',
+    '',
+    'Đoạn kết.',
+  ].join('\n');
+
+  const blocks = parseImportedBlockMarkers(source, [photo]);
+  assert.deepEqual(blocks, [
+    { type: 'p', text: 'Đoạn mở đầu của bài.' },
+    { type: 'h2', text: 'Phần nội dung kỳ họp' },
+    { type: 'p', text: 'Đoạn thứ nhất.' },
+    { type: 'p', text: 'Đoạn thứ hai.' },
+    { type: 'image', ...photo },
+    { type: 'p', text: 'Đoạn kết.' },
+  ]);
+  assert.doesNotMatch(JSON.stringify(blocks), /\[\[DTHL_/);
 });
