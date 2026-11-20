@@ -548,8 +548,8 @@ function markersToBlocks(articleHtml, baseUrl, title) {
 
   // <picture> sources frequently carry the only usable high-resolution URL,
   // while <img src> is a tiny data-URI/placeholder. Resolve it before parsing.
-  marked = marked.replace(/<picture\\b[^>]*>[\\s\\S]*?<\\/picture>/gi, (picture) => {
-    const imgTag = picture.match(/<img\\b[^>]*>/i)?.[0] || '';
+  marked = marked.replace(/<picture\b[^>]*>[\s\S]*?<\/picture>/gi, (picture) => {
+    const imgTag = picture.match(/<img\b[^>]*>/i)?.[0] || '';
     if (!imgTag) return picture;
     const image = extractArticleImageSource(imgTag, picture);
     if (!image.rawUrl) return imgTag;
