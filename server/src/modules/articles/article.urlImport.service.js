@@ -854,7 +854,7 @@ function cloudinaryDocsImageUrl(uploaded) {
 
 async function prepareImageBlocks(extracted, includeImages) {
   if (!includeImages) {
-    return { blocks: extracted.blocks.filter((block) => block.type !== 'image'), temporaryAssets: [] };
+    return { blocks: extracted.blocks.filter((block) => block.type !== 'image'), temporaryAssets: [], failedImages: [] };
   }
 
   const blocks = extracted.blocks.map((block) => ({ ...block }));
@@ -863,6 +863,7 @@ async function prepareImageBlocks(extracted, includeImages) {
     .filter((index) => index >= 0)
     .slice(0, MAX_IMAGES);
   const temporaryAssets = [];
+  const failedImages = [];
 
   for (let cursor = 0; cursor < imageIndexes.length; cursor += 3) {
     const batch = imageIndexes.slice(cursor, cursor + 3);
@@ -882,20 +883,26 @@ async function prepareImageBlocks(extracted, includeImages) {
             imageUri: cloudinaryDocsImageUrl(uploaded),
           };
         } catch (error) {
-          console.warn(`[ArticleUrlImport] bỏ qua ảnh ${block.url}: ${error.message}`);
-          return { blockIndex, imageUri: '' };
+          const reason = String(error?.message || 'Không đọc được ảnh từ nguồn.').slice(0, 200);
+          console.warn(`[ArticleUrlImport] bỏ qua ảnh ${block.url}: ${reason}`);
+          return { blockIndex, imageUri: '', failedImage: {
+            url: String(block.url || '').slice(0, 800),
+            reason,
+          } };
         }
       }),
     );
 
     for (const item of prepared) {
       blocks[item.blockIndex].imageUri = item.imageUri;
+      if (item.failedImage) failedImages.push(item.failedImage);
     }
   }
 
   return {
     blocks: blocks.filter((block) => block.type !== 'image' || block.imageUri),
     temporaryAssets,
+    failedImages,
   };
 }
 
@@ -1064,6 +1071,10 @@ export async function previewAdminArticleUrl(url) {
     publishedAt: extracted.publishedAt?.toISOString() || null,
     wordCount: extracted.wordCount,
     imageCount: extracted.imageCount,
+    imageCandidates: extracted.blocks
+      .filter((block) => block.type === 'image')
+      .slice(0, 6)
+      .map((block) => ({ url: block.url, alt: block.alt })),
     removedBlocks: extracted.removedBlocks,
     contentPreview: extracted.contentPreview,
     duplicate,
@@ -1155,6 +1166,7 @@ export async function importAdminArticleUrl(
       canonicalUrl: article.sourceCanonicalUrl,
       title: extracted.title,
       wordCount: extracted.wordCount,
+      failedImages: prepared.failedImages,
       imageCount: prepared.blocks.filter((block) => block.type === 'image').length,
       skippedImageCount: Math.max(
         0,
