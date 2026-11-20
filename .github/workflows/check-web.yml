@@ -31,5 +31,8 @@ jobs:
         working-directory: client
 
       - name: Build full frontend
+        env:
+          # Preview PRs should not depend on live production sitemap API data.
+          SITEMAP_ALLOW_STATIC_ONLY: ${{ github.event_name == 'pull_request' && 'true' || 'false' }}
         run: npm run build
         working-directory: client
