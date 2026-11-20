@@ -26,10 +26,8 @@ import {
   X,
 } from 'lucide-react';
 
-import {
-  api,
-  apiErrorMessage,
-} from '../../api/http';
+import { apiErrorMessage } from '../../api/http';
+import { clipboardImageFiles, uploadImageFile } from '../../utils/imageUpload';
 import './RichTextEditor.css';
 import './RichTextEditorCaption.css';
 
@@ -476,25 +474,12 @@ export default function RichTextEditor({
       setUploadProgress(0);
 
       try {
-        const formData = new FormData();
-        formData.append('image', file);
-        formData.append('folder', uploadFolder);
-        formData.append('altText', fileNameToAlt(file.name));
-
-        const response = await api.post('/media/images', formData, {
-          onUploadProgress(progressEvent) {
-            if (!progressEvent.total) return;
-
-            setUploadProgress(
-              Math.round(
-                (progressEvent.loaded * 100) /
-                  progressEvent.total,
-              ),
-            );
-          },
+        const media = await uploadImageFile(file, {
+          folder: uploadFolder,
+          altText: fileNameToAlt(file.name),
+          maxImageSizeMb,
+          onProgress: setUploadProgress,
         });
-
-        const media = response?.data?.data;
         const mediaId = media?._id || media?.id;
         const mediaUrl = media?.secureUrl || media?.url;
 
@@ -533,7 +518,7 @@ export default function RichTextEditor({
         }
       }
     },
-    [saveSelection, uploadFolder, validateImageFile],
+    [maxImageSizeMb, saveSelection, uploadFolder, validateImageFile],
   );
 
   const openImagePicker = useCallback(() => {
@@ -766,22 +751,15 @@ export default function RichTextEditor({
     (event) => {
       if (disabled) return;
 
-      const clipboardItems = Array.from(
-        event.clipboardData?.items || [],
-      );
-      const imageItem = clipboardItems.find((item) =>
-        item.type.startsWith('image/'),
-      );
+      const imageFiles = clipboardImageFiles(event.clipboardData);
 
-      if (imageItem) {
+      if (imageFiles.length) {
         event.preventDefault();
-        const file = imageItem.getAsFile();
-
-        if (file) {
-          saveSelection();
-          void uploadInlineImage(file);
+        saveSelection();
+        void uploadInlineImage(imageFiles[0]);
+        if (imageFiles.length > 1) {
+          setError('Chỉ chèn ảnh đầu tiên của lần dán. Hãy chọn nhiều ảnh qua nút Chèn ảnh.');
         }
-
         return;
       }
 
