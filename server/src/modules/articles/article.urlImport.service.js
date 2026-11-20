@@ -5,6 +5,12 @@ import path from 'node:path';
 
 import sanitizeHtml from 'sanitize-html';
 import sharp from 'sharp';
+import { extractArticleImageSource } from './article.urlImages.js';
+import {
+  cleanImportedArticleMarkup,
+  cleanImportedArticleBlocks,
+  parseImportedBlockMarkers,
+} from './article.urlCleaner.js';
 
 import { env } from '../../config/env.js';
 import {
@@ -362,11 +368,11 @@ async function fetchPublicResource(
   let current = await assertSafePublicUrl(input);
 
   for (let redirectCount = 0; redirectCount <= MAX_REDIRECTS; redirectCount += 1) {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), timeoutMs);
+    const controller = new globalThis.AbortController();
+    const timer = globalThis.setTimeout(() => controller.abort(), timeoutMs);
 
     try {
-      const response = await fetch(current, {
+      const response = await globalThis.fetch(current, {
         method: 'GET',
         redirect: 'manual',
         headers: {
@@ -407,7 +413,7 @@ async function fetchPublicResource(
       }
       throw new ApiError(502, 'Không thể kết nối website nguồn.', 'ARTICLE_URL_FETCH_FAILED');
     } finally {
-      clearTimeout(timer);
+      globalThis.clearTimeout(timer);
     }
   }
 
@@ -497,7 +503,7 @@ function candidateScore(candidate) {
   const firstTag = candidate.match(/^<[^>]+>/)?.[0] || '';
   const attrs = parseTagAttributes(firstTag);
   const hint = `${attrs.id || ''} ${attrs.class || ''}`;
-  const text = plainText(stripNoise(candidate));
+  const text = plainText(cleanImportedArticleMarkup(stripNoise(candidate)));
   const paragraphCount = (candidate.match(/<p\b/gi) || []).length;
   const headingCount = (candidate.match(/<h[1-4]\b/gi) || []).length;
   const imageCount = (candidate.match(/<img\b/gi) || []).length;
@@ -527,36 +533,6 @@ function chooseArticleHtml(html, jsonLd) {
   return cleaned;
 }
 
-function chooseSrcset(value = '') {
-  const candidates = String(value || '')
-    .split(',')
-    .map((part) => part.trim())
-    .filter(Boolean)
-    .map((part) => {
-      const [url, descriptor = ''] = part.split(/\s+/);
-      const width = Number(String(descriptor).replace(/w$/i, '')) || 0;
-      return { url, width };
-    })
-    .sort((a, b) => b.width - a.width);
-
-  return candidates[0]?.url || '';
-}
-
-function imageSourceFromTag(tag) {
-  const attrs = parseTagAttributes(tag);
-  return {
-    rawUrl:
-      attrs['data-original'] ||
-      attrs['data-src'] ||
-      attrs['data-lazy-src'] ||
-      attrs.src ||
-      chooseSrcset(attrs.srcset || attrs['data-srcset']),
-    alt: safeText(attrs.alt || attrs.title, 300),
-    width: Number.parseInt(attrs.width, 10) || 0,
-    height: Number.parseInt(attrs.height, 10) || 0,
-  };
-}
-
 function imageUrlLooksUseful(url) {
   if (!url) return false;
   const lower = url.toLowerCase();
@@ -568,10 +544,24 @@ function imageUrlLooksUseful(url) {
 function markersToBlocks(articleHtml, baseUrl, title) {
   const images = [];
   const imageIndex = new Map();
-  let marked = stripNoise(articleHtml);
+  let marked = cleanImportedArticleMarkup(stripNoise(articleHtml));
+
+  // <picture> sources frequently carry the only usable high-resolution URL,
+  // while <img src> is a tiny data-URI/placeholder. Resolve it before parsing.
+  marked = marked.replace(/<picture\b[^>]*>[\s\S]*?<\/picture>/gi, (picture) => {
+    const imgTag = picture.match(/<img\b[^>]*>/i)?.[0] || '';
+    if (!imgTag) return picture;
+    const image = extractArticleImageSource(imgTag, picture);
+    if (!image.rawUrl) return imgTag;
+    const dimensionAttrs = [
+      image.width > 0 ? `width="${image.width}"` : '',
+      image.height > 0 ? `height="${image.height}"` : '',
+    ].filter(Boolean).join(' ');
+    return `<img src="${escapeHtml(image.rawUrl)}" alt="${escapeHtml(image.alt)}" ${dimensionAttrs}>`;
+  });
 
   marked = marked.replace(/<img\b[^>]*>/gi, (tag) => {
-    const source = imageSourceFromTag(tag);
+    const source = extractArticleImageSource(tag);
     const url = normalizeUrl(source.rawUrl, baseUrl);
     if (!imageUrlLooksUseful(url)) return ' ';
     if (source.width && source.height && source.width < 120 && source.height < 120) return ' ';
@@ -611,46 +601,7 @@ function markersToBlocks(articleHtml, baseUrl, title) {
     .replace(/\n{3,}/g, '\n\n')
     .trim();
 
-  const blocks = [];
-  let textBuffer = '';
-
-  const flushText = () => {
-    const text = safeText(textBuffer, 12000);
-    textBuffer = '';
-    if (!text) return;
-    blocks.push({ type: 'p', text });
-  };
-
-  for (const rawLine of decoded.split(/\n+/)) {
-    const line = safeText(rawLine, 12000);
-    if (!line) {
-      flushText();
-      continue;
-    }
-
-    const imageMatch = line.match(/^\[\[DTHL_IMAGE_(\d+)\]\]$/);
-    if (imageMatch) {
-      flushText();
-      const image = images[Number(imageMatch[1])];
-      if (image) blocks.push({ type: 'image', ...image });
-      continue;
-    }
-
-    const styledMatch = line.match(/^\[\[DTHL_(H2|H3|H4|QUOTE|LI)\]\](.*?)\[\[DTHL_END\]\]$/);
-    if (styledMatch) {
-      flushText();
-      const text = safeText(styledMatch[2], 12000);
-      if (!text) continue;
-      const typeMap = { H2: 'h2', H3: 'h3', H4: 'h4', QUOTE: 'quote', LI: 'li' };
-      blocks.push({ type: typeMap[styledMatch[1]] || 'p', text });
-      continue;
-    }
-
-    textBuffer += `${textBuffer ? '\n' : ''}${line}`;
-  }
-
-  flushText();
-  return { blocks, images };
+  return { blocks: parseImportedBlockMarkers(decoded, images), images };
 }
 
 function cleanTitle(value, sourceDomain) {
@@ -757,17 +708,25 @@ async function extractArticle(urlInput) {
 
   const articleHtml = chooseArticleHtml(html, jsonLd);
   let { blocks } = markersToBlocks(articleHtml, finalUrl, title);
+  let cleaned = cleanImportedArticleBlocks(blocks, { title, summary });
+  blocks = cleaned.blocks;
+  let removedBlocks = cleaned.removedBlocks;
   let textLength = blocks
     .filter((block) => block.type !== 'image')
     .reduce((sum, block) => sum + String(block.text || '').length, 0);
 
   if (textLength < 250 && jsonLd?.articleBody) {
-    blocks = safeText(jsonLd.articleBody, MAX_TEXT_CHARS)
-      .split(/\n{2,}/)
-      .map((text) => safeText(text, 12000))
-      .filter(Boolean)
-      .map((text) => ({ type: 'p', text }));
-    textLength = blocks.reduce((sum, block) => sum + block.text.length, 0);
+    const structuredBody = plainText(jsonLd.articleBody, MAX_TEXT_CHARS);
+    cleaned = cleanImportedArticleBlocks(
+      structuredBody
+        .split(/\n{2,}/)
+        .map((text) => safeText(text, 12000))
+        .filter(Boolean)
+        .map((text) => ({ type: 'p', text })),
+      { title, summary },
+    );
+    blocks = cleaned.blocks;
+    removedBlocks += cleaned.removedBlocks;
   }
 
   const heroImage = normalizeUrl(
@@ -794,15 +753,10 @@ async function extractArticle(urlInput) {
     }
   }
 
-  blocks = blocks.filter((block, index) => {
-    if (block.type === 'image') return true;
-    const text = safeText(block.text, 12000);
-    if (!text) return false;
-    if (index < 4 && text.localeCompare(title, 'vi', { sensitivity: 'base' }) === 0) return false;
-    if (summary && index < 6 && text.localeCompare(summary, 'vi', { sensitivity: 'base' }) === 0) return false;
-    block.text = text;
-    return true;
-  });
+  // Final pass also excludes duplicate metadata if hero image was prepended.
+  cleaned = cleanImportedArticleBlocks(blocks, { title, summary });
+  blocks = cleaned.blocks;
+  removedBlocks += cleaned.removedBlocks;
 
   const seenImages = new Set();
   let keptImages = 0;
@@ -836,6 +790,11 @@ async function extractArticle(urlInput) {
     blocks,
     wordCount,
     imageCount: keptImages,
+    removedBlocks,
+    contentPreview: blocks
+      .filter((block) => block.type !== 'image')
+      .slice(0, 10)
+      .map((block) => ({ type: block.type, text: block.text.slice(0, 800) })),
   };
 }
 
@@ -895,7 +854,7 @@ function cloudinaryDocsImageUrl(uploaded) {
 
 async function prepareImageBlocks(extracted, includeImages) {
   if (!includeImages) {
-    return { blocks: extracted.blocks.filter((block) => block.type !== 'image'), temporaryAssets: [] };
+    return { blocks: extracted.blocks.filter((block) => block.type !== 'image'), temporaryAssets: [], failedImages: [] };
   }
 
   const blocks = extracted.blocks.map((block) => ({ ...block }));
@@ -904,6 +863,7 @@ async function prepareImageBlocks(extracted, includeImages) {
     .filter((index) => index >= 0)
     .slice(0, MAX_IMAGES);
   const temporaryAssets = [];
+  const failedImages = [];
 
   for (let cursor = 0; cursor < imageIndexes.length; cursor += 3) {
     const batch = imageIndexes.slice(cursor, cursor + 3);
@@ -923,20 +883,26 @@ async function prepareImageBlocks(extracted, includeImages) {
             imageUri: cloudinaryDocsImageUrl(uploaded),
           };
         } catch (error) {
-          console.warn(`[ArticleUrlImport] bỏ qua ảnh ${block.url}: ${error.message}`);
-          return { blockIndex, imageUri: '' };
+          const reason = String(error?.message || 'Không đọc được ảnh từ nguồn.').slice(0, 200);
+          console.warn(`[ArticleUrlImport] bỏ qua ảnh ${block.url}: ${reason}`);
+          return { blockIndex, imageUri: '', failedImage: {
+            url: String(block.url || '').slice(0, 800),
+            reason,
+          } };
         }
       }),
     );
 
     for (const item of prepared) {
       blocks[item.blockIndex].imageUri = item.imageUri;
+      if (item.failedImage) failedImages.push(item.failedImage);
     }
   }
 
   return {
     blocks: blocks.filter((block) => block.type !== 'image' || block.imageUri),
     temporaryAssets,
+    failedImages,
   };
 }
 
@@ -1054,11 +1020,11 @@ async function populateGoogleDocument(accessToken, documentId, extracted, blocks
     });
   }
 
-  const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), 45000);
+  const controller = new globalThis.AbortController();
+  const timer = globalThis.setTimeout(() => controller.abort(), 45000);
 
   try {
-    const response = await fetch(
+    const response = await globalThis.fetch(
       `https://docs.googleapis.com/v1/documents/${encodeURIComponent(documentId)}:batchUpdate`,
       {
         method: 'POST',
@@ -1087,7 +1053,7 @@ async function populateGoogleDocument(accessToken, documentId, extracted, blocks
     }
     throw new ApiError(502, 'Không thể ghi nội dung URL vào Google Docs.', 'ARTICLE_URL_GOOGLE_DOC_NETWORK_ERROR');
   } finally {
-    clearTimeout(timer);
+    globalThis.clearTimeout(timer);
   }
 }
 
@@ -1105,6 +1071,12 @@ export async function previewAdminArticleUrl(url) {
     publishedAt: extracted.publishedAt?.toISOString() || null,
     wordCount: extracted.wordCount,
     imageCount: extracted.imageCount,
+    imageCandidates: extracted.blocks
+      .filter((block) => block.type === 'image')
+      .slice(0, 6)
+      .map((block) => ({ url: block.url, alt: block.alt })),
+    removedBlocks: extracted.removedBlocks,
+    contentPreview: extracted.contentPreview,
     duplicate,
   };
 }
@@ -1194,6 +1166,7 @@ export async function importAdminArticleUrl(
       canonicalUrl: article.sourceCanonicalUrl,
       title: extracted.title,
       wordCount: extracted.wordCount,
+      failedImages: prepared.failedImages,
       imageCount: prepared.blocks.filter((block) => block.type === 'image').length,
       skippedImageCount: Math.max(
         0,

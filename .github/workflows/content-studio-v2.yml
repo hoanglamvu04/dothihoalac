@@ -65,6 +65,7 @@ jobs:
           src/pages/admin/AdminProjectsPage.jsx
           src/pages/admin/AdminUsersPage.jsx
           src/pages/admin/ArticleWorkspacePage.jsx
+          src/pages/admin/ArticleUrlImportButton.jsx
           src/pages/admin/GoogleDocsArticleLauncher.jsx
           src/pages/admin/ModerationQueuePage.jsx
           src/pages/admin/ProjectWorkspacePage.jsx
@@ -79,7 +80,16 @@ jobs:
           src/pages/public/SearchPage.jsx
           src/utils/content.js
           src/utils/projects.js
-      - run: npm run build
+          src/utils/imageUpload.js
+          src/api/media.api.js
+          src/components/forms/RichTextEditor.jsx
+          src/components/admin/ArticleComposer.jsx
+          src/components/community/CommunitySocialEditor.jsx
+          src/components/forms/PropertyGalleryUploader.jsx
+      - name: Build frontend
+        env:
+          SITEMAP_ALLOW_STATIC_ONLY: ${{ github.event_name == 'pull_request' && 'true' || 'false' }}
+        run: npm run build
 
   server:
     runs-on: ubuntu-latest
@@ -136,6 +146,8 @@ jobs:
           src/modules/jobs/job.service.js
           src/modules/jobs/job.publicList.service.js
           src/modules/jobs/jobPost.model.js
+          src/modules/articles/article.urlCleaner.js
+          src/modules/articles/article.urlImport.service.js
           src/modules/articles/article.admin.routes.js
           src/modules/articles/article.controller.js
           src/modules/articles/article.model.js

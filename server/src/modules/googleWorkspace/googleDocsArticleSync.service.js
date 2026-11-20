@@ -4,6 +4,7 @@ import { env } from '../../config/env.js';
 import Media from '../media/media.model.js';
 import { uploadImage as storeMediaImage } from '../media/media.service.js';
 import { GoogleWorkspaceError } from './googleWorkspace.service.js';
+import { cleanImportedGoogleDocsRows } from '../articles/article.urlCleaner.js';
 
 const MAX_IMAGE_BYTES = Math.max(
   1,
@@ -644,7 +645,15 @@ export async function syncGoogleDocsArticleContent({
   ownerId,
   accessToken,
 }) {
-  const rows = collectDocumentRows(document);
+  const importedFromUrl = Boolean(article?.sourceCanonicalUrl || article?.sourceUrl);
+  const originalRows = collectDocumentRows(document);
+  // Older imported Docs can contain accessibility toolbars and raw parser
+  // tokens. Clean only imports traced to a source URL. Google Docs itself is
+  // left untouched, and normal editor-authored Docs retain their formatting.
+  const cleanedRows = importedFromUrl
+    ? cleanImportedGoogleDocsRows(originalRows)
+    : { rows: originalRows, removedRows: 0 };
+  const rows = cleanedRows.rows;
   const textRows = rows.filter(
     (row) => row.kind === 'text',
   );
@@ -720,10 +729,6 @@ export async function syncGoogleDocsArticleContent({
 
   const useFirstDocImageAsCover =
     article?.coverMode !== 'custom';
-  const importedFromUrl = Boolean(
-    article?.sourceCanonicalUrl ||
-    article?.sourceUrl,
-  );
 
   let coverMediaId = '';
   let coverUrl = '';
@@ -927,6 +932,7 @@ export async function syncGoogleDocsArticleContent({
     inlineImageCount: meaningful.filter(
       (block) => block.type === 'image',
     ).length,
+    cleanedImportedRows: cleanedRows.removedRows,
     coverMediaId,
     coverUrl,
   };

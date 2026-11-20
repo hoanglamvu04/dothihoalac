@@ -164,9 +164,13 @@ export default function ArticleUrlImportButton({ disabled = false }) {
       const skippedImages = Number(imported?.skippedImageCount || 0);
       toast.success(
         includeImages
-          ? `Đã tạo Google Docs từ URL với ${importedImages} ảnh${skippedImages ? `, bỏ qua ${skippedImages} ảnh không tải được` : ''}. Đang đồng bộ về CMS…`
+          ? `Đã tạo Google Docs từ URL với ${importedImages} ảnh. Đang đồng bộ về CMS…`
           : 'Đã tạo Google Docs từ URL. Đang đồng bộ về CMS…',
       );
+      if (includeImages && skippedImages) {
+        const firstReason = imported?.failedImages?.[0]?.reason || 'Website nguồn chặn tải ảnh hoặc URL ảnh không hợp lệ.';
+        toast.error(`${skippedImages} ảnh không lấy được: ${firstReason} Có thể bổ sung ảnh thủ công trong Media Library.`);
+      }
 
       try {
         await adminApi.syncGoogleDoc(postId);
@@ -336,6 +340,61 @@ export default function ArticleUrlImportButton({ disabled = false }) {
                     </span>
                   </div>
                 </div>
+
+                {Array.isArray(preview.contentPreview) && preview.contentPreview.length ? (
+                  <section className="article-url-import-clean-preview" aria-label="Nội dung đã lọc">
+                    <div className="article-url-import-clean-preview-head">
+                      <strong>Nội dung đã lọc — xem trước trước khi tạo Google Docs</strong>
+                      {Number(preview.removedBlocks || 0) > 0 ? (
+                        <span>Đã loại {preview.removedBlocks} đoạn trùng hoặc nhiễu</span>
+                      ) : null}
+                    </div>
+                    <div className="article-url-import-clean-preview-body">
+                      {preview.contentPreview.map((block, index) => (
+                        <p
+                          className={['h2', 'h3', 'h4'].includes(block.type) ? 'is-heading' : ''}
+                          key={`${index}-${block.type}`}
+                        >
+                          {block.text}
+                        </p>
+                      ))}
+                    </div>
+                    <small>
+                      Đây là các đoạn đầu sau khi lọc, không phải toàn bộ bài. Nếu vẫn thấy nội dung điều khiển của website, không nên tạo Google Docs.
+                    </small>
+                  </section>
+                ) : null}
+
+                {Array.isArray(preview.imageCandidates) && preview.imageCandidates.length ? (
+                  <section className="article-url-import-images-preview" aria-label="Ảnh nguồn được nhận diện">
+                    <div className="article-url-import-clean-preview-head">
+                      <strong>Ảnh trong bài được nhận diện</strong>
+                      <span>Chưa tải lên Media Library</span>
+                    </div>
+                    <div className="article-url-import-image-links">
+                      {preview.imageCandidates.map((item, index) => (
+                        <a
+                          href={item.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          key={`${index}-${item.url}`}
+                          title={item.url}
+                        >
+                          <Image size={14} />
+                          <span>Ảnh {index + 1}: {item.alt || 'Ảnh bài viết'}</span>
+                          <ExternalLink size={13} />
+                        </a>
+                      ))}
+                    </div>
+                    <small>
+                      Website có thể chặn tải ảnh tự động dù URL được nhận diện. Khi nhập xong, hệ thống sẽ báo số ảnh tải thất bại và nguyên nhân.
+                    </small>
+                  </section>
+                ) : (
+                  <div className="article-url-import-no-images">
+                    Chưa phát hiện ảnh hợp lệ trong nội dung. Hãy kiểm tra ảnh nguồn hoặc bổ sung thủ công sau khi nhập bài.
+                  </div>
+                )}
 
                 <div className="article-url-import-origin">
                   <span>Nguồn</span>

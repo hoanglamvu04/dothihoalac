@@ -297,3 +297,62 @@
     flex-direction: column;
   }
 }
+
+
+/* Import repair tools: avoid destructive edits to historical Google Docs. */
+.article-url-repair-panel {
+  margin: 14px 0;
+  padding: 15px 17px;
+  border: 1px solid #d8cbaa;
+  border-radius: 12px;
+  background: #fffcf3;
+  color: #37362f;
+}
+
+.article-url-repair-panel > strong {
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.article-url-repair-panel p {
+  margin: 7px 0 12px;
+  font-size: 12px;
+  line-height: 1.65;
+}
+
+.article-url-repair-panel__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+
+.article-url-repair-panel__actions button,
+.article-url-repair-panel__actions a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 36px;
+  padding: 8px 11px;
+  border: 1px solid #c6b680;
+  border-radius: 9px;
+  color: #514015;
+  background: white;
+  font-size: 12px;
+  font-weight: 750;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.article-url-repair-panel__actions button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.article-url-repair-panel > small {
+  display: block;
+  margin-top: 10px;
+  color: #685c3e;
+  font-size: 11px;
+  line-height: 1.5;
+}

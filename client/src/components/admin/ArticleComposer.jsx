@@ -30,7 +30,7 @@ import {
   Unlink,
 } from 'lucide-react';
 
-import { api, apiErrorMessage } from '../../api/http';
+import { uploadImageFile } from '../../utils/imageUpload';
 
 const IMAGE_TYPES = new Set([
   'image/avif',
@@ -124,8 +124,14 @@ export default function ArticleComposer({
   const [stats, setStats] = useState({ words: 0, characters: 0 });
 
   const uploadFiles = useCallback(async (activeEditor, files, position = null) => {
-    const accepted = Array.from(files || []).filter((file) => IMAGE_TYPES.has(file.type));
-    if (!accepted.length || !activeEditor) return;
+    const selected = Array.from(files || []);
+    const accepted = selected.filter((file) => IMAGE_TYPES.has(file.type));
+    if (!activeEditor) return;
+    if (selected.length && !accepted.length) {
+      setError('Định dạng ảnh không được hỗ trợ. Hãy dùng JPG, PNG, WEBP, GIF hoặc AVIF.');
+      return;
+    }
+    if (!accepted.length) return;
 
     setError('');
     setUploading((count) => count + accepted.length);
@@ -134,15 +140,13 @@ export default function ArticleComposer({
       let insertPosition = position;
 
       for (const file of accepted) {
-        const formData = new FormData();
         const alt = fileNameToText(file.name);
-        formData.append('image', file);
-        formData.append('folder', uploadFolder);
-        formData.append('altText', alt);
 
         try {
-          const response = await api.post('/media/images', formData);
-          const media = response?.data?.data;
+          const media = await uploadImageFile(file, {
+            folder: uploadFolder,
+            altText: alt,
+          });
           const mediaId = media?._id || media?.id;
           const src = media?.secureUrl || media?.url;
 
@@ -174,7 +178,7 @@ export default function ArticleComposer({
             activeEditor.chain().focus().insertContent(figure).run();
           }
         } catch (uploadError) {
-          setError(apiErrorMessage(uploadError, `Không thể tải ảnh ${file.name}.`));
+          setError(uploadError?.message || `Không thể tải ảnh ${file.name}.`);
         } finally {
           setUploading((count) => Math.max(0, count - 1));
         }
