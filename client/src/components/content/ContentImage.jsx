@@ -97,7 +97,7 @@ export default function ContentImage({
         } else {
           setFailedSrc(originalSrc);
         }
-      }
+      }}
       {...props}
     />
   );
