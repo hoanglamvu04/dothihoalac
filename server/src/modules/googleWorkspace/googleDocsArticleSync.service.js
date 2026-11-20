@@ -165,7 +165,7 @@ function imageCaptionFromEmbedded() {
 
 async function fetchGoogleImage(contentUri, accessToken) {
   const request = async (withAuth = false) =>
-    fetch(contentUri, {
+    globalThis.fetch(contentUri, {
       redirect: 'follow',
       headers: {
         Accept: 'image/*',
@@ -773,7 +773,7 @@ export async function syncGoogleDocsArticleContent({
 
       const caption = imageCaptionFromEmbedded();
 
-      let stored = null;
+      let stored;
       let imageError = null;
 
       try {
