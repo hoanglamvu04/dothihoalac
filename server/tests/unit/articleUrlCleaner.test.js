@@ -5,6 +5,7 @@ import {
   cleanImportedArticleMarkup,
   cleanImportedArticleBlocks,
   parseImportedBlockMarkers,
+  cleanImportedGoogleDocsRows,
 } from '../../src/modules/articles/article.urlCleaner.js';
 
 test('URL import removes accessibility toolbar, hidden UI and related stories', () => {
@@ -120,4 +121,32 @@ test('URL import parses real heading and paragraph boundaries without leaking se
     { type: 'p', text: 'Đoạn kết.' },
   ]);
   assert.doesNotMatch(JSON.stringify(blocks), /\[\[DTHL_/);
+});
+
+
+test('legacy Google Docs URL import cleanup removes widget rows and stray parser markers', () => {
+  const source = [
+    { kind: 'text', text: 'Tin Hòa Lạc có nhiều diễn biến mới', html: 'Tin Hòa Lạc có nhiều diễn biến mới', namedStyle: 'TITLE' },
+    { kind: 'text', text: 'Sapo: Bản tin từ địa phương.', html: 'Sapo: Bản tin từ địa phương.', namedStyle: 'SUBTITLE' },
+    { kind: 'text', text: 'Aa', html: 'Aa', namedStyle: 'NORMAL_TEXT' },
+    { kind: 'text', text: 'Màu chữ', html: 'Màu chữ', namedStyle: 'NORMAL_TEXT' },
+    { kind: 'text', text: 'Tương phản: 17.4:1 — Rất tốt (AAA)', html: 'Tương phản: 17.4:1 — Rất tốt (AAA)', namedStyle: 'NORMAL_TEXT' },
+    { kind: 'text', text: '[[DTHL_H2]]', html: '[[DTHL_H2]]', namedStyle: 'NORMAL_TEXT' },
+    { kind: 'text', text: 'HĐND thành phố họp thường lệ.', html: '<strong>HĐND thành phố họp thường lệ.</strong>', namedStyle: 'NORMAL_TEXT' },
+    { kind: 'image', objectId: 'image-one' },
+  ];
+  const result = cleanImportedGoogleDocsRows(source);
+  assert.equal(result.removedRows, 4);
+  assert.equal(result.rows.length, 4);
+  assert.equal(result.rows[2].html, '<strong>HĐND thành phố họp thường lệ.</strong>');
+  assert.deepEqual(result.rows[3], { kind: 'image', objectId: 'image-one' });
+});
+
+test('when an imported Docs paragraph contains junk and text, updated HTML cannot reintroduce junk', () => {
+  const value = 'Aa Màu chữ: Tùy chỉnh: #1a1a1a Về mặc định Tương phản: 17.4:1 — Rất tốt (AAA) Về mặc định Cử tri Hòa Lạc tham dự cuộc họp.';
+  const result = cleanImportedGoogleDocsRows([
+    { kind: 'text', text: value, html: '<b>' + value + '</b>', namedStyle: 'NORMAL_TEXT' },
+  ]);
+  assert.equal(result.rows[0].text, 'Cử tri Hòa Lạc tham dự cuộc họp.');
+  assert.equal(result.rows[0].html, 'Cử tri Hòa Lạc tham dự cuộc họp.');
 });
