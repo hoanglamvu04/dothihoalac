@@ -19,6 +19,7 @@ import {
 } from '../../services/storage.service.js';
 import ApiError from '../../utils/ApiError.js';
 import Article from './article.model.js';
+import Media from '../media/media.model.js';
 import { adminDeleteArticle } from './article.admin.delete.service.js';
 import * as articleService from './article.service.js';
 import { createArticleGoogleDocFast } from '../googleWorkspace/googleWorkspace.document.service.js';
@@ -881,6 +882,7 @@ async function prepareImageBlocks(extracted, includeImages) {
           return {
             blockIndex,
             imageUri: cloudinaryDocsImageUrl(uploaded),
+            sourceAsset: uploaded,
           };
         } catch (error) {
           const reason = String(error?.message || 'Không đọc được ảnh từ nguồn.').slice(0, 200);
@@ -895,6 +897,7 @@ async function prepareImageBlocks(extracted, includeImages) {
 
     for (const item of prepared) {
       blocks[item.blockIndex].imageUri = item.imageUri;
+      if (item.sourceAsset) blocks[item.blockIndex].sourceAsset = item.sourceAsset;
       if (item.failedImage) failedImages.push(item.failedImage);
     }
   }
@@ -1111,6 +1114,7 @@ export async function importAdminArticleUrl(
   });
 
   let temporaryAssets = [];
+  const createdSourceMediaIds = [];
 
   try {
     const { connection, accessToken } = await loadConnectedGoogle();
@@ -1135,6 +1139,35 @@ export async function importAdminArticleUrl(
       prepared.blocks,
     );
 
+    // The images were already downloaded from the original news page and
+    // uploaded to Cloudinary for embedding into Docs. Keep those assets in
+    // Media Library instead of destroying them immediately: Google Docs can
+    // show its own image copy while later refusing contentUri downloads.
+    // A stable Media ID means the CMS can still render the exact photograph.
+    for (const block of prepared.blocks) {
+      if (block.type !== 'image' || !block.sourceAsset) continue;
+      const asset = block.sourceAsset;
+      // eslint-disable-next-line no-await-in-loop
+      const media = await Media.create({
+        ownerId: userId,
+        provider: 'cloudinary',
+        publicId: asset.publicId,
+        assetId: asset.assetId || null,
+        url: asset.secureUrl,
+        secureUrl: asset.secureUrl,
+        resourceType: 'image',
+        originalFilename: asset.originalFilename || '',
+        format: asset.format || 'webp',
+        fileSize: Number(asset.bytes || 0),
+        width: Number(asset.width || 0),
+        height: Number(asset.height || 0),
+        altText: safeText(block.alt || `${extracted.title} - ảnh nguồn`, 300),
+        status: 'active',
+        deletedAt: null,
+      });
+      createdSourceMediaIds.push(media._id);
+    }
+
     const article = await Article.findOne({ contentId: created._id });
     if (!article) {
       throw new ApiError(500, 'Không tìm thấy metadata Article sau khi tạo bài.', 'ARTICLE_URL_METADATA_MISSING');
@@ -1152,9 +1185,11 @@ export async function importAdminArticleUrl(
     article.sourceDomain = extracted.sourceDomain;
     article.sourceUrlHash = canonicalUrlHash(extracted.canonicalUrl);
     article.originalPublishedAt = extracted.publishedAt || null;
+    article.urlImportImageMediaIds = createdSourceMediaIds;
     await article.save();
 
-    await cleanupTemporaryAssets(temporaryAssets);
+    // Media now owns these Cloudinary assets. Deleting them here would
+    // break the fallback and was one source of missing public article images.
     temporaryAssets = [];
 
     return {
@@ -1174,6 +1209,9 @@ export async function importAdminArticleUrl(
       ),
     };
   } catch (error) {
+    if (createdSourceMediaIds.length) {
+      await Media.deleteMany({ _id: { $in: createdSourceMediaIds } }).catch(() => null);
+    }
     await cleanupTemporaryAssets(temporaryAssets);
     await adminDeleteArticle(created._id).catch(() => null);
     throw error;
