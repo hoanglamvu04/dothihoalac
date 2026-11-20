@@ -729,10 +729,6 @@ export async function syncGoogleDocsArticleContent({
 
   const useFirstDocImageAsCover =
     article?.coverMode !== 'custom';
-  const importedFromUrl = Boolean(
-    article?.sourceCanonicalUrl ||
-    article?.sourceUrl,
-  );
 
   let coverMediaId = '';
   let coverUrl = '';
