@@ -58,22 +58,32 @@ export default function PropertyGalleryUploader({
 
     setLoading(true);
 
-    try {
-      const uploaded = [];
+    const uploaded = [];
+    let failed = 0;
+    let firstError = '';
 
+    try {
       for (const file of selected) {
-        // Upload tuần tự để tránh tạo quá nhiều request đồng thời khi chọn nhiều ảnh.
-        // eslint-disable-next-line no-await-in-loop
-        const media = await mediaApi.uploadImage(file, '');
-        if (media) uploaded.push(media);
+        try {
+          // Upload tuần tự: một ảnh lỗi không làm mất các ảnh tải thành công.
+          // eslint-disable-next-line no-await-in-loop
+          const media = await mediaApi.uploadImage(file, '');
+          if (media) {
+            uploaded.push(media);
+            onChange?.([...items, ...uploaded]);
+          }
+        } catch (error) {
+          failed += 1;
+          if (!firstError) firstError = apiErrorMessage(error);
+        }
       }
 
       if (uploaded.length) {
-        onChange?.([...items, ...uploaded]);
         toast.success(`Đã tải ${uploaded.length} ảnh lên.`);
       }
-    } catch (error) {
-      toast.error(apiErrorMessage(error));
+      if (failed) {
+        toast.error(`${failed} ảnh tải thất bại. ${firstError}`);
+      }
     } finally {
       setLoading(false);
     }
