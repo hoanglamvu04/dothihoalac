@@ -1147,7 +1147,6 @@ export async function importAdminArticleUrl(
     for (const block of prepared.blocks) {
       if (block.type !== 'image' || !block.sourceAsset) continue;
       const asset = block.sourceAsset;
-      // eslint-disable-next-line no-await-in-loop
       const media = await Media.create({
         ownerId: userId,
         provider: 'cloudinary',
