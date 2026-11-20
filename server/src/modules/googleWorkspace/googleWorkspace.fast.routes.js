@@ -70,7 +70,7 @@ function withTimeout(
   return Promise.race([
     promise,
     timeout,
-  ]).finally(() => clearTimeout(timer));
+  ]).finally(() => globalThis.clearTimeout(timer));
 }
 
 function normalizeId(value) {
@@ -131,7 +131,7 @@ async function renameGoogleDriveFile(
   );
 
   const response = await withTimeout(
-    fetch(url.toString(), {
+    globalThis.fetch(url.toString(), {
       method: 'PATCH',
       headers: {
         Authorization: `Bearer ${accessToken}`,
