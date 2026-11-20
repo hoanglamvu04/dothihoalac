@@ -69,7 +69,7 @@ function fileNameToAlt(fileName = '') {
     .replace(/\.[^.]+$/, '')
     .replace(/[-_]+/g, ' ')
     .replace(/\s+/g, ' ')
-    .trim();
+    .trim() || 'Ảnh minh họa';
 }
 
 function safeLink(value = '') {
