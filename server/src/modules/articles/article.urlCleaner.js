@@ -180,3 +180,67 @@ export function cleanImportedArticleBlocks(blocks = [], { title = '', summary = 
 
   return { blocks: cleaned, removedBlocks: removed };
 }
+
+
+/**
+ * Convert sentinel tokens to document blocks while preserving paragraph
+ * boundaries. Heading markers may be separated from text by nested HTML
+ * tags and line breaks; parsing by whole lines loses these tokens.
+ */
+export function parseImportedBlockMarkers(decoded = '', images = []) {
+  const blocks = [];
+  let textBuffer = '';
+  let blockType = 'p';
+  const typeMap = { H2: 'h2', H3: 'h3', H4: 'h4', QUOTE: 'quote', LI: 'li' };
+
+  const flush = () => {
+    const text = String(textBuffer || '')
+      .replace(/\r/g, '')
+      .replace(/\u00a0/g, ' ')
+      .replace(/[ \t]+/g, ' ')
+      .replace(/\n{3,}/g, '\n\n')
+      .trim()
+      .slice(0, 12000);
+    textBuffer = '';
+    if (text) blocks.push({ type: blockType, text });
+  };
+
+  const chunks = String(decoded || '').split(
+    /(\[\[DTHL_(?:IMAGE_\d+|H2|H3|H4|QUOTE|LI|END)\]\]|\n{2,})/g,
+  );
+
+  for (const chunk of chunks) {
+    if (!chunk) continue;
+
+    if (/^\n{2,}$/.test(chunk)) {
+      flush();
+      continue;
+    }
+
+    const imageMatch = chunk.match(/^\[\[DTHL_IMAGE_(\d+)\]\]$/);
+    if (imageMatch) {
+      flush();
+      const image = images[Number(imageMatch[1])];
+      if (image) blocks.push({ type: 'image', ...image });
+      continue;
+    }
+
+    const styledMatch = chunk.match(/^\[\[DTHL_(H2|H3|H4|QUOTE|LI)\]\]$/);
+    if (styledMatch) {
+      flush();
+      blockType = typeMap[styledMatch[1]] || 'p';
+      continue;
+    }
+
+    if (chunk === '[[DTHL_END]]') {
+      flush();
+      blockType = 'p';
+      continue;
+    }
+
+    textBuffer += chunk;
+  }
+
+  flush();
+  return blocks;
+}
