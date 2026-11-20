@@ -80,6 +80,12 @@ jobs:
           src/pages/public/SearchPage.jsx
           src/utils/content.js
           src/utils/projects.js
+          src/utils/imageUpload.js
+          src/api/media.api.js
+          src/components/forms/RichTextEditor.jsx
+          src/components/admin/ArticleComposer.jsx
+          src/components/community/CommunitySocialEditor.jsx
+          src/components/forms/PropertyGalleryUploader.jsx
       - name: Build frontend
         env:
           SITEMAP_ALLOW_STATIC_ONLY: ${{ github.event_name == 'pull_request' && 'true' || 'false' }}
