@@ -5,6 +5,7 @@ import Media from '../media/media.model.js';
 import { uploadImage as storeMediaImage } from '../media/media.service.js';
 import { GoogleWorkspaceError } from './googleWorkspace.service.js';
 import { cleanImportedGoogleDocsRows } from '../articles/article.urlCleaner.js';
+import { sourceMediaIdForInitialSync } from './googleDocsImageFallback.js';
 
 const MAX_IMAGE_BYTES = Math.max(
   1,
@@ -164,7 +165,7 @@ function imageCaptionFromEmbedded() {
 
 async function fetchGoogleImage(contentUri, accessToken) {
   const request = async (withAuth = false) =>
-    fetch(contentUri, {
+    globalThis.fetch(contentUri, {
       redirect: 'follow',
       headers: {
         Accept: 'image/*',
@@ -726,6 +727,9 @@ export async function syncGoogleDocsArticleContent({
   const imageMediaIds = [];
   const blocks = [];
   const seenObjectIds = new Set();
+  const failedImages = [];
+  let sourceImageFallbackCount = 0;
+  let imageOrdinal = 0;
 
   const useFirstDocImageAsCover =
     article?.coverMode !== 'custom';
@@ -743,13 +747,21 @@ export async function syncGoogleDocsArticleContent({
       }
 
       seenObjectIds.add(row.objectId);
+      const currentOrdinal = imageOrdinal;
+      imageOrdinal += 1;
 
       const object = imageObjectFromDocument(
         document,
         row.objectId,
       );
 
-      if (!object) continue;
+      if (!object) {
+        failedImages.push({
+          objectId: row.objectId,
+          reason: 'Google Docs không trả về dữ liệu hình ảnh.',
+        });
+        continue;
+      }
 
       const previous =
         previousMap[row.objectId];
@@ -761,7 +773,8 @@ export async function syncGoogleDocsArticleContent({
 
       const caption = imageCaptionFromEmbedded();
 
-      let stored = null;
+      let stored;
+      let imageError = null;
 
       try {
         stored = await storeGoogleDocImage({
@@ -774,6 +787,7 @@ export async function syncGoogleDocsArticleContent({
           title,
         });
       } catch (error) {
+        imageError = error;
         console.warn(
           `[GoogleDocsImageSync] ${row.objectId}: ${error.message}`,
         );
@@ -786,7 +800,40 @@ export async function syncGoogleDocsArticleContent({
         }).catch(() => null);
       }
 
+      // Google contentUri may expire or reject server-side downloads even
+      // though the editor displays the image. For newly imported articles,
+      // reuse the original Cloudinary photo saved by the URL importer.
       if (!stored) {
+        const sourceMediaId = sourceMediaIdForInitialSync(
+          article,
+          currentOrdinal,
+        );
+
+        if (sourceMediaId) {
+          const sourceMedia = await activePreviousMedia({
+            mediaId: sourceMediaId,
+          }).catch(() => null);
+
+          stored = storedImageFromMedia({
+            media: sourceMedia,
+            objectId: row.objectId,
+            alt,
+            caption,
+            hash: '',
+            reused: true,
+          });
+
+          if (stored) sourceImageFallbackCount += 1;
+        }
+      }
+
+      if (!stored) {
+        failedImages.push({
+          objectId: row.objectId,
+          reason: String(
+            imageError?.message || 'Không đọc được ảnh từ Google Docs.',
+          ).slice(0, 220),
+        });
         continue;
       }
 
@@ -814,19 +861,10 @@ export async function syncGoogleDocsArticleContent({
         coverMediaId = stored.mediaId;
         coverUrl = stored.url;
 
-        /*
-         * URL importer luôn đặt ảnh đại diện ở vị trí ảnh đầu tiên của Docs.
-         * Ảnh này là cover/card/SEO, không phải một ảnh trong thân bài.
-         * Giữ một figure marker không có <img> để trang chi tiết biết thumbnail
-         * đã được đại diện trong body và không tự chèn cover lên đầu bài.
-         */
-        if (importedFromUrl) {
-          blocks.push({
-            type: 'cover-marker',
-            mediaId: stored.mediaId,
-          });
-          continue;
-        }
+        // The first Docs image is both cover/SEO and a genuine inline image.
+        // Public ArticleDetailPage detects the inline <img> by Media ID,
+        // so the standalone cover is not repeated. A marker-only figure hid
+        // the sole image of imported articles and must not be generated.
       }
 
       blocks.push({
@@ -904,6 +942,17 @@ export async function syncGoogleDocsArticleContent({
     });
   }
 
+  // Never silently publish a text-only article when the Google Doc contains
+  // photographs that could not be transferred. Keep the old CMS body intact.
+  if (failedImages.length) {
+    const firstReason = failedImages[0].reason;
+    throw new GoogleWorkspaceError(
+      `Google Docs có ${seenObjectIds.size} ảnh nhưng ${failedImages.length} ảnh chưa đồng bộ được. Nội dung CMS cũ được giữ nguyên. ${firstReason} Hãy thử đồng bộ lại hoặc tải ảnh vào Media Library.`,
+      'GOOGLE_DOC_IMAGE_SYNC_INCOMPLETE',
+      502,
+    );
+  }
+
   const meaningful = blocks.filter(
     (block) =>
       block.type === 'image' ||
@@ -929,6 +978,8 @@ export async function syncGoogleDocsArticleContent({
     imageUrls,
     imageMediaIds,
     imageCount: imageMediaIds.length,
+    sourceImageFallbackCount,
+    detectedImageCount: seenObjectIds.size,
     inlineImageCount: meaningful.filter(
       (block) => block.type === 'image',
     ).length,

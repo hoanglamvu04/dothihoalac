@@ -30,6 +30,10 @@ jobs:
         run: npm ci
         working-directory: client
 
+      - name: Test article image visibility
+        run: node --test tests/articleMedia.test.mjs
+        working-directory: client
+
       - name: Build full frontend
         # PRs validate the app even when production APIs return no dynamic sitemap URLs.
         # Production main/deploy remains strict.

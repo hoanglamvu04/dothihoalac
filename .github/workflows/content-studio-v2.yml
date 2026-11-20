@@ -81,11 +81,15 @@ jobs:
           src/utils/content.js
           src/utils/projects.js
           src/utils/imageUpload.js
+          src/utils/articleMedia.js
           src/api/media.api.js
           src/components/forms/RichTextEditor.jsx
           src/components/admin/ArticleComposer.jsx
           src/components/community/CommunitySocialEditor.jsx
           src/components/forms/PropertyGalleryUploader.jsx
+      - name: Test article image visibility
+        run: node --test tests/articleMedia.test.mjs
+
       - name: Build frontend
         env:
           SITEMAP_ALLOW_STATIC_ONLY: ${{ github.event_name == 'pull_request' && 'true' || 'false' }}
@@ -148,6 +152,9 @@ jobs:
           src/modules/jobs/jobPost.model.js
           src/modules/articles/article.urlCleaner.js
           src/modules/articles/article.urlImport.service.js
+          src/modules/googleWorkspace/googleDocsArticleSync.service.js
+          src/modules/googleWorkspace/googleDocsImageFallback.js
+          src/modules/googleWorkspace/googleWorkspace.fast.routes.js
           src/modules/articles/article.admin.routes.js
           src/modules/articles/article.controller.js
           src/modules/articles/article.model.js

@@ -47,12 +47,17 @@ export default function ContentImage({
   sizes,
   ...props
 }) {
-  const [failed, setFailed] = useState(false);
+  // A Cloudinary transformation can fail even when the original URL is
+  // healthy. Retry the real uploaded image once before hiding it.
+  const [retryOriginalFor, setRetryOriginalFor] = useState('');
+  const [failedSrc, setFailedSrc] = useState('');
   const resolvedImage = image || media;
   const originalSrc = mediaUrl(resolvedImage);
+  const useOriginal = retryOriginalFor === originalSrc;
+  const failed = failedSrc === originalSrc;
   if (!originalSrc || failed) return fallback;
 
-  const responsiveSet = srcSet || responsiveSourceSet(originalSrc);
+  const responsiveSet = useOriginal ? undefined : (srcSet || responsiveSourceSet(originalSrc));
   const responsiveSizes =
     sizes || (ratio === 'property' ? PROPERTY_SIZES : DEFAULT_SIZES);
   const src = responsiveSet
@@ -86,7 +91,13 @@ export default function ContentImage({
       height={intrinsicHeight}
       fetchPriority={fetchPriority || (loading === 'eager' ? 'high' : undefined)}
       className={classes}
-      onError={() => setFailed(true)}
+      onError={() => {
+        if (responsiveSet && !useOriginal) {
+          setRetryOriginalFor(originalSrc);
+        } else {
+          setFailedSrc(originalSrc);
+        }
+      }}
       {...props}
     />
   );

@@ -261,7 +261,7 @@ export function cleanImportedGoogleDocsRows(rows = []) {
   return {
     removedRows: result.removedBlocks,
     rows: result.blocks.map((row) => {
-      const { type, originalText, ...rest } = row;
+      const { type: _type, originalText, ...rest } = row;
       if (rest.kind === 'text' && rest.text !== originalText) {
         return {
           ...rest,

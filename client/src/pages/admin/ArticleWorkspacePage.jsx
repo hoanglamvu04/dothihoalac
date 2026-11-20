@@ -161,7 +161,13 @@ export default function ArticleWorkspacePage() {
       setItem(finalItem);
       setForm(formFromItem(finalItem));
       setCoverMedia(finalItem?.thumbnailMediaId || coverMedia);
-      toast.success('Đã đồng bộ tiêu đề, sapo, nội dung và hình ảnh từ Google Docs.');
+      const syncInfo = synced?.imageSyncInfo;
+      toast.success(syncInfo
+        ? `Đã đồng bộ nội dung và ${syncInfo.saved}/${syncInfo.detected} ảnh từ Google Docs.`
+        : 'Đã đồng bộ tiêu đề, sapo, nội dung và hình ảnh từ Google Docs.');
+      if (syncInfo?.recoveredFromSource) {
+        toast.info(`Đã khôi phục ${syncInfo.recoveredFromSource} ảnh từ Media Library gốc khi Google Docs không cho tải ảnh.`);
+      }
     } catch (error) {
       toast.error(apiErrorMessage(error));
     } finally {
@@ -268,7 +274,13 @@ export default function ArticleWorkspacePage() {
       setItem(finalItem);
       setForm(formFromItem(finalItem));
       setCoverMedia(finalItem?.thumbnailMediaId || coverMedia);
-      toast.success(published ? 'Đã cập nhật bài đang xuất bản.' : 'Đã xuất bản bài viết.');
+      const syncInfo = result?.imageSyncInfo;
+      toast.success(syncInfo
+        ? `${published ? 'Đã cập nhật' : 'Đã xuất bản'} bài với ${syncInfo.saved}/${syncInfo.detected} ảnh.`
+        : published ? 'Đã cập nhật bài đang xuất bản.' : 'Đã xuất bản bài viết.');
+      if (syncInfo?.recoveredFromSource) {
+        toast.info(`Đã phục hồi ${syncInfo.recoveredFromSource} ảnh nguồn vào bài viết.`);
+      }
     } catch (error) {
       toast.error(apiErrorMessage(error));
     } finally {
