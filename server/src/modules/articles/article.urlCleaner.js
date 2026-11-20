@@ -244,3 +244,38 @@ export function parseImportedBlockMarkers(decoded = '', images = []) {
   flush();
   return blocks;
 }
+
+
+/**
+ * Old URL-imported Google Docs can already contain page furniture and parser
+ * markers. Clean their rows on every CMS sync without modifying the original
+ * Google Doc. Authored (non-URL) Google Docs do not use this filter.
+ */
+export function cleanImportedGoogleDocsRows(rows = []) {
+  const adapted = rows.map((row) => ({
+    ...row,
+    type: row.kind === 'image' ? 'image' : 'p',
+    originalText: row.text || '',
+  }));
+  const result = cleanImportedArticleBlocks(adapted);
+  return {
+    removedRows: result.removedBlocks,
+    rows: result.blocks.map((row) => {
+      const { type, originalText, ...rest } = row;
+      if (rest.kind === 'text' && rest.text !== originalText) {
+        return {
+          ...rest,
+          // Drop original rich text ONLY for altered paragraphs; otherwise the
+          // previously imported junk remains in html even though text is clean.
+          html: String(rest.text || '')
+            .replaceAll('&', '&amp;')
+            .replaceAll('<', '&lt;')
+            .replaceAll('>', '&gt;')
+            .replaceAll('"', '&quot;')
+            .replaceAll("'", '&#039;'),
+        };
+      }
+      return rest;
+    }),
+  };
+}
