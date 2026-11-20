@@ -654,6 +654,11 @@ async function publishArticleFromGoogleDocs(
     imageCount: Number(
       article.googleDocImageCount || 0,
     ),
+    imageSyncInfo: {
+      detected: Number(synced.parsed.detectedImageCount || 0),
+      saved: Number(synced.parsed.imageCount || 0),
+      recoveredFromSource: Number(synced.parsed.sourceImageFallbackCount || 0),
+    },
     coverUrl:
       synced.parsed.coverUrl || '',
   };
@@ -786,7 +791,14 @@ router.post(
       );
 
     return sendSuccess(res, {
-      data: result.item,
+      data: {
+        ...result.item,
+        imageSyncInfo: {
+          detected: Number(result.parsed.detectedImageCount || 0),
+          saved: Number(result.parsed.imageCount || 0),
+          recoveredFromSource: Number(result.parsed.sourceImageFallbackCount || 0),
+        },
+      },
       message:
         `Đã đồng bộ Google Docs về website: ${result.parsed.imageCount} ảnh, ảnh đầu tiên làm ảnh bìa.`,
     });
