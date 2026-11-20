@@ -5,6 +5,7 @@ import path from 'node:path';
 
 import sanitizeHtml from 'sanitize-html';
 import sharp from 'sharp';
+import { extractArticleImageSource } from './article.urlImages.js';
 import {
   cleanImportedArticleMarkup,
   cleanImportedArticleBlocks,
@@ -532,36 +533,6 @@ function chooseArticleHtml(html, jsonLd) {
   return cleaned;
 }
 
-function chooseSrcset(value = '') {
-  const candidates = String(value || '')
-    .split(',')
-    .map((part) => part.trim())
-    .filter(Boolean)
-    .map((part) => {
-      const [url, descriptor = ''] = part.split(/\s+/);
-      const width = Number(String(descriptor).replace(/w$/i, '')) || 0;
-      return { url, width };
-    })
-    .sort((a, b) => b.width - a.width);
-
-  return candidates[0]?.url || '';
-}
-
-function imageSourceFromTag(tag) {
-  const attrs = parseTagAttributes(tag);
-  return {
-    rawUrl:
-      attrs['data-original'] ||
-      attrs['data-src'] ||
-      attrs['data-lazy-src'] ||
-      attrs.src ||
-      chooseSrcset(attrs.srcset || attrs['data-srcset']),
-    alt: safeText(attrs.alt || attrs.title, 300),
-    width: Number.parseInt(attrs.width, 10) || 0,
-    height: Number.parseInt(attrs.height, 10) || 0,
-  };
-}
-
 function imageUrlLooksUseful(url) {
   if (!url) return false;
   const lower = url.toLowerCase();
@@ -575,8 +546,22 @@ function markersToBlocks(articleHtml, baseUrl, title) {
   const imageIndex = new Map();
   let marked = cleanImportedArticleMarkup(stripNoise(articleHtml));
 
+  // <picture> sources frequently carry the only usable high-resolution URL,
+  // while <img src> is a tiny data-URI/placeholder. Resolve it before parsing.
+  marked = marked.replace(/<picture\\b[^>]*>[\\s\\S]*?<\\/picture>/gi, (picture) => {
+    const imgTag = picture.match(/<img\\b[^>]*>/i)?.[0] || '';
+    if (!imgTag) return picture;
+    const image = extractArticleImageSource(imgTag, picture);
+    if (!image.rawUrl) return imgTag;
+    const dimensionAttrs = [
+      image.width > 0 ? `width="${image.width}"` : '',
+      image.height > 0 ? `height="${image.height}"` : '',
+    ].filter(Boolean).join(' ');
+    return `<img src="${escapeHtml(image.rawUrl)}" alt="${escapeHtml(image.alt)}" ${dimensionAttrs}>`;
+  });
+
   marked = marked.replace(/<img\b[^>]*>/gi, (tag) => {
-    const source = imageSourceFromTag(tag);
+    const source = extractArticleImageSource(tag);
     const url = normalizeUrl(source.rawUrl, baseUrl);
     if (!imageUrlLooksUseful(url)) return ' ';
     if (source.width && source.height && source.width < 120 && source.height < 120) return ' ';
