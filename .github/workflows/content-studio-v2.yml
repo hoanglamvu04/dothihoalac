@@ -91,6 +91,12 @@ jobs:
           src/utils/propertyMap.js
           src/pages/public/PropertyLocationMap.jsx
           src/api/media.api.js
+          src/components/forms/LeadForm.jsx
+          src/components/layout/XHubAnalyticsConsent.jsx
+          src/components/layout/SiteFooter.jsx
+          src/pages/public/PropertiesPage.jsx
+          src/pages/public/JobsPage.jsx
+          src/utils/leadTelemetry.js
           src/components/forms/RichTextEditor.jsx
           src/components/admin/ArticleComposer.jsx
           src/components/community/CommunitySocialEditor.jsx
@@ -98,8 +104,21 @@ jobs:
       - name: Test article images and featured news
         run: node --test tests/articleMedia.test.mjs tests/homeHero.test.mjs tests/propertyMap.test.mjs tests/sitemapOutputDir.test.mjs
 
+      - name: WA-002 browser consent and CRM success tests
+        run: node --test tests/xhubAnalytics.test.mjs tests/leadTelemetry.test.mjs
+
+      - name: WA-002 syntax-check vendored browser tracker
+        run: node --check src/utils/xhub-web-tracker.mjs && node --check src/utils/xhub-intelligence.mjs && node --check src/utils/xhub-analytics-policy.mjs
+
       - name: Validate safe production sitemap refresh script
         run: bash -n scripts/refresh-sitemap-production.sh
+      - name: WA-002 confirm no server token variable in public code
+        run: |
+          if grep -R -F 'XHUB_WEB_ANALYTICS_SITE_TOKEN' src; then
+            echo 'Frontend code must never reference backend site token' >&2
+            exit 1
+          fi
+
       - name: Build frontend
         env:
           SITEMAP_ALLOW_STATIC_ONLY: 'true'
@@ -202,8 +221,14 @@ jobs:
           src/modules/users/user.routes.js
           src/modules/users/user.service.js
           src/modules/users/userActivity.model.js
+          src/app.js
+          src/config/env.js
+          src/integrations/xhubAnalytics.mount.js
           src/routes/index.js
       - name: Validate MongoDB Database Tools installer shell syntax
         run: bash -n scripts/ensure-mongodb-database-tools.sh
+
+      - name: WA-002 syntax-check Express bridge and event schema
+        run: node --check src/integrations/xhub-express-bridge.mjs && node --check src/integrations/xhub-payload.guard.mjs
 
       - run: npm test
