@@ -127,3 +127,55 @@
   .admin-seo-item { flex-direction: column; }
   .admin-seo-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+.admin-seo-filter button,
+.admin-seo-filter select,
+.admin-seo-pager button {
+  padding: 9px 12px;
+  border: 1px solid #d5e2d8;
+  border-radius: 9px;
+  color: #185438;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.admin-seo-filter button {
+  background: #176c3d;
+  border-color: #176c3d;
+  color: #fff;
+}
+
+.admin-seo-filter select {
+  max-width: 250px;
+}
+
+.admin-seo-page-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: #61766a;
+  font-size: 12px;
+}
+
+.admin-seo-pager {
+  display: flex;
+  gap: 8px;
+}
+
+.admin-seo-pager button:disabled,
+.admin-seo-filter button:disabled,
+.admin-seo-heading button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+@media (max-width: 640px) {
+  .admin-seo-search { flex-basis: 100%; }
+  .admin-seo-page-info { align-items: flex-start; }
+  .admin-seo-pager { width: 100%; }
+  .admin-seo-pager button { flex: 1; }
+}

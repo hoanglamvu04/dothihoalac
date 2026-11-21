@@ -29,3 +29,25 @@ test('SEO audit flags overly long headings', () => {
   const issues = articleSeoIssues({ ...article, title: 'Tiêu đề rất dài '.repeat(10) }, { bodyText: 'Có rất nhiều nội dung được xuất bản. '.repeat(20) });
   assert.ok(issues.some((issue) => issue.code === 'long_title'));
 });
+
+test('SEO audit accepts active inline media as valid cover fallback', () => {
+  const withoutThumbnail = { ...article, thumbnailMediaId: null };
+  const issues = articleSeoIssues(
+    withoutThumbnail,
+    { bodyText: 'Đã có đủ thông tin kiểm chứng. '.repeat(20), inlineMediaIds: ['image-id'] },
+    { hasImage: true, invalidInlineCount: 0, inactiveCover: false },
+  );
+  assert.equal(issues.some((issue) => issue.code === 'missing_cover'), false);
+});
+
+test('SEO audit reports stale media even when image IDs exist', () => {
+  const issues = articleSeoIssues(
+    article,
+    { bodyText: 'Đã có đủ thông tin kiểm chứng. '.repeat(20), inlineMediaIds: ['missing-photo'] },
+    { hasImage: false, inactiveCover: true, invalidInlineCount: 1 },
+  );
+  const codes = issues.map((issue) => issue.code);
+  assert.ok(codes.includes('missing_cover'));
+  assert.ok(codes.includes('inactive_cover'));
+  assert.ok(codes.includes('invalid_inline_images'));
+});

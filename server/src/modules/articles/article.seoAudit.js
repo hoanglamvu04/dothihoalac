@@ -1,4 +1,9 @@
-export function articleSeoIssues(item = {}, body = {}) {
+/**
+ * Cheap, deterministic editorial checks. External image URLs and Search Console
+ * indexing are not verified here. The service provides actual active-Media
+ * counts for reporting; default arguments preserve use in unit tests.
+ */
+export function articleSeoIssues(item = {}, body = {}, media = {}) {
   const issues = [];
   const title = String(item.title || '').trim();
   const summary = String(item.summary || '').trim();
@@ -16,8 +21,27 @@ export function articleSeoIssues(item = {}, body = {}) {
     issues.push({ code: 'long_description', label: 'Mô tả có thể bị rút gọn trên kết quả tìm kiếm' });
   }
 
-  if (!item.thumbnailMediaId) {
-    issues.push({ code: 'missing_cover', label: 'Chưa gắn ảnh đại diện' });
+  const hasImage = media.hasImage ??
+    Boolean(item.thumbnailMediaId || body.inlineMediaIds?.length);
+  if (!hasImage) {
+    issues.push({
+      code: 'missing_cover',
+      label: 'Chưa có ảnh đại diện hoặc ảnh nội dung còn hoạt động',
+    });
+  }
+
+  if (media.inactiveCover) {
+    issues.push({
+      code: 'inactive_cover',
+      label: 'Ảnh đại diện đã bị xóa, chặn hoặc thiếu URL trong Media Library',
+    });
+  }
+
+  if (Number(media.invalidInlineCount || 0) > 0) {
+    issues.push({
+      code: 'invalid_inline_images',
+      label: 'Có ' + media.invalidInlineCount + ' ảnh nội dung không còn hoạt động trong Media Library',
+    });
   }
 
   if (!item.primaryCategoryId) {

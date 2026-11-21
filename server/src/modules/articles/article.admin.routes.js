@@ -44,7 +44,7 @@ r.get(
   '/seo/overview',
   requirePermission(...editorialReadPermissions),
   asyncHandler(async (req, res) => sendSuccess(res, {
-    data: await articleSeoOverview(),
+    data: await articleSeoOverview(req.query),
   })),
 );
 
