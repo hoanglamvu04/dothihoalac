@@ -88,13 +88,15 @@ jobs:
           src/utils/imageUpload.js
           src/utils/articleMedia.js
           src/utils/homeHero.js
+          src/utils/propertyMap.js
+          src/pages/public/PropertyLocationMap.jsx
           src/api/media.api.js
           src/components/forms/RichTextEditor.jsx
           src/components/admin/ArticleComposer.jsx
           src/components/community/CommunitySocialEditor.jsx
           src/components/forms/PropertyGalleryUploader.jsx
       - name: Test article images and featured news
-        run: node --test tests/articleMedia.test.mjs tests/homeHero.test.mjs
+        run: node --test tests/articleMedia.test.mjs tests/homeHero.test.mjs tests/propertyMap.test.mjs
 
       - name: Build frontend
         env:
