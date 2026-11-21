@@ -2,6 +2,8 @@
 // Tracking remains disabled unless the operator explicitly approves both the
 // feature flag AND the website's own consent interface.
 const CONSENT_KEY = 'dthl_xhub_analytics_consent_v1';
+// A failed storage write must NEVER prevent immediate withdrawal of consent.
+let revokedInMemory = false;
 export const XHUB_CONSENT_CHANGE_EVENT = 'dthl:xhub-analytics-consent-change';
 
 export function isXHubAnalyticsFeatureEnabled() {
@@ -16,6 +18,7 @@ export function isXHubPrivacySignalActive(root = globalThis) {
 }
 
 export function readXHubConsentChoice(root = globalThis) {
+  if (revokedInMemory) return 'denied';
   try {
     const value = root.localStorage?.getItem(CONSENT_KEY);
     return value === 'granted' || value === 'denied' ? value : null;
@@ -45,14 +48,21 @@ export function setXHubConsentChoice(choice, root = globalThis) {
     return false;
   }
 
+  if (choice === 'denied') revokedInMemory = true;
   try {
-    root.localStorage?.setItem(CONSENT_KEY, choice);
-    if (typeof root.dispatchEvent === 'function' && typeof root.Event === 'function') {
-      root.dispatchEvent(new root.Event(XHUB_CONSENT_CHANGE_EVENT));
+    if (typeof root.localStorage?.setItem !== 'function') {
+      throw new Error('Preference storage unavailable');
     }
-    return true;
+    root.localStorage.setItem(CONSENT_KEY, choice);
+    if (choice === 'granted') revokedInMemory = false;
   } catch {
-    // A blocked storage API fails closed: no consent is assumed.
-    return false;
+    // Grant requires durable storage. Withdrawal is effective in memory
+    // immediately even if the browser blocks/removes storage.
+    if (choice === 'granted') return false;
   }
+
+  if (typeof root.dispatchEvent === 'function' && typeof root.Event === 'function') {
+    root.dispatchEvent(new root.Event(XHUB_CONSENT_CHANGE_EVENT));
+  }
+  return true;
 }
