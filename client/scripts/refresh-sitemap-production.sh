@@ -35,10 +35,11 @@ SITEMAP_OUTPUT_DIR="$STAGE_DIR" \
   SITEMAP_SKIP_DYNAMIC_FETCH=false \
   node scripts/generate-sitemap.mjs
 
-echo '[DTHL sitemap] Strictly validating staged XML and dynamic collections'
+echo '[DTHL sitemap] Validating staged XML and public API availability'
+# A collection with zero published posts is legitimate. The status check below
+# rejects any failed fetch even if the other feeds returned valid data.
 SITEMAP_OUTPUT_DIR="$STAGE_DIR" \
-  SITEMAP_ALLOW_STATIC_ONLY=false \
-  SEO_SITEMAP_STRICT=true \
+  SITEMAP_ALLOW_STATIC_ONLY=true \
   node scripts/verify-sitemap.mjs
 
 SITEMAP_STATUS_FILE="$STAGE_DIR/sitemap-status.json" node --input-type=module -e '
