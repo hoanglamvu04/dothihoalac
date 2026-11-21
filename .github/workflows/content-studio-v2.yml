@@ -167,6 +167,8 @@ jobs:
           src/modules/jobs/job.service.js
           src/modules/jobs/job.publicList.service.js
           src/modules/jobs/jobPost.model.js
+          src/app.js
+          src/config/env.js
           src/modules/articles/article.quality.js
           src/modules/articles/article.seoAudit.js
           src/modules/articles/article.seo.service.js
