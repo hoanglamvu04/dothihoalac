@@ -39,7 +39,8 @@ export function safePublicAnalyticsPath(pathname) {
 
 export function publicArticleSlug(slug) {
   return typeof slug === 'string' &&
-    /^[a-z0-9][a-z0-9_-]{0,79}$/i.test(slug)
+    /^[a-z0-9][a-z0-9_-]{0,79}$/i.test(slug) &&
+    !/\d{9,}/.test(slug)
     ? slug : '';
 }
 
