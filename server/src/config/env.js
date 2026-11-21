@@ -57,6 +57,13 @@ const schema = z
       .string()
       .default('http://localhost:5173'),
 
+    // WA-002: never required for the site to boot. Explicitly approved X-HUB
+    // source credentials are backend-only; missing values disable the bridge.
+    XHUB_WEB_ANALYTICS_ENABLED: boolFromString.default(false),
+    XHUB_WEB_ANALYTICS_SITE_ID: z.string().optional().default(''),
+    XHUB_WEB_ANALYTICS_SITE_TOKEN: z.string().optional().default(''),
+    XHUB_WEB_ANALYTICS_PUBLIC_HOST: z.string().optional().default(''),
+
     // =====================================================
     // DATABASE
     // =====================================================
