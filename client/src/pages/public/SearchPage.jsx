@@ -27,6 +27,7 @@ import Avatar from '../../components/common/Avatar';
 import ContentImage from '../../components/content/ContentImage';
 import ContentMeta from '../../components/content/ContentMeta';
 import { searchApi } from '../../api/content.api';
+import { trackXHubEvent } from '../../utils/xhubAnalytics.mjs';
 import { contentPath } from '../../utils/content';
 import { truncate } from '../../utils/formatters';
 import {
@@ -351,6 +352,7 @@ export default function SearchPage() {
         return;
       }
 
+      trackXHubEvent('search_used');
       setSearchParams(buildParams({ nextQuery: normalizedQuery, nextPage: 1 }));
     },
     [buildParams, query, setSearchParams],
@@ -362,6 +364,7 @@ export default function SearchPage() {
       if (!normalizedTerm) return;
 
       setQuery(normalizedTerm);
+      trackXHubEvent('search_used');
       setSearchParams(
         buildParams({
           nextQuery: normalizedTerm,
@@ -376,6 +379,7 @@ export default function SearchPage() {
   const changeType = useCallback(
     (value) => {
       if (!q) return;
+      trackXHubEvent('filter_used');
       setSearchParams(buildParams({ nextType: value, nextPage: 1 }));
       scrollToResults();
     },
@@ -386,6 +390,7 @@ export default function SearchPage() {
     (event) => {
       if (!q) return;
       const nextSort = event.target.value === 'newest' ? 'newest' : 'relevance';
+      trackXHubEvent('filter_used');
       setSearchParams(buildParams({ nextSort, nextPage: 1 }));
       scrollToResults();
     },
