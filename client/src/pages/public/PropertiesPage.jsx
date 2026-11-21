@@ -38,6 +38,7 @@ import {
 } from 'lucide-react';
 
 import Seo from '../../components/common/Seo';
+import { xhubIntelligence } from '../../utils/xhub-intelligence.mjs';
 import Pagination from '../../components/common/Pagination';
 import ErrorState from '../../components/common/ErrorState';
 import { LoadingBlock } from '../../components/common/Loading';
@@ -491,6 +492,11 @@ export default function PropertiesPage() {
 
   const update = useCallback(
     (key, value, options = {}) => {
+      if (key === 'q') {
+        if (String(value || '').trim()) xhubIntelligence.searchUsed();
+      } else {
+        xhubIntelligence.filterUsed();
+      }
       setUrlParams(
         (next) => {
           if (value !== undefined && value !== null && String(value).trim() !== '') {
@@ -508,6 +514,7 @@ export default function PropertiesPage() {
 
   const updateMultiple = useCallback(
     (values) => {
+      xhubIntelligence.filterUsed();
       setUrlParams((next) => {
         Object.entries(values).forEach(([key, value]) => {
           if (value !== undefined && value !== null && String(value).trim() !== '') {
