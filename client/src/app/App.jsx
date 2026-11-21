@@ -25,6 +25,7 @@ import EditorRouteId from '../components/routing/EditorRouteId';
 import { PageLoading } from '../components/common/Loading';
 import ErrorBoundary from '../components/common/ErrorBoundary';
 import { trackPageView } from '../utils/analytics';
+import { trackXHubPageView } from '../utils/xhubAnalytics.mjs';
 import { isPersistedContentId } from '../utils/content';
 
 const HomePage = lazy(() => import('../pages/public/HomePage'));
@@ -134,6 +135,8 @@ function RouterEffects() {
     trackPageView(
       location.pathname + location.search,
     );
+    // WA-001 sees only the public pathname, once per SPA navigation.
+    trackXHubPageView();
   }, [location.pathname, location.search]);
 
   return (
