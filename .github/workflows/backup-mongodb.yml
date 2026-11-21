@@ -8,6 +8,7 @@ on:
     paths:
       - '.github/workflows/backup-mongodb.yml'
       - 'server/scripts/backup-mongodb.sh'
+      - 'server/scripts/ensure-mongodb-database-tools.sh'
   schedule:
     - cron: '15 20 * * *'
   workflow_dispatch:
@@ -51,30 +52,10 @@ jobs:
           command_timeout: 15m
           script: |
             set -euo pipefail
-            # Backups must never reset source code or interrupt an active release.
-            # Provision only the official tools package from EXISTING trusted
-            # apt sources. Never modify MongoDB Server or add apt repositories.
-            if ! command -v mongodump >/dev/null 2>&1; then
-              echo '[DTHL backup] mongodump is missing; checking configured apt sources'
-              if ! command -v apt-get >/dev/null 2>&1; then
-                echo '[DTHL backup] apt-get unavailable; install Database Tools for this OS manually' >&2
-                exit 6
-              fi
-              if [ "$(id -u)" -eq 0 ]; then
-                apt-get update -qq
-                DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends mongodb-database-tools
-              elif command -v sudo >/dev/null 2>&1 && sudo -n true; then
-                sudo -n apt-get update -qq
-                sudo -n env DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends mongodb-database-tools
-              else
-                echo '[DTHL backup] No privileged apt access; install mongodb-database-tools on VPS' >&2
-                exit 6
-              fi
-            fi
-
-            command -v mongodump
-            command -v mongorestore
+            # Keep the MongoDB Server and all production data untouched.
+            # Install only the official pinned Database Tools when absent.
             cd /var/www/dothihoalac/server
+            bash ./scripts/ensure-mongodb-database-tools.sh
             bash ./scripts/backup-mongodb.sh
 
       - name: Open or update backup alert
