@@ -52,6 +52,12 @@ jobs:
           src/components/layout/AdminLayout.jsx
           src/components/layout/AdminLayoutImpl.jsx
           src/components/layout/PublicLayout.jsx
+          src/components/layout/SiteFooter.jsx
+          src/components/layout/XHubConsentControls.jsx
+          src/components/forms/LeadForm.jsx
+          src/api/lead.api.js
+          src/pages/public/ContactPage.jsx
+          src/pages/public/PropertiesPage.jsx
           src/components/studio/ContentEditorShell.jsx
           src/context/AuthContext.jsx
           src/context/TaxonomyContext.jsx
