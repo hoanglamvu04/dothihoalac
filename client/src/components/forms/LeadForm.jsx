@@ -8,6 +8,7 @@ import { useTaxonomy } from '../../context/TaxonomyContext';
 import { useToast } from '../../context/ToastContext';
 import { LEAD_TYPES } from '../../utils/constants';
 import { xhubIntelligence } from '../../utils/xhub-intelligence.mjs';
+import { createLeadAndReport } from '../../utils/leadTelemetry';
 
 export default function LeadForm({
   presetType = 'architecture_design',
@@ -38,16 +39,13 @@ export default function LeadForm({
     event.preventDefault();
     setLoading(true);
     try {
-      await leadApi.create({
+      await createLeadAndReport(leadApi, {
         ...form,
         areaId: form.areaId || null,
         sourceContentId,
         sourcePage: window.location.pathname,
         assignedBrand,
-      });
-      // Only a resolved leadApi.create() is a confirmed submission.
-      // The CRM payload and sourcePage must never be sent to X-HUB.
-      xhubIntelligence.leadSubmitted();
+      }, xhubIntelligence);
       toast.success('Đã gửi yêu cầu. Bộ phận phụ trách sẽ liên hệ với bạn.');
       setForm((current) => ({ ...current, message: '', consent: false }));
       onSuccess?.();
