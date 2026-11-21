@@ -35,9 +35,10 @@ jobs:
         working-directory: client
 
       - name: Build full frontend
-        # PRs validate the app even when production APIs return no dynamic sitemap URLs.
-        # Production main/deploy remains strict.
+        # CI validates static sitemap structure independently from public API uptime.
+        # VPS release builds use the loopback API for dynamic sitemap content.
         env:
-          SITEMAP_ALLOW_STATIC_ONLY: ${{ github.event_name == 'pull_request' && 'true' || 'false' }}
+          SITEMAP_ALLOW_STATIC_ONLY: 'true'
+          SITEMAP_SKIP_DYNAMIC_FETCH: 'true'
         run: npm run build
         working-directory: client
