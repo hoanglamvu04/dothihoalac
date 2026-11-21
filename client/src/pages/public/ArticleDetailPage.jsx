@@ -36,6 +36,7 @@ import { articleApi } from '../../api/content.api';
 import { formatDateTime } from '../../utils/formatters';
 import { mediaUrl } from '../../utils/media';
 import { bodyContainsVisibleMediaId } from '../../utils/articleMedia';
+import { xhubIntelligence } from '../../utils/xhub-intelligence.mjs';
 import { buildNewsArticleJsonLd } from '../../utils/structuredData';
 
 import './ArticleDetailPage.css';
@@ -239,6 +240,14 @@ export default function ArticleDetailPage() {
       active = false;
     };
   }, [slug]);
+
+  // Track actual article views only AFTER its API detail resolved.
+  // The only entity field sent is the public slug, never author/account IDs.
+  useEffect(() => {
+    if (item?.slug && item.slug === slug) {
+      xhubIntelligence.recordArticleView(item.slug);
+    }
+  }, [item?.slug, slug]);
 
   useEffect(() => {
     if (!item?._id) return undefined;
