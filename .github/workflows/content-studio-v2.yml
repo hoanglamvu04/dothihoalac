@@ -96,8 +96,10 @@ jobs:
           src/components/community/CommunitySocialEditor.jsx
           src/components/forms/PropertyGalleryUploader.jsx
       - name: Test article images and featured news
-        run: node --test tests/articleMedia.test.mjs tests/homeHero.test.mjs tests/propertyMap.test.mjs
+        run: node --test tests/articleMedia.test.mjs tests/homeHero.test.mjs tests/propertyMap.test.mjs tests/sitemapOutputDir.test.mjs
 
+      - name: Validate safe production sitemap refresh script
+        run: bash -n scripts/refresh-sitemap-production.sh
       - name: Build frontend
         env:
           SITEMAP_ALLOW_STATIC_ONLY: 'true'

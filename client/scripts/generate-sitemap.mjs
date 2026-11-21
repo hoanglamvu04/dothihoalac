@@ -253,7 +253,10 @@ const sitemapSets = {
 
 const allEntries = uniqueEntries(Object.values(sitemapSets).flat());
 const currentFile = fileURLToPath(import.meta.url);
-const publicDir = path.resolve(path.dirname(currentFile), '..', 'public');
+// A custom output directory permits atomic refreshes without modifying Git files.
+const publicDir = process.env.SITEMAP_OUTPUT_DIR
+  ? path.resolve(process.env.SITEMAP_OUTPUT_DIR)
+  : path.resolve(path.dirname(currentFile), '..', 'public');
 await mkdir(publicDir, { recursive: true });
 
 // sitemap.xml is intentionally a single urlset instead of a sitemap index.
