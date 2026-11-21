@@ -19,7 +19,7 @@ of a Deploy Do Thi Hoa Lac VPS workflow run. It tests:
 - API liveness https://api.dothihoalac.vn/api/v1/health
 - API readiness https://api.dothihoalac.vn/api/v1/health/ready
 - Public article, community, property and job list APIs
-- Sitemap https://dothihoalac.vn/sitemap.xml is an XML sitemap index
+- Sitemap https://dothihoalac.vn/sitemap.xml is an XML urlset with the homepage URL
 
 The workflow maintains a deduplicated GitHub issue for an unresolved failure. Test success indicates the routes were reachable from the GitHub runner; it does not prove every frontend interaction or admin workflow.
 
