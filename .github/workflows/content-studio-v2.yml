@@ -201,4 +201,7 @@ jobs:
           src/modules/users/user.service.js
           src/modules/users/userActivity.model.js
           src/routes/index.js
+      - name: Validate MongoDB Database Tools installer shell syntax
+        run: bash -n scripts/ensure-mongodb-database-tools.sh
+
       - run: npm test
