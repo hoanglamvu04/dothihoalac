@@ -51,7 +51,7 @@ jobs:
             'https://api.dothihoalac.vn/api/v1/articles?page=1&limit=1' >/dev/null
 
       - name: Open or update outage alert
-        if: steps.web.outcome == 'failure' || steps.api.outcome == 'failure' || steps.articles.outcome == 'failure' || steps.articles.outcome == 'failure'
+        if: steps.web.outcome == 'failure' || steps.api.outcome == 'failure' || steps.articles.outcome == 'failure'
         uses: actions/github-script@v7
         with:
           script: |
@@ -127,7 +127,7 @@ jobs:
             }
 
       - name: Fail workflow when production is unhealthy
-        if: steps.web.outcome == 'failure' || steps.api.outcome == 'failure'
+        if: steps.web.outcome == 'failure' || steps.api.outcome == 'failure' || steps.articles.outcome == 'failure'
         shell: bash
         run: |
           echo "Production smoke check failed."
