@@ -59,6 +59,11 @@ mv "$TMP_ARCHIVE" "$ARCHIVE"
 sha256sum "$ARCHIVE" > "$ARCHIVE.sha256"
 (cd "$BACKUP_DIR" && sha256sum -c "$(basename "$ARCHIVE").sha256") >/dev/null
 
+# Optional offsite durability: encrypt with age before any network transfer.
+# If fully configured, an upload/verification failure also fails this backup
+# workflow; the already verified local archive stays untouched.
+bash "$SERVER_DIR/scripts/offsite-mongodb-backup.sh" "$ARCHIVE"
+
 find "$BACKUP_DIR" -type f \
   \( -name 'dothihoalac-*.archive.gz' -o -name 'dothihoalac-*.archive.gz.sha256' \) \
   -mtime "+$RETENTION_DAYS" -delete
