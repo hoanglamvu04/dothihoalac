@@ -30,8 +30,8 @@ jobs:
         run: npm ci
         working-directory: client
 
-      - name: Test article image visibility
-        run: node --test tests/articleMedia.test.mjs
+      - name: Test article images and featured news
+        run: node --test tests/articleMedia.test.mjs tests/homeHero.test.mjs
         working-directory: client
 
       - name: Build full frontend
