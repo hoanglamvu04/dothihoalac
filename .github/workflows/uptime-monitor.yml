@@ -100,7 +100,22 @@ jobs:
               --max-time 15 \
               https://dothihoalac.vn/sitemap.xml
           )"
-          printf '%s' "$BODY" | grep -q '<sitemapindex'
+          # Google-compatible production sitemap.xml is a URLSET, not an index.
+          # Parse the real XML so an SPA HTML fallback cannot appear healthy.
+          printf '%s' "$BODY" | python3 -c '
+          import sys
+          import xml.etree.ElementTree as ET
+          root = ET.parse(sys.stdin).getroot()
+          namespace = "{http://www.sitemaps.org/schemas/sitemap/0.9}"
+          if root.tag != namespace + "urlset":
+              raise SystemExit("Expected a sitemap urlset, not an index or HTML")
+          urls = [
+              node.text for node in root.findall(namespace + "url/" + namespace + "loc")
+          ]
+          if "https://dothihoalac.vn/" not in urls:
+              raise SystemExit("Sitemap is missing the homepage canonical URL")
+          print("Validated sitemap urlset with", len(urls), "URLs")
+          '
 
       - name: Open or update outage alert
         if: steps.web.outcome == 'failure' || steps.api.outcome == 'failure' || steps.articles.outcome == 'failure' || steps.ready.outcome == 'failure' || steps.feeds.outcome == 'failure' || steps.sitemap.outcome == 'failure'
