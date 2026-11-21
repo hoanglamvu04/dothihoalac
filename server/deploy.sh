@@ -4,7 +4,7 @@ set -Eeuo pipefail
 APP_NAME="${DTHL_PM2_APP:-dothihoalac-api}"
 APP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_DIR="$(cd "$APP_DIR/.." && pwd)"
-HEALTH_URL="${DTHL_HEALTH_URL:-http://127.0.0.1:5000/api/v1/health}"
+HEALTH_URL="${DTHL_HEALTH_URL:-http://127.0.0.1:5000/api/v1/health/ready}"
 PREVIOUS_COMMIT="${DTHL_PREVIOUS_COMMIT:-}"
 TMP_DIR=""
 BACKUP_NODE_MODULES=""
@@ -91,7 +91,7 @@ if [[ "$HEALTHY" != "1" ]]; then
   exit 1
 fi
 
-log "API health check passed"
+log "API and MongoDB readiness check passed"
 if [[ -n "$BACKUP_NODE_MODULES" && -d "$BACKUP_NODE_MODULES" ]]; then
   rm -rf "$BACKUP_NODE_MODULES"
   BACKUP_NODE_MODULES=""
