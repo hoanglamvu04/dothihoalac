@@ -4,6 +4,12 @@ on:
   schedule:
     - cron: '*/30 * * * *'
   workflow_dispatch:
+  # Check public routing immediately after production deployments, not only by schedule.
+  workflow_run:
+    workflows:
+      - 'Deploy Do Thi Hoa Lac VPS'
+    types:
+      - completed
 
 permissions:
   contents: read
@@ -41,6 +47,21 @@ jobs:
           echo "$BODY"
           echo "$BODY" | grep -q '"status":"ok"'
 
+      - name: Check database-backed readiness
+        id: ready
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          BODY="$(
+            curl --fail --silent --show-error \
+              --retry 2 --retry-all-errors \
+              --max-time 15 \
+              https://api.dothihoalac.vn/api/v1/health/ready
+          )"
+          printf '%s' "$BODY" | grep -q '"status":"ok"'
+          printf '%s' "$BODY" | grep -q '"database":"connected"'
+
       - name: Check public article API
         id: articles
         continue-on-error: true
@@ -50,8 +71,39 @@ jobs:
           curl --fail --silent --show-error --retry 2 --retry-all-errors --max-time 15 \
             'https://api.dothihoalac.vn/api/v1/articles?page=1&limit=1' >/dev/null
 
+      - name: Check community, property and job APIs
+        id: feeds
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          for section in community properties jobs; do
+            echo "Checking /api/v1/$section"
+            BODY="$(
+              curl --fail --silent --show-error \
+                --retry 2 --retry-all-errors \
+                --max-time 15 \
+                "https://api.dothihoalac.vn/api/v1/$section?page=1&limit=1"
+            )"
+            printf '%s' "$BODY" | grep -q '"success":true'
+          done
+
+      - name: Check SEO sitemap index
+        id: sitemap
+        continue-on-error: true
+        shell: bash
+        run: |
+          set -euo pipefail
+          BODY="$(
+            curl --location --fail --silent --show-error \
+              --retry 2 --retry-all-errors \
+              --max-time 15 \
+              https://dothihoalac.vn/sitemap.xml
+          )"
+          printf '%s' "$BODY" | grep -q '<sitemapindex'
+
       - name: Open or update outage alert
-        if: steps.web.outcome == 'failure' || steps.api.outcome == 'failure' || steps.articles.outcome == 'failure'
+        if: steps.web.outcome == 'failure' || steps.api.outcome == 'failure' || steps.articles.outcome == 'failure' || steps.ready.outcome == 'failure' || steps.feeds.outcome == 'failure' || steps.sitemap.outcome == 'failure'
         uses: actions/github-script@v7
         with:
           script: |
@@ -62,6 +114,9 @@ jobs:
               '- Website: ${{ steps.web.outcome }}',
               '- API health: ${{ steps.api.outcome }}',
               '- Article API: ${{ steps.articles.outcome }}',
+              '- MongoDB readiness: ${{ steps.ready.outcome }}',
+              '- Other public feeds: ${{ steps.feeds.outcome }}',
+              '- Sitemap XML: ${{ steps.sitemap.outcome }}',
               '- Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}',
               '- Checked at: ' + new Date().toISOString(),
             ].join('\n');
@@ -94,7 +149,7 @@ jobs:
             }
 
       - name: Close outage alert after recovery
-        if: steps.web.outcome == 'success' && steps.api.outcome == 'success' && steps.articles.outcome == 'success'
+        if: steps.web.outcome == 'success' && steps.api.outcome == 'success' && steps.articles.outcome == 'success' && steps.ready.outcome == 'success' && steps.feeds.outcome == 'success' && steps.sitemap.outcome == 'success'
         uses: actions/github-script@v7
         with:
           script: |
@@ -127,7 +182,7 @@ jobs:
             }
 
       - name: Fail workflow when production is unhealthy
-        if: steps.web.outcome == 'failure' || steps.api.outcome == 'failure' || steps.articles.outcome == 'failure'
+        if: steps.web.outcome == 'failure' || steps.api.outcome == 'failure' || steps.articles.outcome == 'failure' || steps.ready.outcome == 'failure' || steps.feeds.outcome == 'failure' || steps.sitemap.outcome == 'failure'
         shell: bash
         run: |
           echo "Production smoke check failed."
