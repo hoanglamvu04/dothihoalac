@@ -32,7 +32,9 @@ export function createXHubWebTracker({
   const metric=(value,max)=>{
     if(typeof value!=='string')return undefined;
     const trimmed=value.trim().slice(0,max);
-    return trimmed&&safeMetric.test(trimmed)?trimmed:undefined;
+    // Marketing tags must not become accidental phone-number or email data.
+    return trimmed&&safeMetric.test(trimmed)&&!/\d{9,}/.test(trimmed)
+      ?trimmed:undefined;
   };
   function context(){
     const location=root.location;
@@ -43,8 +45,12 @@ export function createXHubWebTracker({
       path.startsWith('/admin')||/[?#@\u0000-\u001f]/.test(path))return null;
     const params=new URLSearchParams(location.search||'');
     let referrerHost;
-    try{referrerHost=new URL(root.document?.referrer||'').hostname||undefined;}
-    catch{}
+    try{
+      const host=new URL(root.document?.referrer||'').hostname.toLowerCase();
+      if(/^[a-z0-9.-]{3,200}$/.test(host)&&
+         !host.includes('..')&&!/^\d+\.\d+\.\d+\.\d+$/.test(host))
+        referrerHost=host;
+    }catch{}
     return {
       path,
       utmSource:metric(params.get('utm_source'),60),
