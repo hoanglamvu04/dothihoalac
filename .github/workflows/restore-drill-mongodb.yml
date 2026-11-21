@@ -1,0 +1,86 @@
+name: DTHL Isolated MongoDB Restore Drill
+
+on:
+  # Manual only: restores private backup data inside a throwaway container
+  # on the VPS. Never runs automatically after a deploy.
+  pull_request:
+    paths:
+      - 'server/scripts/restore-mongodb-isolated.sh'
+      - '.github/workflows/restore-drill-mongodb.yml'
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: 'Type ISOLATED_DTHL_RESTORE to verify a backup safely'
+        required: true
+        type: string
+      mongo_image:
+        description: 'Match the source MongoDB server major version'
+        required: true
+        type: choice
+        default: 'mongo:8.0'
+        options:
+          - 'mongo:6.0'
+          - 'mongo:7.0'
+          - 'mongo:8.0'
+
+permissions:
+  contents: read
+
+jobs:
+  syntax-check:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify shell syntax
+        run: bash -n server/scripts/restore-mongodb-isolated.sh
+      - name: Verify manual confirmation is required
+        shell: bash
+        run: |
+          if bash server/scripts/restore-mongodb-isolated.sh >/dev/null 2>&1; then
+            echo 'Restore must never run without explicit confirmation' >&2
+            exit 1
+          fi
+      - name: Verify isolated Docker configuration
+        shell: bash
+        run: |
+          grep -F -- '--network none' server/scripts/restore-mongodb-isolated.sh
+          grep -F -- '--volume "$LATEST:/backup.archive.gz:ro"' server/scripts/restore-mongodb-isolated.sh
+
+  isolated-restore:
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: deploy-dthl-production
+      cancel-in-progress: false
+    timeout-minutes: 30
+    steps:
+      - name: Validate explicit restore drill confirmation
+        shell: bash
+        env:
+          RESTORE_CONFIRM: ${{ inputs.confirm }}
+        run: |
+          if [ "$RESTORE_CONFIRM" != "ISOLATED_DTHL_RESTORE" ]; then
+            echo 'Restore drill confirmation rejected'
+            exit 1
+          fi
+
+      - uses: actions/checkout@v4
+
+      - name: Validate restore drill shell syntax
+        run: bash -n server/scripts/restore-mongodb-isolated.sh
+
+      - name: Restore the latest archive inside a network-isolated disposable MongoDB
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script_stop: true
+          command_timeout: 25m
+          script: |
+            set -Eeuo pipefail
+            cd /var/www/dothihoalac/server
+            DTHL_RESTORE_DRILL_CONFIRM=ISOLATED_DTHL_RESTORE \
+              DTHL_RESTORE_DRILL_MONGO_IMAGE=${{ inputs.mongo_image == 'mongo:6.0' && 'mongo:6.0' || inputs.mongo_image == 'mongo:7.0' && 'mongo:7.0' || 'mongo:8.0' }} \
+              bash ./scripts/restore-mongodb-isolated.sh
