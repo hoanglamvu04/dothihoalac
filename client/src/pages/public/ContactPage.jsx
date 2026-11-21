@@ -31,6 +31,7 @@ import Seo from '../../components/common/Seo';
 import LeadForm from '../../components/forms/LeadForm';
 
 import { useToast } from '../../context/ToastContext';
+import { trackXHubEvent } from '../../utils/xhubAnalytics.mjs';
 
 import './ContactPage.css';
 
@@ -218,6 +219,7 @@ export default function ContactPage() {
             <div className="contact-hero__actions">
               <a
                 href={`tel:${CONTACT_INFO.phoneHref}`}
+                onClick={() => trackXHubEvent('contact_click')}
                 className="contact-primary-button"
               >
                 <Phone size={18} />
