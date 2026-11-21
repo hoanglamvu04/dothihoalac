@@ -6,7 +6,7 @@ the following day) and whenever backup scripts/workflows change on main.
 
 ## Prerequisites
 
-- MongoDB Database Tools installed on the VPS (mongodump and mongorestore)
+- MongoDB Database Tools installed on the VPS (mongodump and mongorestore). The workflow can bootstrap the package from existing apt repositories when missing, with root or passwordless sudo access. It does not add new repositories.
 - server/.env configured with the real MONGO_URI
 - write access and enough disk space under /var/backups/dothihoalac/mongodb
 - private backup permissions and secure VPS credentials
