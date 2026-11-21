@@ -10,6 +10,7 @@ import {
   Eye,
   FileText,
   Image as ImageIcon,
+  History,
   RefreshCw,
   Save,
   Send,
@@ -23,6 +24,8 @@ import FormField from '../../components/common/FormField';
 import TaxonomyFields from '../../components/forms/TaxonomyFields';
 import MediaUploader from '../../components/forms/MediaUploader';
 import ArticleBody from '../../components/content/ArticleBody';
+import ArticleQualityPanel from './ArticleQualityPanel';
+import ArticleRevisionPanel from './ArticleRevisionPanel';
 import ContentImage from '../../components/content/ContentImage';
 import { LoadingBlock } from '../../components/common/Loading';
 import { adminApi } from '../../api/admin.api';
@@ -33,6 +36,7 @@ import { CONTENT_STATUS } from '../../utils/constants';
 import { formatDateTime } from '../../utils/formatters';
 
 import './ArticleWorkspacePage.css';
+import './ArticleEditorPanels.css';
 
 const ARTICLE_TYPES = [
   ['news', 'Tin tức'],
@@ -54,6 +58,7 @@ const TABS = [
   ['content', 'Nội dung', FileText],
   ['taxonomy', 'Phân loại & SEO', Settings2],
   ['publish', 'Xuất bản', ShieldCheck],
+  ['history', 'Phiên bản', History],
 ];
 
 function idOf(value) {
@@ -516,7 +521,9 @@ export default function ArticleWorkspacePage() {
       ) : null}
 
       {tab === 'publish' ? (
-        <form className="article-workspace-grid" onSubmit={saveMetadata}>
+        <>
+          <ArticleQualityPanel articleId={id} refreshKey={item?.updatedAt} />
+          <form className="article-workspace-grid" onSubmit={saveMetadata}>
           <section className="article-workspace-card article-workspace-card--wide">
             <div className="article-workspace-card__head">
               <ShieldCheck size={19} />
@@ -570,7 +577,16 @@ export default function ArticleWorkspacePage() {
               <Send size={15} /> {published ? 'Đồng bộ & cập nhật' : 'Đồng bộ & xuất bản'}
             </button>
           </footer>
-        </form>
+          </form>
+        </>
+      ) : null}
+
+      {tab === 'history' ? (
+        <ArticleRevisionPanel
+          articleId={id}
+          canRestore={!docUrl && ['draft', 'needs_revision', 'rejected', 'approved'].includes(item.status)}
+          onRestored={() => load({ quiet: true })}
+        />
       ) : null}
     </main>
   );
