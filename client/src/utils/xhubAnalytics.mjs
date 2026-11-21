@@ -50,12 +50,45 @@ export function createXHubAnalyticsAdapter({
     };
   }
 
+  const controllers = new Set();
   const tracker = trackerFactory({
     endpoint: '/api/xhub-analytics',
     hasConsent,
     root,
+    send: async (url, options) => {
+      if (!hasConsent()) return { ok: false };
+      const controller = new AbortController();
+      controllers.add(controller);
+      try {
+        return await root.fetch(url, { ...options, signal: controller.signal });
+      } finally {
+        controllers.delete(controller);
+      }
+    },
   });
   let lastPageView = '';
+  let draining = false;
+
+  async function drain() {
+    if (draining) return;
+    draining = true;
+    try {
+      while (tracker.pending() > 0 && hasConsent()) {
+        const outcome = await tracker.flush();
+        // Avoid a retry storm when the backend is not yet provisioned.
+        if (!outcome.sent) break;
+      }
+    } finally {
+      draining = false;
+    }
+  }
+
+  function disable() {
+    lastPageView = '';
+    controllers.forEach((controller) => controller.abort());
+    controllers.clear();
+    tracker.disable();
+  }
 
   function allowed() {
     return hasConsent() === true &&
@@ -65,8 +98,7 @@ export function createXHubAnalyticsAdapter({
   function trackEvent(name, { entityKey } = {}) {
     if (!allowed()) {
       if (hasConsent() !== true) {
-        lastPageView = '';
-        tracker.disable();
+        disable();
       }
       return false;
     }
@@ -86,7 +118,7 @@ export function createXHubAnalyticsAdapter({
     }
 
     const queued = tracker.track(name, metadata);
-    if (queued) void tracker.flush();
+    if (queued) void drain();
     return queued;
   }
 
@@ -101,10 +133,7 @@ export function createXHubAnalyticsAdapter({
   return {
     trackEvent,
     trackPageView,
-    disable() {
-      lastPageView = '';
-      tracker.disable();
-    },
+    disable,
     pending: () => tracker.pending(),
   };
 }
