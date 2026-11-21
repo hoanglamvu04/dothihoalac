@@ -240,10 +240,16 @@ async function buildHomeFeed() {
   // bốn slot cuối thực sự là bài thuộc chuyên mục Quy hoạch.
   const articles = [...primaryArticles, ...spotlightArticles];
 
+  const articleIds = articles.map((item) => item._id);
   const communityIds = community.map((item) => item._id);
   const authorIds = uniqueIds(community.map((item) => item.authorId));
 
-  const [communityDetails, communityBodies, users, profiles] = await Promise.all([
+  const [articleBodies, communityDetails, communityBodies, users, profiles] = await Promise.all([
+    articleIds.length
+      ? ContentBody.find({ contentId: { $in: articleIds } })
+          .select('contentId inlineMediaIds')
+          .lean()
+      : [],
     communityIds.length
       ? CommunityPost.find({ contentId: { $in: communityIds } })
           .select('contentId postType')
@@ -266,6 +272,7 @@ async function buildHomeFeed() {
       : [],
   ]);
 
+  const articleBodyMap = mapById(articleBodies, 'contentId');
   const communityMap = mapById(communityDetails, 'contentId');
   const communityBodyMap = mapById(communityBodies, 'contentId');
   const userMap = mapById(users);
@@ -274,6 +281,9 @@ async function buildHomeFeed() {
   const allContent = [...articles, ...community, ...properties, ...jobs];
   const categoryIds = uniqueIds(articles.map((item) => item.primaryCategoryId));
   const areaIds = uniqueIds(allContent.map((item) => item.primaryAreaId));
+  const articleInlineMediaIds = uniqueIds(
+    articleBodies.flatMap((body) => body.inlineMediaIds || []),
+  );
   const communityInlineMediaIds = uniqueIds(
     communityBodies.flatMap((body) => body.inlineMediaIds || []),
   );
@@ -282,6 +292,7 @@ async function buildHomeFeed() {
   );
   const mediaIds = uniqueIds([
     ...allContent.map((item) => item.thumbnailMediaId),
+    ...articleInlineMediaIds,
     ...communityInlineMediaIds,
     ...communityAvatarMediaIds,
   ]);
@@ -333,7 +344,20 @@ async function buildHomeFeed() {
   };
 
   return {
-    articles: articles.map(hydrateCard),
+    articles: articles.map((item) => {
+      const hydrated = hydrateCard(item);
+      const inlineIds = articleBodyMap.get(idOf(item._id))?.inlineMediaIds || [];
+      const firstActiveInlinePhoto = inlineIds
+        .map((mediaId) => mediaMap.get(idOf(mediaId)))
+        .find(Boolean);
+
+      // Imported Docs can have photos in the body without a populated cover.
+      // Prefer that article's own first active image instead of a blank hero.
+      return {
+        ...hydrated,
+        thumbnailMediaId: hydrated.thumbnailMediaId || firstActiveInlinePhoto || null,
+      };
+    }),
     community: community.map((item) => {
       const author = userMap.get(idOf(item.authorId)) || null;
       const body = communityBodyMap.get(idOf(item._id)) || null;
