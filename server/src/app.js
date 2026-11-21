@@ -12,6 +12,7 @@ import apiRoutes from './routes/index.js';
 
 import { requestIdMiddleware } from './middlewares/requestId.middleware.js';
 import { apiLimiter } from './middlewares/rateLimit.middleware.js';
+import { createXHubSiteAnalyticsRouter } from './integrations/xhub-site-analytics.mjs';
 import { notFoundMiddleware } from './middlewares/notFound.middleware.js';
 import { errorMiddleware } from './middlewares/error.middleware.js';
 
@@ -78,6 +79,18 @@ export function createApp() {
   app.use(cors(corsOptions));
   app.use(compression());
   app.use(cookieParser());
+
+  // Only mount the same-origin WA-001 bridge when explicitly approved on this
+  // WEBSITE backend. It owns the private token and has a strict 16 KB parser,
+  // independent of the existing 2 MB JSON limit and /api/v1 CRM endpoints.
+  if (env.XHUB_WEB_ANALYTICS_ENABLED) {
+    app.use('/api/xhub-analytics', createXHubSiteAnalyticsRouter({
+      enabled: true,
+      siteId: env.XHUB_WEB_ANALYTICS_SITE_ID,
+      siteToken: env.XHUB_WEB_ANALYTICS_SITE_TOKEN,
+      publicHost: env.XHUB_WEB_ANALYTICS_PUBLIC_HOST,
+    }));
+  }
 
   /*
    * Chỉ áp dụng cho JSON và form URL-encoded.
