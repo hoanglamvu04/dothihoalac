@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Button from '../common/Button';
 import FormField from '../common/FormField';
 import { leadApi } from '../../api/lead.api';
@@ -7,6 +7,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useTaxonomy } from '../../context/TaxonomyContext';
 import { useToast } from '../../context/ToastContext';
 import { LEAD_TYPES } from '../../utils/constants';
+import { xhubIntelligence } from '../../utils/xhub-intelligence.mjs';
 
 export default function LeadForm({
   presetType = 'architecture_design',
@@ -30,6 +31,7 @@ export default function LeadForm({
     consent: false,
   });
   const [loading, setLoading] = useState(false);
+  const startedRef = useRef(false);
 
   const change = (key, value) => setForm((current) => ({ ...current, [key]: value }));
   const submit = async (event) => {
@@ -43,6 +45,9 @@ export default function LeadForm({
         sourcePage: window.location.pathname,
         assignedBrand,
       });
+      // Only a resolved leadApi.create() is a confirmed submission.
+      // The CRM payload and sourcePage must never be sent to X-HUB.
+      xhubIntelligence.leadSubmitted();
       toast.success('Đã gửi yêu cầu. Bộ phận phụ trách sẽ liên hệ với bạn.');
       setForm((current) => ({ ...current, message: '', consent: false }));
       onSuccess?.();
@@ -54,7 +59,15 @@ export default function LeadForm({
   };
 
   return (
-    <form className={`lead-form ${compact ? 'lead-form--compact' : ''}`} onSubmit={submit}>
+    <form
+      className={`lead-form ${compact ? 'lead-form--compact' : ''}`}
+      onSubmit={submit}
+      onFocusCapture={() => {
+        if (startedRef.current) return;
+        startedRef.current = true;
+        xhubIntelligence.formStarted();
+      }}
+    >
       <div className="form-grid form-grid--2">
         <FormField label="Nhu cầu" required><select value={form.leadType} onChange={(event) => change('leadType', event.target.value)}>{Object.entries(LEAD_TYPES).map(([value, label]) => <option key={value} value={value}>{label}</option>)}</select></FormField>
         <FormField label="Khu vực"><select value={form.areaId} onChange={(event) => change('areaId', event.target.value)}><option value="">Chưa xác định</option>{areas.map((area) => <option key={area._id} value={area._id}>{area.name}</option>)}</select></FormField>
