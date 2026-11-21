@@ -7,6 +7,11 @@ const SITE_ORIGIN = String(process.env.VITE_SITE_URL || 'https://dothihoalac.vn'
   .replace(/\/+$/, '');
 const API_PATH = '/api/v1';
 const DEFAULT_PRODUCTION_API = 'https://api.dothihoalac.vn/api/v1';
+// Use the loopback API during VPS builds without changing Vite's runtime API.
+const SITEMAP_SOURCE_API = String(process.env.SITEMAP_SOURCE_API || '')
+  .trim().replace(/\/+$/, '');
+const SKIP_DYNAMIC_FETCH =
+  String(process.env.SITEMAP_SKIP_DYNAMIC_FETCH || '').toLowerCase() === 'true';
 
 const STATIC_ROUTES = [
   { path: '/', priority: '1.0', changefreq: 'daily' },
@@ -35,6 +40,8 @@ const CORE_AREAS = [
 ];
 
 function normalizeApiBase() {
+  if (SKIP_DYNAMIC_FETCH) return '';
+  if (SITEMAP_SOURCE_API) return SITEMAP_SOURCE_API;
   const explicitApi = String(process.env.VITE_API_URL || '')
     .trim()
     .replace(/\/+$/, '');
@@ -203,13 +210,17 @@ function renderUrlSet(entries) {
     .join('\n')}\n</urlset>\n`;
 }
 
+const unavailableCollections = [];
+
 async function safeCollection(apiBase, endpoint, label) {
+  if (!apiBase) return [];
   try {
     const items = await fetchPublicItems(apiBase, endpoint);
     console.log(`[sitemap] ${label}: ${items.length} URLs from API.`);
     return items;
   } catch (error) {
     console.warn(`[sitemap] ${label} fetch failed: ${error.message}`);
+    unavailableCollections.push(label);
     return [];
   }
 }
@@ -272,7 +283,7 @@ counts.total = allEntries.length;
 
 await writeFile(
   path.join(publicDir, 'sitemap-status.json'),
-  `${JSON.stringify({ generatedAt, apiBase, counts }, null, 2)}\n`,
+  `${JSON.stringify({ generatedAt, apiBase, counts, unavailableCollections, dynamicFetchSkipped: SKIP_DYNAMIC_FETCH }, null, 2)}\n`,
   'utf8',
 );
 
