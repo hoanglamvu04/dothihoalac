@@ -38,6 +38,7 @@ import {
 } from 'lucide-react';
 
 import Seo from '../../components/common/Seo';
+import { xhubIntelligence } from '../../utils/xhub-intelligence.mjs';
 import JobCard from '../../components/content/JobCard';
 import ContentImage from '../../components/content/ContentImage';
 import Pagination from '../../components/common/Pagination';
@@ -512,6 +513,11 @@ export default function JobsPage() {
 
   const update = useCallback(
     (key, value, options = {}) => {
+      if (key === 'q') {
+        if (String(value || '').trim()) xhubIntelligence.searchUsed();
+      } else {
+        xhubIntelligence.filterUsed();
+      }
       setUrlParams(
         (next) => {
           const cleanValue = String(value ?? '').trim();
