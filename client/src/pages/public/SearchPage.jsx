@@ -28,6 +28,7 @@ import ContentImage from '../../components/content/ContentImage';
 import ContentMeta from '../../components/content/ContentMeta';
 import { searchApi } from '../../api/content.api';
 import { contentPath } from '../../utils/content';
+import { xhubIntelligence } from '../../utils/xhub-intelligence.mjs';
 import { truncate } from '../../utils/formatters';
 import {
   getRecentSearches,
@@ -351,6 +352,7 @@ export default function SearchPage() {
         return;
       }
 
+      xhubIntelligence.searchUsed();
       setSearchParams(buildParams({ nextQuery: normalizedQuery, nextPage: 1 }));
     },
     [buildParams, query, setSearchParams],
@@ -361,6 +363,7 @@ export default function SearchPage() {
       const normalizedTerm = String(term || '').trim();
       if (!normalizedTerm) return;
 
+      xhubIntelligence.searchUsed();
       setQuery(normalizedTerm);
       setSearchParams(
         buildParams({
@@ -376,6 +379,7 @@ export default function SearchPage() {
   const changeType = useCallback(
     (value) => {
       if (!q) return;
+      xhubIntelligence.filterUsed();
       setSearchParams(buildParams({ nextType: value, nextPage: 1 }));
       scrollToResults();
     },
@@ -386,6 +390,7 @@ export default function SearchPage() {
     (event) => {
       if (!q) return;
       const nextSort = event.target.value === 'newest' ? 'newest' : 'relevance';
+      xhubIntelligence.filterUsed();
       setSearchParams(buildParams({ nextSort, nextPage: 1 }));
       scrollToResults();
     },
