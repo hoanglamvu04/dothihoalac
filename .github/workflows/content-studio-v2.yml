@@ -67,6 +67,9 @@ jobs:
           src/pages/admin/ArticleWorkspacePage.jsx
           src/pages/admin/ArticleQualityPanel.jsx
           src/pages/admin/ArticleRevisionPanel.jsx
+          src/pages/admin/AdminSeoPage.jsx
+          src/pages/admin/AdminLeadsPage.jsx
+          src/utils/constants.js
           src/pages/admin/ArticleUrlImportButton.jsx
           src/pages/admin/GoogleDocsArticleLauncher.jsx
           src/pages/admin/ModerationQueuePage.jsx
@@ -155,6 +158,12 @@ jobs:
           src/modules/jobs/job.publicList.service.js
           src/modules/jobs/jobPost.model.js
           src/modules/articles/article.quality.js
+          src/modules/articles/article.seoAudit.js
+          src/modules/articles/article.seo.service.js
+          src/modules/leads/lead.service.js
+          src/modules/leads/leadFollowUp.js
+          src/modules/leads/lead.controller.js
+          src/modules/leads/leadRequest.model.js
           src/modules/articles/article.editorSupport.service.js
           src/modules/articles/article.urlCleaner.js
           src/modules/articles/article.urlImport.service.js

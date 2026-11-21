@@ -70,6 +70,7 @@ const ActivityPage = lazy(() => import('../pages/account/ActivityPage'));
 const AdminDashboardPage = lazy(() => import('../pages/admin/AdminDashboardPage'));
 const ModerationQueuePage = lazy(() => import('../pages/admin/ModerationQueuePage'));
 const AdminArticlesPage = lazy(() => import('../pages/admin/AdminArticlesPage'));
+const AdminSeoPage = lazy(() => import('../pages/admin/AdminSeoPage'));
 const AdminMediaPage = lazy(() => import('../pages/admin/AdminMediaPage'));
 const AdminProjectsPage = lazy(() => import('../pages/admin/AdminProjectsPage'));
 const ProjectWorkspacePage = lazy(() => import('../pages/admin/ProjectWorkspacePage'));
@@ -157,6 +158,7 @@ const router = createBrowserRouter(
         <Route index element={<AdminDashboardPage />} />
         <Route path="kiem-duyet" element={<ModerationQueuePage />} />
         <Route path="bai-viet" element={<AdminArticlesPage />} />
+        <Route path="seo" element={<AdminSeoPage />} />
         <Route path="media" element={<AdminMediaPage />} />
         <Route path="du-an" element={<AdminProjectsPage />} />
         <Route path="du-an/moi" element={<ProjectWorkspacePage />} />

@@ -64,6 +64,7 @@ r.patch(
 );
 r.get('/reports', requirePermission(...reportPermissions), asyncHandler(c.reports));
 r.patch('/reports/:id', requirePermission(...reportPermissions), asyncHandler(c.report));
+r.get('/leads/overview', requirePermission(PERMISSIONS.MANAGE_LEADS), asyncHandler(leadController.adminOverview));
 r.get('/leads', requirePermission(PERMISSIONS.MANAGE_LEADS), asyncHandler(leadController.adminList));
 r.get('/leads/:id', requirePermission(PERMISSIONS.MANAGE_LEADS), asyncHandler(leadController.detail));
 r.patch(

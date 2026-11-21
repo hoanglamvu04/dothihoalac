@@ -338,10 +338,10 @@ export const LEAD_TYPES = {
 
 export const LEAD_STATUS = {
   new: 'Mới',
-  contacted: 'Đã liên hệ',
-  qualified: 'Có nhu cầu phù hợp',
-  proposal_sent: 'Đã gửi đề xuất',
-  converted: 'Đã chuyển đổi',
+  contacting: 'Đang liên hệ',
+  qualified: 'Đã xác định nhu cầu',
+  quoted: 'Đã gửi báo giá',
+  won: 'Đã chốt dịch vụ',
   lost: 'Không thành công',
-  spam: 'Spam',
+  closed: 'Đã đóng',
 };

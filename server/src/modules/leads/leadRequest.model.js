@@ -40,9 +40,11 @@ const schema = new mongoose.Schema(
       default: 'new',
       index: true,
     },
+    nextFollowUpAt: { type: Date, default: null, index: true },
     consentAt: { type: Date, required: true },
   },
   { timestamps: true, collection: 'leadrequests' },
 );
 schema.index({ assignedBrand: 1, status: 1, createdAt: -1 });
+schema.index({ status: 1, nextFollowUpAt: 1 });
 export default getOrCreateModel('LeadRequest', schema, 'leadrequests');

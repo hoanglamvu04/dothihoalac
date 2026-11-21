@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import * as c from './article.controller.js';
+import { articleSeoOverview } from './article.seo.service.js';
 import { requireAuth } from '../../middlewares/auth.middleware.js';
 import { requirePermission } from '../../middlewares/role.middleware.js';
 import { uploadSingleDocument } from '../../middlewares/upload.middleware.js';
@@ -39,6 +40,14 @@ const editorialReadPermissions = [
 r.use(requireAuth);
 
 r.get('/', requirePermission(...editorialReadPermissions), asyncHandler(c.adminList));
+r.get(
+  '/seo/overview',
+  requirePermission(...editorialReadPermissions),
+  asyncHandler(async (req, res) => sendSuccess(res, {
+    data: await articleSeoOverview(),
+  })),
+);
+
 r.get(
   '/:id/quality',
   requirePermission(...editorialReadPermissions),

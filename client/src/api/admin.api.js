@@ -44,10 +44,12 @@ export const adminApi = {
   resolveReport: async (id, payload) =>
     unwrap(await api.patch(`/admin/reports/${id}`, payload)),
   leads: async (params = {}) => unwrapList(await api.get('/admin/leads', { params })),
+  leadsOverview: async () => unwrap(await api.get('/admin/leads/overview')),
   leadDetail: async (id) => unwrap(await api.get(`/admin/leads/${id}`)),
   updateLead: async (id, payload) => unwrap(await api.patch(`/admin/leads/${id}`, payload)),
 
   articles: async (params = {}) => unwrapList(await api.get('/admin/articles', { params })),
+  articlesSeoOverview: async () => unwrap(await api.get('/admin/articles/seo/overview')),
   articleDetail: async (id) => unwrap(await api.get(`/admin/articles/${id}`)),
   articleQuality: async (id) => unwrap(await api.get(`/admin/articles/${id}/quality`)),
   articleRevisions: async (id) => unwrap(await api.get(`/admin/articles/${id}/revisions`)),

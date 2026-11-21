@@ -14,6 +14,9 @@ export async function adminList(req, res) {
   const r = await s.adminList(req.query);
   return sendSuccess(res, { data: r.items, meta: r.meta });
 }
+export async function adminOverview(req, res) {
+  return sendSuccess(res, { data: await s.adminOverview() });
+}
 export async function adminUpdate(req, res) {
   return sendSuccess(res, {
     data: await s.adminUpdate(req.params.id, req.user._id, req.body),
