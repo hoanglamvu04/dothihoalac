@@ -59,3 +59,31 @@ test('article quality blocks invalid schedule dates', () => {
   assert.equal(result.ready, false);
   assert.ok(result.checks.some((x) => x.code === 'schedule' && x.level === 'block'));
 });
+
+test('article quality blocks missing inline images even when a valid cover exists', () => {
+  const result = articleQualityChecks({
+    ...valid,
+    body: {
+      ...valid.body,
+      inlineMediaIds: ['present', 'missing'],
+    },
+    validInlineCount: 1,
+    invalidInlineCount: 1,
+  });
+  assert.equal(result.ready, false);
+  assert.equal(result.blockers, 1);
+  assert.ok(result.checks.some((check) => check.code === 'invalid_inline_images'));
+});
+
+test('article quality warns when a selected cover is no longer active', () => {
+  const result = articleQualityChecks({
+    ...valid,
+    content: { ...valid.content, thumbnailMediaId: 'stale-cover' },
+    body: { ...valid.body, inlineMediaIds: ['good-inline'] },
+    hasCover: false,
+    validInlineCount: 1,
+  });
+  assert.equal(result.ready, true);
+  assert.ok(result.checks.some((check) => check.code === 'inactive_cover'));
+  assert.ok(result.checks.some((check) => check.code === 'images' && check.level === 'warn'));
+});
