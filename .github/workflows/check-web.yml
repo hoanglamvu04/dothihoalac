@@ -34,6 +34,14 @@ jobs:
         run: node --test tests/articleMedia.test.mjs tests/homeHero.test.mjs tests/propertyMap.test.mjs tests/sitemapOutputDir.test.mjs
         working-directory: client
 
+      - name: WA-002 browser consent and CRM success tests
+        run: node --test tests/xhubAnalytics.test.mjs tests/leadTelemetry.test.mjs
+        working-directory: client
+
+      - name: WA-002 syntax-check vendored tracker and privacy adapter
+        run: node --check src/utils/xhub-web-tracker.mjs && node --check src/utils/xhub-intelligence.mjs && node --check src/utils/xhub-analytics-policy.mjs
+        working-directory: client
+
       - name: Validate safe production sitemap refresh script
         run: bash -n scripts/refresh-sitemap-production.sh
         working-directory: client
@@ -45,3 +53,11 @@ jobs:
           SITEMAP_SKIP_DYNAMIC_FETCH: 'true'
         run: npm run build
         working-directory: client
+
+      - name: WA-002 verify site bearer token cannot appear in frontend bundle
+        working-directory: client
+        run: |
+          if grep -R -F 'XHUB_WEB_ANALYTICS_SITE_TOKEN' dist/assets; then
+            echo 'Backend-only token variable found in frontend assets' >&2
+            exit 1
+          fi
