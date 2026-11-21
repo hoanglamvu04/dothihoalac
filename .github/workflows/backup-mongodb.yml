@@ -27,7 +27,7 @@ jobs:
         if: github.event_name == 'workflow_dispatch'
         shell: bash
         run: |
-          if [ "\${{ inputs.confirm }}" != "BACKUP_DTHL_DB" ]; then
+          if [ "${{ inputs.confirm }}" != "BACKUP_DTHL_DB" ]; then
             echo "Manual dispatch rejected: confirmation text is incorrect."
             exit 1
           fi
@@ -37,15 +37,15 @@ jobs:
         continue-on-error: true
         uses: appleboy/ssh-action@v1.0.3
         with:
-          host: \${{ secrets.VPS_HOST }}
-          username: \${{ secrets.VPS_USERNAME }}
-          key: \${{ secrets.VPS_SSH_KEY }}
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          script_stop: true
+          command_timeout: 15m
           script: |
             set -euo pipefail
-            cd /var/www/dothihoalac
-            git fetch origin main
-            git reset --hard origin/main
-            cd server
+            # Backups must never reset source code or interrupt an active release.
+            cd /var/www/dothihoalac/server
             bash ./scripts/backup-mongodb.sh
 
       - name: Open or update backup alert
@@ -57,10 +57,10 @@ jobs:
             const body = [
               'Scheduled MongoDB backup failed.',
               '',
-              '- Run: \${{ github.server_url }}/\${{ github.repository }}/actions/runs/\${{ github.run_id }}',
+              '- Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}',
               '- Checked at: ' + new Date().toISOString(),
               '',
-              'Current known prerequisite: the VPS must have MongoDB Database Tools (mongodump) installed.',
+              'First check the SSH configuration and the step logs. On VPS, mongodump (MongoDB Database Tools) is also required.',
             ].join('\n');
 
             const { data: issues } = await github.rest.issues.listForRepo({
