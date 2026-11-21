@@ -1,12 +1,19 @@
 const IMPORT_ARTIFACT = /\[\[DTHL_(?:H[234]|END|LI|QUOTE|IMAGE_\d+)\]\]/i;
 const UNSAFE_IMAGE = /<img\b[^>]*\bsrc\s*=\s*["'](?:blob:|data:)/i;
 
-export function articleQualityChecks({ content = {}, body = {}, hasCover = false } = {}) {
+export function articleQualityChecks({
+  content = {},
+  body = {},
+  hasCover = false,
+  validInlineCount = null,
+  invalidInlineCount = 0,
+} = {}) {
   const title = String(content.title || '').trim();
   const summary = String(content.summary || '').trim();
   const bodyText = String(body.bodyText || content.bodyText || '').trim();
   const html = String(body.bodyHtml || '');
   const imageCount = Array.isArray(body.inlineMediaIds) ? body.inlineMediaIds.length : 0;
+  const usableInlineCount = validInlineCount === null ? imageCount : validInlineCount;
   const checks = [];
 
   const add = (code, level, message) => checks.push({ code, level, message });
@@ -32,12 +39,24 @@ export function articleQualityChecks({ content = {}, body = {}, hasCover = false
     add('temporary_images', 'block', 'Ảnh tạm blob:/data: không thể lưu làm ảnh công khai.');
   }
 
-  if (!hasCover && imageCount === 0) {
-    add('images', 'warn', 'Chưa có ảnh bìa hoặc ảnh trong bài.');
+  if (invalidInlineCount > 0) {
+    add(
+      'invalid_inline_images',
+      'block',
+      'Có ' + invalidInlineCount + ' ảnh nội dung bị xóa, bị chặn hoặc thiếu URL trong Media Library.',
+    );
+  }
+
+  if (content.thumbnailMediaId && !hasCover) {
+    add('inactive_cover', 'warn', 'Ảnh bìa đã chọn không còn khả dụng trong Media Library.');
+  }
+
+  if (!hasCover && usableInlineCount === 0) {
+    add('images', 'warn', 'Chưa có ảnh bìa hoặc ảnh nội dung còn hoạt động.');
   } else if (!hasCover) {
-    add('images', 'warn', 'Có ảnh nội dung nhưng chưa chọn ảnh bìa.');
+    add('images', 'warn', 'Có ảnh nội dung hợp lệ nhưng chưa chọn ảnh bìa riêng.');
   } else {
-    add('images', 'pass', 'Đã có ảnh đại diện.');
+    add('images', 'pass', 'Đã có ảnh đại diện còn hoạt động.');
   }
 
   if (!content.primaryCategoryId) {
