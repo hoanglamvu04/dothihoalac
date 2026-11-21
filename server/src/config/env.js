@@ -259,6 +259,15 @@ const schema = z
       .default(''),
 
     // =====================================================
+    // X-HUB WEB ANALYTICS (explicit opt-in; secrets ONLY in backend)
+    // =====================================================
+
+    XHUB_WEB_ANALYTICS_ENABLED: boolFromString.default(false),
+    XHUB_WEB_ANALYTICS_SITE_ID: z.string().optional().default(''),
+    XHUB_WEB_ANALYTICS_SITE_TOKEN: z.string().optional().default(''),
+    XHUB_WEB_ANALYTICS_PUBLIC_HOST: z.string().optional().default(''),
+
+    // =====================================================
     // DEVELOPMENT / LOGGING
     // =====================================================
 
