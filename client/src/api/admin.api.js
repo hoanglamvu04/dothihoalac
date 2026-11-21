@@ -49,6 +49,7 @@ export const adminApi = {
   updateLead: async (id, payload) => unwrap(await api.patch(`/admin/leads/${id}`, payload)),
 
   articles: async (params = {}) => unwrapList(await api.get('/admin/articles', { params })),
+  articlesSeoOverview: async () => unwrap(await api.get('/admin/articles/seo/overview')),
   articleDetail: async (id) => unwrap(await api.get(`/admin/articles/${id}`)),
   articleQuality: async (id) => unwrap(await api.get(`/admin/articles/${id}/quality`)),
   articleRevisions: async (id) => unwrap(await api.get(`/admin/articles/${id}/revisions`)),
