@@ -91,6 +91,12 @@ const navGroups = [
         permissions: ['create_article', 'edit_article', 'approve_article', 'publish_article'],
       },
       {
+        to: '/quan-tri/seo',
+        label: 'SEO Center',
+        icon: Search,
+        permissions: ['create_article', 'edit_article', 'approve_article', 'publish_article', 'manage_system'],
+      },
+      {
         to: '/quan-tri/media',
         label: 'Thư viện media',
         icon: Images,
