@@ -48,8 +48,16 @@ if [[ ! -s "$TMP_ARCHIVE" ]]; then
   exit 4
 fi
 
+# Verify the full compressed stream before publishing any success artifact.
+# A partial archive must never be rotated into the only known backup.
+if ! gzip -t "$TMP_ARCHIVE"; then
+  printf '[DTHL backup] gzip archive verification failed\n' >&2
+  exit 5
+fi
+
 mv "$TMP_ARCHIVE" "$ARCHIVE"
 sha256sum "$ARCHIVE" > "$ARCHIVE.sha256"
+(cd "$BACKUP_DIR" && sha256sum -c "$(basename "$ARCHIVE").sha256") >/dev/null
 
 find "$BACKUP_DIR" -type f \
   \( -name 'dothihoalac-*.archive.gz' -o -name 'dothihoalac-*.archive.gz.sha256' \) \
