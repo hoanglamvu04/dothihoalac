@@ -69,7 +69,8 @@ export function isSafeWa001Batch(body, now = Date.now()) {
       event.entityKey !== undefined;
     if (hasEntity &&
         (!ENTITY_TYPES.has(event.entityType) ||
-         !SAFE_SLUG.test(event.entityKey || ''))) return false;
+         !SAFE_SLUG.test(event.entityKey || '') ||
+         /\d{9,}/.test(event.entityKey))) return false;
 
     if (event.name === 'content_view' &&
         (event.entityType !== 'article' || !SAFE_SLUG.test(event.entityKey || '')))
