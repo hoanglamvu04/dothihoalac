@@ -8,6 +8,7 @@ on:
     paths:
       - '.github/workflows/backup-mongodb.yml'
       - 'server/scripts/backup-mongodb.sh'
+      - 'server/scripts/offsite-mongodb-backup.sh'
       - 'server/scripts/ensure-mongodb-database-tools.sh'
   schedule:
     - cron: '15 20 * * *'
@@ -49,7 +50,7 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
           script_stop: true
-          command_timeout: 15m
+          command_timeout: 30m
           script: |
             set -euo pipefail
             # Keep the MongoDB Server and all production data untouched.
