@@ -20,6 +20,12 @@ import {
   importAdminArticleUrl,
   previewAdminArticleUrl,
 } from './article.urlImport.service.js';
+import {
+  articleQualityReport,
+  listArticleRevisions,
+  articleRevisionDetail,
+  restoreArticleRevision,
+} from './article.editorSupport.service.js';
 
 const r = Router();
 const editorialReadPermissions = [
@@ -33,6 +39,43 @@ const editorialReadPermissions = [
 r.use(requireAuth);
 
 r.get('/', requirePermission(...editorialReadPermissions), asyncHandler(c.adminList));
+r.get(
+  '/:id/quality',
+  requirePermission(...editorialReadPermissions),
+  asyncHandler(async (req, res) => sendSuccess(res, {
+    data: await articleQualityReport(req.params.id),
+  })),
+);
+
+r.get(
+  '/:id/revisions',
+  requirePermission(...editorialReadPermissions),
+  asyncHandler(async (req, res) => sendSuccess(res, {
+    data: await listArticleRevisions(req.params.id, req.query.limit),
+  })),
+);
+
+r.get(
+  '/:id/revisions/:version',
+  requirePermission(...editorialReadPermissions),
+  asyncHandler(async (req, res) => sendSuccess(res, {
+    data: await articleRevisionDetail(req.params.id, req.params.version),
+  })),
+);
+
+r.post(
+  '/:id/revisions/:version/restore',
+  requirePermission(PERMISSIONS.EDIT_ARTICLE, PERMISSIONS.MANAGE_SYSTEM),
+  asyncHandler(async (req, res) => sendSuccess(res, {
+    data: await restoreArticleRevision(
+      req.params.id,
+      req.params.version,
+      req.user._id,
+    ),
+    message: 'Đã khôi phục nội dung phiên bản trước.',
+  })),
+);
+
 r.get('/:id', requirePermission(...editorialReadPermissions), asyncHandler(c.adminDetail));
 r.post(
   '/',
