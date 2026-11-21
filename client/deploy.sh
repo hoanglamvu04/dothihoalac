@@ -34,7 +34,9 @@ printf '[DTHL web deploy] Installing frontend dependencies\n'
 npm ci --no-audit --no-fund
 
 printf '[DTHL web deploy] Building next frontend release\n'
-npm run build -- --outDir "$NEXT_DIST"
+# Build the public sitemap from the healthy local API; CDN/proxy errors must
+# not turn a production build into a partial sitemap.
+SITEMAP_SOURCE_API="${SITEMAP_SOURCE_API:-http://127.0.0.1:5000/api/v1}" npm run build -- --outDir "$NEXT_DIST"
 
 if [[ ! -f "$NEXT_DIST/index.html" ]]; then
   printf '[DTHL web deploy] Build did not produce index.html\n' >&2
