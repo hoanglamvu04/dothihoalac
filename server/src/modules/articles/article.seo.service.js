@@ -18,9 +18,9 @@ function normalizeTitleQuery(value) {
 }
 
 export async function articleSeoOverview(options = {}) {
-  const { page } = parsePagination(options, { page: 1, limit: 25 });
-  // Bound each server request to avoid scanning every article body in memory.
-  const limit = Math.min(50, Math.max(1, Number(options.limit) || 25));
+  const { page, limit: requestedLimit } = parsePagination(options, { page: 1, limit: 25 });
+  // Bound each request to avoid scanning every article body in memory.
+  const limit = Math.min(50, requestedLimit);
   const effectiveSkip = (page - 1) * limit;
   const search = normalizeTitleQuery(options.q);
   const filter = search
