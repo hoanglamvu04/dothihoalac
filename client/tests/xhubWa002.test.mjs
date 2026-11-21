@@ -181,3 +181,18 @@ test('lead telemetry occurs only after the actual lead request resolves', async 
   );
   assert.deepEqual(failed, []);
 });
+
+
+test('consent withdrawal immediately overrides a stale granted choice if storage breaks', () => {
+  const root = {
+    navigator: { globalPrivacyControl: false, doNotTrack: '0' },
+    localStorage: {
+      getItem: () => 'granted',
+      setItem: () => { throw new Error('storage blocked'); },
+    },
+  };
+
+  assert.equal(setXHubConsentChoice('denied', root), true);
+  assert.equal(isXHubConsentGranted({ root, enabled: true }), false);
+  assert.equal(readXHubConsentChoice(root), 'denied');
+});
