@@ -64,7 +64,7 @@ jobs:
             DTHL_SITE_URL=https://dothihoalac.vn bash ./deploy.sh
 
             echo "Final checks"
-            curl --fail --silent --show-error --max-time 8 http://127.0.0.1:5000/api/v1/health >/dev/null
+            curl --fail --silent --show-error --max-time 8 http://127.0.0.1:5000/api/v1/health/ready >/dev/null
             curl --location --fail --silent --show-error --max-time 10 https://dothihoalac.vn/ >/dev/null
 
             echo "Do Thi Hoa Lac deploy completed successfully: $TARGET_COMMIT"
