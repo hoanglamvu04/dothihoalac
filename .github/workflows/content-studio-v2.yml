@@ -96,7 +96,7 @@ jobs:
           src/components/community/CommunitySocialEditor.jsx
           src/components/forms/PropertyGalleryUploader.jsx
       - name: Test article images and featured news
-        run: node --test tests/articleMedia.test.mjs tests/homeHero.test.mjs tests/propertyMap.test.mjs tests/sitemapOutputDir.test.mjs
+        run: node --test tests/articleMedia.test.mjs tests/homeHero.test.mjs tests/propertyMap.test.mjs tests/sitemapOutputDir.test.mjs tests/xhubWa002.test.mjs
 
       - name: Validate safe production sitemap refresh script
         run: bash -n scripts/refresh-sitemap-production.sh
