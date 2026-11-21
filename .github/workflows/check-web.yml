@@ -36,6 +36,7 @@ jobs:
 
       - name: Validate safe production sitemap refresh script
         run: bash -n scripts/refresh-sitemap-production.sh
+        working-directory: client
       - name: Build full frontend
         # CI validates static sitemap structure independently from public API uptime.
         # VPS release builds use the loopback API for dynamic sitemap content.
