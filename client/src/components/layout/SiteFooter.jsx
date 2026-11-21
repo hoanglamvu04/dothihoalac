@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import XHubConsentControls from './XHubConsentControls';
 
 import {
   ChevronRight,
@@ -105,6 +106,7 @@ export default function SiteFooter() {
               <Link to="/chinh-sach-quyen-rieng">Quyền riêng tư</Link>
               <Link to="/quy-dinh-dang-bai">Quy định đăng bài</Link>
             </nav>
+            <XHubConsentControls />
           </section>
 
           <section className="site-footer__column site-footer__contact-column">
