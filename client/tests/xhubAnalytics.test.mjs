@@ -160,6 +160,7 @@ test('sensitive routes and user-generated slugs are not sent as paths', () => {
   assert.equal(safePublicAnalyticsPath('/khu-vuc/hoa-lac'), '/khu-vuc');
   assert.equal(safePublicAnalyticsPath('/bat-dong-san/private-slug'), '/bat-dong-san');
   assert.equal(isPublicContactHref('tel:+84123456789'), true);
+  assert.equal(safePublicAnalyticsPath('/tai-khoan/nguoi-dung'), null);
   assert.equal(isPublicContactHref('https://zalo.me/secret'), true);
   assert.equal(isPublicContactHref('https://attacker.example/'), false);
 });
