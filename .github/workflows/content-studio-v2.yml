@@ -93,7 +93,8 @@ jobs:
 
       - name: Build frontend
         env:
-          SITEMAP_ALLOW_STATIC_ONLY: ${{ github.event_name == 'pull_request' && 'true' || 'false' }}
+          SITEMAP_ALLOW_STATIC_ONLY: 'true'
+          SITEMAP_SKIP_DYNAMIC_FETCH: 'true'
         run: npm run build
 
   server:
