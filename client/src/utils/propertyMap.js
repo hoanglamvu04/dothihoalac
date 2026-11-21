@@ -1,5 +1,3 @@
-import { contentPath } from './content.js';
-
 /**
  * Only use GeoJSON coordinates saved and published with a property listing.
  * Displaying fake geocoded pins from an address label would mislead visitors.
@@ -37,7 +35,7 @@ export function propertyMapLocations(items = [], maxItems = 12) {
       address: String(item?.property?.addressText || ''),
       latitude,
       longitude,
-      href: contentPath(item),
+      href: item?.slug ? '/bat-dong-san/' + encodeURIComponent(String(item.slug)) : '#',
     });
 
     if (points.length >= Math.min(30, Math.max(1, Number(maxItems) || 12))) break;
