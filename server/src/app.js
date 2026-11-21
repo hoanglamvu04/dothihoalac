@@ -9,6 +9,7 @@ import { env } from './config/env.js';
 import { corsOptions } from './config/cors.js';
 import { logger } from './config/logger.js';
 import apiRoutes from './routes/index.js';
+import { mountXHubAnalytics } from './integrations/xhubAnalytics.mount.js';
 
 import { requestIdMiddleware } from './middlewares/requestId.middleware.js';
 import { apiLimiter } from './middlewares/rateLimit.middleware.js';
@@ -78,6 +79,12 @@ export function createApp() {
   app.use(cors(corsOptions));
   app.use(compression());
   app.use(cookieParser());
+
+  // WA-002: disabled by default. The route owns a stricter 16 KB parser and
+  // limiter; never allow the site's existing 2 MB API parser to swallow
+  // oversized telemetry or expose any X-HUB source token to the browser.
+  // Does not modify /api/v1, auth sessions, leads, CMS or GA4.
+  mountXHubAnalytics(app, env);
 
   /*
    * Chỉ áp dụng cho JSON và form URL-encoded.
