@@ -25,6 +25,7 @@ import EditorRouteId from '../components/routing/EditorRouteId';
 import { PageLoading } from '../components/common/Loading';
 import ErrorBoundary from '../components/common/ErrorBoundary';
 import { trackPageView } from '../utils/analytics';
+import { xhubIntelligence } from '../utils/xhub-intelligence.mjs';
 import { isPersistedContentId } from '../utils/content';
 
 const HomePage = lazy(() => import('../pages/public/HomePage'));
@@ -134,7 +135,22 @@ function RouterEffects() {
     trackPageView(
       location.pathname + location.search,
     );
+    // WA-001 only observes public route categories, without query strings.
+    // Its internal dedupe prevents extra page views from React rerenders.
+    xhubIntelligence.recordNavigation(location.pathname);
   }, [location.pathname, location.search]);
+
+  useEffect(() => {
+    const onClick = (event) => {
+      const anchor = event.target?.closest?.('a[href]');
+      if (!anchor) return;
+      // The URL/contact number is used only to classify the click locally.
+      // Telemetry receives the event name, never the href or phone/email.
+      xhubIntelligence.onLinkClick(anchor.getAttribute('href'));
+    };
+    document.addEventListener('click', onClick, { capture: true });
+    return () => document.removeEventListener('click', onClick, { capture: true });
+  }, []);
 
   return (
     <>
