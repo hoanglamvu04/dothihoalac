@@ -37,6 +37,7 @@ import { articleApi } from '../../api/content.api';
 import { useListPage } from '../../hooks/useListPage';
 import { useTaxonomy } from '../../context/TaxonomyContext';
 import { contentPath } from '../../utils/content';
+import { xhubIntelligence } from '../../utils/xhub-intelligence.mjs';
 import { truncate } from '../../utils/formatters';
 import {
   ARTICLE_CATEGORY_PAGE_COPY,
@@ -628,6 +629,10 @@ export default function ArticlesPage() {
 
   const updateUrl = useCallback(
     (values) => {
+      if (Object.keys(values).some((key) =>
+        ['category', 'area', 'date', 'sort'].includes(key))) {
+        xhubIntelligence.filterUsed();
+      }
       setSearchParams((current) => {
         const next = new URLSearchParams(current);
 
@@ -711,6 +716,7 @@ export default function ArticlesPage() {
 
   const submitSearch = (event) => {
     event.preventDefault();
+    if (searchDraft.trim()) xhubIntelligence.searchUsed();
     updateUrl({ q: searchDraft.trim() });
   };
 
