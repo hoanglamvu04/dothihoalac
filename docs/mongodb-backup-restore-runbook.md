@@ -43,3 +43,42 @@ A valid gzip stream and SHA256 checksum prove archive integrity only; they do no
 prove restoration. Local VPS backups do not protect against total VPS loss.
 Add encrypted, independently retained offsite copies for disaster recovery.
 Never upload database archives or connection secrets to public GitHub artifacts.
+
+
+## V4: real restore drill without touching the production database
+
+GitHub Actions now provides the manual workflow **DTHL Isolated MongoDB Restore Drill**.
+It does not run on a schedule or after deployment and it does not load the live
+MongoDB URI. The VPS is used only to read the latest on-disk backup archive.
+
+Run it from GitHub Actions using confirmation ISOLATED_DTHL_RESTORE. Choose a
+MongoDB container image version matching the production server major version
+(mongo:6.0, mongo:7.0 or mongo:8.0).
+
+How it works:
+
+1. Check the local archive exists, is nonempty, and passes gzip and SHA256.
+2. Require Docker access; use the official MongoDB image selected in the workflow.
+3. Start a disposable Docker container with network=none, no published ports,
+   limited CPU/RAM and a read-only mount of the backup archive.
+4. Run mongorestore with --archive, --gzip and --stopOnError inside that container.
+5. Confirm that the restored dothihoalac database has collections and documents.
+6. Always remove the test container, including when the script fails.
+
+The source-of-truth script is server/scripts/restore-mongodb-isolated.sh.
+Manual CLI usage (from the VPS) is:
+
+    cd /var/www/dothihoalac/server
+    DTHL_RESTORE_DRILL_CONFIRM=ISOLATED_DTHL_RESTORE \
+      DTHL_RESTORE_DRILL_MONGO_IMAGE=mongo:8.0 \
+      bash ./scripts/restore-mongodb-isolated.sh
+
+The command above assumes that production uses MongoDB 8.x. Select the correct
+image version in the actual environment. Keep memory/disk pressure in mind and
+run the drill during a quiet maintenance window. Without Docker access or a
+matching image, the workflow fails clearly; that must NOT be interpreted as
+successful recovery verification.
+
+The restore drill proves an archive can be read and restored into an isolated
+instance. It does not test application startup against the restored database,
+cross-region disaster recovery or independently retained offsite copies.
