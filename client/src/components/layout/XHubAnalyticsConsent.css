@@ -1,0 +1,65 @@
+.xhub-consent {
+  position: fixed;
+  z-index: 1200;
+  right: 16px;
+  bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: min(710px, calc(100vw - 32px));
+  padding: 17px 19px;
+  border: 1px solid #dce8e0;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #193b29;
+  box-shadow: 0 16px 55px rgb(18 45 26 / 0.18);
+}
+
+.xhub-consent__message { flex: 1; min-width: 0; }
+.xhub-consent__message strong { font-size: 14px; }
+.xhub-consent__message p {
+  margin: 5px 0 0;
+  font-size: 12px;
+  line-height: 1.6;
+}
+.xhub-consent__message a { color: #106238; }
+.xhub-consent__blocked { color: #8e512b; }
+.xhub-consent__actions { display: flex; gap: 9px; flex-wrap: wrap; }
+.xhub-consent__actions button {
+  padding: 10px 13px;
+  border: 1px solid #a1b8a9;
+  border-radius: 9px;
+  color: #185337;
+  background: #fff;
+  font-size: 12px;
+  font-weight: 750;
+  cursor: pointer;
+}
+.xhub-consent__actions .xhub-consent__accept {
+  color: #fff;
+  border-color: #0c6a3e;
+  background: #0c6a3e;
+}
+.xhub-consent-manage {
+  padding: 0;
+  border: 0;
+  background: transparent;
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+.xhub-consent__actions button:focus-visible,
+.xhub-consent-manage:focus-visible {
+  outline: 2px solid #0a6738;
+  outline-offset: 3px;
+}
+@media (max-width: 650px) {
+  .xhub-consent {
+    right: 9px;
+    bottom: 9px;
+    flex-direction: column;
+    align-items: stretch;
+    width: calc(100vw - 18px);
+  }
+  .xhub-consent__actions button { flex: 1; }
+}
