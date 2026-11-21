@@ -1,6 +1,13 @@
 name: Backup DTHL MongoDB
 
 on:
+  # Automatically verify backup after workflow/script changes on main.
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/backup-mongodb.yml'
+      - 'server/scripts/backup-mongodb.sh'
   schedule:
     - cron: '15 20 * * *'
   workflow_dispatch:
