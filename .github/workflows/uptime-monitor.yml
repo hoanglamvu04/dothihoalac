@@ -50,9 +50,9 @@ jobs:
             const detail = [
               'Production smoke monitor detected a failure.',
               '',
-              '- Website: \${{ steps.web.outcome }}',
-              '- API: \${{ steps.api.outcome }}',
-              '- Run: \${{ github.server_url }}/\${{ github.repository }}/actions/runs/\${{ github.run_id }}',
+              '- Website: ${{ steps.web.outcome }}',
+              '- API: ${{ steps.api.outcome }}',
+              '- Run: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}',
               '- Checked at: ' + new Date().toISOString(),
             ].join('\n');
 
