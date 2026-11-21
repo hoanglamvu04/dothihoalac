@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import XHubConsentControls from './XHubConsentControls';
+import { trackXHubEvent } from '../../utils/xhubAnalytics.mjs';
 
 import {
   ChevronRight,
@@ -130,7 +131,7 @@ export default function SiteFooter() {
                 </span>
                 <div>
                   <strong>Hotline</strong>
-                  <a href="tel:0966709790">0966 709 790</a>
+                  <a href="tel:0966709790" onClick={() => trackXHubEvent('contact_click')}>0966 709 790</a>
                 </div>
               </div>
 
