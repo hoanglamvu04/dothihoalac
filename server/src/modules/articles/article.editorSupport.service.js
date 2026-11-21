@@ -29,21 +29,38 @@ async function getArticleContent(id) {
 
 export async function articleQualityReport(id) {
   const content = await getArticleContent(id);
-  const [body, cover] = await Promise.all([
-    ContentBody.findOne({ contentId: content._id }).lean(),
-    content.thumbnailMediaId
-      ? Media.findOne({
-          _id: content.thumbnailMediaId,
-          deletedAt: null,
-          status: 'active',
-        }).select('secureUrl url').lean()
-      : null,
-  ]);
+  const body = await ContentBody.findOne({ contentId: content._id }).lean();
+  const inlineMediaIds = body?.inlineMediaIds || [];
+  const referencedMediaIds = [
+    content.thumbnailMediaId,
+    ...inlineMediaIds,
+  ].filter(Boolean);
+  const activeMedia = referencedMediaIds.length
+    ? await Media.find({
+        _id: { $in: referencedMediaIds },
+        deletedAt: null,
+        status: 'active',
+        resourceType: 'image',
+      }).select('_id secureUrl url').lean()
+    : [];
+
+  const validMediaIds = new Set(
+    activeMedia
+      .filter((item) => Boolean(item.secureUrl || item.url))
+      .map((item) => String(item._id)),
+  );
+  const validInlineCount = inlineMediaIds.filter((mediaId) =>
+    validMediaIds.has(String(mediaId))).length;
 
   return articleQualityChecks({
     content,
     body,
-    hasCover: Boolean(cover?.secureUrl || cover?.url),
+    hasCover: Boolean(
+      content.thumbnailMediaId &&
+      validMediaIds.has(String(content.thumbnailMediaId)),
+    ),
+    validInlineCount,
+    invalidInlineCount: inlineMediaIds.length - validInlineCount,
   });
 }
 
