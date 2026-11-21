@@ -10,6 +10,7 @@ import {
   Youtube,
 } from 'lucide-react';
 
+import { XHubConsentSettingsButton } from './XHubAnalyticsConsent';
 import './SiteFooter.css';
 import './SiteFooter.mobile.css';
 
@@ -104,6 +105,7 @@ export default function SiteFooter() {
               <Link to="/dieu-khoan">Điều khoản</Link>
               <Link to="/chinh-sach-quyen-rieng">Quyền riêng tư</Link>
               <Link to="/quy-dinh-dang-bai">Quy định đăng bài</Link>
+              <XHubConsentSettingsButton />
             </nav>
           </section>
 
