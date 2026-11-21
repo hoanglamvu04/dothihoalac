@@ -124,6 +124,7 @@ test('PII fields, private paths and nonconsented payloads are rejected BEFORE up
     { email: 'visitor@example.com' },
     { phone: '0900000000' },
     { searchQuery: 'private search' },
+    { entityKey: '0900000000' },
     { fullUrl: 'https://dothihoalac.vn/tim-kiem?q=secret' },
     { latitude: 21.00, longitude: 105.00 },
     { userId: 'real-account-id' },
