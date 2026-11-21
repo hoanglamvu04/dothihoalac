@@ -13,6 +13,8 @@ import {
   BriefcaseBusiness,
   Building2,
   CalendarDays,
+  ChevronLeft,
+  ChevronRight,
   Clock3,
   Eye,
   GraduationCap,
@@ -23,6 +25,8 @@ import {
   MessageSquareText,
   MoreHorizontal,
   Newspaper,
+  Pause,
+  Play,
   RefreshCw,
   UsersRound,
 } from 'lucide-react';
@@ -41,6 +45,13 @@ import {
   truncate,
 } from '../../utils/formatters';
 import { contentPath } from '../../utils/content';
+import { mediaUrl } from '../../utils/media';
+import {
+  HOME_HERO_AUTOPLAY_MS,
+  hasHeroImage,
+  heroStoryId,
+  selectHomeHeroStories,
+} from '../../utils/homeHero';
 import { COMMUNITY_TYPES, JOB_TYPES } from '../../utils/constants';
 import { getPropertyTypeLabel } from '../../utils/propertyPosting';
 
@@ -74,7 +85,7 @@ const RESOLVED_LOADING = {
   jobs: false,
 };
 
-const HOME_FEED_CACHE_KEY = 'dthl:home-feed:v2';
+const HOME_FEED_CACHE_KEY = 'dthl:home-feed:v3';
 const HOME_FEED_CACHE_MAX_AGE_MS = 10 * 60 * 1000;
 
 const MOBILE_SHORTCUTS = [
@@ -250,24 +261,45 @@ function MetaLine({ item, showArea = true, showViews = true }) {
   );
 }
 
-function HomeHeroCard({ item }) {
+function HomeHeroCard({
+  item,
+  imageUrl,
+  stories,
+  activeIndex,
+  onImageError,
+  onSelect,
+  onPrevious,
+  onNext,
+  manualPaused,
+  onToggleAutoplay,
+}) {
   if (!item) return null;
   const href = contentPath(item);
+  const multiple = stories.length > 1;
 
   return (
-    <article className="home-hero-card">
+    <article className="home-hero-card" role="region" aria-roledescription="carousel" aria-label="Tin nổi bật">
       <Link className="home-hero-card__media" to={href} aria-label={item.title}>
-        <ContentImage
-          media={item.thumbnailMediaId}
-          alt={item.title}
-          ratio="hero"
-          loading="eager"
-          fetchPriority="high"
-          sizes="(max-width: 900px) 100vw, 920px"
-        />
+        {imageUrl ? (
+          <img
+            key={heroStoryId(item)}
+            className="content-image home-hero-card__image"
+            src={imageUrl}
+            alt=""
+            loading="eager"
+            decoding="async"
+            fetchPriority="high"
+            onError={() => onImageError(heroStoryId(item))}
+          />
+        ) : (
+          <span className="home-hero-card__placeholder" aria-hidden="true">
+            <Newspaper size={48} strokeWidth={1.4} />
+            <span>ĐÔ THỊ HÒA LẠC</span>
+          </span>
+        )}
       </Link>
       <div className="home-hero-card__shade" />
-      <div className="home-hero-card__content">
+      <div className="home-hero-card__content" aria-live="off">
         <span className="home-pill home-pill--gold">{articleCategory(item)}</span>
         <h1><Link to={href}>{item.title}</Link></h1>
         {item.summary ? <p>{truncate(item.summary, 155)}</p> : null}
@@ -276,13 +308,127 @@ function HomeHeroCard({ item }) {
       <Link className="home-hero-card__more" to={href}>
         Xem chi tiết <ArrowRight size={14} />
       </Link>
-      <div className="home-hero-card__dots" aria-hidden="true">
-        <span className="is-active" />
-        <span />
-        <span />
-        <span />
-      </div>
+
+      {multiple ? (
+        <>
+          <button
+            type="button"
+            className="home-hero-card__arrow home-hero-card__arrow--previous"
+            onClick={onPrevious}
+            aria-label="Tin nổi bật trước"
+          >
+            <ChevronLeft size={19} />
+          </button>
+          <button
+            type="button"
+            className="home-hero-card__arrow home-hero-card__arrow--next"
+            onClick={onNext}
+            aria-label="Tin nổi bật tiếp theo"
+          >
+            <ChevronRight size={19} />
+          </button>
+          <div className="home-hero-card__controls" role="group" aria-label="Điều khiển tin nổi bật">
+            <div className="home-hero-card__dots">
+              {stories.map((story, index) => (
+                <button
+                  key={heroStoryId(story)}
+                  type="button"
+                  className={index === activeIndex ? 'is-active' : ''}
+                  onClick={() => onSelect(index)}
+                  aria-label={`Xem tin ${index + 1}: ${truncate(story.title, 56)}`}
+                  aria-current={index === activeIndex ? 'true' : undefined}
+                />
+              ))}
+            </div>
+            <button
+              type="button"
+              className="home-hero-card__autoplay-toggle"
+              onClick={onToggleAutoplay}
+              aria-label={manualPaused ? 'Tiếp tục tự chuyển tin' : 'Tạm dừng tự chuyển tin'}
+            >
+              {manualPaused ? <Play size={13} fill="currentColor" /> : <Pause size={13} fill="currentColor" />}
+            </button>
+          </div>
+        </>
+      ) : null}
     </article>
+  );
+}
+
+function HomeHeroCarousel({ articles }) {
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [failedImageIds, setFailedImageIds] = useState([]);
+  const [manualPaused, setManualPaused] = useState(false);
+  const [hoverPaused, setHoverPaused] = useState(false);
+  const [focusPaused, setFocusPaused] = useState(false);
+  const stories = selectHomeHeroStories(articles, failedImageIds);
+  const currentIndex = stories.length ? activeIndex % stories.length : 0;
+  const item = stories[currentIndex] || null;
+
+  useEffect(() => {
+    if (stories.length < 2 || manualPaused || hoverPaused || focusPaused) {
+      return undefined;
+    }
+
+    const timer = window.setInterval(() => {
+      if (document.visibilityState === 'hidden') return;
+      if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) return;
+
+      setActiveIndex((index) => (index + 1) % stories.length);
+    }, HOME_HERO_AUTOPLAY_MS);
+
+    return () => window.clearInterval(timer);
+  }, [stories.length, manualPaused, hoverPaused, focusPaused]);
+
+  const onImageError = useCallback((id) => {
+    if (!id) return;
+    setFailedImageIds((previous) => (
+      previous.includes(id) ? previous : [...previous, id]
+    ));
+    setActiveIndex(0);
+  }, []);
+
+  if (!item) return null;
+
+  const itemId = heroStoryId(item);
+  const imageUrl = hasHeroImage(item) && !failedImageIds.includes(itemId)
+    ? mediaUrl(item.thumbnailMediaId)
+    : '';
+
+  return (
+    <div
+      className="home-hero-carousel"
+      onMouseEnter={() => setHoverPaused(true)}
+      onMouseLeave={() => setHoverPaused(false)}
+      onFocusCapture={() => setFocusPaused(true)}
+      onBlurCapture={(event) => {
+        if (!event.currentTarget.contains(event.relatedTarget)) {
+          setFocusPaused(false);
+        }
+      }}
+    >
+      <HomeHeroCard
+        item={item}
+        imageUrl={imageUrl}
+        stories={stories}
+        activeIndex={currentIndex}
+        onImageError={onImageError}
+        onSelect={(index) => {
+          setActiveIndex(index);
+          setManualPaused(true);
+        }}
+        onPrevious={() => {
+          setActiveIndex((index) => (index + stories.length - 1) % stories.length);
+          setManualPaused(true);
+        }}
+        onNext={() => {
+          setActiveIndex((index) => (index + 1) % stories.length);
+          setManualPaused(true);
+        }}
+        manualPaused={manualPaused}
+        onToggleAutoplay={() => setManualPaused((paused) => !paused)}
+      />
+    </div>
   );
 }
 
@@ -522,7 +668,6 @@ export default function HomePage() {
     setReloadKey((current) => current + 1);
   }, []);
 
-  const leadArticle = data.articles[0] || null;
   const sideArticles = data.articles.slice(1, 4);
   const spotlightArticles = data.articles.slice(8, 12);
   const communityItems = data.community.slice(0, 4);
@@ -550,7 +695,7 @@ export default function HomePage() {
             emptyTitle="Chưa có tin nổi bật"
           >
             <div className="home-reference-hero">
-              <HomeHeroCard item={leadArticle} />
+              <HomeHeroCarousel articles={data.articles} />
               <div className="home-reference-side-list">
                 {sideArticles.map((item, index) => (
                   <HomeSideStory key={getItemKey(item, 'side', index)} item={item} />
