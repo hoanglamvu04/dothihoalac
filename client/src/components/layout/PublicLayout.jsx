@@ -5,6 +5,7 @@ import DeferredSiteFooter from './DeferredSiteFooter';
 import MobileBottomNav from './MobileBottomNav';
 import DeferredCommunityQuickComposer from '../community/DeferredCommunityQuickComposer';
 import AdSlot from '../ads/AdSlot';
+import XHubAnalyticsConsent from './XHubAnalyticsConsent';
 
 import './PublicInteractionFixes.css';
 import './MobileGreenConsistency.css';
@@ -207,6 +208,7 @@ export default function PublicLayout() {
 
       {!authRoute ? <AdSlot slotKey="site_before_footer" layout="strip" /> : null}
       <DeferredSiteFooter />
+      <XHubAnalyticsConsent />
 
       {showBottomNav ? <MobileBottomNav /> : null}
       {!authRoute ? <DeferredCommunityQuickComposer /> : null}
