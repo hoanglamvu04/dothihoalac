@@ -22,7 +22,6 @@ import {
   KeyRound,
   Landmark,
   List,
-  Map,
   MapPin,
   Plus,
   RefreshCw,
@@ -44,6 +43,7 @@ import ErrorState from '../../components/common/ErrorState';
 import { LoadingBlock } from '../../components/common/Loading';
 import PropertyCard from '../../components/content/PropertyCard';
 import ContentImage from '../../components/content/ContentImage';
+import PropertyLocationMap from './PropertyLocationMap';
 
 import { propertyApi } from '../../api/content.api';
 import { useListPage } from '../../hooks/useListPage';
@@ -1071,34 +1071,7 @@ export default function PropertiesPage() {
               </div>
 
               <aside className="properties-sidebar">
-                <section className="properties-sidebar-card properties-sidebar-map">
-                  <header>
-                    <div>
-                      <Map size={18} />
-                      <h3>Khu vực Hòa Lạc</h3>
-                    </div>
-                  </header>
-                  <div className="properties-sidebar-map__visual" aria-hidden="true">
-                    <span className="route route-a" />
-                    <span className="route route-b" />
-                    {featuredAreas.slice(0, 4).map((area, index) => (
-                      <span className={`map-dot map-dot-${index + 1}`} key={area._id || area.slug || area.name}>
-                        {index + 1}
-                      </span>
-                    ))}
-                  </div>
-                  <div className="properties-sidebar-map__areas">
-                    {featuredAreas.slice(0, 4).map((area) => (
-                      <button
-                        type="button"
-                        key={area._id || area.slug || area.name}
-                        onClick={() => update('area', taxonomyUrlValue(area))}
-                      >
-                        <MapPin size={13} /> {area.name}
-                      </button>
-                    ))}
-                  </div>
-                </section>
+                <PropertyLocationMap items={result.items} />
 
                 <section className="properties-sidebar-card properties-market-card">
                   <header className="properties-market-card__header">

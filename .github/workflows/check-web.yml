@@ -31,7 +31,7 @@ jobs:
         working-directory: client
 
       - name: Test article images and featured news
-        run: node --test tests/articleMedia.test.mjs tests/homeHero.test.mjs
+        run: node --test tests/articleMedia.test.mjs tests/homeHero.test.mjs tests/propertyMap.test.mjs
         working-directory: client
 
       - name: Build full frontend
