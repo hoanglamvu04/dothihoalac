@@ -3,6 +3,7 @@ import { rateLimit } from 'express-rate-limit';
 
 import { createXHubAnalyticsBridge } from './xhub-express-bridge.mjs';
 import { validateXHubSiteBatch } from './xhub-site-event-validation.mjs';
+import { recordConsentedMetricEvents } from './xhub-consented-metrics.mjs';
 
 /**
  * Strictly opt-in public endpoint. The website backend owns the bearer token
@@ -10,6 +11,8 @@ import { validateXHubSiteBatch } from './xhub-site-event-validation.mjs';
  */
 export function createXHubSiteAnalyticsRouter({
   enabled = false,
+  mode = 'push',
+  storeBatch = recordConsentedMetricEvents,
   siteId = '',
   siteToken = '',
   publicHost = '',
@@ -22,7 +25,7 @@ export function createXHubSiteAnalyticsRouter({
 
   let bridge = null;
   try {
-    bridge = createXHubAnalyticsBridge({
+    if (mode === 'push') bridge = createXHubAnalyticsBridge({
       siteId,
       siteToken,
       publicHost,
@@ -48,8 +51,10 @@ export function createXHubSiteAnalyticsRouter({
   router.post('/', limiter, express.json({ limit: '16kb', strict: true }), async (req, res) => {
     res.set('Cache-Control', 'no-store');
 
-    if (!bridge) {
-      return res.status(503).json({ error: 'Analytics bridge not configured' });
+    if (!['push', 'local'].includes(mode) ||
+      !/^[a-z0-9.-]{3,253}$/.test(publicHost) ||
+      (mode === 'push' && !bridge)) {
+      return res.status(503).json({ error: 'Analytics source not configured' });
     }
 
     const expectedOrigin = 'https://' + publicHost;
@@ -58,6 +63,11 @@ export function createXHubSiteAnalyticsRouter({
     if (origin !== expectedOrigin ||
       (fetchSite && fetchSite !== 'same-origin' && fetchSite !== 'none')) {
       return res.status(403).json({ error: 'Analytics origin not allowed' });
+    }
+
+    // Server-side privacy signals also override any untrusted consent flag.
+    if (req.get('DNT') === '1' || req.get('Sec-GPC') === '1') {
+      return res.status(403).json({ error: 'Privacy preference denies tracking' });
     }
 
     if (!req.is('application/json')) {
@@ -71,6 +81,14 @@ export function createXHubSiteAnalyticsRouter({
 
     // Forward ONLY the allowlisted copy. Do not copy req.ip, req.user, raw
     // referrer, cookies, Authorization, custom fields or original input.
+    if (mode === 'local') {
+      try {
+        await storeBatch(safeBody.events);
+        return res.status(202).json({ accepted: true });
+      } catch {
+        return res.status(503).json({ error: 'Consented analytics source unavailable' });
+      }
+    }
     req.body = safeBody;
     return bridge(req, res);
   });

@@ -8,27 +8,21 @@ const EVENT_FIELDS = new Set([
 ]);
 const EVENT_NAMES = new Set([
   'page_view', 'content_view', 'search_used', 'filter_used',
-  'map_place_view', 'map_directions_click', 'favorite_added',
-  'contact_click', 'form_started', 'lead_submitted', 'outbound_click',
+  'contact_click', 'form_started', 'lead_submitted',
 ]);
 const UUID_V4 = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 const SAFE_CAMPAIGN = /^[\p{L}\p{N}_. -]+$/u;
 const SAFE_ENTITY = /^[a-zA-Z0-9_-]{1,80}$/;
-const SAFE_HOST = /^[a-z0-9](?:[a-z0-9.-]{0,251}[a-z0-9])?$/;
-const SAFE_SEGMENT = '[a-zA-Z0-9_-]{1,80}';
+const SAFE_HOST = /^(?=.{4,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/;
 const SAFE_PUBLIC_BASE_PATHS = new Set([
   '/', '/tin-tuc', '/cong-dong', '/bat-dong-san', '/nha-dat',
   '/viec-lam', '/tim-kiem', '/lien-he', '/gioi-thieu',
+  '/khu-vuc', '/trang',
   '/dieu-khoan', '/dieu-khoan-su-dung', '/chinh-sach-quyen-rieng',
   '/chinh-sach-quyen-rieng-tu', '/quy-dinh-dang-bai',
   '/tu-van', '/tu-van-kien-truc', '/uoc-tinh-chi-phi-xay-dung',
   '/tim-homestay', '/dat-villa',
 ]);
-const SAFE_PUBLIC_DETAILS = [
-  new RegExp('^/(?:tin-tuc|cong-dong|bat-dong-san|nha-dat|viec-lam)/' +
-    SAFE_SEGMENT + '(?:/' + SAFE_SEGMENT + ')?$'),
-  new RegExp('^/(?:khu-vuc|trang)/' + SAFE_SEGMENT + '$'),
-];
 
 function isPlainObject(value) {
   return value !== null && typeof value === 'object' && !Array.isArray(value) &&
@@ -38,17 +32,19 @@ function isPlainObject(value) {
 function safeOptionalMetric(value, max) {
   return value === undefined ||
     (typeof value === 'string' && value.length >= 1 &&
-      value.length <= max && SAFE_CAMPAIGN.test(value));
+      value.length <= max && SAFE_CAMPAIGN.test(value) &&
+      !/\d{9,}/.test(value));
 }
 
 export function isSafePublicTelemetryPath(path) {
   if (typeof path !== 'string' || path.length > 180 ||
-    !path.startsWith('/') || /[?#@%\u0000-\u001f]/.test(path)) {
+    !path.startsWith('/') || /[?#@%\u0000-\u001f]/.test(path) ||
+    /\d{9,}/.test(path)) {
     return false;
   }
   const normalized = path === '/' ? path : path.replace(/\/+$/, '');
-  return SAFE_PUBLIC_BASE_PATHS.has(normalized) ||
-    SAFE_PUBLIC_DETAILS.some((regex) => regex.test(normalized));
+  // Never accept a raw dynamic slug from a forged browser request.
+  return SAFE_PUBLIC_BASE_PATHS.has(normalized);
 }
 
 /**
@@ -99,7 +95,8 @@ export function validateXHubSiteBatch(body, { now = Date.now() } = {}) {
       (hasType && (
         !['article', 'project', 'place', 'listing', 'service'].includes(raw.entityType) ||
         typeof raw.entityKey !== 'string' ||
-        !SAFE_ENTITY.test(raw.entityKey)
+        !SAFE_ENTITY.test(raw.entityKey) ||
+        /\d{9,}/.test(raw.entityKey)
       ))) {
       return null;
     }
@@ -108,7 +105,7 @@ export function validateXHubSiteBatch(body, { now = Date.now() } = {}) {
     // entity event is a public article slug.
     if (raw.name === 'content_view') {
       if (raw.entityType !== 'article' ||
-        !raw.path.startsWith('/tin-tuc/')) return null;
+        raw.path !== '/tin-tuc') return null;
     } else if (hasType || hasKey) {
       return null;
     }
@@ -119,6 +116,7 @@ export function validateXHubSiteBatch(body, { now = Date.now() } = {}) {
       (raw.referrerHost !== undefined &&
         (typeof raw.referrerHost !== 'string' ||
           !SAFE_HOST.test(raw.referrerHost) ||
+          /\d{9,}/.test(raw.referrerHost) ||
           raw.referrerHost.length > 253)) ||
       (raw.engagementMs !== undefined &&
         (!Number.isSafeInteger(raw.engagementMs) ||

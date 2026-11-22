@@ -70,7 +70,7 @@ test('public page views dedupe route rerenders without sending full query string
   assert.ok(!options.headers.Authorization);
   const event = JSON.parse(options.body).events[0];
   assert.equal(event.name, 'page_view');
-  assert.equal(event.path, '/tin-tuc/quy-hoach-hoa-lac');
+  assert.equal(event.path, '/tin-tuc');
   assert.equal(event.utmSource, 'facebook');
   assert.equal(event.utmCampaign, 'tin-tuc');
   assert.equal(JSON.stringify(event).includes('hidden'), false);

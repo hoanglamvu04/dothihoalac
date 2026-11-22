@@ -20,7 +20,7 @@ function event(overrides = {}) {
     sessionId: randomUUID(),
     name: 'page_view',
     occurredAt: new Date().toISOString(),
-    path: '/tin-tuc/quy-hoach-hoa-lac',
+    path: '/tin-tuc',
     consent: true,
     ...overrides,
   };
@@ -74,7 +74,7 @@ test('valid WA-001 request is forwarded using private bearer only in the backend
   assert.equal(sent[0].options.headers.Authorization, 'Bearer ' + PRIVATE_TOKEN);
   assert.ok(!JSON.stringify(response.body).includes(PRIVATE_TOKEN));
   const forwarded = JSON.parse(sent[0].options.body).events[0];
-  assert.equal(forwarded.path, '/tin-tuc/quy-hoach-hoa-lac');
+  assert.equal(forwarded.path, '/tin-tuc');
   assert.equal('ip' in forwarded, false);
   assert.equal('email' in forwarded, false);
 });
@@ -134,6 +134,7 @@ test('local validator preserves safe campaign-only metadata and no search text',
   assert.equal(JSON.stringify(clean).includes('phone'), false);
   assert.equal(isSafePublicTelemetryPath('/quan-tri/bai-viet'), false);
   assert.equal(isSafePublicTelemetryPath('/thanh-vien/abc'), false);
-  assert.equal(isSafePublicTelemetryPath('/tin-tuc/quy-hoach-hoa-lac'), true);
+  assert.equal(isSafePublicTelemetryPath('/tin-tuc'), true);
+  assert.equal(isSafePublicTelemetryPath('/tin-tuc/quy-hoach-hoa-lac'), false);
   assert.equal(validateXHubSiteBatch(batch({ entityType: 'article' })), null);
 });

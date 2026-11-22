@@ -13,6 +13,7 @@ import apiRoutes from './routes/index.js';
 import { requestIdMiddleware } from './middlewares/requestId.middleware.js';
 import { apiLimiter } from './middlewares/rateLimit.middleware.js';
 import { createXHubSiteAnalyticsRouter } from './integrations/xhub-site-analytics.mjs';
+import { createXHubPullAnalyticsRouter } from './integrations/xhub-pull-analytics.mjs';
 import { notFoundMiddleware } from './middlewares/notFound.middleware.js';
 import { errorMiddleware } from './middlewares/error.middleware.js';
 
@@ -76,6 +77,15 @@ export function createApp() {
     }),
   );
 
+  // WA-005: read-only site aggregate is mounted BEFORE site-wide CORS.
+  // Browser Origin, preflight and cookies are never authorized for this API.
+  app.use('/api/xhub/v1/analytics/summary', createXHubPullAnalyticsRouter({
+    enabled: env.XHUB_ANALYTICS_PULL_ENABLED,
+    sourceReady: env.XHUB_WEB_ANALYTICS_ENABLED &&
+      env.XHUB_WEB_ANALYTICS_MODE === 'local',
+    key: env.XHUB_ANALYTICS_READ_KEY,
+  }));
+
   app.use(cors(corsOptions));
   app.use(compression());
   app.use(cookieParser());
@@ -86,6 +96,7 @@ export function createApp() {
   if (env.XHUB_WEB_ANALYTICS_ENABLED) {
     app.use('/api/xhub-analytics', createXHubSiteAnalyticsRouter({
       enabled: true,
+      mode: env.XHUB_WEB_ANALYTICS_MODE,
       siteId: env.XHUB_WEB_ANALYTICS_SITE_ID,
       siteToken: env.XHUB_WEB_ANALYTICS_SITE_TOKEN,
       publicHost: env.XHUB_WEB_ANALYTICS_PUBLIC_HOST,

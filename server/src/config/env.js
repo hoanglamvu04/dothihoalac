@@ -266,6 +266,11 @@ const schema = z
     XHUB_WEB_ANALYTICS_SITE_ID: z.string().optional().default(''),
     XHUB_WEB_ANALYTICS_SITE_TOKEN: z.string().optional().default(''),
     XHUB_WEB_ANALYTICS_PUBLIC_HOST: z.string().optional().default(''),
+    // push = legacy WA-002 forwarding, local = consent-only Mongo source.
+    // These modes are mutually exclusive; pull never adds to WA-002 totals.
+    XHUB_WEB_ANALYTICS_MODE: z.enum(['push', 'local']).default('push'),
+    XHUB_ANALYTICS_PULL_ENABLED: boolFromString.default(false),
+    XHUB_ANALYTICS_READ_KEY: z.string().optional().default(''),
 
     // =====================================================
     // DEVELOPMENT / LOGGING
