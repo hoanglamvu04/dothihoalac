@@ -169,6 +169,10 @@ jobs:
           src/modules/jobs/jobPost.model.js
           src/app.js
           src/config/env.js
+          src/integrations/xhub-consented-metrics.mjs
+          src/integrations/xhub-pull-analytics.mjs
+          src/integrations/xhub-site-analytics.mjs
+          src/integrations/xhub-site-event-validation.mjs
           src/modules/articles/article.quality.js
           src/modules/articles/article.seoAudit.js
           src/modules/articles/article.seo.service.js

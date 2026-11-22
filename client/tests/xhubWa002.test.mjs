@@ -5,6 +5,7 @@ import { randomUUID } from 'node:crypto';
 import {
   createXHubAnalyticsAdapter,
   isXHubTrackablePublicPath,
+  canonicalXHubPublicPath,
 } from '../src/utils/xhubAnalytics.mjs';
 import {
   isXHubConsentGranted,
@@ -103,6 +104,21 @@ test('article, search, filter and contact only forward allowlisted fields', asyn
     assert.equal(JSON.stringify(event).includes('private@example.vn'), false);
     assert.equal('sourcePage' in event, false);
   }
+});
+
+test('canonical public paths and attribution never leak numeric IDs or phone', async () => {
+  assert.equal(canonicalXHubPublicPath('/tin-tuc/public-article'), '/tin-tuc');
+  assert.equal(canonicalXHubPublicPath('/cong-dong/public-post'), '/cong-dong');
+  assert.equal(canonicalXHubPublicPath('/tin-tuc/0123456789'), null);
+  const browser = makeBrowser({ consent: true });
+  browser.root.location.search = '?utm_source=0901234567&utm_campaign=valid-campaign';
+  browser.root.document.referrer = 'https://123456789.example.com/sensitive';
+  browser.adapter.trackPageView();
+  await tick();
+  const event = JSON.parse(browser.requests[0].options.body).events[0];
+  assert.equal(event.utmSource, undefined);
+  assert.equal(event.utmCampaign, 'valid-campaign');
+  assert.equal(event.referrerHost, undefined);
 });
 
 test('private/account/editor/user profile paths cannot be tracked', async () => {

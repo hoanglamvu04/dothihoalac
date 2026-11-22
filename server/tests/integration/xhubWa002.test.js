@@ -137,4 +137,7 @@ test('local validator preserves safe campaign-only metadata and no search text',
   assert.equal(isSafePublicTelemetryPath('/tin-tuc'), true);
   assert.equal(isSafePublicTelemetryPath('/tin-tuc/quy-hoach-hoa-lac'), false);
   assert.equal(validateXHubSiteBatch(batch({ entityType: 'article' })), null);
+  assert.equal(validateXHubSiteBatch(batch({ utmSource: '0901234567' })), null);
+  assert.equal(validateXHubSiteBatch(batch({ referrerHost: '123456789.example.com' })), null);
+  assert.equal(validateXHubSiteBatch(batch({ path: '/tin-tuc/public-article' })), null);
 });

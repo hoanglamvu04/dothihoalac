@@ -48,7 +48,7 @@ jobs:
       - name: Verify no backend-only X-HUB config names appear in frontend assets
         working-directory: client
         run: |
-          if grep -R -F 'XHUB_WEB_ANALYTICS_SITE_TOKEN' dist/assets; then
+          if grep -R -E 'XHUB_WEB_ANALYTICS_SITE_TOKEN|XHUB_ANALYTICS_READ_KEY' dist/assets; then
             echo 'Unexpected backend-only field found in frontend assets'
             exit 1
           fi

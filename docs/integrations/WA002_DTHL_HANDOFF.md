@@ -100,6 +100,11 @@ End-to-end checks after approved configuration:
 - Verify X-HUB summary for only the approved site/workspace, and that top
   pages/UTM campaign appear only once >=3 distinct consenting sessions exist.
 
+WA-005 continuation uses this PR's WA-002 implementation as its base, and adds
+an opt-in local Mongo aggregate source and private GET API in
+WA005_DTHL_PULL_API.md. Never merge overlapping PR #75 on top of #76.
+Push and pull modes are mutually exclusive.
+
 This PR does NOT run production migrations, provision any site source,
 configure Nginx, install website/VPS secrets, submit data to X-HUB or deploy.
 No cross-site visitor identity graph, CRM backfill or marketing automation.
