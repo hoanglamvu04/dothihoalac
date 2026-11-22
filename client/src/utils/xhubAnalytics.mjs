@@ -10,6 +10,7 @@ const SAFE_SEGMENT = '[a-zA-Z0-9_-]{1,80}';
 const PUBLIC_BASE_ROUTES = new Set([
   '/', '/tin-tuc', '/cong-dong', '/bat-dong-san', '/nha-dat',
   '/viec-lam', '/tim-kiem', '/lien-he', '/gioi-thieu',
+  '/khu-vuc', '/trang',
   '/dieu-khoan', '/dieu-khoan-su-dung', '/chinh-sach-quyen-rieng',
   '/chinh-sach-quyen-rieng-tu', '/quy-dinh-dang-bai',
   '/tu-van', '/tu-van-kien-truc', '/uoc-tinh-chi-phi-xay-dung',
@@ -24,13 +25,24 @@ const PUBLIC_DETAIL_PATTERNS = [
 
 export function isXHubTrackablePublicPath(path) {
   if (typeof path !== 'string' || path.length > 180 ||
-    !path.startsWith('/') || /[?#@%\u0000-\u001f]/.test(path)) {
+    !path.startsWith('/') || /[?#@%\u0000-\u001f]/.test(path) ||
+    /\d{9,}/.test(path)) {
     return false;
   }
 
   const normalized = path === '/' ? path : path.replace(/\/+$/, '');
   return PUBLIC_BASE_ROUTES.has(normalized) ||
     PUBLIC_DETAIL_PATTERNS.some((pattern) => pattern.test(normalized));
+}
+
+// Emit only section-level paths, never raw article slugs, listing IDs, or
+// any visitor-provided path segment. Entity keys are separately validated.
+export function canonicalXHubPublicPath(path) {
+  if (!isXHubTrackablePublicPath(path)) return null;
+  const normalized = path === '/' ? '/' : path.replace(/\/+$/, '');
+  if (PUBLIC_BASE_ROUTES.has(normalized)) return normalized;
+  const section = normalized.split('/')[1];
+  return section ? '/' + section : null;
 }
 
 // Injected dependencies permit network-free unit tests without importing
@@ -55,6 +67,7 @@ export function createXHubAnalyticsAdapter({
     endpoint: '/api/xhub-analytics',
     hasConsent,
     root,
+    getPath: canonicalXHubPublicPath,
     send: async (url, options) => {
       if (!hasConsent()) return { ok: false };
       const controller = new AbortController();
@@ -108,6 +121,7 @@ export function createXHubAnalyticsAdapter({
     if (name === 'content_view') {
       const key = String(entityKey || '');
       if (!/^[-_a-zA-Z0-9]{1,80}$/.test(key) ||
+        /\d{9,}/.test(key) ||
         !root.location?.pathname?.startsWith('/tin-tuc/')) return false;
       metadata = { entityType: 'article', entityKey: key };
     } else if (![
