@@ -9,14 +9,19 @@ const ALLOWED=new Set([
 ]);
 const safeMetric=/^[\p{L}\p{N}_. -]+$/u;
 const safeEntity=/^[A-Za-z0-9_-]{1,80}$/;
+// Optional DNS attribution must not include localhost, IPs or long numeric IDs.
+const safeReferrerHost=/^(?=.{4,253}$)(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,63}$/;
 
 export function createXHubWebTracker({
   endpoint='/api/xhub-analytics',hasConsent=()=>false,
-  root=globalThis,send=root.fetch?.bind(root)
+  root=globalThis,send=root.fetch?.bind(root),
+  // Site-specific sanitizer returns a public route CATEGORY, never a raw URL.
+  getPath=(pathname)=>pathname
 }={}){
   if(typeof endpoint!=='string'||!endpoint.startsWith('/')||
     endpoint.startsWith('//')||endpoint.includes('?')||
-    typeof hasConsent!=='function'||typeof send!=='function')
+    typeof hasConsent!=='function'||typeof send!=='function'||
+    typeof getPath!=='function')
     throw new TypeError('A same-origin endpoint, consent function and fetch are required');
   let sessionId=null;
   let attribution=null;
@@ -25,23 +30,29 @@ export function createXHubWebTracker({
   const randomId=()=>root.crypto?.randomUUID?.()||null;
   const consented=()=>hasConsent()===true&&
     root.navigator?.globalPrivacyControl!==true&&
-    root.navigator?.doNotTrack!=='1';
+    root.navigator?.doNotTrack!=='1'&&
+    root.navigator?.msDoNotTrack!=='1'&&root.doNotTrack!=='1';
   function reset(){queue=[];sessionId=null;attribution=null;}
   const metric=(value,max)=>{
     if(typeof value!=='string')return undefined;
-    const trimmed=value.trim().slice(0,max);
-    return trimmed&&safeMetric.test(trimmed)?trimmed:undefined;
+    const trimmed=value.trim();
+    // Drop sensitive/oversized attribution entirely; never truncate PII.
+    return trimmed&&trimmed.length<=max&&safeMetric.test(trimmed)&&
+      !/\d{9,}/.test(trimmed)?trimmed:undefined;
   };
   function context(){
     const location=root.location;
     if(!location||typeof location.pathname!=='string')return null;
-    const path=location.pathname;
-    if(!path.startsWith('/')||path.length>180||
+    let path;
+    try{path=getPath(location.pathname);}catch{return null;}
+    if(typeof path!=='string'||!path.startsWith('/')||path.length>180||
       path.startsWith('/admin')||/[?#@\u0000-\u001f]/.test(path))return null;
     const params=new URLSearchParams(location.search||'');
     let referrerHost;
-    try{referrerHost=new URL(root.document?.referrer||'').hostname||undefined;}
-    catch{}
+    try{
+      const host=new URL(root.document?.referrer||'').hostname.toLowerCase();
+      if(safeReferrerHost.test(host)&&!/\d{9,}/.test(host))referrerHost=host;
+    }catch{}
     return {
       path,
       utmSource:metric(params.get('utm_source'),60),
@@ -89,7 +100,8 @@ export function createXHubWebTracker({
     const event={eventId,sessionId,name,occurredAt:new Date().toISOString(),
       consent:true,...info,...attribution};
     if(['article','project','place','listing','service'].includes(entityType)&&
-      typeof entityKey==='string'&&safeEntity.test(entityKey)){
+      typeof entityKey==='string'&&safeEntity.test(entityKey)&&
+      !/\d{9,}/.test(entityKey)){
       event.entityType=entityType;
       event.entityKey=entityKey;
     }
