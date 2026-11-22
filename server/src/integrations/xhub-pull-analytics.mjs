@@ -1,6 +1,7 @@
 // WA-005: independent, read-only, server-to-server pull contract.
 // Never serve this response from GA4 or non-consented legacy metrics.
 import { timingSafeEqual } from 'node:crypto';
+import { Buffer } from 'node:buffer';
 import { Router } from 'express';
 import { rateLimit } from 'express-rate-limit';
 

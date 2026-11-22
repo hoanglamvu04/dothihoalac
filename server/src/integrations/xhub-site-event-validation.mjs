@@ -1,3 +1,5 @@
+import { Buffer } from 'node:buffer';
+
 // Local WA-001 validation is an additional privacy barrier before forwarding
 // to X-HUB. The server never sends arbitrary browser fields to its backend.
 // X-HUB independently validates the same versioned contract.
@@ -38,7 +40,8 @@ function safeOptionalMetric(value, max) {
 
 export function isSafePublicTelemetryPath(path) {
   if (typeof path !== 'string' || path.length > 180 ||
-    !path.startsWith('/') || /[?#@%\u0000-\u001f]/.test(path) ||
+    !path.startsWith('/') || /[?#@%]/.test(path) ||
+    [...path].some((char) => char.charCodeAt(0) < 32) ||
     /\d{9,}/.test(path)) {
     return false;
   }
