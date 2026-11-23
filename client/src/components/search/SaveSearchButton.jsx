@@ -11,31 +11,39 @@ import './SaveSearchButton.css';
 export default function SaveSearchButton({ query = '', contentType = 'all', area = '' }) {
   const { user, loading: authLoading } = useAuth();
   const toast = useToast();
-  const [saved, setSaved] = useState(null);
+  const [savedState, setSavedState] = useState(null);
+  const [checkedKey, setCheckedKey] = useState('');
   const [busy, setBusy] = useState(false);
   const normalizedQuery = String(query || '').trim();
   const normalizedArea = String(area || '').trim();
   const canSave = Boolean(normalizedQuery || normalizedArea);
 
   const userId = String(user?._id || user?.id || '');
+  const loggedIn = Boolean(user);
+  const criteriaKey = JSON.stringify([userId, normalizedQuery, contentType, normalizedArea]);
+  const saved = savedState?.key === criteriaKey ? savedState.item : null;
   useEffect(() => {
-    setSaved(null);
-    if (!user || !canSave) return undefined;
+    if (!loggedIn || !canSave) return undefined;
 
     let active = true;
     savedSearchApi.list().then((items) => {
-      if (active) {
-        setSaved(findSavedSearch(items, {
+      if (!active) return;
+      setSavedState({
+        key: criteriaKey,
+        item: findSavedSearch(items, {
           query: normalizedQuery,
           contentType,
           area: normalizedArea,
-        }));
-      }
+        }),
+      });
+      setCheckedKey(criteriaKey);
     }).catch(() => {
-      if (active) setSaved(null);
+      if (!active) return;
+      setSavedState({ key: criteriaKey, item: null });
+      setCheckedKey(criteriaKey);
     });
     return () => { active = false; };
-  }, [userId, Boolean(user), canSave, normalizedQuery, contentType, normalizedArea]);
+  }, [loggedIn, canSave, criteriaKey, normalizedQuery, contentType, normalizedArea]);
 
   if (!canSave || authLoading) return null;
 
@@ -49,7 +57,7 @@ export default function SaveSearchButton({ query = '', contentType = 'all', area
     try {
       if (saved?.isActive) {
         await savedSearchApi.remove(saved._id);
-        setSaved(null);
+        setSavedState({ key: criteriaKey, item: null });
         toast.success('Đã bỏ theo dõi tìm kiếm.');
       } else {
         const item = await savedSearchApi.create({
@@ -57,7 +65,7 @@ export default function SaveSearchButton({ query = '', contentType = 'all', area
           contentType,
           area: normalizedArea,
         });
-        setSaved(item || null);
+        setSavedState({ key: criteriaKey, item: item || null });
         toast.success('Đã theo dõi. Tin mới phù hợp sẽ có trong Thông báo.');
       }
     } catch (error) {
@@ -72,7 +80,7 @@ export default function SaveSearchButton({ query = '', contentType = 'all', area
       type="button"
       className={'save-search-button' + (saved?.isActive ? ' is-saved' : '')}
       onClick={handleClick}
-      disabled={busy}
+      disabled={busy || checkedKey !== criteriaKey}
       aria-pressed={Boolean(saved?.isActive)}
       title="Tin mới sẽ được thông báo trong tài khoản. Bạn có thể tắt bất cứ lúc nào."
     >
