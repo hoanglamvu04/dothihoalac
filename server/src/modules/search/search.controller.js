@@ -16,6 +16,7 @@ export async function run(req, res) {
       areas: r.areas,
       facets: r.facets,
       sort: r.sort,
+      suggestion: r.suggestion || null,
     },
     meta: r.meta,
   });

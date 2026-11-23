@@ -28,6 +28,12 @@ router.post(
 );
 
 router.get(
+  '/:slug/related',
+  validate(slugSchema),
+  asyncHandler(controller.related),
+);
+
+router.get(
   '/:slug',
   optionalAuth,
   validate(slugSchema),
