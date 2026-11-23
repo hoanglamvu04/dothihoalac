@@ -8,7 +8,10 @@ export function safeNotificationDestination(value) {
     !path.startsWith('//') &&
     !path.includes('\\') &&
     path.length <= 1024 &&
-    !/[\u0000-\u001f\u007f]/.test(path)
+    !Array.from(path).some((character) => {
+    const code = character.charCodeAt(0);
+    return code < 32 || code === 127;
+  })
     ? path
     : DEFAULT_NOTIFICATION_DESTINATION;
 }

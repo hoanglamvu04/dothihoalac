@@ -26,7 +26,10 @@ export function safeNotificationPath(value) {
   if (typeof value !== 'string') return '';
   const path = value.trim();
   if (!path.startsWith('/') || path.startsWith('//') || path.includes('\\')) return '';
-  if (path.length > 1024 || /[\u0000-\u001f\u007f]/.test(path)) return '';
+  if (path.length > 1024 || Array.from(path).some((character) => {
+    const code = character.charCodeAt(0);
+    return code < 32 || code === 127;
+  })) return '';
   return path;
 }
 
