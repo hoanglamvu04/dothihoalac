@@ -11,10 +11,16 @@ const schema = new mongoose.Schema(
     title: { type: String, required: true, maxlength: 200 },
     message: { type: String, default: '', maxlength: 1000 },
     payload: { type: mongoose.Schema.Types.Mixed, default: {} },
+    dedupeKey: { type: String, maxlength: 200, default: undefined },
     readAt: { type: Date, default: null, index: true },
     deletedAt: { type: Date, default: null },
   },
   { timestamps: true, collection: 'notifications' },
 );
 schema.index({ recipientId: 1, readAt: 1, createdAt: -1 });
+schema.index({ recipientId: 1, dedupeKey: 1 }, {
+  unique: true,
+  partialFilterExpression: { dedupeKey: { $type: 'string' } },
+  name: 'unique_notification_dedupe',
+});
 export default getOrCreateModel('Notification', schema, 'notifications');

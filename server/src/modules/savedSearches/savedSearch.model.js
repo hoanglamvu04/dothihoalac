@@ -1,0 +1,26 @@
+import mongoose from 'mongoose';
+import { getOrCreateModel } from '../../utils/modelHelpers.js';
+
+const schema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true, index: true },
+  query: { type: String, default: '', maxlength: 100 },
+  queryNormalized: { type: String, default: '', maxlength: 100 },
+  contentType: {
+    type: String,
+    enum: ['all', 'article', 'community', 'property', 'job'],
+    default: 'all',
+  },
+  areaId: { type: mongoose.Schema.Types.ObjectId, ref: 'Area', default: null },
+  areaName: { type: String, default: '', maxlength: 120 },
+  areaSlug: { type: String, default: '', maxlength: 150 },
+  isActive: { type: Boolean, default: true },
+  lastScannedAt: { type: Date, default: Date.now },
+  lastScannedContentId: { type: mongoose.Schema.Types.ObjectId, default: null },
+}, { timestamps: true, collection: 'savedsearches' });
+
+schema.index(
+  { userId: 1, queryNormalized: 1, contentType: 1, areaId: 1 },
+  { unique: true, name: 'saved_search_per_user_unique' },
+);
+schema.index({ isActive: 1, lastScannedAt: 1, _id: 1 });
+export default getOrCreateModel('SavedSearch', schema, 'savedsearches');

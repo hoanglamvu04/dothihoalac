@@ -5,6 +5,7 @@ import { expirePropertyListings } from './expirePropertyListings.job.js';
 import { expireJobPosts } from './expireJobPosts.job.js';
 import { cleanupTokens } from './cleanupTokens.job.js';
 import { cleanupMedia } from './cleanupMedia.job.js';
+import { sendSavedSearchAlerts } from './savedSearchAlerts.job.js';
 import {
   startSourceWatchWorker,
   stopSourceWatchWorker,
@@ -29,6 +30,7 @@ export function startJobs() {
       await expireJobPosts();
       await cleanupTokens();
       await cleanupMedia();
+      await sendSavedSearchAlerts();
     } catch (error) {
       logger.error({ err: error }, 'Scheduled jobs failed');
     }

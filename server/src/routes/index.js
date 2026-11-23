@@ -24,6 +24,7 @@ import {
 } from '../modules/notifications/notification.routes.js';
 import reportRoutes from '../modules/reports/report.routes.js';
 import searchRoutes from '../modules/search/search.routes.js';
+import savedSearchRoutes from '../modules/savedSearches/savedSearch.routes.js';
 import leadRoutes from '../modules/leads/lead.routes.js';
 import systemRoutes from '../modules/system/system.routes.js';
 import systemAdminRoutes from '../modules/system/system.admin.routes.js';
@@ -57,6 +58,7 @@ router.use('/notifications', notificationRoutes);
 router.use('/notification-preferences', preferenceRoutes);
 router.use('/reports', reportRoutes);
 router.use('/search', searchRoutes);
+router.use('/saved-searches', savedSearchRoutes);
 router.use('/leads', leadRoutes);
 router.use('/system', systemRoutes);
 router.use('/admin/articles', articleAdminRoutes);

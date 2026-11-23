@@ -15,6 +15,7 @@ export const NOTIFICATION_TYPES = Object.freeze({
   REPORT_RESOLVED: 'report_resolved',
   ACCOUNT_WARNING: 'account_warning',
   SYSTEM_NOTICE: 'system_notice',
+  SAVED_SEARCH_MATCH: 'saved_search_match',
 });
 
 export const NOTIFICATION_TYPE_VALUES = Object.values(NOTIFICATION_TYPES);
