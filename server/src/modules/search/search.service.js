@@ -92,6 +92,10 @@ export async function search(query) {
   }
 
   const expanded = normalizeSearchQuery(q);
+  // Punctuation-only requests must not become unrestricted public content queries.
+  if (q && !expanded) {
+    throw new ApiError(422, 'Từ khóa không hợp lệ.', 'SEARCH_QUERY_INVALID');
+  }
   const regex = q ? vietnameseSearchRegex(q) : null;
   const requestedType = String(query.type || 'all');
   const sort = normalizeSort(query.sort);

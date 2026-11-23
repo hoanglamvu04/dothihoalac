@@ -20,7 +20,11 @@ export function parseSavedSearchInput(input = {}) {
   if (!query && !area) {
     throw new ApiError(422, 'Cần từ khóa hoặc khu vực để theo dõi.', 'SAVED_SEARCH_EMPTY');
   }
-  return { query, queryNormalized: normalizeSearchQuery(query), contentType: type, area };
+  const queryNormalized = normalizeSearchQuery(query);
+  if (query && !queryNormalized) {
+    throw new ApiError(422, 'Từ khóa không hợp lệ.', 'SAVED_SEARCH_INVALID');
+  }
+  return { query, queryNormalized, contentType: type, area };
 }
 
 async function resolveArea(input) {

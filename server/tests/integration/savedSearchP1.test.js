@@ -10,6 +10,7 @@ test('Saved search input is normalized and not allowed without query or area', (
   assert.throws(() => parseSavedSearchInput({}), (error) => error.code === 'SAVED_SEARCH_EMPTY');
   assert.throws(() => parseSavedSearchInput({ query: 'a' }), (error) => error.code === 'SAVED_SEARCH_QUERY_SHORT');
   assert.throws(() => parseSavedSearchInput({ query: 'abc', contentType: 'user' }), (error) => error.code === 'SAVED_SEARCH_INVALID');
+  assert.throws(() => parseSavedSearchInput({ query: '!!!' }), (error) => error.code === 'SAVED_SEARCH_INVALID');
   assert.deepEqual(parseSavedSearchInput({ area: 'thach-that' }).query, '');
 });
 

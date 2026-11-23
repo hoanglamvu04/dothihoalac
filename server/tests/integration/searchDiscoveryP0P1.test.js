@@ -9,6 +9,7 @@ import {
   vietnameseSearchRegex,
 } from '../../src/utils/vietnameseSearch.js';
 import { articleRelevance } from '../../src/modules/articles/article.related.service.js';
+import { search } from '../../src/modules/search/search.service.js';
 
 test('Vietnamese text is folded and abbreviations expanded deterministically', () => {
   assert.equal(foldVietnamese('Đô Thị Hòa Lạc – Quy Hoạch'), 'do thi hoa lac quy hoach');
@@ -43,4 +44,9 @@ test('Related articles favor same region and category over unrelated popular pos
   const local = { title: 'Đời sống Hòa Lạc', primaryCategoryId: { _id: 'cat1' }, primaryAreaId: { _id: 'area1' }, tagIds: ['t1'], publishedAt: new Date(now) };
   const remote = { title: 'Giải bóng đá toàn quốc', primaryCategoryId: 'cat2', primaryAreaId: 'area2', tagIds: [], publishedAt: new Date(now), viewCount: 1000000 };
   assert.ok(articleRelevance(source, local, now) > articleRelevance(source, remote, now));
+});
+
+
+test('Punctuation-only searches are rejected instead of returning all public posts', async () => {
+  await assert.rejects(() => search({ q: '!!!' }), (error) => error.code === 'SEARCH_QUERY_INVALID');
 });
