@@ -542,7 +542,9 @@ export default function SearchPage() {
                           : <>Không tìm thấy kết quả cho <b>“{q || area}”</b>.</>}
                   </p>
                   <div>
-                    <SaveSearchButton query={q} contentType={type === 'user' || type === 'area' ? 'all' : type} area={area} />
+                    {type !== 'user' && type !== 'area' ? (
+                      <SaveSearchButton query={q} contentType={type} area={area} />
+                    ) : null}
                      <span>{selectedType.label}</span>
                     {contentSortEnabled ? (
                       <label className="search-sort-control">

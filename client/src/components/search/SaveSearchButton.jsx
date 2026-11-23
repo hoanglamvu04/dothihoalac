@@ -5,33 +5,37 @@ import { useAuth } from '../../context/AuthContext';
 import { useToast } from '../../context/ToastContext';
 import { apiErrorMessage } from '../../api/http';
 import { savedSearchApi } from '../../api/savedSearch.api';
+import { findSavedSearch } from '../../utils/savedSearchMatch.mjs';
 import './SaveSearchButton.css';
 
 export default function SaveSearchButton({ query = '', contentType = 'all', area = '' }) {
   const { user, loading: authLoading } = useAuth();
   const toast = useToast();
-  const [savedId, setSavedId] = useState('');
+  const [saved, setSaved] = useState(null);
   const [busy, setBusy] = useState(false);
   const normalizedQuery = String(query || '').trim();
   const normalizedArea = String(area || '').trim();
   const canSave = Boolean(normalizedQuery || normalizedArea);
 
+  const userId = String(user?._id || user?.id || '');
   useEffect(() => {
-    if (!user?._id || !canSave) return undefined;
+    setSaved(null);
+    if (!user || !canSave) return undefined;
+
     let active = true;
     savedSearchApi.list().then((items) => {
-      if (!active) return;
-      const match = (items || []).find((item) =>
-        item.contentType === contentType &&
-        String(item.query || '').trim().toLocaleLowerCase('vi-VN') === normalizedQuery.toLocaleLowerCase('vi-VN') &&
-        String(item.areaSlug || '').trim() === normalizedArea,
-      );
-      setSavedId(match?._id || '');
+      if (active) {
+        setSaved(findSavedSearch(items, {
+          query: normalizedQuery,
+          contentType,
+          area: normalizedArea,
+        }));
+      }
     }).catch(() => {
-      if (active) setSavedId('');
+      if (active) setSaved(null);
     });
     return () => { active = false; };
-  }, [user?._id, canSave, normalizedQuery, contentType, normalizedArea]);
+  }, [userId, Boolean(user), canSave, normalizedQuery, contentType, normalizedArea]);
 
   if (!canSave || authLoading) return null;
 
@@ -43,9 +47,9 @@ export default function SaveSearchButton({ query = '', contentType = 'all', area
     if (busy) return;
     setBusy(true);
     try {
-      if (savedId) {
-        await savedSearchApi.remove(savedId);
-        setSavedId('');
+      if (saved?.isActive) {
+        await savedSearchApi.remove(saved._id);
+        setSaved(null);
         toast.success('Đã bỏ theo dõi tìm kiếm.');
       } else {
         const item = await savedSearchApi.create({
@@ -53,7 +57,7 @@ export default function SaveSearchButton({ query = '', contentType = 'all', area
           contentType,
           area: normalizedArea,
         });
-        setSavedId(item?._id || '');
+        setSaved(item || null);
         toast.success('Đã theo dõi. Tin mới phù hợp sẽ có trong Thông báo.');
       }
     } catch (error) {
@@ -66,14 +70,14 @@ export default function SaveSearchButton({ query = '', contentType = 'all', area
   return (
     <button
       type="button"
-      className={'save-search-button' + (savedId ? ' is-saved' : '')}
+      className={'save-search-button' + (saved?.isActive ? ' is-saved' : '')}
       onClick={handleClick}
       disabled={busy}
-      aria-pressed={Boolean(savedId)}
+      aria-pressed={Boolean(saved?.isActive)}
       title="Tin mới sẽ được thông báo trong tài khoản. Bạn có thể tắt bất cứ lúc nào."
     >
-      {savedId ? <BellOff size={16} /> : <BellPlus size={16} />}
-      {savedId ? 'Bỏ theo dõi' : 'Theo dõi tin mới'}
+      {saved?.isActive ? <BellOff size={16} /> : <BellPlus size={16} />}
+      {saved?.isActive ? 'Bỏ theo dõi' : saved ? 'Bật lại theo dõi' : 'Theo dõi tin mới'}
     </button>
   );
 }
