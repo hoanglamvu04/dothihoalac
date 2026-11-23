@@ -34,17 +34,29 @@ export function normalizeSearchQuery(value = '') {
   return ALIASES.get(folded) || folded;
 }
 
+// Synonym variants stay within the same bounded regex; none is free-form user regex.
+const SYNONYM_VARIANTS = new Map([
+  ['bat dong san', ['bat dong san', 'nha dat', 'bds']],
+  ['dai hoc quoc gia', ['dai hoc quoc gia', 'dhqg']],
+  ['khu cong nghiep', ['khu cong nghiep', 'kcn']],
+  ['khu do thi', ['khu do thi', 'kdt']],
+  ['quy hoach', ['quy hoach', 'qhoach']],
+]);
+
 export function vietnameseSearchRegex(value = '') {
   const folded = normalizeSearchQuery(value).slice(0, 100);
   if (!folded) return null;
-  const terms = folded.split(' ').slice(0, 10);
-  const pattern = terms.map((term) =>
-    [...term].map((character) => {
-      const group = GROUPS[character];
-      return group ? '[' + group + ']' : character;
-    }).join(''),
-  ).join('\\s+');
-  return new RegExp(pattern, 'i');
+  const variants = SYNONYM_VARIANTS.get(folded) || [folded];
+  const patterns = variants.map((variant) => {
+    const terms = variant.split(' ').slice(0, 10);
+    return terms.map((term) =>
+      [...term].map((character) => {
+        const group = GROUPS[character];
+        return group ? '[' + group + ']' : character;
+      }).join(''),
+    ).join('\\s+');
+  });
+  return new RegExp(patterns.length > 1 ? '(?:' + patterns.join('|') + ')' : patterns[0], 'i');
 }
 
 export function normalizedTitleTokens(value = '') {

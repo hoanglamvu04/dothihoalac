@@ -102,7 +102,7 @@ export async function search(query) {
   const searchesContent = requestedType === 'all' || CONTENT_TYPE_SET.has(requestedType);
   // Mongo text-index search is the fast path. A bounded, escaped Vietnamese
   // regex fallback handles prefix searches and older content that text search misses.
-  const useTextIndex = Boolean(searchesContent && q && expanded.length >= 2 && await Content.exists({
+  const useTextIndex = Boolean(searchesContent && q && expanded === foldVietnamese(q) && expanded.length >= 2 && await Content.exists({
     status: 'published', visibility: 'public', deletedAt: null,
     ...(area ? { primaryAreaId: area } : {}),
     $text: { $search: expanded },

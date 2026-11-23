@@ -50,3 +50,11 @@ test('Related articles favor same region and category over unrelated popular pos
 test('Punctuation-only searches are rejected instead of returning all public posts', async () => {
   await assert.rejects(() => search({ q: '!!!' }), (error) => error.code === 'SEARCH_QUERY_INVALID');
 });
+
+
+test('Real-estate synonyms match both original phrases and abbreviations', () => {
+  const expression = vietnameseSearchRegex('BĐS');
+  assert.equal(expression.test('Mua bán bất động sản'), true);
+  assert.equal(expression.test('Nhà đất Hòa Lạc'), true);
+  assert.equal(expression.test('Tin BĐS mới'), true);
+});

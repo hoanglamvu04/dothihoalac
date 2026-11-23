@@ -63,7 +63,8 @@ export async function sendSavedSearchAlerts() {
             title: 'Có nội dung mới phù hợp với tìm kiếm đã lưu',
             message: String(content.title || '').slice(0, 250),
             payload: { url: '/' + section + '/' + encodeURIComponent(content.slug) },
-            dedupeKey: 'saved-search:' + search._id + ':' + content._id,
+            // Deduplicate across overlapping saved searches owned by the same user.
+            dedupeKey: 'saved-search-match:' + content._id,
           });
           notified += 1;
         }
