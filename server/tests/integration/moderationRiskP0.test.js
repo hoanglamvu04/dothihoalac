@@ -26,3 +26,15 @@ test('short missing details create review flags but do not block submission', ()
   assert.ok(risk.flags.length >= 2);
   assert.equal(risk.automatedDecision, false);
 });
+
+
+test('high posting frequency is advisory only and never blocks publication', () => {
+  const risk = assessModerationRisk({
+    _id: 'a', contentType: 'community',
+    title: 'Cập nhật thông tin cộng đồng tại xã Hạ Bằng',
+    summary: 'Nội dung thông báo có đầy đủ thông tin và nguồn tham khảo.',
+  }, [], { authorRecentCount: 9 });
+  assert.equal(risk.level, 'review');
+  assert.ok(risk.flags.some((flag) => flag.includes('24 giờ')));
+  assert.equal(risk.automatedDecision, false);
+});

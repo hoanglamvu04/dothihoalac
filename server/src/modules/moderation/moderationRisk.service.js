@@ -1,7 +1,7 @@
 import Content from '../contents/content.model.js';
 import { foldVietnamese, normalizedTitleTokens, tokenSimilarity } from '../../utils/vietnameseSearch.js';
 
-export function assessModerationRisk(content, candidates = []) {
+export function assessModerationRisk(content, candidates = [], options = {}) {
   const title = String(content?.title || '');
   const normalizedTitle = foldVietnamese(title);
   const tokens = normalizedTitleTokens(title);
@@ -13,6 +13,10 @@ export function assessModerationRisk(content, candidates = []) {
 
   const linkCount = (String(content?.summary || '').match(/https?:\/\//gi) || []).length;
   if (linkCount >= 2) flags.push('Mô tả chứa nhiều liên kết');
+  // User-level burst signal; advisory only, never an automatic suspension.
+  if (Number(options.authorRecentCount || 0) >= 8) {
+    flags.push('Tài khoản gửi nhiều bài trong 24 giờ, cần đối chiếu nguồn');
+  }
 
   let duplicate = null;
   if (tokens.length >= 4 && normalizedTitle.length >= 20) {
@@ -57,9 +61,28 @@ export async function annotateModerationQueue(items = [], allowedTypes = []) {
     .limit(350)
     .lean();
 
+  const authors = [...new Map(items
+    .map((item) => item.authorId?._id || item.authorId)
+    .filter(Boolean)
+    .map((authorId) => [String(authorId), authorId])).values()];
+  const bursts = authors.length ? await Content.aggregate([
+    {
+      $match: {
+        authorId: { $in: authors },
+        contentType: { $in: allowedTypes },
+        status: { $in: ['pending_review', 'approved', 'published'] },
+        deletedAt: null,
+        createdAt: { $gte: new Date(Date.now() - 86_400_000) },
+      },
+    },
+    { $group: { _id: '$authorId', count: { $sum: 1 } } },
+  ]) : [];
+  const burstMap = new Map(bursts.map((row) => [String(row._id), row.count]));
   const candidates = [...publicCandidates, ...items];
   return items.map((item) => ({
     ...item,
-    moderationRisk: assessModerationRisk(item, candidates),
+    moderationRisk: assessModerationRisk(item, candidates, {
+      authorRecentCount: burstMap.get(String(item.authorId?._id || item.authorId)) || 0,
+    }),
   }));
 }
