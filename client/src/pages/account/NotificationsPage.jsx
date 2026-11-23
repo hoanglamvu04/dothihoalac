@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Bell,
@@ -22,6 +22,7 @@ import { notificationApi } from '../../api/interaction.api';
 import { apiErrorMessage } from '../../api/http';
 import { useToast } from '../../context/ToastContext';
 import { formatRelativeTime } from '../../utils/formatters';
+import { safeNotificationDestination } from '../../utils/notificationNavigation.mjs';
 
 import './AccountPages.css';
 import './NotificationsPage.css';
@@ -37,6 +38,7 @@ function NotificationIcon({ item }) {
     return <MessageCircle size={20} />;
   }
 
+  if (type === 'saved_search_match') return <BellRing size={20} />;
   if (type.includes('reaction')) return <Heart size={20} />;
   if (type.includes('follower')) return <UserPlus size={20} />;
   if (type.includes('listing')) return <Building2 size={20} />;
@@ -55,34 +57,32 @@ export default function NotificationsPage() {
   const [filter, setFilter] = useState('all');
   const [loading, setLoading] = useState(true);
   const [working, setWorking] = useState(false);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   const load = useCallback(async () => {
     setLoading(true);
 
     try {
-      const result = await notificationApi.list({ page, limit: 20 });
+      const [result, unread] = await Promise.all([
+        notificationApi.list({ page, limit: 20, unread: filter === 'unread' ? 'true' : undefined }),
+        notificationApi.unreadCount(),
+      ]);
       setItems(result.items || []);
       setMeta(result.meta || {});
+      setUnreadCount(Number(unread?.count || 0));
     } catch (error) {
       toast.error(apiErrorMessage(error));
     } finally {
       setLoading(false);
     }
-  }, [page, toast]);
+  }, [filter, page, toast]);
 
   useEffect(() => {
     load();
   }, [load]);
 
-  const visibleItems = useMemo(
-    () =>
-      filter === 'unread'
-        ? items.filter((item) => !item.readAt)
-        : items,
-    [filter, items],
-  );
-
-  const unreadCount = items.filter((item) => !item.readAt).length;
+  // The API now paginates the active filter instead of filtering one page locally.
+  const visibleItems = items;
 
   const markRead = async (item) => {
     if (item.readAt) return true;
@@ -90,12 +90,18 @@ export default function NotificationsPage() {
     try {
       await notificationApi.read(item._id);
       setItems((current) =>
-        current.map((value) =>
-          value._id === item._id
-            ? { ...value, readAt: new Date().toISOString() }
-            : value,
-        ),
+        filter === 'unread'
+          ? current.filter((value) => value._id !== item._id)
+          : current.map((value) =>
+            value._id === item._id
+              ? { ...value, readAt: new Date().toISOString() }
+              : value,
+          ),
       );
+      setUnreadCount((current) => Math.max(0, current - 1));
+      if (filter === 'unread') {
+        setMeta((current) => ({ ...current, total: Math.max(0, Number(current.total || 0) - 1) }));
+      }
       return true;
     } catch (error) {
       toast.error(apiErrorMessage(error));
@@ -107,12 +113,7 @@ export default function NotificationsPage() {
     const marked = await markRead(item);
     if (!marked) return;
 
-    const destination = String(item?.url || '/tai-khoan/thong-bao');
-
-    if (/^https?:\/\//i.test(destination)) {
-      window.location.assign(destination);
-      return;
-    }
+    const destination = safeNotificationDestination(item?.url);
 
     if (destination !== '/tai-khoan/thong-bao') {
       navigate(destination);
@@ -125,12 +126,18 @@ export default function NotificationsPage() {
 
     try {
       await notificationApi.readAll();
-      setItems((current) =>
-        current.map((item) => ({
-          ...item,
-          readAt: item.readAt || new Date().toISOString(),
-        })),
-      );
+      setUnreadCount(0);
+      if (filter === 'unread') {
+        setItems([]);
+        setMeta((current) => ({ ...current, total: 0, totalPages: 1 }));
+      } else {
+        setItems((current) =>
+          current.map((item) => ({
+            ...item,
+            readAt: item.readAt || new Date().toISOString(),
+          })),
+        );
+      }
       toast.success('Đã đánh dấu tất cả thông báo là đã đọc.');
     } catch (error) {
       toast.error(apiErrorMessage(error));
@@ -142,7 +149,7 @@ export default function NotificationsPage() {
   const remove = async (id) => {
     try {
       await notificationApi.remove(id);
-      setItems((current) => current.filter((item) => item._id !== id));
+      await load();
       toast.success('Đã xóa thông báo.');
     } catch (error) {
       toast.error(apiErrorMessage(error));
@@ -187,14 +194,14 @@ export default function NotificationsPage() {
         <button
           type="button"
           className={filter === 'all' ? 'is-active' : ''}
-          onClick={() => setFilter('all')}
+          onClick={() => { setPage(1); setFilter('all'); }}
         >
-          Tất cả ({items.length})
+          Tất cả{filter === 'all' ? ` (${Number(meta.total || 0).toLocaleString('vi-VN')})` : ''}
         </button>
         <button
           type="button"
           className={filter === 'unread' ? 'is-active' : ''}
-          onClick={() => setFilter('unread')}
+          onClick={() => { setPage(1); setFilter('unread'); }}
         >
           Chưa đọc ({unreadCount})
         </button>
