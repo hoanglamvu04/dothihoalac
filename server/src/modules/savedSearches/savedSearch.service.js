@@ -8,6 +8,9 @@ export const SAVED_SEARCH_TYPES = new Set(['all', 'article', 'community', 'prope
 const MAX_SAVED_SEARCHES = 20;
 
 export function parseSavedSearchInput(input = {}) {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) {
+    throw new ApiError(422, 'Bộ lọc tìm kiếm không hợp lệ.', 'SAVED_SEARCH_INVALID');
+  }
   const query = typeof input.query === 'string' ? input.query.trim().replace(/\s+/g, ' ') : '';
   const type = typeof input.contentType === 'string' ? input.contentType : 'all';
   const area = typeof input.area === 'string' ? input.area.trim() : '';

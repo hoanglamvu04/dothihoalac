@@ -21,10 +21,20 @@ function publicContentUrl(contentType, slug) {
   return section ? `/${section}/${encodeURIComponent(cleanSlug)}` : '';
 }
 
-function notificationDestination(item) {
+// Reject external URLs and protocol-relative paths, including backslashes.
+export function safeNotificationPath(value) {
+  if (typeof value !== 'string') return '';
+  const path = value.trim();
+  if (!path.startsWith('/') || path.startsWith('//') || path.includes('\\')) return '';
+  if (path.length > 1024 || /[\u0000-\u001f\u007f]/.test(path)) return '';
+  return path;
+}
+
+export function notificationDestination(item) {
   const payload = item?.payload || {};
 
-  if (payload.url) return String(payload.url);
+  const requestedPath = safeNotificationPath(payload.url);
+  if (requestedPath) return requestedPath;
 
   const directContentUrl = publicContentUrl(
     payload.contentType,
