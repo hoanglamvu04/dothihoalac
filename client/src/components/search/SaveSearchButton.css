@@ -1,0 +1,9 @@
+.save-search-button {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border: 1px solid #b2c9ba; color: #24553e; background: #f5faf6;
+  border-radius: 9px; padding: 10px 13px; font-size: 13px; font-weight: 700;
+  text-decoration: none; line-height: 1.2; cursor: pointer; white-space: nowrap;
+}
+.save-search-button:hover { border-color: #63886d; background: #eaf3ed; }
+.save-search-button.is-saved { background: #e1f0e5; border-color: #6f9d7a; }
+.save-search-button:disabled { opacity: .55; cursor: wait; }

@@ -26,6 +26,7 @@ const linksBeforeActivity = [
   { to: '/tai-khoan/bao-mat', label: 'Bảo mật', icon: Lock },
   { to: '/tai-khoan/phien-dang-nhap', label: 'Phiên đăng nhập', icon: MonitorSmartphone },
   { to: '/tai-khoan/thong-bao', label: 'Thông báo', icon: Bell },
+  { to: '/tai-khoan/tim-kiem-da-luu', label: 'Tìm kiếm đã lưu', icon: Search },
 ];
 
 const activityLinks = [
