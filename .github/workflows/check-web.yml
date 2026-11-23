@@ -31,7 +31,7 @@ jobs:
         working-directory: client
 
       - name: Test article images and featured news
-        run: node --test tests/articleMedia.test.mjs tests/homeHero.test.mjs tests/propertyMap.test.mjs tests/sitemapOutputDir.test.mjs
+        run: node --test tests/articleMedia.test.mjs tests/homeHero.test.mjs tests/propertyMap.test.mjs tests/sitemapOutputDir.test.mjs tests/savedSearchMatch.test.mjs tests/notificationNavigation.test.mjs
         working-directory: client
 
       - name: Validate safe production sitemap refresh script

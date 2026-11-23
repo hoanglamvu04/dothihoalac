@@ -1,6 +1,11 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { parseSavedSearchInput } from '../../src/modules/savedSearches/savedSearch.service.js';
+import {
+  parseSavedSearchInput,
+  setSavedSearchActive,
+  deleteSavedSearch,
+} from '../../src/modules/savedSearches/savedSearch.service.js';
+import SavedSearch from '../../src/modules/savedSearches/savedSearch.model.js';
 import { buildSavedSearchContentFilter } from '../../src/jobs/savedSearchAlerts.job.js';
 
 test('Saved search input is normalized and not allowed without query or area', () => {
@@ -37,4 +42,34 @@ test('Cursor for tied timestamps has id tie-breaker and survives backlogs', () =
   }, new Date('2026-11-21T00:00:00Z'));
   assert.equal(filter.$and[0].$or.length, 2);
   assert.deepEqual(filter.$and[0].$or[1]._id, { $gt: '507f1f77bcf86cd799439011' });
+});
+
+
+test('pausing and deleting a saved search require matching owner', async (t) => {
+  const userId = '507f1f77bcf86cd799439001';
+  const id = '507f1f77bcf86cd799439002';
+  const patchStub = t.mock.method(SavedSearch, 'findOneAndUpdate', async (filter, update) => {
+    assert.deepEqual(filter, { _id: id, userId });
+    assert.equal(update.$set.isActive, false);
+    return { _id: id, userId, isActive: false };
+  });
+
+  const result = await setSavedSearchActive(userId, id, false);
+  assert.equal(result.isActive, false);
+  assert.equal(patchStub.mock.callCount(), 1);
+  patchStub.mock.restore();
+
+  const deleteStub = t.mock.method(SavedSearch, 'findOneAndDelete', async (filter) => {
+    assert.deepEqual(filter, { _id: id, userId });
+    return null; // Belongs to another user or is missing.
+  });
+  await assert.rejects(() => deleteSavedSearch(userId, id), (error) =>
+    error.statusCode === 404 && error.code === 'SAVED_SEARCH_NOT_FOUND');
+  assert.equal(deleteStub.mock.callCount(), 1);
+});
+
+test('saved searches declare a per-user unique index', () => {
+  const index = SavedSearch.schema.indexes().find(([keys]) =>
+    keys.userId === 1 && keys.queryNormalized === 1 && keys.contentType === 1 && keys.areaId === 1);
+  assert.equal(index?.[1]?.unique, true);
 });
