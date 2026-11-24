@@ -63,6 +63,7 @@ const ProfileSettingsPage = lazy(() => import('../pages/account/ProfileSettingsP
 const SecurityPage = lazy(() => import('../pages/account/SecurityPage'));
 const SessionsPage = lazy(() => import('../pages/account/SessionsPage'));
 const NotificationsPage = lazy(() => import('../pages/account/NotificationsPage'));
+const SavedSearchesPage = lazy(() => import('../pages/account/SavedSearchesPage'));
 const MyContentPage = lazy(() => import('../pages/account/MyContentPage'));
 const BookmarksPage = lazy(() => import('../pages/account/BookmarksPage'));
 const ReportsPage = lazy(() => import('../pages/account/ReportsPage'));
@@ -135,7 +136,7 @@ function RouterEffects() {
     trackPageView(
       location.pathname + location.search,
     );
-    // WA-001 sees only the public pathname, once per SPA navigation.
+    // Only sanitized public paths after analytics consent (off by default).
     trackXHubPageView();
   }, [location.pathname, location.search]);
 
@@ -300,6 +301,7 @@ const router = createBrowserRouter(
           <Route path="bao-mat" element={<SecurityPage />} />
           <Route path="phien-dang-nhap" element={<SessionsPage />} />
           <Route path="thong-bao" element={<NotificationsPage />} />
+          <Route path="tim-kiem-da-luu" element={<SavedSearchesPage />} />
           <Route path="hoat-dong" element={<ActivityPage mode="all" />} />
           <Route path="hoat-dong/tim-kiem" element={<ActivityPage mode="search" />} />
           <Route path="hoat-dong/binh-luan" element={<ActivityPage mode="comment" />} />

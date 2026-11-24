@@ -148,6 +148,7 @@ export const adminApi = {
   deleteBanner: async (id) =>
     unwrap(await api.delete(`/admin/system/banners/${id}`)),
 
+  discoveryOverview: async (params = {}) => unwrap(await api.get('/admin/system/discovery-overview', { params })),
   operationsOverview: async (params = {}) =>
     unwrap(await api.get('/admin/system/operations', { params })),
   resolveSystemError: async (id) =>

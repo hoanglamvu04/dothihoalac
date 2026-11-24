@@ -2,6 +2,7 @@ import mongoose from 'mongoose';
 
 import * as s from './article.service.js';
 import { listPublicArticles } from './article.publicList.service.js';
+import { relatedArticles } from './article.related.service.js';
 import { adminArticleDetail } from './article.admin.detail.service.js';
 import { adminUpdateMetadata as updateMetadata } from './article.metadata.service.js';
 import {
@@ -197,6 +198,10 @@ export async function list(req, res) {
 
 export async function detail(req, res) {
   return sendSuccess(res, { data: await s.detail(req.params.slug) });
+}
+
+export async function related(req, res) {
+  return sendSuccess(res, { data: await relatedArticles(req.params.slug) });
 }
 
 export async function tip(req, res) {

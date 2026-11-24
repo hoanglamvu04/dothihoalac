@@ -208,6 +208,7 @@ export default function ArticleDetailPage() {
   const [error, setError] = useState(null);
   const [readingProgress, setReadingProgress] = useState(0);
   const [sidebarArticles, setSidebarArticles] = useState([]);
+  const [recommendedArticles, setRecommendedArticles] = useState([]);
   const [sidebarLoading, setSidebarLoading] = useState(true);
   const [sidebarVisibleCount, setSidebarVisibleCount] = useState(4);
 
@@ -218,6 +219,7 @@ export default function ArticleDetailPage() {
     setError(null);
     setReadingProgress(0);
     setSidebarArticles([]);
+    setRecommendedArticles([]);
     setSidebarLoading(true);
     setSidebarVisibleCount(4);
 
@@ -242,7 +244,7 @@ export default function ArticleDetailPage() {
   }, [slug]);
 
   useEffect(() => {
-    // Only count successfully loaded PUBLIC article pages, never draft previews.
+    // Only track successfully loaded public articles, never draft previews.
     if (item?.slug && item.slug === slug) {
       trackXHubEvent('content_view', { entityKey: item.slug });
     }
@@ -280,6 +282,17 @@ export default function ArticleDetailPage() {
       active = false;
     };
   }, [item?._id]);
+
+  useEffect(() => {
+    if (!item?.slug) return undefined;
+    let active = true;
+    articleApi.related(item.slug).then((items) => {
+      if (active) setRecommendedArticles(Array.isArray(items) ? items : []);
+    }).catch(() => {
+      if (active) setRecommendedArticles([]);
+    });
+    return () => { active = false; };
+  }, [item?.slug]);
 
   useEffect(() => {
     const story = storyRef.current;
@@ -467,7 +480,9 @@ export default function ArticleDetailPage() {
   }
 
   const visibleSidebarArticles = sidebarArticles.slice(0, sidebarVisibleCount);
-  const relatedArticles = selectRelatedArticles(item, sidebarArticles, 4);
+  const relatedArticles = recommendedArticles.length
+    ? selectSidebarArticles(item, recommendedArticles).slice(0, 4)
+    : selectRelatedArticles(item, sidebarArticles, 4);
 
   return (
     <section className="article-view-page">

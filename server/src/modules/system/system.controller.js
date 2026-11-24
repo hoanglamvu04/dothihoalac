@@ -2,6 +2,7 @@ import * as s from './system.service.js';
 import { homeFeed as loadHomeFeed } from './homeFeed.service.js';
 import { sendCreated, sendSuccess } from '../../utils/apiResponse.js';
 import * as observability from './observability.service.js';
+import { discoveryOverview } from './discoveryOverview.service.js';
 
 export async function homeFeed(req, res) {
   res.set(
@@ -124,4 +125,9 @@ export async function resolveSystemError(req, res) {
     ),
     message: 'Đã đánh dấu cảnh báo là đã xử lý.',
   });
+}
+
+export async function discoveryMetrics(req, res) {
+  res.set('Cache-Control', 'private, no-store');
+  return sendSuccess(res, { data: await discoveryOverview(req.query.days) });
 }

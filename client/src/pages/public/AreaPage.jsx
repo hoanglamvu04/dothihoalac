@@ -15,6 +15,7 @@ import {
   ArrowLeft,
   ArrowRight,
   Building2,
+  BriefcaseBusiness,
   CheckCircle2,
   FileText,
   Home,
@@ -30,6 +31,8 @@ import Seo from '../../components/common/Seo';
 import ArticleCard from '../../components/content/ArticleCard';
 import CommunityCard from '../../components/content/CommunityCard';
 import PropertyCard from '../../components/content/PropertyCard';
+import SaveSearchButton from '../../components/search/SaveSearchButton';
+import { contentPath } from '../../utils/content';
 import EmptyState from '../../components/common/EmptyState';
 import { LoadingBlock } from '../../components/common/Loading';
 
@@ -39,6 +42,7 @@ import {
   articleApi,
   communityApi,
   propertyApi,
+  jobApi,
 } from '../../api/content.api';
 
 import './AreaPage.css';
@@ -52,6 +56,7 @@ const INITIAL_DATA = {
   articles: EMPTY_COLLECTION,
   community: EMPTY_COLLECTION,
   properties: EMPTY_COLLECTION,
+  jobs: EMPTY_COLLECTION,
 };
 
 const AREA_TYPE_LABELS = {
@@ -154,6 +159,7 @@ export default function AreaPage() {
       articles: false,
       community: false,
       properties: false,
+      jobs: false,
     });
 
   useEffect(() => {
@@ -176,6 +182,7 @@ export default function AreaPage() {
       articles: false,
       community: false,
       properties: false,
+      jobs: false,
     });
 
     Promise.allSettled([
@@ -196,12 +203,14 @@ export default function AreaPage() {
         page: 1,
         limit: 4,
       }),
+      jobApi.list({ area: area._id, page: 1, limit: 4 }),
     ])
       .then(
         ([
           articleResult,
           communityResult,
           propertyResult,
+          jobResult,
         ]) => {
           if (!active) {
             return;
@@ -231,6 +240,9 @@ export default function AreaPage() {
                     propertyResult.value,
                   )
                 : EMPTY_COLLECTION,
+            jobs: jobResult.status === 'fulfilled'
+              ? normalizeCollection(jobResult.value)
+              : EMPTY_COLLECTION,
           });
 
           setSectionErrors({
@@ -245,6 +257,7 @@ export default function AreaPage() {
             properties:
               propertyResult.status ===
               'rejected',
+            jobs: jobResult.status === 'rejected',
           });
         },
       )
@@ -276,12 +289,14 @@ export default function AreaPage() {
   const visibleContentCount =
     data.articles.items.length +
     data.community.items.length +
-    data.properties.items.length;
+    data.properties.items.length +
+    data.jobs.items.length;
 
   const hasAnyError =
     sectionErrors.articles ||
     sectionErrors.community ||
-    sectionErrors.properties;
+    sectionErrors.properties ||
+    sectionErrors.jobs;
 
   const areaFilterValue = String(
     area?.slug || area?._id || '',
@@ -407,6 +422,7 @@ export default function AreaPage() {
                 <MessageCircle size={18} />
                 Tham gia cộng đồng
               </Link>
+              <SaveSearchButton area={areaFilterValue} />
             </div>
           </div>
 
@@ -658,6 +674,34 @@ export default function AreaPage() {
                     </article>
                   ),
                 )}
+              </div>
+            ) : null}
+          </AreaContentSection>
+
+          <AreaContentSection
+            icon={BriefcaseBusiness}
+            eyebrow="Cơ hội địa phương"
+            title="Việc làm gần khu vực"
+            description={'Các vị trí đang tuyển dụng tại ' + area.name + '.'}
+            to={'/viec-lam?area=' + encodeURIComponent(areaFilterValue)}
+            count={data.jobs.total}
+            error={sectionErrors.jobs}
+            emptyTitle="Chưa có việc làm"
+            emptyDescription={'Chưa có tin tuyển dụng được phân loại tại ' + area.name + '.'}
+            onRetry={handleReload}
+          >
+            {data.jobs.items.length ? (
+              <div className="area-job-grid">
+                {data.jobs.items.map((item, index) => (
+                  <Link className="area-job-link" key={getItemKey(item, 'job', index)} to={contentPath(item)}>
+                    <BriefcaseBusiness size={19} />
+                    <span>
+                      <strong>{item.title}</strong>
+                      <small>{item.job?.companyName || 'Đơn vị tuyển dụng'} · {item.job?.workLocation || area.name}</small>
+                    </span>
+                    <ArrowRight size={17} />
+                  </Link>
+                ))}
               </div>
             ) : null}
           </AreaContentSection>

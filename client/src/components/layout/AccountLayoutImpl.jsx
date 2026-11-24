@@ -36,6 +36,7 @@ const MOBILE_TITLES = [
   ['/tai-khoan/bao-mat', 'Bảo mật tài khoản'],
   ['/tai-khoan/phien-dang-nhap', 'Thiết bị đăng nhập'],
   ['/tai-khoan/thong-bao', 'Thông báo'],
+  ['/tai-khoan/tim-kiem-da-luu', 'Tìm kiếm đã lưu'],
   ['/tai-khoan/hoat-dong', 'Nhật ký hoạt động'],
   ['/tai-khoan/noi-dung', 'Bài đăng của tôi'],
   ['/tai-khoan/bai-viet', 'Bài đăng của tôi'],

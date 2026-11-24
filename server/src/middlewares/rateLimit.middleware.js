@@ -41,3 +41,10 @@ export const clientErrorLimiter = createLimiter({
   limit: 30,
   message: 'Quá nhiều báo cáo lỗi từ thiết bị này.',
 });
+
+
+export const searchSuggestLimiter = createLimiter({
+  windowMs: 60 * 1000,
+  limit: 90,
+  message: 'Bạn đang gửi quá nhiều yêu cầu gợi ý tìm kiếm. Vui lòng thử lại sau.',
+});

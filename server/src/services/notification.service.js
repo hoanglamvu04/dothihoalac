@@ -27,27 +27,25 @@ export async function createNotification({
     ...(dedupeKey ? { dedupeKey } : {}),
   };
 
-  if (dedupeKey) {
-    const existing = await Notification.findOne({
-      recipientId,
-      notificationType,
-      targetType,
-      targetId,
-      'payload.dedupeKey': dedupeKey,
-      deletedAt: null,
-    }).lean();
+  const record = {
+    recipientId, actorId, notificationType, targetType, targetId,
+    title, message, payload: normalizedPayload,
+  };
 
-    if (existing) return existing;
+  if (!dedupeKey) return Notification.create(record);
+
+  // A unique compound key makes alert delivery idempotent even when the
+  // scheduler retries after a crash or two workers overlap.
+  try {
+    return await Notification.findOneAndUpdate(
+      { recipientId, dedupeKey },
+      { $setOnInsert: { ...record, dedupeKey } },
+      { upsert: true, new: true, setDefaultsOnInsert: true },
+    );
+  } catch (error) {
+    if (error?.code === 11000) {
+      return Notification.findOne({ recipientId, dedupeKey });
+    }
+    throw error;
   }
-
-  return Notification.create({
-    recipientId,
-    actorId,
-    notificationType,
-    targetType,
-    targetId,
-    title,
-    message,
-    payload: normalizedPayload,
-  });
 }
