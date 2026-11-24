@@ -181,6 +181,7 @@ export const communityApi = {
 export const propertyApi = {
   list: async (params = {}, config = {}) => unwrapList(await getList('/properties', params, config)),
   detail: async (slug, config = {}) => unwrap(await api.get(`/properties/${slug}`, config)),
+  related: async (slug, config = {}) => unwrap(await api.get(`/properties/${encodeURIComponent(slug)}/related`, config)),
   editDetail: async (id, config = {}) => unwrap(await api.get(`/properties/${id}/edit`, config)),
   create: async (payload) => mutation(api.post('/properties', payload), 'create'),
   update: async (id, payload) => mutation(api.patch(`/properties/${id}`, payload), 'update'),

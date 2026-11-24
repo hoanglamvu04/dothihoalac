@@ -40,6 +40,7 @@ import {
 import Seo from '../../components/common/Seo';
 import Badge from '../../components/common/Badge';
 import ContentImage from '../../components/content/ContentImage';
+import PropertyCard from '../../components/content/PropertyCard';
 import ArticleBody from '../../components/content/ArticleBody';
 import CommentsSection from '../../components/content/CommentsSection';
 import ErrorState from '../../components/common/ErrorState';
@@ -87,6 +88,15 @@ function getMediaKey(media, index) {
 }
 
 function buildGallery(item) {
+  useEffect(() => {
+    let active = true;
+    setRelated([]);
+    propertyApi.related(slug)
+      .then((items) => { if (active) setRelated(Array.isArray(items) ? items : []); })
+      .catch(() => { if (active) setRelated([]); });
+    return () => { active = false; };
+  }, [slug]);
+
   const property = item?.property || {};
 
   const source = [
@@ -187,6 +197,7 @@ export default function PropertyDetailPage() {
   const pageRef = useRef(null);
 
   const [item, setItem] = useState(null);
+  const [related, setRelated] = useState([]);
   const [error, setError] = useState(null);
   const [phoneVisible, setPhoneVisible] = useState(false);
   const [phoneLoading, setPhoneLoading] = useState(false);
@@ -911,6 +922,17 @@ export default function PropertyDetailPage() {
             </div>
           </aside>
         </div>
+        {related.length ? (
+          <section className="property-related-results" aria-labelledby="property-related-title">
+            <header>
+              <h2 id="property-related-title">Bất động sản tương tự</h2>
+              <p>Những tin công khai còn hiệu lực có cùng loại giao dịch và loại hình.</p>
+            </header>
+            <div className="property-related-grid">
+              {related.map((other) => <PropertyCard item={other} key={other._id} />)}
+            </div>
+          </section>
+        ) : null}
       </div>
 
       {readingProgress > 0.35 ? (
