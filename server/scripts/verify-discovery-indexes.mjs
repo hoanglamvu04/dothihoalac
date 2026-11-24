@@ -1,33 +1,10 @@
 #!/usr/bin/env node
 // Read-only MongoDB index audit for DTHL P0/P1 acceptance.
-// No model imports, createIndexes, migrations or mutation commands.
+// No models, createIndexes, migrations or mutation commands.
 import 'dotenv/config';
 import mongoose from 'mongoose';
-
-export function verifyDiscoveryIndexes(savedIndexes, notificationIndexes) {
-  const savedSearchUnique = savedIndexes.some((index) =>
-    index.name === 'saved_search_per_user_unique' &&
-    index.unique === true &&
-    index.key?.userId === 1 &&
-    index.key?.queryNormalized === 1 &&
-    index.key?.contentType === 1 &&
-    index.key?.areaId === 1
-  );
-
-  const notificationDedupeUnique = notificationIndexes.some((index) =>
-    index.name === 'unique_notification_dedupe' &&
-    index.unique === true &&
-    index.key?.recipientId === 1 &&
-    index.key?.dedupeKey === 1 &&
-    index.partialFilterExpression?.dedupeKey?.$type === 'string'
-  );
-
-  return {
-    savedSearchUnique,
-    notificationDedupeUnique,
-    pass: savedSearchUnique && notificationDedupeUnique,
-  };
-}
+import { verifyDiscoveryIndexes } from '../src/modules/savedSearches/discoveryReadiness.js';
+export { verifyDiscoveryIndexes };
 
 async function main() {
   if (!process.env.MONGO_URI) {
@@ -36,7 +13,6 @@ async function main() {
     return;
   }
 
-  // Separate connection with no registered models, no indexing or collection creation.
   const connection = mongoose.createConnection(process.env.MONGO_URI, {
     autoIndex: false,
     autoCreate: false,
@@ -56,15 +32,14 @@ async function main() {
       ? await connection.db.collection('notifications').listIndexes().toArray()
       : [];
     const checks = verifyDiscoveryIndexes(saved, notifications);
-    const result = {
+    process.stdout.write(JSON.stringify({
       status: checks.pass ? 'PASS' : 'FAIL',
       readOnly: true,
       savedSearchCollectionExists: collections.has('savedsearches'),
       notificationCollectionExists: collections.has('notifications'),
       savedSearchUnique: checks.savedSearchUnique,
       notificationDedupeUnique: checks.notificationDedupeUnique,
-    };
-    process.stdout.write(JSON.stringify(result, null, 2) + '\n');
+    }, null, 2) + '\n');
     if (!checks.pass) process.exitCode = 1;
   } catch (error) {
     // Never print connection string, credentials or document content.
@@ -75,7 +50,6 @@ async function main() {
   }
 }
 
-// Not run when imported by node:test.
 if (process.argv[1]?.endsWith('verify-discovery-indexes.mjs')) {
   await main();
 }

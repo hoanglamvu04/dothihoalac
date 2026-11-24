@@ -1,6 +1,8 @@
 import { randomUUID } from 'node:crypto';
 import Content from '../modules/contents/content.model.js';
 import SavedSearch from '../modules/savedSearches/savedSearch.model.js';
+import Notification from '../modules/notifications/notification.model.js';
+import { verifyDiscoveryIndexes } from '../modules/savedSearches/discoveryReadiness.js';
 import { vietnameseSearchRegex } from '../utils/vietnameseSearch.js';
 import { createNotification } from '../services/notification.service.js';
 import { NOTIFICATION_TYPES } from '../constants/notificationTypes.js';
@@ -86,6 +88,23 @@ export async function sendSavedSearchAlerts() {
   running = true;
   let processed = 0;
   try {
+    // Fail closed: an absent unique index can turn retry/upsert into duplicate
+    // notifications. Verify physical MongoDB indexes before scanning anything.
+    let indexChecks;
+    try {
+      const [savedIndexes, notificationIndexes] = await Promise.all([
+        SavedSearch.collection.indexes(),
+        Notification.collection.indexes(),
+      ]);
+      indexChecks = verifyDiscoveryIndexes(savedIndexes, notificationIndexes);
+    } catch (error) {
+      logger.warn({ errorName: error?.name }, 'Saved search alerts paused: cannot verify MongoDB indexes');
+      return 0;
+    }
+    if (!indexChecks.pass) {
+      logger.warn('Saved search alerts paused: unique MongoDB indexes are missing');
+      return 0;
+    }
     const searches = await SavedSearch.find({ isActive: true })
       .sort({ lastScannedAt: 1, _id: 1 })
       .limit(SEARCHES_PER_RUN)
