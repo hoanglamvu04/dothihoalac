@@ -181,6 +181,7 @@ export const communityApi = {
 export const propertyApi = {
   list: async (params = {}, config = {}) => unwrapList(await getList('/properties', params, config)),
   detail: async (slug, config = {}) => unwrap(await api.get(`/properties/${slug}`, config)),
+  related: async (slug, config = {}) => unwrap(await api.get(`/properties/${encodeURIComponent(slug)}/related`, config)),
   editDetail: async (id, config = {}) => unwrap(await api.get(`/properties/${id}/edit`, config)),
   create: async (payload) => mutation(api.post('/properties', payload), 'create'),
   update: async (id, payload) => mutation(api.patch(`/properties/${id}`, payload), 'update'),
@@ -202,6 +203,8 @@ export const jobApi = {
 };
 
 export const searchApi = {
+  suggest: async (q, config = {}) =>
+    unwrap(await api.get('/search/suggest', { ...config, params: { q } })),
   run: async (params = {}, config = {}) => {
     const response = await getList('/search', params, config);
     return { data: response.data.data, meta: response.data.meta };

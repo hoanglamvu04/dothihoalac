@@ -172,16 +172,43 @@ export async function getPreferences(userId) {
   );
 }
 
-export async function updatePreferences(userId, items) {
-  await Promise.all(
-    items.map((item) =>
-      NotificationPreference.findOneAndUpdate(
-        { userId, notificationType: item.notificationType },
-        { $set: item },
-        { upsert: true, new: true, runValidators: true },
-      ),
-    ),
-  );
+export function validateNotificationPreferences(items) {
+  if (!Array.isArray(items) || items.length < 1 ||
+    items.length > NOTIFICATION_TYPE_VALUES.length) {
+    throw new ApiError(422, 'Danh sách cài đặt thông báo không hợp lệ.', 'NOTIFICATION_PREFERENCES_INVALID');
+  }
+  const seen = new Set();
+  return items.map((item) => {
+    if (!item || typeof item !== 'object' || Array.isArray(item) ||
+      !NOTIFICATION_TYPE_VALUES.includes(item.notificationType) ||
+      seen.has(item.notificationType)) {
+      throw new ApiError(422, 'Loại thông báo không hợp lệ.', 'NOTIFICATION_PREFERENCES_INVALID');
+    }
+    seen.add(item.notificationType);
+    const update = { notificationType: item.notificationType };
+    for (const field of ['inAppEnabled', 'emailEnabled', 'smsEnabled']) {
+      if (Object.hasOwn(item, field)) {
+        if (typeof item[field] !== 'boolean') {
+          throw new ApiError(422, 'Giá trị cài đặt phải là bật hoặc tắt.', 'NOTIFICATION_PREFERENCES_INVALID');
+        }
+        update[field] = item[field];
+      }
+    }
+    if (Object.keys(update).length < 2) {
+      throw new ApiError(422, 'Thiếu tùy chọn cần cập nhật.', 'NOTIFICATION_PREFERENCES_INVALID');
+    }
+    return update;
+  });
+}
 
+export async function updatePreferences(userId, items) {
+  const updates = validateNotificationPreferences(items);
+  await Promise.all(updates.map((item) =>
+    NotificationPreference.findOneAndUpdate(
+      { userId, notificationType: item.notificationType },
+      { $set: item },
+      { upsert: true, new: true, runValidators: true },
+    ),
+  ));
   return getPreferences(userId);
 }

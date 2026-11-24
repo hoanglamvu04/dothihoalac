@@ -16,6 +16,7 @@ import asyncHandler from '../../utils/asyncHandler.js';
 const r = Router();
 
 r.get('/', asyncHandler(c.list));
+r.get('/:slug/related', validate(slugSchema), asyncHandler(c.related));
 r.post('/', requireAuth, contentCreateLimiter, validate(createSchema), asyncHandler(c.create));
 r.get('/:id/edit', requireAuth, validate(idSchema), asyncHandler(c.editor));
 r.patch('/:id', requireAuth, validate(updateSchema), asyncHandler(c.update));

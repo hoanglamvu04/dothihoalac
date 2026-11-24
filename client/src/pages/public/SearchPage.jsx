@@ -74,6 +74,9 @@ const SEARCH_TYPES = [
 const SORT_OPTIONS = [
   { value: 'relevance', label: 'Liên quan' },
   { value: 'newest', label: 'Mới nhất' },
+  { value: 'popular', label: 'Xem nhiều' },
+  { value: 'price_asc', label: 'Giá thấp đến cao' },
+  { value: 'price_desc', label: 'Giá cao đến thấp' },
 ];
 
 const SUGGESTED_SEARCHES = [
@@ -113,7 +116,8 @@ function normalizeResult(value) {
         ...EMPTY_FACETS,
         ...rawFacets,
       },
-      sort: data.sort === 'newest' ? 'newest' : 'relevance',
+      sort: SORT_OPTIONS.some((item) => item.value === data.sort) ? data.sort : 'relevance',
+      suggestion: typeof data.suggestion === 'string' ? data.suggestion : null,
     },
     meta: value?.meta && typeof value.meta === 'object' ? value.meta : {},
   };
@@ -252,7 +256,10 @@ export default function SearchPage() {
 
   const q = searchParams.get('q')?.trim() || '';
   const area = searchParams.get('area')?.trim() || '';
-  const hasCriteria = Boolean(q || area);
+  const hasAdvancedCriteria = ['days', 'propertyType', 'transactionType',
+    'minPrice', 'maxPrice', 'minArea', 'maxArea']
+    .some((key) => Boolean(searchParams.get(key)));
+  const hasCriteria = Boolean(q || area || hasAdvancedCriteria);
   const requestedType = searchParams.get('type') || 'all';
   const type = SEARCH_TYPES.some((item) => item.value === requestedType)
     ? requestedType
@@ -269,10 +276,52 @@ export default function SearchPage() {
   const [error, setError] = useState(null);
   const [reloadKey, setReloadKey] = useState(0);
   const [recentSearches, setRecentSearches] = useState(loadRecentSearches);
+  const [typeahead, setTypeahead] = useState([]);
+  const [correction, setCorrection] = useState(null);
+  const [propertyForm, setPropertyForm] = useState({
+    propertyType: '', transactionType: '',
+    minPrice: '', maxPrice: '', minArea: '', maxArea: '',
+  });
 
   useEffect(() => {
     setQuery(q);
   }, [q]);
+
+  useEffect(() => {
+    setPropertyForm({
+      propertyType: searchParams.get('propertyType') || '',
+      transactionType: searchParams.get('transactionType') || '',
+      minPrice: searchParams.get('minPrice')
+        ? String(Number(searchParams.get('minPrice')) / 1e6) : '',
+      maxPrice: searchParams.get('maxPrice')
+        ? String(Number(searchParams.get('maxPrice')) / 1e6) : '',
+      minArea: searchParams.get('minArea') || '',
+      maxArea: searchParams.get('maxArea') || '',
+    });
+  }, [searchParams]);
+
+  useEffect(() => {
+    const typed = query.trim();
+    if (typed.length < 2) {
+      setTypeahead([]);
+      setCorrection(null);
+      return undefined;
+    }
+    let active = true;
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => {
+      searchApi.suggest(typed.slice(0, 60), { signal: controller.signal })
+        .then((response) => {
+          if (!active) return;
+          setTypeahead(Array.isArray(response?.items) ? response.items : []);
+          setCorrection(response?.correction || null);
+        })
+        .catch(() => {
+          if (active) { setTypeahead([]); setCorrection(null); }
+        });
+    }, 200);
+    return () => { active = false; window.clearTimeout(timer); controller.abort(); };
+  }, [query]);
 
   useEffect(() => {
     if (!hasCriteria) {
@@ -328,17 +377,22 @@ export default function SearchPage() {
 
   const buildParams = useCallback(
     ({ nextQuery = q, nextType = type, nextSort = sort, nextPage = 1 } = {}) => {
-      const params = {
-        q: nextQuery,
-        ...(area ? { area } : {}),
-        type: nextType,
-        page: String(nextPage),
-      };
-
-      if (nextSort !== 'relevance') params.sort = nextSort;
+      const params = Object.fromEntries(searchParams.entries());
+      params.q = nextQuery;
+      if (area) params.area = area;
+      params.type = nextType;
+      params.page = String(nextPage);
+      if (nextType !== 'property') {
+        for (const field of ['propertyType', 'transactionType',
+          'minPrice', 'maxPrice', 'minArea', 'maxArea']) delete params[field];
+      }
+      const effectiveSort = nextType !== 'property' && nextSort.startsWith('price_')
+        ? 'relevance' : nextSort;
+      if (effectiveSort !== 'relevance') params.sort = effectiveSort;
+      else delete params.sort;
       return params;
     },
-    [area, q, sort, type],
+    [area, q, searchParams, sort, type],
   );
 
   const scrollToResults = useCallback(() => {
@@ -352,14 +406,15 @@ export default function SearchPage() {
       event.preventDefault();
       const normalizedQuery = query.trim();
 
-      if (!normalizedQuery) {
+      if (!normalizedQuery && !hasAdvancedCriteria && !area) {
         searchInputRef.current?.focus();
         return;
       }
 
+      setTypeahead([]);
       setSearchParams(buildParams({ nextQuery: normalizedQuery, nextPage: 1 }));
     },
-    [buildParams, query, setSearchParams],
+    [area, buildParams, hasAdvancedCriteria, query, setSearchParams],
   );
 
   const searchTerm = useCallback(
@@ -368,6 +423,7 @@ export default function SearchPage() {
       if (!normalizedTerm) return;
 
       setQuery(normalizedTerm);
+      setTypeahead([]);
       setSearchParams(
         buildParams({
           nextQuery: normalizedTerm,
@@ -407,6 +463,26 @@ export default function SearchPage() {
     [buildParams, scrollToResults, setSearchParams],
   );
 
+  const applyPropertyFilters = useCallback((event) => {
+    event.preventDefault();
+    const params = buildParams({ nextType: 'property', nextPage: 1 });
+    for (const key of ['propertyType', 'transactionType', 'minPrice', 'maxPrice', 'minArea', 'maxArea']) {
+      delete params[key];
+      const value = String(propertyForm[key] || '').trim();
+      if (value) params[key] = key.endsWith('Price')
+        ? String(Number(value) * 1e6) : value;
+    }
+    setSearchParams(params);
+    scrollToResults();
+  }, [buildParams, propertyForm, scrollToResults, setSearchParams]);
+
+  const changeWindow = useCallback((event) => {
+    const params = buildParams({ nextPage: 1 });
+    if (event.target.value === '0') delete params.days;
+    else params.days = event.target.value;
+    setSearchParams(params);
+  }, [buildParams, setSearchParams]);
+
   const clearSearch = useCallback(() => {
     setQuery('');
     setResult(EMPTY_RESULT);
@@ -425,7 +501,7 @@ export default function SearchPage() {
   return (
     <main className="search-page">
       <Seo
-        title={hasCriteria ? `Tìm kiếm: ${q || area}` : 'Tìm kiếm'}
+        title={hasCriteria ? `Tìm kiếm: ${q || area || 'Bất động sản'}` : 'Tìm kiếm'}
         description="Tìm tin tức, bất động sản, việc làm, cộng đồng, thành viên và khu vực trên Đô Thị Hòa Lạc."
         noindex
       />
@@ -435,7 +511,7 @@ export default function SearchPage() {
           <div className="search-hero__content">
             <div className="search-page-title">
               <span>Tìm kiếm</span>
-              <h1>{hasCriteria ? `Kết quả cho “${q || area}”` : 'Bạn đang cần tìm gì?'}</h1>
+              <h1>{hasCriteria ? `Kết quả cho “${q || area || 'Bộ lọc đã chọn'}”` : 'Bạn đang cần tìm gì?'}</h1>
               <p>
                 Tìm thấy những nội dung hữu ích về Hòa Lạc và khu vực lân cận phù hợp với từ khóa của bạn.
               </p>
@@ -467,6 +543,27 @@ export default function SearchPage() {
                 <span>Tìm kiếm</span>
               </button>
             </form>
+            {typeahead.length > 0 ? (
+              <div className="search-typeahead" aria-label="Gợi ý từ khóa và nội dung">
+                <strong>Gợi ý cho bạn</strong>
+                <ul>
+                  {typeahead.slice(0, 6).map((item) => (
+                    <li key={item.type + ':' + item.href}>
+                      <Link to={item.href} onClick={() => setTypeahead([])}>
+                        <Search size={14} />
+                        <span>{item.label}</span>
+                        <small>{item.type === 'area' ? 'Khu vực' : 'Nội dung'}</small>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : correction && query.trim().length >= 3 ? (
+              <p className="search-typeahead-correction">
+                Có phải bạn muốn tìm{' '}
+                <button type="button" onClick={() => searchTerm(correction)}>{correction}</button>?
+              </p>
+            ) : null}
           </div>
 
           <div className="search-hero__visual" aria-hidden="true">
@@ -542,7 +639,7 @@ export default function SearchPage() {
                           : <>Không tìm thấy kết quả cho <b>“{q || area}”</b>.</>}
                   </p>
                   <div>
-                    {type !== 'user' && type !== 'area' ? (
+                    {type !== 'user' && type !== 'area' && (q || area) && !hasAdvancedCriteria ? (
                       <SaveSearchButton query={q} contentType={type} area={area} />
                     ) : null}
                      <span>{selectedType.label}</span>
@@ -550,7 +647,7 @@ export default function SearchPage() {
                       <label className="search-sort-control">
                         <span>Sắp xếp</span>
                         <select value={sort} onChange={changeSort} aria-label="Sắp xếp kết quả">
-                          {SORT_OPTIONS.map((item) => (
+                          {SORT_OPTIONS.filter((item) => type === 'property' || !item.value.startsWith('price_')).map((item) => (
                             <option key={item.value} value={item.value}>{item.label}</option>
                           ))}
                         </select>
@@ -622,6 +719,14 @@ export default function SearchPage() {
                       description={`Không có dữ liệu phù hợp với “${q || area}”. Thử đổi nhóm hoặc dùng từ khóa ngắn hơn.`}
                     />
                     <div className="search-empty__suggestions">
+                      {result.data.suggestion ? (
+                        <p className="search-empty__correction">
+                          Có phải bạn muốn tìm{' '}
+                          <button type="button" onClick={() => searchTerm(result.data.suggestion)}>
+                            {result.data.suggestion}
+                          </button>?
+                        </p>
+                      ) : null}
                       <strong><SearchX size={17} /> Gợi ý khác</strong>
                       <div className="search-chip-list">
                         {SUGGESTED_SEARCHES.slice(0, 5).map((term) => (
@@ -673,6 +778,58 @@ export default function SearchPage() {
                   </div>
                 </section>
 
+                <section className="search-sidebar-card search-advanced-filter">
+                  <h2>Bộ lọc thời gian</h2>
+                  <label>
+                    <span>Thời điểm đăng</span>
+                    <select value={searchParams.get('days') || '0'} onChange={changeWindow}>
+                      <option value="0">Mọi thời điểm</option>
+                      <option value="7">7 ngày gần đây</option>
+                      <option value="30">30 ngày gần đây</option>
+                      <option value="90">90 ngày gần đây</option>
+                    </select>
+                  </label>
+                </section>
+                {type === 'property' ? (
+                  <form className="search-sidebar-card search-advanced-filter" onSubmit={applyPropertyFilters}>
+                    <h2>Lọc bất động sản</h2>
+                    <label><span>Giao dịch</span>
+                      <select value={propertyForm.transactionType} onChange={(event) => setPropertyForm((v) => ({ ...v, transactionType: event.target.value }))}>
+                        <option value="">Tất cả</option>
+                        <option value="sale">Bán</option>
+                        <option value="rent">Cho thuê</option>
+                      </select>
+                    </label>
+                    <label><span>Loại hình</span>
+                      <select value={propertyForm.propertyType} onChange={(event) => setPropertyForm((v) => ({ ...v, propertyType: event.target.value }))}>
+                        <option value="">Tất cả</option>
+                        <option value="land">Đất</option>
+                        <option value="residential_land">Đất ở</option>
+                        <option value="house">Nhà ở</option>
+                        <option value="apartment">Căn hộ</option>
+                        <option value="room">Phòng trọ</option>
+                      </select>
+                    </label>
+                    <div className="search-advanced-filter__pair">
+                      <label><span>Giá từ (triệu ₫)</span>
+                        <input type="number" min="0" step="10" value={propertyForm.minPrice} onChange={(event) => setPropertyForm((v) => ({ ...v, minPrice: event.target.value }))} />
+                      </label>
+                      <label><span>Đến (triệu ₫)</span>
+                        <input type="number" min="0" step="10" value={propertyForm.maxPrice} onChange={(event) => setPropertyForm((v) => ({ ...v, maxPrice: event.target.value }))} />
+                      </label>
+                    </div>
+                    <div className="search-advanced-filter__pair">
+                      <label><span>Diện tích từ (m²)</span>
+                        <input type="number" min="0" value={propertyForm.minArea} onChange={(event) => setPropertyForm((v) => ({ ...v, minArea: event.target.value }))} />
+                      </label>
+                      <label><span>Đến (m²)</span>
+                        <input type="number" min="0" value={propertyForm.maxArea} onChange={(event) => setPropertyForm((v) => ({ ...v, maxArea: event.target.value }))} />
+                      </label>
+                    </div>
+                    <small>Khoảng giá áp dụng cho tổng giá (VND); không áp dụng giá thỏa thuận, giá/m² hay thuê theo tháng.</small>
+                    <button type="submit" className="search-advanced-filter__apply">Áp dụng bộ lọc</button>
+                  </form>
+                ) : null}
                 <section className="search-sidebar-card search-suggestion-card">
                   <h2>Gợi ý tìm kiếm</h2>
                   <div>

@@ -115,3 +115,22 @@ html[data-dthl-theme='system'] .account-notifications-page .account-page-heading
 .account-center-page:has(.account-notifications-page) [class*='yellow'] {
   filter: none !important;
 }
+
+
+.notification-follow-controls {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap; margin: 16px 0; padding: 14px 18px;
+  background: #fff; border: 1px solid var(--ap-border); border-radius: 12px;
+}
+.notification-follow-controls strong { color: var(--ap-ink); }
+.notification-follow-controls p { margin: 5px 0 0; font-size: .87rem; color: var(--ap-text); }
+.notification-follow-controls button {
+  border: 1px solid var(--ap-green-border); border-radius: 9px; padding: 10px 14px;
+  background: var(--ap-green-soft); color: var(--ap-green-dark); font-weight: 700;
+  cursor: pointer; white-space: nowrap;
+}
+.notification-follow-controls button:disabled { opacity: .65; cursor: wait; }
+.notification-day-heading {
+  padding: 10px 16px 6px; margin: 0;
+  font-size: .82rem; font-weight: 700; color: var(--ap-muted);
+}

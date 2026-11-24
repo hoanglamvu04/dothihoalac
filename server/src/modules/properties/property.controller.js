@@ -1,4 +1,5 @@
 import * as s from './property.service.js';
+import { relatedProperties } from './property.related.service.js';
 import { listPublicProperties } from './property.publicList.service.js';
 import { sendCreated, sendSuccess } from '../../utils/apiResponse.js';
 
@@ -62,4 +63,9 @@ export async function contact(req, res) {
     await s.recordContact(req.params.id, req.user?._id, req.body.contactType, req.ip),
     'Đã ghi nhận tương tác.',
   );
+}
+
+export async function related(req, res) {
+  res.set('Cache-Control', 'public, max-age=30, stale-while-revalidate=120');
+  return sendSuccess(res, { data: await relatedProperties(req.params.slug) });
 }

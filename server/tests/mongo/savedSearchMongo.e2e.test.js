@@ -24,6 +24,8 @@ test('MongoDB E2E: saved searches, index constraints, tenant isolation, alerts',
         Area: (await import('../../src/modules/taxonomy/area.model.js')).default,
         Content: (await import('../../src/modules/contents/content.model.js')).default,
         SavedSearch: (await import('../../src/modules/savedSearches/savedSearch.model.js')).default,
+        PropertyListing: (await import('../../src/modules/properties/propertyListing.model.js')).default,
+        UserActivity: (await import('../../src/modules/users/userActivity.model.js')).default,
         Notification: (await import('../../src/modules/notifications/notification.model.js')).default,
         NotificationPreference: (await import('../../src/modules/notifications/notificationPreference.model.js')).default,
       })),
@@ -32,8 +34,8 @@ test('MongoDB E2E: saved searches, index constraints, tenant isolation, alerts',
 
   await mongoose.connect(uri, { serverSelectionTimeoutMS: 15000 });
   t.after(async () => { await mongoose.disconnect(); });
-  const { User, Area, Content, SavedSearch, Notification, NotificationPreference } = models;
-  for (const model of [User, Area, Content, SavedSearch, Notification, NotificationPreference]) {
+  const { User, Area, Content, SavedSearch, Notification, NotificationPreference, PropertyListing, UserActivity } = models;
+  for (const model of [User, Area, Content, SavedSearch, Notification, NotificationPreference, PropertyListing]) {
     await model.init();
   }
 
@@ -381,6 +383,131 @@ test('MongoDB E2E: saved searches, index constraints, tenant isolation, alerts',
     );
     report = await readDiscoveryPreflight(mongoose.connection.db);
     assert.equal(report.status, 'PASS');
+  });
+
+  await t.test('public autocomplete cannot leak private titles and property filters return exact pages', async () => {
+    const publishedAt = new Date(Date.now() - 2000);
+    const fixtures = await Content.insertMany([
+      {
+        authorId: userA._id, contentType: 'property',
+        title: 'Đất nền Thạch Thất giá hai tỷ',
+        summary: 'Đất nền tốt cho thuê hay mua bán',
+        slug: 'v2-search-sale-two-billion', primaryAreaId: area._id,
+        status: 'published', visibility: 'public', publishedAt,
+      },
+      {
+        authorId: userA._id, contentType: 'property',
+        title: 'Đất nền Thạch Thất giá bốn tỷ',
+        slug: 'v2-search-sale-four-billion', primaryAreaId: area._id,
+        status: 'published', visibility: 'public', publishedAt,
+      },
+      {
+        authorId: userA._id, contentType: 'property',
+        title: 'Mật danh riêng Chỉ Quản trị',
+        slug: 'v2-search-private-secret', primaryAreaId: area._id,
+        status: 'published', visibility: 'private', publishedAt,
+      },
+    ]);
+    const common = {
+      transactionType: 'sale', propertyType: 'land', ownerType: 'owner',
+      landArea: 120, priceUnit: 'total',
+      addressText: 'Test-only address', contactName: 'Test', contactPhone: '0000000000',
+      expiresAt: new Date(Date.now() + 86400000),
+    };
+    await PropertyListing.insertMany([
+      { ...common, contentId: fixtures[0]._id, price: 2000000000 },
+      { ...common, contentId: fixtures[1]._id, price: 4000000000 },
+      { ...common, contentId: fixtures[2]._id, price: 1000000000 },
+    ]);
+    const fromPublic = await request(app).get('/api/v1/search/suggest')
+      .query({ q: 'Đất nền Thạch Thất' }).expect(200);
+    assert.ok(fromPublic.body.data.items.some((entry) => entry.label.includes('hai tỷ')));
+    assert.ok(fromPublic.body.data.items.every((entry) =>
+      entry.href.startsWith('/') && !entry.label.includes('Mật danh riêng')));
+
+    const fromPrivate = await request(app).get('/api/v1/search/suggest')
+      .query({ q: 'Mật danh riêng' }).expect(200);
+    assert.equal(fromPrivate.body.data.items.length, 0);
+    const typo = await request(app).get('/api/v1/search/suggest')
+      .query({ q: 'hoa lak' }).expect(200);
+    assert.equal(typo.body.data.correction, 'Hòa Lạc');
+
+    // No keyword/area: filter-only searches must work and exclude private and
+    // out-of-range listings without loading a capped subset into memory.
+    const filtered = await request(app).get('/api/v1/search').query({
+      type: 'property', minPrice: '1000000000', maxPrice: '3000000000',
+      minArea: '100', maxArea: '200', propertyType: 'land',
+      sort: 'price_asc', limit: 10,
+    }).expect(200);
+    assert.equal(filtered.body.data.contents.length, 1);
+    assert.equal(filtered.body.data.contents[0].slug, 'v2-search-sale-two-billion');
+    assert.equal(filtered.body.meta.total, 1);
+    assert.equal(filtered.body.data.contents[0].bodyText, undefined);
+    assert.equal(filtered.body.data.contents[0].listing, undefined);
+    assert.equal(filtered.body.data.contents[0].contactPhone, undefined);
+
+    const invalid = await request(app).get('/api/v1/search')
+      .query({ type: 'property', minPrice: 400, maxPrice: 200 }).expect(422);
+    assert.equal(invalid.body.code, 'SEARCH_FILTER_RANGE');
+
+    const byTime = await request(app).get('/api/v1/search')
+      .query({ q: 'Đất nền Thạch Thất', type: 'property', days: 7 }).expect(200);
+    assert.ok(byTime.body.data.contents.some((item) => item.slug === 'v2-search-sale-two-billion'));
+  });
+
+  await t.test('on-demand saved-search preview does not create implicit search-history events', async () => {
+    const before = await UserActivity.countDocuments({
+      userId: userB._id, activityType: 'search',
+    });
+    await request(app).get('/api/v1/search').set(b).query({
+      q: 'Đất nền Thạch Thất', type: 'property',
+      preview: 'saved-search', sort: 'newest',
+    }).expect(200);
+    const after = await UserActivity.countDocuments({
+      userId: userB._id, activityType: 'search',
+    });
+    assert.equal(after, before);
+  });
+
+  await t.test('related properties only return active published public cards without contact PII', async () => {
+    const response = await request(app)
+      .get('/api/v1/properties/v2-search-sale-two-billion/related').expect(200);
+    const cards = response.body.data || [];
+    assert.ok(cards.some((entry) => entry.slug === 'v2-search-sale-four-billion'));
+    assert.ok(cards.every((entry) =>
+      entry.slug !== 'v2-search-private-secret' &&
+      !entry.property?.contactPhone && !entry.property?.contactEmail));
+  });
+
+  await t.test('notification preferences are per-user, with validated payloads and no privilege escalation', async () => {
+    await request(app).get('/api/v1/admin/system/discovery-overview').expect(401);
+    const forbidden = await request(app)
+      .get('/api/v1/admin/system/discovery-overview').set(b).expect(403);
+    assert.equal(forbidden.body.code, 'PERMISSION_FORBIDDEN');
+
+    const prefUrl = '/api/v1/notification-preferences';
+    const turnedOff = await request(app).patch(prefUrl).set(b).send({
+      preferences: [{
+        notificationType: 'saved_search_match', inAppEnabled: false,
+        userId: userA._id, _id: new mongoose.Types.ObjectId(),
+      }],
+    }).expect(200);
+    assert.ok(turnedOff.body.data.find((p) => p.notificationType === 'saved_search_match' && p.inAppEnabled === false));
+    const stored = await NotificationPreference.findOne({ userId: userB._id, notificationType: 'saved_search_match' }).lean();
+    assert.equal(stored.inAppEnabled, false);
+    assert.equal(await NotificationPreference.countDocuments({
+      userId: userA._id, notificationType: 'saved_search_match', inAppEnabled: true,
+    }), 0);
+
+    const invalid = await request(app).patch(prefUrl).set(b).send({
+      preferences: [{ notificationType: 'saved_search_match', inAppEnabled: 'false' }],
+    }).expect(422);
+    assert.equal(invalid.body.code, 'NOTIFICATION_PREFERENCES_INVALID');
+    await request(app).patch(prefUrl).set(b).send({
+      preferences: [{ notificationType: 'saved_search_match', inAppEnabled: true }],
+    }).expect(200);
+    const read = await request(app).get(prefUrl).set(b).expect(200);
+    assert.ok(read.body.data.some((p) => p.notificationType === 'saved_search_match' && p.inAppEnabled === true));
   });
 
   await t.test('same-user duplicate subscriptions are rejected by MongoDB index, not only application code', async () => {

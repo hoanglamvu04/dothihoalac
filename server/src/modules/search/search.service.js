@@ -5,16 +5,18 @@ import Area from '../taxonomy/area.model.js';
 import { parsePagination, buildPaginationMeta } from '../../utils/pagination.js';
 import { foldVietnamese, normalizeSearchQuery, vietnameseSearchRegex } from '../../utils/vietnameseSearch.js';
 import ApiError from '../../utils/ApiError.js';
+import { spellingSuggestion } from './search.suggestions.js';
+import { parseSearchFilters, findFilteredProperties } from './search.filters.js';
 
 const CONTENT_TYPES = ['article', 'community', 'property', 'job'];
 const CONTENT_TYPE_SET = new Set(CONTENT_TYPES);
-const SORT_VALUES = new Set(['relevance', 'newest']);
+const SORT_VALUES = new Set(['relevance', 'newest', 'popular', 'price_asc', 'price_desc']);
 
 function normalizeSort(value) {
   return SORT_VALUES.has(String(value || '')) ? String(value) : 'relevance';
 }
 
-function buildContentFilter({ q, regex, useTextIndex, area }) {
+function buildContentFilter({ q, regex, useTextIndex, area, since }) {
   const filter = {
     status: 'published',
     visibility: 'public',
@@ -28,11 +30,15 @@ function buildContentFilter({ q, regex, useTextIndex, area }) {
   }
 
   if (area) filter.primaryAreaId = area;
+  if (since) filter.publishedAt = { $gte: since, $lte: new Date() };
 
   return filter;
 }
 
 function buildContentSort({ useTextIndex, sort }) {
+  if (sort === 'popular') {
+    return { viewCount: -1, publishedAt: -1, _id: -1 };
+  }
   if (sort === 'newest' || !useTextIndex) {
     return { publishedAt: -1, createdAt: -1, _id: -1 };
   }
@@ -71,8 +77,9 @@ export async function search(query) {
       : (await Area.findOne({ slug: areaInput.toLowerCase(), isActive: true }).select('_id').lean())?._id
     : null;
   const { page, limit, skip } = parsePagination(query);
+  const { since, propertyListingFilter } = parseSearchFilters(query);
 
-  if (!q && !areaInput) {
+  if (!q && !areaInput && !propertyListingFilter && !since) {
     return {
       items: [],
       users: [],
@@ -102,7 +109,7 @@ export async function search(query) {
   const searchesContent = requestedType === 'all' || CONTENT_TYPE_SET.has(requestedType);
   // Mongo text-index search is the fast path. A bounded, escaped Vietnamese
   // regex fallback handles prefix searches and older content that text search misses.
-  const useTextIndex = Boolean(searchesContent && q && expanded === foldVietnamese(q) && expanded.length >= 2 && await Content.exists({
+  const useTextIndex = Boolean(!propertyListingFilter && sort !== 'popular' && searchesContent && q && expanded === foldVietnamese(q) && expanded.length >= 2 && await Content.exists({
     status: 'published', visibility: 'public', deletedAt: null,
     ...(area ? { primaryAreaId: area } : {}),
     $text: { $search: expanded },
@@ -113,6 +120,7 @@ export async function search(query) {
     regex,
     useTextIndex,
     area: areaInput ? area || new mongoose.Types.ObjectId('000000000000000000000000') : null,
+    since,
   });
   const selectedContentFilter = CONTENT_TYPE_SET.has(requestedType)
     ? { ...baseContentFilter, contentType: requestedType }
@@ -120,24 +128,33 @@ export async function search(query) {
   const userFilter = q ? buildUserFilter(regex) : null;
   const areaFilter = q ? buildAreaFilter(regex) : null;
 
-  const contentPromise = searchesContent
-    ? Content.find(selectedContentFilter)
-        .populate('authorId', 'username displayName')
-        .populate('primaryAreaId', 'name slug')
-        .populate('primaryCategoryId', 'name slug')
-        .populate(
-          'thumbnailMediaId',
-          'url secureUrl altText width height resourceType',
-        )
-        .sort(buildContentSort({ useTextIndex, sort }))
-        .skip(skip)
-        .limit(limit)
-        .lean()
-    : Promise.resolve([]);
+  const propertyResultsPromise = propertyListingFilter
+    ? findFilteredProperties({
+      contentFilter: selectedContentFilter,
+      listingFilter: propertyListingFilter,
+      sort, skip, limit,
+    })
+    : null;
 
-  const selectedContentTotalPromise = searchesContent
-    ? Content.countDocuments(selectedContentFilter)
-    : Promise.resolve(0);
+  const contentPromise = propertyResultsPromise
+    ? propertyResultsPromise.then((result) => result.items)
+    : searchesContent
+      ? Content.find(selectedContentFilter)
+          .populate('authorId', 'username displayName')
+          .populate('primaryAreaId', 'name slug')
+          .populate('primaryCategoryId', 'name slug')
+          .populate('thumbnailMediaId', 'url secureUrl altText width height resourceType')
+          .sort(buildContentSort({ useTextIndex, sort }))
+          .skip(skip)
+          .limit(limit)
+          .lean()
+      : Promise.resolve([]);
+
+  const selectedContentTotalPromise = propertyResultsPromise
+    ? propertyResultsPromise.then((result) => result.total)
+    : searchesContent
+      ? Content.countDocuments(selectedContentFilter)
+      : Promise.resolve(0);
 
   const contentFacetPromises = CONTENT_TYPES.map((contentType) =>
     Content.countDocuments({ ...baseContentFilter, contentType }),
@@ -188,6 +205,7 @@ export async function search(query) {
       Number(contentFacetValues[index] || 0),
     ]),
   );
+  if (propertyResultsPromise) contentFacets.property = selectedContentTotal;
   const contentTotal = Object.values(contentFacets).reduce(
     (sum, value) => sum + Number(value || 0),
     0,
@@ -214,7 +232,9 @@ export async function search(query) {
     areas,
     facets,
     sort,
-    suggestion: q && expanded !== foldVietnamese(q) ? expanded : null,
+    suggestion: q && expanded !== foldVietnamese(q)
+      ? expanded
+      : q && selectedTotal === 0 ? spellingSuggestion(q) : null,
     meta: buildPaginationMeta({
       page,
       limit,

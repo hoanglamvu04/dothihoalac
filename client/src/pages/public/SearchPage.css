@@ -1223,3 +1223,36 @@
     grid-template-columns: 102px 1fr;
   }
 }
+
+
+.search-typeahead {
+  z-index: 2; position: relative; margin: 6px 0 12px;
+  border: 1px solid var(--search-border); border-radius: 12px;
+  background: #fff; box-shadow: 0 8px 18px rgb(23 42 26 / 8%);
+  padding: 10px 14px;
+}
+.search-typeahead > strong { display: block; color: var(--search-text); font-size: .86rem; padding-bottom: 4px; }
+.search-typeahead ul { list-style: none; padding: 0; margin: 0; }
+.search-typeahead li + li { border-top: 1px solid var(--search-border); }
+.search-typeahead a { display: flex; align-items: center; gap: 10px; padding: 9px 2px; color: var(--search-ink); text-decoration: none; }
+.search-typeahead a:hover, .search-typeahead a:focus-visible { color: var(--search-green); text-decoration: underline; }
+.search-typeahead a span { flex: 1; min-width: 0; }
+.search-typeahead a small { color: var(--search-muted); white-space: nowrap; }
+.search-typeahead-correction { margin: 6px 0 10px; color: var(--search-text); }
+.search-typeahead-correction button, .search-empty__correction button {
+  border: 0; background: transparent; font-weight: 700;
+  color: var(--search-green); text-decoration: underline; cursor: pointer;
+}
+
+
+.search-advanced-filter { display: flex; flex-direction: column; gap: 10px; }
+.search-advanced-filter h2 { margin-bottom: 2px; }
+.search-advanced-filter label { display: flex; flex-direction: column; gap: 5px; min-width: 0; }
+.search-advanced-filter label span { font-size: .83rem; color: var(--search-text); }
+.search-advanced-filter select, .search-advanced-filter input {
+  width: 100%; min-width: 0; border: 1px solid var(--search-border);
+  border-radius: 8px; background: white; padding: 9px 8px; color: var(--search-ink);
+}
+.search-advanced-filter__pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+.search-advanced-filter small { color: var(--search-text); line-height: 1.4; }
+.search-advanced-filter__apply { padding: 10px 12px; color: white; background: var(--search-green); border: 0; border-radius: 8px; font-weight: 700; }
