@@ -337,7 +337,7 @@ test('MongoDB E2E: saved searches, index constraints, tenant isolation, alerts',
       deletedAt: null, readAt: null,
       createdAt: new Date(), updatedAt: new Date(),
     };
-    const duplicateRows = await Notification.collection.insertMany([fake, fake]);
+    const duplicateRows = await Notification.collection.insertMany([{ ...fake }, { ...fake }]);
     report = await readDiscoveryPreflight(mongoose.connection.db);
     assert.equal(report.notificationDuplicates.groups, 1);
     assert.equal(report.notificationDuplicates.extraRecords, 1);
