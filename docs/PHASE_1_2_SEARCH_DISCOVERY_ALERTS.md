@@ -36,21 +36,21 @@ Phạm vi: `hoanglamvu04/dothihoalac`. Nhánh này xuất phát từ `main` và 
 ## Nghiệm thu MongoDB thực, gate staging (CI 2026-11-24)
 
 Bổ sung job **MongoDB saved-search acceptance (isolated DB)** trên GitHub Actions:
-- MongoDB 7.0 container riêng, database \`dthl_pr78_ci\`, không dùng dữ liệu production; chỉ chạy khi \`NODE_ENV=test\`, \`DTHL_MONGO_E2E=true\` và URI localhost đúng tên CI.
+- MongoDB 7.0 container riêng, database `dthl_pr78_ci`, không dùng dữ liệu production; chỉ chạy khi `NODE_ENV=test`, `DTHL_MONGO_E2E=true` và URI localhost đúng tên CI.
 - Kết nối hai user test qua JWT thật: kiểm tra tạo và tìm kiếm trùng, quyền A/B cho GET/PATCH/DELETE, bật/tạm dừng, thông báo in-app.
 - Tạo nội dung published/private/pending/ngoài khu vực/tin cũ. Chỉ bài phù hợp và công khai được thông báo.
 - Gửi cùng một tin khớp nhiều bộ lọc: MongoDB partial unique index chống gửi lặp sau retry. Hai tài khoản nhận thông báo độc lập. Người dùng có thể tắt notification preference.
-- Kiểm tra index compound \`saved_search_per_user_unique\` và partial \`unique_notification_dedupe\` trên database thực.
+- Kiểm tra index compound `saved_search_per_user_unique` và partial `unique_notification_dedupe` trên database thực.
 - Job CI chạy lệnh kiểm tra index **chỉ đọc** để chứng minh quy trình nghiệm thu có thể dùng lại.
 
 ### Lệnh kiểm tra index trên staging/VPS (chỉ đọc)
 
-Trong thư mục \`server\` đã có \`.env\` của môi trường cần kiểm tra:
+Trong thư mục `server` đã có `.env` của môi trường cần kiểm tra:
 
-\`\`\`bash
+```bash
 node scripts/verify-discovery-indexes.mjs
-\`\`\`
+```
 
-Script chỉ kết nối và truy vấn danh sách index. Nó **không chạy migration**, không tạo index, không sửa schema, không tiết lộ URL kết nối hay dữ liệu cá nhân trong output. \`status: PASS\` nghĩa là hai index cần thiết đã tồn tại; \`FAIL\` nghĩa là chưa đủ điều kiện nghiệm thu. Cần tạo index đúng quy trình bảo trì **sau khi sao lưu và kiểm tra dữ liệu trùng**, không tự tạo trong script.
+Script chỉ kết nối và truy vấn danh sách index. Nó **không chạy migration**, không tạo index, không sửa schema, không tiết lộ URL kết nối hay dữ liệu cá nhân trong output. `status: PASS` nghĩa là hai index cần thiết đã tồn tại; `FAIL` nghĩa là chưa đủ điều kiện nghiệm thu. Cần tạo index đúng quy trình bảo trì **sau khi sao lưu và kiểm tra dữ liệu trùng**, không tự tạo trong script.
 
 **Phân biệt rõ:** MongoDB 7 CI hoàn toàn đã được kiểm thử; MongoDB trên VPS/staging thực tế chưa được kiểm tra bằng kết nối trong ChatGPT. Giữ PR ở Draft cho đến khi nghiệm thu staging riêng.
