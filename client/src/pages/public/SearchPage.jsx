@@ -639,10 +639,8 @@ export default function SearchPage() {
                           : <>Không tìm thấy kết quả cho <b>“{q || area}”</b>.</>}
                   </p>
                   <div>
-                    {type !== 'user' && type !== 'area' ? (
-                      {!['minPrice', 'maxPrice', 'minArea', 'maxArea', 'propertyType', 'transactionType'].some((key) => searchParams.has(key)) ? (
-                        <SaveSearchButton query={q} contentType={type} area={area} />
-                      ) : null}
+                    {type !== 'user' && type !== 'area' && (q || area) && !hasAdvancedCriteria ? (
+                      <SaveSearchButton query={q} contentType={type} area={area} />
                     ) : null}
                      <span>{selectedType.label}</span>
                     {contentSortEnabled ? (
