@@ -464,6 +464,37 @@ test('MongoDB E2E: saved searches, index constraints, tenant isolation, alerts',
       !entry.property?.contactPhone && !entry.property?.contactEmail));
   });
 
+  await t.test('notification preferences are per-user, with validated payloads and no privilege escalation', async () => {
+    await request(app).get('/api/v1/admin/system/discovery-overview').expect(401);
+    const forbidden = await request(app)
+      .get('/api/v1/admin/system/discovery-overview').set(b).expect(403);
+    assert.equal(forbidden.body.code, 'PERMISSION_FORBIDDEN');
+
+    const prefUrl = '/api/v1/notification-preferences';
+    const turnedOff = await request(app).patch(prefUrl).set(b).send({
+      preferences: [{
+        notificationType: 'saved_search_match', inAppEnabled: false,
+        userId: userA._id, _id: new mongoose.Types.ObjectId(),
+      }],
+    }).expect(200);
+    assert.ok(turnedOff.body.data.find((p) => p.notificationType === 'saved_search_match' && p.inAppEnabled === false));
+    const stored = await NotificationPreference.findOne({ userId: userB._id, notificationType: 'saved_search_match' }).lean();
+    assert.equal(stored.inAppEnabled, false);
+    assert.equal(await NotificationPreference.countDocuments({
+      userId: userA._id, notificationType: 'saved_search_match', inAppEnabled: true,
+    }), 0);
+
+    const invalid = await request(app).patch(prefUrl).set(b).send({
+      preferences: [{ notificationType: 'saved_search_match', inAppEnabled: 'false' }],
+    }).expect(422);
+    assert.equal(invalid.body.code, 'NOTIFICATION_PREFERENCES_INVALID');
+    await request(app).patch(prefUrl).set(b).send({
+      preferences: [{ notificationType: 'saved_search_match', inAppEnabled: true }],
+    }).expect(200);
+    const read = await request(app).get(prefUrl).set(b).expect(200);
+    assert.ok(read.body.data.some((p) => p.notificationType === 'saved_search_match' && p.inAppEnabled === true));
+  });
+
   await t.test('same-user duplicate subscriptions are rejected by MongoDB index, not only application code', async () => {
     const existing = await SavedSearch.findById(savedB._id).lean();
     await assert.rejects(
