@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Bell, BellOff, PauseCircle, PlayCircle, Search, Trash2 } from 'lucide-react';
+import { Bell, BellOff, PauseCircle, PlayCircle, Search, Sparkles, Trash2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import Seo from '../../components/common/Seo';
 import EmptyState from '../../components/common/EmptyState';
 import { LoadingBlock } from '../../components/common/Loading';
 import { savedSearchApi } from '../../api/savedSearch.api';
+import { searchApi } from '../../api/content.api';
+import { contentPath } from '../../utils/content';
 import { apiErrorMessage } from '../../api/http';
 import { useToast } from '../../context/ToastContext';
 import './AccountPages.css';
@@ -20,6 +22,8 @@ export default function SavedSearchesPage() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [workingId, setWorkingId] = useState('');
+  const [previews, setPreviews] = useState(null);
+  const [previewLoading, setPreviewLoading] = useState(false);
 
   const load = useCallback(async () => {
     setLoading(true);
@@ -44,6 +48,38 @@ export default function SavedSearchesPage() {
       toast.error(apiErrorMessage(error));
     } finally {
       setWorkingId('');
+    }
+  };
+
+  const loadSuggestions = async () => {
+    if (previewLoading) return;
+    setPreviewLoading(true);
+    try {
+      // Only run after the user's explicit click. No persistent profiling.
+      const relevant = items.filter((item) => item.isActive).slice(0, 3);
+      const responses = await Promise.allSettled(relevant.map((item) =>
+        searchApi.run({
+          q: item.query || undefined,
+          area: item.areaSlug || undefined,
+          type: item.contentType,
+          sort: 'newest', page: 1, limit: 6,
+        }),
+      ));
+      const seen = new Set();
+      const matched = [];
+      for (const response of responses) {
+        if (response.status !== 'fulfilled') continue;
+        for (const content of response.value.data?.contents || []) {
+          if (!content?._id || seen.has(content._id)) continue;
+          seen.add(content._id);
+          matched.push(content);
+        }
+      }
+      setPreviews(matched.slice(0, 9));
+    } catch (error) {
+      toast.error(apiErrorMessage(error));
+    } finally {
+      setPreviewLoading(false);
     }
   };
 
@@ -107,6 +143,31 @@ export default function SavedSearchesPage() {
           <EmptyState title="Chưa theo dõi tìm kiếm nào" description="Hãy tìm kiếm chủ đề hoặc ghé trang khu vực và chọn Theo dõi tin mới." actionLabel="Khám phá" actionTo="/tim-kiem" />
         )}
       </section>
+      {items.some((item) => item.isActive) ? (
+        <section className="account-page-card saved-searches-suggestions">
+          <div className="saved-searches-suggestions__heading">
+            <div>
+              <h3><Sparkles size={19} /> Gợi ý từ bộ lọc đã lưu</h3>
+              <p>Chỉ lấy nội dung công khai khi bạn bấm xem. Không tự theo dõi hành vi hay gửi dữ liệu tới bên thứ ba.</p>
+            </div>
+            <button type="button" disabled={previewLoading} onClick={loadSuggestions}>
+              {previewLoading ? 'Đang tải…' : 'Xem gợi ý'}
+            </button>
+          </div>
+          {previews !== null ? (
+            previews.length ? (
+              <ul className="saved-searches-suggestions__results">
+                {previews.map((item) => (
+                  <li key={item._id}>
+                    <Link to={contentPath(item)}>{item.title}</Link>
+                    <small>{LABELS[item.contentType] || 'Nội dung'}</small>
+                  </li>
+                ))}
+              </ul>
+            ) : <p>Chưa có nội dung công khai phù hợp lúc này.</p>
+          ) : null}
+        </section>
+      ) : null}
     </div>
   );
 }
