@@ -79,7 +79,7 @@ export async function search(query) {
   const { page, limit, skip } = parsePagination(query);
   const { since, propertyListingFilter } = parseSearchFilters(query);
 
-  if (!q && !areaInput) {
+  if (!q && !areaInput && !propertyListingFilter && !since) {
     return {
       items: [],
       users: [],
