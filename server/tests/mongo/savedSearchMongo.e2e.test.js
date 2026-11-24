@@ -12,7 +12,7 @@ test('MongoDB E2E: saved searches, index constraints, tenant isolation, alerts',
   const uri = process.env.MONGO_URI || '';
   assert.match(uri, /^mongodb:\/\/(?:127\.0\.0\.1|localhost):27017\/dthl_pr78_ci(?:_[a-z0-9_-]+)?$/i);
 
-  const [{ default: mongoose }, { default: request }, { createApp }, tokens, models, svc, { sendSavedSearchAlerts }] =
+  const [{ default: mongoose }, { default: request }, { createApp }, tokens, models, { sendSavedSearchAlerts }] =
     await Promise.all([
       import('mongoose'),
       import('supertest'),
@@ -26,7 +26,6 @@ test('MongoDB E2E: saved searches, index constraints, tenant isolation, alerts',
         Notification: (await import('../../src/modules/notifications/notification.model.js')).default,
         NotificationPreference: (await import('../../src/modules/notifications/notificationPreference.model.js')).default,
       })),
-      import('../../src/services/notification.service.js'),
       import('../../src/jobs/savedSearchAlerts.job.js'),
     ]);
 
@@ -219,6 +218,88 @@ test('MongoDB E2E: saved searches, index constraints, tenant isolation, alerts',
     assert.equal(await Notification.countDocuments({ recipientId: userA._id }), 1);
     assert.equal(await Notification.countDocuments({ recipientId: userB._id }), 2);
     assert.equal(await Notification.countDocuments({ recipientId: userB._id, targetId: next._id }), 1);
+  });
+
+  await t.test('leased search is skipped across workers, expired lease recovers and pause clears lease', async () => {
+    const initialCount = await Notification.countDocuments({ recipientId: userB._id });
+    const pending = await Content.create({
+      authorId: userA._id, contentType: 'property', title: 'Bất động sản Hòa Lạc tin mới có khóa quét',
+      slug: 'e2e-leased-property', primaryAreaId: area._id,
+      status: 'published', visibility: 'public', publishedAt: new Date(Date.now() - 1500),
+    });
+    const cursor = new Date(Date.now() - 3000);
+    await SavedSearch.updateOne({ _id: savedB._id }, {
+      $set: {
+        lastScannedAt: cursor, lastScannedContentId: null,
+        scanLeaseToken: 'another-pm2-process',
+        scanLeaseUntil: new Date(Date.now() + 60000),
+      },
+    });
+    await sendSavedSearchAlerts();
+    assert.equal(await Notification.countDocuments({ recipientId: userB._id }), initialCount);
+    assert.equal((await SavedSearch.findById(savedB._id).select('+scanLeaseToken')).scanLeaseToken, 'another-pm2-process');
+
+    // Simulate a crashed worker: only expired leases can be acquired again.
+    await SavedSearch.updateOne({ _id: savedB._id }, {
+      $set: { scanLeaseUntil: new Date(Date.now() - 1000) },
+    });
+    await sendSavedSearchAlerts();
+    assert.equal(await Notification.countDocuments({
+      recipientId: userB._id, targetId: pending._id,
+    }), 1);
+    const afterScan = await SavedSearch.findById(savedB._id).select('+scanLeaseToken +scanLeaseUntil');
+    assert.equal(afterScan.scanLeaseToken, null);
+    assert.equal(afterScan.scanLeaseUntil, null);
+
+    // Pause while another worker holds an unexpired lease: invalidate its token.
+    await SavedSearch.updateOne({ _id: savedB._id }, { $set: {
+      scanLeaseToken: 'running-worker',
+      scanLeaseUntil: new Date(Date.now() + 60000),
+    } });
+    await request(app).patch(endpoint + '/' + savedB._id).set(b).send({ isActive: false }).expect(200);
+    const paused = await SavedSearch.findById(savedB._id).select('+scanLeaseToken +scanLeaseUntil');
+    assert.equal(paused.isActive, false);
+    assert.equal(paused.scanLeaseToken, null);
+    assert.equal(paused.scanLeaseUntil, null);
+    const before = await Notification.countDocuments({ recipientId: userB._id });
+    await Content.create({
+      authorId: userA._id, contentType: 'property', title: 'Bất động sản Hòa Lạc khi tạm dừng',
+      slug: 'e2e-paused-property', primaryAreaId: area._id,
+      status: 'published', visibility: 'public', publishedAt: new Date(Date.now() - 100),
+    });
+    await sendSavedSearchAlerts();
+    assert.equal(await Notification.countDocuments({ recipientId: userB._id }), before);
+
+    await request(app).patch(endpoint + '/' + savedB._id).set(b).send({ isActive: true }).expect(200);
+    await sendSavedSearchAlerts();
+    // Resume starts at "now", it must not backfill paused content.
+    assert.equal(await Notification.countDocuments({ recipientId: userB._id }), before);
+  });
+
+  await t.test('backlog of 20 items with identical publishedAt is fully paged without losing the cursor', async () => {
+    const timestamp = new Date(Date.now() - 500);
+    const batch = await Content.insertMany(Array.from({ length: 20 }, (_, i) => ({
+      authorId: userA._id, contentType: 'property',
+      title: 'Bất động sản Hòa Lạc lô test ' + i,
+      slug: 'e2e-backlog-property-' + i, primaryAreaId: area._id,
+      status: 'published', visibility: 'public', publishedAt: timestamp,
+    })));
+    await SavedSearch.updateOne({ _id: savedB._id }, { $set: {
+      lastScannedAt: new Date(timestamp.getTime() - 1000),
+      lastScannedContentId: null,
+    } });
+    for (let i = 0; i < 3; i += 1) await sendSavedSearchAlerts();
+    const matching = await Notification.find({
+      recipientId: userB._id,
+      targetId: { $in: batch.map((item) => item._id) },
+    }).lean();
+    assert.equal(matching.length, batch.length);
+    assert.equal(new Set(matching.map((item) => String(item.targetId))).size, batch.length);
+    const finished = await SavedSearch.findById(savedB._id)
+      .select('+scanLeaseToken +scanLeaseUntil').lean();
+    assert.equal(finished.lastScannedContentId, null);
+    assert.equal(finished.scanLeaseToken, null);
+    assert.equal(finished.scanLeaseUntil, null);
   });
 
   await t.test('same-user duplicate subscriptions are rejected by MongoDB index, not only application code', async () => {

@@ -54,3 +54,13 @@ node scripts/verify-discovery-indexes.mjs
 Script chỉ kết nối và truy vấn danh sách index. Nó **không chạy migration**, không tạo index, không sửa schema, không tiết lộ URL kết nối hay dữ liệu cá nhân trong output. `status: PASS` nghĩa là hai index cần thiết đã tồn tại; `FAIL` nghĩa là chưa đủ điều kiện nghiệm thu. Cần tạo index đúng quy trình bảo trì **sau khi sao lưu và kiểm tra dữ liệu trùng**, không tự tạo trong script.
 
 **Phân biệt rõ:** MongoDB 7 CI hoàn toàn đã được kiểm thử; MongoDB trên VPS/staging thực tế chưa được kiểm tra bằng kết nối trong ChatGPT. Giữ PR ở Draft cho đến khi nghiệm thu staging riêng.
+
+
+## Hardening tiếp theo — PM2 worker, pause/resume và tách công tắc triển khai
+
+- \`SAVED_SEARCH_ALERTS_ENABLED=false\` là **mặc định**. \`SCHEDULER_ENABLED=true\` có thể tiếp tục vận hành các công việc cũ mà **không** vô tình bật phát thông báo tìm kiếm khi lên bản mới. Chỉ bật \`SAVED_SEARCH_ALERTS_ENABLED=true\` sau khi nghiệm thu index trên môi trường tương ứng.
+- Mỗi bộ lọc có scan lease gồm \`scanLeaseToken\`, \`scanLeaseUntil\` (120 giây). Lấy lease bằng \`findOneAndUpdate\` có điều kiện để một bộ lọc không bị quét đồng thời trên nhiều process; lease hết hạn tự cho phép retry nếu process bị dừng. Unique index thông báo tiếp tục chống gửi trùng.
+- Khi tạm dừng, bật lại hoặc xóa theo dõi, token bị vô hiệu. Job kiểm tra lease trước khi gửi mỗi thông báo, và chỉ cập nhật cursor khi token thuộc chính lượt quét hiện tại.
+- Giới hạn mỗi chu kỳ tối đa **80 bộ lọc**, mỗi bộ lọc **16 tin** và cursor \`(publishedAt, _id)\` giúp xử lý backlog nhiều tin cùng thời gian đăng mà không mất dữ liệu.
+- Kiểm thử E2E MongoDB bổ sung: lease đang bị process khác giữ → không quét; lease hết hạn → retry; pause vô hiệu lease; resume không backfill; 20 tin trùng thời điểm đăng → xử lý hết sau nhiều lượt. Không có cam kết "exactly once" ở mức xử lý, nhưng tạo notification có khóa unique và retry an toàn.
+- Kế hoạch staging: sao lưu dữ liệu, chạy \`node scripts/verify-discovery-indexes.mjs\`, kiểm tra quyền user A/B và tạm dừng/bật lại, sau đó mới bật cờ và giám sát log. Không có thao tác tự bật production trong PR.

@@ -6,6 +6,7 @@ import {
   deleteSavedSearch,
 } from '../../src/modules/savedSearches/savedSearch.service.js';
 import SavedSearch from '../../src/modules/savedSearches/savedSearch.model.js';
+import { env } from '../../src/config/env.js';
 import { buildSavedSearchContentFilter } from '../../src/jobs/savedSearchAlerts.job.js';
 
 test('Saved search input is normalized and not allowed without query or area', () => {
@@ -72,4 +73,23 @@ test('saved searches declare a per-user unique index', () => {
   const index = SavedSearch.schema.indexes().find(([keys]) =>
     keys.userId === 1 && keys.queryNormalized === 1 && keys.contentType === 1 && keys.areaId === 1);
   assert.equal(index?.[1]?.unique, true);
+});
+
+
+test('opt-in alert worker is disabled by default, even if maintenance jobs are enabled', () => {
+  assert.equal(env.SAVED_SEARCH_ALERTS_ENABLED, false);
+});
+
+test('all pause/resume operations invalidate an existing scan lease', async (t) => {
+  const id = '507f1f77bcf86cd799439012';
+  const userId = '507f1f77bcf86cd799439013';
+  const stub = t.mock.method(SavedSearch, 'findOneAndUpdate', async (_filter, update) => {
+    assert.equal(update.$set.scanLeaseToken, null);
+    assert.equal(update.$set.scanLeaseUntil, null);
+    return { _id: id, userId, isActive: update.$set.isActive };
+  });
+  for (const active of [false, true]) {
+    assert.equal((await setSavedSearchActive(userId, id, active)).isActive, active);
+  }
+  assert.equal(stub.mock.callCount(), 2);
 });
