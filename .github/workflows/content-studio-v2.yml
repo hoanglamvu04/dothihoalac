@@ -143,6 +143,7 @@ jobs:
           src/modules/notifications/notification.model.js
           src/modules/savedSearches/savedSearch.model.js
           src/modules/savedSearches/savedSearch.service.js
+          src/modules/savedSearches/discoveryReadiness.js
           src/modules/savedSearches/savedSearch.routes.js
           src/modules/comments/comment.model.js
           src/modules/comments/comment.service.js
@@ -261,3 +262,5 @@ jobs:
         run: node --test --test-reporter=spec tests/mongo/savedSearchMongo.e2e.test.js
       - name: Read-only release index audit against isolated MongoDB
         run: node scripts/verify-discovery-indexes.mjs
+      - name: Read-only duplicate and index preflight against isolated MongoDB
+        run: node scripts/preflight-discovery-release.mjs

@@ -1,5 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readDiscoveryPreflight } from '../../src/modules/savedSearches/discoveryReadiness.js';
 
 const enabled = process.env.DTHL_MONGO_E2E === 'true';
 
@@ -300,6 +301,86 @@ test('MongoDB E2E: saved searches, index constraints, tenant isolation, alerts',
     assert.equal(finished.lastScannedContentId, null);
     assert.equal(finished.scanLeaseToken, null);
     assert.equal(finished.scanLeaseUntil, null);
+  });
+
+  await t.test('read-only preflight finds duplicate keys and worker pauses until both MongoDB unique indexes are present', async () => {
+    const publishedAt = new Date(Date.now() - 1000);
+    const content = await Content.create({
+      authorId: userA._id, contentType: 'property',
+      title: 'Bất động sản Hòa Lạc tin cần khóa unique index',
+      slug: 'e2e-index-gated-property',
+      primaryAreaId: area._id, status: 'published', visibility: 'public',
+      publishedAt,
+    });
+    await SavedSearch.updateOne({ _id: savedB._id }, { $set: {
+      lastScannedAt: new Date(publishedAt.getTime() - 1000),
+      lastScannedContentId: null,
+    } });
+    const before = await Notification.countDocuments({ recipientId: userB._id });
+    const cursorBefore = (await SavedSearch.findById(savedB._id).lean()).lastScannedAt;
+
+    // This CI database is disposable and contains only test fixtures.
+    await Notification.collection.dropIndex('unique_notification_dedupe');
+    await sendSavedSearchAlerts();
+    assert.equal(await Notification.countDocuments({ recipientId: userB._id }), before);
+    assert.equal((await SavedSearch.findById(savedB._id).lean()).lastScannedAt.getTime(), cursorBefore.getTime());
+    let report = await readDiscoveryPreflight(mongoose.connection.db);
+    assert.equal(report.status, 'FAIL');
+    assert.equal(report.notificationDedupeUnique, false);
+
+    const key = 'ci-collision:' + new mongoose.Types.ObjectId();
+    const fake = {
+      recipientId: userA._id,
+      notificationType: 'saved_search_match',
+      dedupeKey: key,
+      title: 'Test duplicate key only',
+      deletedAt: null, readAt: null,
+      createdAt: new Date(), updatedAt: new Date(),
+    };
+    const duplicateRows = await Notification.collection.insertMany([fake, fake]);
+    report = await readDiscoveryPreflight(mongoose.connection.db);
+    assert.equal(report.notificationDuplicates.groups, 1);
+    assert.equal(report.notificationDuplicates.extraRecords, 1);
+    await Notification.collection.deleteMany({
+      _id: { $in: Object.values(duplicateRows.insertedIds) },
+    });
+    await Notification.collection.createIndex(
+      { recipientId: 1, dedupeKey: 1 },
+      {
+        name: 'unique_notification_dedupe',
+        unique: true,
+        partialFilterExpression: { dedupeKey: { $type: 'string' } },
+      },
+    );
+    report = await readDiscoveryPreflight(mongoose.connection.db);
+    assert.equal(report.status, 'PASS');
+    await sendSavedSearchAlerts();
+    assert.equal(await Notification.countDocuments({ recipientId: userB._id, targetId: content._id }), 1);
+    await sendSavedSearchAlerts();
+    assert.equal(await Notification.countDocuments({ recipientId: userB._id, targetId: content._id }), 1);
+  });
+
+  await t.test('preflight detects duplicate saved searches without exposing account or query keys', async () => {
+    const source = await SavedSearch.findById(savedB._id).lean();
+    await SavedSearch.collection.dropIndex('saved_search_per_user_unique');
+    const testDuplicate = await SavedSearch.collection.insertOne({
+      userId: source.userId, queryNormalized: source.queryNormalized,
+      contentType: source.contentType, areaId: source.areaId,
+      query: 'CI duplicate record', isActive: false,
+    });
+    let report = await readDiscoveryPreflight(mongoose.connection.db);
+    assert.equal(report.savedSearchUnique, false);
+    assert.equal(report.savedSearchDuplicates.groups, 1);
+    assert.equal(report.savedSearchDuplicates.extraRecords, 1);
+    assert.equal(JSON.stringify(report).includes('CI duplicate record'), false);
+    assert.equal(JSON.stringify(report).includes(String(userB._id)), false);
+    await SavedSearch.collection.deleteOne({ _id: testDuplicate.insertedId });
+    await SavedSearch.collection.createIndex(
+      { userId: 1, queryNormalized: 1, contentType: 1, areaId: 1 },
+      { name: 'saved_search_per_user_unique', unique: true },
+    );
+    report = await readDiscoveryPreflight(mongoose.connection.db);
+    assert.equal(report.status, 'PASS');
   });
 
   await t.test('same-user duplicate subscriptions are rejected by MongoDB index, not only application code', async () => {

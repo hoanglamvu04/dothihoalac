@@ -64,3 +64,22 @@ Script chỉ kết nối và truy vấn danh sách index. Nó **không chạy mi
 - Giới hạn mỗi chu kỳ tối đa **80 bộ lọc**, mỗi bộ lọc **16 tin** và cursor \`(publishedAt, _id)\` giúp xử lý backlog nhiều tin cùng thời gian đăng mà không mất dữ liệu.
 - Kiểm thử E2E MongoDB bổ sung: lease đang bị process khác giữ → không quét; lease hết hạn → retry; pause vô hiệu lease; resume không backfill; 20 tin trùng thời điểm đăng → xử lý hết sau nhiều lượt. Không có cam kết "exactly once" ở mức xử lý, nhưng tạo notification có khóa unique và retry an toàn.
 - Kế hoạch staging: sao lưu dữ liệu, chạy \`node scripts/verify-discovery-indexes.mjs\`, kiểm tra quyền user A/B và tạm dừng/bật lại, sau đó mới bật cờ và giám sát log. Không có thao tác tự bật production trong PR.
+
+
+## Release gate — kiểm tra dữ liệu trùng và quyền phát thông báo (2026-11-24)
+
+Thêm công cụ **preflight chỉ đọc** trong `server`:
+
+```bash
+node scripts/preflight-discovery-release.mjs
+```
+
+Công cụ kiểm tra **index MongoDB thực**, số nhóm trùng và số bản ghi dư đối với cả 2 cặp khóa:
+- `savedsearches`: `userId + queryNormalized + contentType + areaId`
+- `notifications`: `recipientId + dedupeKey` với partial filter `dedupeKey` kiểu string
+
+Output chỉ có trạng thái PASS/FAIL và **số lượng**, tuyệt đối không ghi ID người dùng, từ khóa, tài khoản hay connection URI. Không gọi `createIndexes`, không ghi/xóa bất kỳ bản ghi nào. Nếu báo trùng, xử lý theo quy trình rà soát/deduplicate riêng có backup và kiểm tra thủ công; không tự động xóa.
+
+**Fail closed:** worker `sendSavedSearchAlerts` cũng kiểm tra hai index thực ở mỗi lượt chạy. Nếu thiếu index hoặc DB chưa sẵn sàng, bỏ qua lượt phát thông báo **không thay đổi cursor**. Sau khi index được khôi phục, lượt chạy tiếp theo tiếp tục quét an toàn. Tất cả được kiểm thử trên MongoDB 7 riêng của GitHub Actions bằng cách gỡ/khôi phục index **chỉ trong CI**, không đụng production.
+
+`SAVED_SEARCH_ALERTS_ENABLED=false` vẫn là mặc định. Preflight PASS trên MongoDB CI không có nghĩa index của MongoDB staging/VPS đã được nghiệm thu.
