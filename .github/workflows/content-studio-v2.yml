@@ -259,3 +259,5 @@ jobs:
       - run: npm ci --no-audit --no-fund
       - name: Verify real MongoDB indexes, auth, isolation, alerts and dedupe
         run: node --test --test-reporter=spec tests/mongo/savedSearchMongo.e2e.test.js
+      - name: Read-only release index audit against isolated MongoDB
+        run: node scripts/verify-discovery-indexes.mjs
