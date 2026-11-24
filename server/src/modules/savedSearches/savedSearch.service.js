@@ -64,6 +64,8 @@ export async function createSavedSearch(userId, input) {
       existing.isActive = true;
       existing.lastScannedAt = new Date();
       existing.lastScannedContentId = null;
+      existing.scanLeaseToken = null;
+      existing.scanLeaseUntil = null;
       await existing.save();
     }
     return existing;
@@ -97,6 +99,9 @@ export async function setSavedSearchActive(userId, id, active) {
     {
       $set: {
         isActive: active,
+        // Invalidate in-flight workers on pause, resume or an explicit retry.
+        scanLeaseToken: null,
+        scanLeaseUntil: null,
         ...(active ? { lastScannedAt: new Date(), lastScannedContentId: null } : {}),
       },
     },

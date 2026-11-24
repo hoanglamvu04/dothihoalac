@@ -329,6 +329,8 @@ const schema = z
       .default(30),
 
     SCHEDULER_ENABLED: boolFromString.default(true),
+    // Rollout gate: never start new user-facing alerts just because maintenance is enabled.
+    SAVED_SEARCH_ALERTS_ENABLED: boolFromString.default(false),
   })
   .superRefine((value, ctx) => {
     if (

@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import Content from '../modules/contents/content.model.js';
 import SavedSearch from '../modules/savedSearches/savedSearch.model.js';
 import { vietnameseSearchRegex } from '../utils/vietnameseSearch.js';
@@ -12,6 +13,8 @@ const PATH_BY_TYPE = {
   job: 'viec-lam',
 };
 const BATCH_SIZE = 16;
+const SEARCHES_PER_RUN = 80;
+const LEASE_MS = 120_000;
 let running = false;
 
 export function buildSavedSearchContentFilter(search, now = new Date()) {
@@ -38,21 +41,78 @@ export function buildSavedSearchContentFilter(search, now = new Date()) {
   };
 }
 
+async function acquireLease(search) {
+  const now = new Date();
+  const token = randomUUID();
+  return SavedSearch.findOneAndUpdate(
+    {
+      _id: search._id,
+      userId: search.userId,
+      isActive: true,
+      $or: [{ scanLeaseUntil: null }, { scanLeaseUntil: { $lte: now } }],
+    },
+    {
+      $set: {
+        scanLeaseToken: token,
+        scanLeaseUntil: new Date(now.getTime() + LEASE_MS),
+      },
+    },
+    { new: true },
+  ).select('+scanLeaseToken +scanLeaseUntil').lean();
+}
+
+async function leaseStillActive(search) {
+  return Boolean(await SavedSearch.exists({
+    _id: search._id,
+    userId: search.userId,
+    isActive: true,
+    scanLeaseToken: search.scanLeaseToken,
+    scanLeaseUntil: { $gt: new Date() },
+  }));
+}
+
+async function releaseLease(search) {
+  // Never release a newer worker's lease if an old worker has timed out.
+  await SavedSearch.updateOne(
+    { _id: search._id, scanLeaseToken: search.scanLeaseToken },
+    { $set: { scanLeaseUntil: null, scanLeaseToken: null } },
+  );
+}
+
 export async function sendSavedSearchAlerts() {
+  // In-process guard + DB lease: concurrent PM2 instances must not scan the
+  // same subscription simultaneously. Unique notification index is a fallback.
   if (running) return 0;
   running = true;
-  let notified = 0;
+  let processed = 0;
   try {
     const searches = await SavedSearch.find({ isActive: true })
-      .sort({ lastScannedAt: 1, _id: 1 }).limit(80).lean();
-    for (const search of searches) {
-      const now = new Date();
-      try {
-        const matches = await Content.find(buildSavedSearchContentFilter(search, now))
-          .select('_id title slug contentType publishedAt').sort({ publishedAt: 1, _id: 1 })
-          .limit(BATCH_SIZE).lean();
+      .sort({ lastScannedAt: 1, _id: 1 })
+      .limit(SEARCHES_PER_RUN)
+      .lean();
 
+    for (const snapshot of searches) {
+      let search = null;
+      try {
+        search = await acquireLease(snapshot);
+        if (!search) continue;
+
+        const now = new Date();
+        const matches = await Content.find(buildSavedSearchContentFilter(search, now))
+          .select('_id title slug contentType publishedAt')
+          .sort({ publishedAt: 1, _id: 1 })
+          .limit(BATCH_SIZE)
+          .lean();
+
+        let completed = true;
         for (const content of matches) {
+          // Pause/delete/reset immediately invalidates the lease. Re-check
+          // before each send so the scan stops without advancing its cursor.
+          if (!await leaseStillActive(search)) {
+            completed = false;
+            break;
+          }
+
           const section = PATH_BY_TYPE[content.contentType];
           if (!section || !content.slug) continue;
           await createNotification({
@@ -63,29 +123,49 @@ export async function sendSavedSearchAlerts() {
             title: 'Có nội dung mới phù hợp với tìm kiếm đã lưu',
             message: String(content.title || '').slice(0, 250),
             payload: { url: '/' + section + '/' + encodeURIComponent(content.slug) },
-            // Deduplicate across overlapping saved searches owned by the same user.
+            // Idempotent across overlapping filters and expired leases.
             dedupeKey: 'saved-search-match:' + content._id,
           });
-          notified += 1;
+          processed += 1;
         }
 
+        if (!completed) continue;
         const hasMore = matches.length === BATCH_SIZE;
         const last = matches[matches.length - 1];
+        // Cursor changes only if the same worker still owns an active lease.
+        // A pause/resume clears the token and starts a fresh cursor at resume.
         await SavedSearch.updateOne(
-          { _id: search._id, userId: search.userId, isActive: true },
+          {
+            _id: search._id,
+            userId: search.userId,
+            isActive: true,
+            scanLeaseToken: search.scanLeaseToken,
+            scanLeaseUntil: { $gt: new Date() },
+          },
           {
             $set: {
               lastScannedAt: hasMore ? last.publishedAt : now,
               lastScannedContentId: hasMore ? last._id : null,
+              scanLeaseToken: null,
+              scanLeaseUntil: null,
             },
           },
         );
       } catch (error) {
-        logger.warn({ err: error, savedSearchId: search._id }, 'Saved search alert check failed');
-        // Keep the cursor unchanged for retry. Already-sent alerts dedupe by unique key.
+        logger.warn({ err: error, savedSearchId: snapshot._id }, 'Saved search alert check failed');
+        // The cursor is unchanged on failure. Notification dedupe handles retry.
+      } finally {
+        if (search) {
+          try {
+            await releaseLease(search);
+          } catch (error) {
+            logger.warn({ err: error, savedSearchId: snapshot._id }, 'Saved search scan lease release failed');
+            // Lease expires automatically after LEASE_MS.
+          }
+        }
       }
     }
-    return notified;
+    return processed; // Attempted sends (including idempotent retries), not a delivery metric.
   } finally {
     running = false;
   }

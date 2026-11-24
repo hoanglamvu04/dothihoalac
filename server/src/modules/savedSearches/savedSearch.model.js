@@ -16,6 +16,9 @@ const schema = new mongoose.Schema({
   isActive: { type: Boolean, default: true },
   lastScannedAt: { type: Date, default: Date.now },
   lastScannedContentId: { type: mongoose.Schema.Types.ObjectId, default: null },
+  // Cross-process best-effort scan lease. Expiry recovers from worker crashes.
+  scanLeaseToken: { type: String, default: null, select: false },
+  scanLeaseUntil: { type: Date, default: null, select: false },
 }, { timestamps: true, collection: 'savedsearches' });
 
 schema.index(

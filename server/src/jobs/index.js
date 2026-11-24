@@ -30,7 +30,7 @@ export function startJobs() {
       await expireJobPosts();
       await cleanupTokens();
       await cleanupMedia();
-      await sendSavedSearchAlerts();
+      if (env.SAVED_SEARCH_ALERTS_ENABLED) await sendSavedSearchAlerts();
     } catch (error) {
       logger.error({ err: error }, 'Scheduled jobs failed');
     }
