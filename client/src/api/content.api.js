@@ -152,6 +152,7 @@ export const draftApi = {
 export const articleApi = {
   list: async (params = {}, config = {}) => unwrapList(await getList('/articles', params, config)),
   detail: async (slug, config = {}) => unwrap(await api.get(`/articles/${slug}`, config)),
+  related: async (slug, config = {}) => unwrap(await api.get(`/articles/${encodeURIComponent(slug)}/related`, config)),
   submitTip: async (payload) => unwrap(await api.post('/articles/tips', payload)),
 };
 

@@ -106,3 +106,13 @@
   .modal--xl { width: calc(100vw - 18px); }
   .moderation-review-content, .moderation-decision-panel { padding: 18px; }
 }
+
+
+/* P0 assisted moderation: advisory signals never make a publishing decision. */
+.moderation-risk-inline { display: inline-flex; align-items: center; gap: 6px; color: #9b5a14; font-size: 12px; font-weight: 700; margin-top: 6px; }
+.moderation-risk-panel { margin: 14px 0; padding: 14px 17px; border: 1px solid #e0bf84; border-radius: 12px; background: #fff9ee; color: #593d1b; }
+.moderation-risk-panel strong { display: flex; gap: 8px; align-items: center; }
+.moderation-risk-panel ul { margin: 8px 0; padding-left: 24px; }
+.moderation-risk-panel li { padding: 3px 0; }
+.moderation-risk-panel p { margin: 8px 0; }
+.moderation-risk-panel small { display: block; line-height: 1.5; }

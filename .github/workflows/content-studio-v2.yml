@@ -31,6 +31,7 @@ jobs:
         run: >-
           npx eslint
           src/main.jsx
+          src/api/savedSearch.api.js
           src/api/admin.api.js
           src/api/content.api.js
           src/api/interaction.api.js
@@ -39,6 +40,7 @@ jobs:
           src/api/user.api.js
           src/api/weather.api.js
           src/app/App.jsx
+          src/components/search/SaveSearchButton.jsx
           src/components/account/AccountContentNav.jsx
           src/components/ads/AdSlot.jsx
           src/components/community/DeferredCommunityQuickComposer.jsx
@@ -59,6 +61,7 @@ jobs:
           src/pages/account/ActivityPage.jsx
           src/pages/account/MyContentPage.jsx
           src/pages/account/NotificationsPage.jsx
+          src/pages/account/SavedSearchesPage.jsx
           src/pages/account/SessionsPage.jsx
           src/pages/admin/AdminArticlesPage.jsx
           src/pages/admin/AdminDashboardPage.jsx
@@ -80,12 +83,15 @@ jobs:
           src/pages/create/JobStudioPage.jsx
           src/pages/create/PropertyStudioAdapter.jsx
           src/pages/public/ArticleDetailPage.jsx
+          src/pages/public/AreaPage.jsx
           src/pages/public/ArticlesPage.jsx
           src/pages/public/HomePage.jsx
           src/pages/public/SearchPage.jsx
           src/utils/content.js
           src/utils/projects.js
           src/utils/imageUpload.js
+          src/utils/savedSearchMatch.mjs
+          src/utils/notificationNavigation.mjs
           src/utils/articleMedia.js
           src/utils/homeHero.js
           src/utils/propertyMap.js
@@ -96,7 +102,7 @@ jobs:
           src/components/community/CommunitySocialEditor.jsx
           src/components/forms/PropertyGalleryUploader.jsx
       - name: Test article images and featured news
-        run: node --test tests/articleMedia.test.mjs tests/homeHero.test.mjs tests/propertyMap.test.mjs tests/sitemapOutputDir.test.mjs
+        run: node --test tests/articleMedia.test.mjs tests/homeHero.test.mjs tests/propertyMap.test.mjs tests/sitemapOutputDir.test.mjs tests/savedSearchMatch.test.mjs tests/notificationNavigation.test.mjs
 
       - name: Validate safe production sitemap refresh script
         run: bash -n scripts/refresh-sitemap-production.sh
@@ -134,6 +140,11 @@ jobs:
           src/services/userActivity.service.js
           src/modules/auth/auth.controller.js
           src/modules/notifications/notification.service.js
+          src/modules/notifications/notification.model.js
+          src/modules/savedSearches/savedSearch.model.js
+          src/modules/savedSearches/savedSearch.service.js
+          src/modules/savedSearches/discoveryReadiness.js
+          src/modules/savedSearches/savedSearch.routes.js
           src/modules/comments/comment.model.js
           src/modules/comments/comment.service.js
           src/modules/reactions/reaction.service.js
@@ -141,6 +152,9 @@ jobs:
           src/modules/search/search.controller.js
           src/modules/search/search.routes.js
           src/modules/search/search.service.js
+          src/utils/vietnameseSearch.js
+          src/jobs/savedSearchAlerts.job.js
+          src/jobs/index.js
           src/jobs/expirePropertyListings.job.js
           src/jobs/expireJobPosts.job.js
           src/jobs/publishScheduledContent.job.js
@@ -161,6 +175,7 @@ jobs:
           src/modules/jobs/job.service.js
           src/modules/jobs/job.publicList.service.js
           src/modules/jobs/jobPost.model.js
+          src/modules/articles/article.related.service.js
           src/modules/articles/article.quality.js
           src/modules/articles/article.seoAudit.js
           src/modules/articles/article.seo.service.js
@@ -184,6 +199,7 @@ jobs:
           src/modules/moderation/moderation.controller.js
           src/modules/moderation/moderation.routes.js
           src/modules/moderation/moderation.service.js
+          src/modules/moderation/moderationRisk.service.js
           src/modules/roles/role.admin.controller.js
           src/modules/roles/role.admin.routes.js
           src/modules/roles/role.service.js
@@ -207,3 +223,44 @@ jobs:
         run: bash -n scripts/ensure-mongodb-database-tools.sh
 
       - run: npm test
+
+
+  mongo-e2e:
+    name: MongoDB saved-search acceptance (isolated DB)
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.adminCommand({ping:1})'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 15
+    defaults:
+      run:
+        working-directory: server
+    env:
+      NODE_ENV: test
+      DTHL_MONGO_E2E: 'true'
+      MONGO_URI: mongodb://127.0.0.1:27017/dthl_pr78_ci
+      JWT_ACCESS_SECRET: e2e-test-access-secret-000000000000000000000000
+      JWT_REFRESH_SECRET: e2e-test-refresh-secret-00000000000000000000000
+      ADMIN_PASSWORD: e2e-test-admin-password
+      UPLOAD_PROVIDER: local
+      CLOUDINARY_URL: cloudinary://123456789012345:test-api-secret@ci-e2e
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - name: Verify real MongoDB indexes, auth, isolation, alerts and dedupe
+        run: node --test --test-reporter=spec tests/mongo/savedSearchMongo.e2e.test.js
+      - name: Read-only release index audit against isolated MongoDB
+        run: node scripts/verify-discovery-indexes.mjs
+      - name: Read-only duplicate and index preflight against isolated MongoDB
+        run: node scripts/preflight-discovery-release.mjs

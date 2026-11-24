@@ -329,6 +329,9 @@ export default function ModerationQueuePage() {
                       >
                         <strong>{item.title}</strong>
                         <small>{item.summary || 'Không có mô tả ngắn.'}</small>
+                        {item.moderationRisk?.level !== 'clear' && item.moderationRisk?.flags?.length ? (
+                          <span className="moderation-risk-inline"><TriangleAlert size={14} /> Cần kiểm tra ({item.moderationRisk.flags.length})</span>
+                        ) : null}
                         <span><Eye size={14} /> Xem nhanh chi tiết</span>
                       </button>
                     </td>
@@ -383,6 +386,14 @@ export default function ModerationQueuePage() {
                 </div>
 
                 <h2>{reviewItem?.title}</h2>
+                {selected?.moderationRisk?.flags?.length ? (
+                  <div className="moderation-risk-panel" role="status">
+                    <strong><TriangleAlert size={18} /> Cảnh báo hỗ trợ kiểm duyệt</strong>
+                    <ul>{selected.moderationRisk.flags.map((flag) => <li key={flag}>{flag}</li>)}</ul>
+                    {selected.moderationRisk.duplicate ? <p>Có thể gần trùng: “{selected.moderationRisk.duplicate.title}” ({Math.round(selected.moderationRisk.duplicate.score * 100)}%).</p> : null}
+                    <small>Chỉ là tín hiệu tự động. Hãy đối chiếu nguồn và nội dung thực tế trước khi quyết định.</small>
+                  </div>
+                ) : null}
                 {reviewItem?.summary ? <p className="moderation-review-summary">{reviewItem.summary}</p> : null}
 
                 <div className="moderation-review-meta">

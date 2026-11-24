@@ -1,0 +1,95 @@
+import test from 'node:test';
+import assert from 'node:assert/strict';
+import {
+  parseSavedSearchInput,
+  setSavedSearchActive,
+  deleteSavedSearch,
+} from '../../src/modules/savedSearches/savedSearch.service.js';
+import SavedSearch from '../../src/modules/savedSearches/savedSearch.model.js';
+import { env } from '../../src/config/env.js';
+import { buildSavedSearchContentFilter } from '../../src/jobs/savedSearchAlerts.job.js';
+
+test('Saved search input is normalized and not allowed without query or area', () => {
+  assert.deepEqual(parseSavedSearchInput({ query: ' Hòa Lạc ', contentType: 'property' }), {
+    query: 'Hòa Lạc', queryNormalized: 'hoa lac', contentType: 'property', area: '',
+  });
+  assert.throws(() => parseSavedSearchInput({}), (error) => error.code === 'SAVED_SEARCH_EMPTY');
+  assert.throws(() => parseSavedSearchInput({ query: 'a' }), (error) => error.code === 'SAVED_SEARCH_QUERY_SHORT');
+  assert.throws(() => parseSavedSearchInput({ query: 'abc', contentType: 'user' }), (error) => error.code === 'SAVED_SEARCH_INVALID');
+  assert.throws(() => parseSavedSearchInput(null), (error) => error.code === 'SAVED_SEARCH_INVALID');
+  assert.throws(() => parseSavedSearchInput({ query: '!!!' }), (error) => error.code === 'SAVED_SEARCH_INVALID');
+  assert.deepEqual(parseSavedSearchInput({ area: 'thach-that' }).query, '');
+});
+
+test('Alert query never reads nonpublic, older or cross-type content', () => {
+  const from = new Date('2026-11-20T00:00:00Z');
+  const filter = buildSavedSearchContentFilter({
+    queryNormalized: 'hoa lac', contentType: 'job', areaId: 'area1', lastScannedAt: from,
+  }, new Date('2026-11-21T00:00:00Z'));
+  assert.equal(filter.status, 'published');
+  assert.equal(filter.visibility, 'public');
+  assert.equal(filter.deletedAt, null);
+  assert.equal(filter.contentType, 'job');
+  assert.equal(filter.primaryAreaId, 'area1');
+  assert.ok(filter.$and[0].publishedAt.$gt);
+  assert.equal(filter.$and[1].$or[0].title.test('Việc làm Hòa Lạc'), true);
+});
+
+test('Cursor for tied timestamps has id tie-breaker and survives backlogs', () => {
+  const filter = buildSavedSearchContentFilter({
+    queryNormalized: '', contentType: 'all', areaId: null,
+    lastScannedAt: new Date('2026-11-20T00:00:00Z'),
+    lastScannedContentId: '507f1f77bcf86cd799439011',
+  }, new Date('2026-11-21T00:00:00Z'));
+  assert.equal(filter.$and[0].$or.length, 2);
+  assert.deepEqual(filter.$and[0].$or[1]._id, { $gt: '507f1f77bcf86cd799439011' });
+});
+
+
+test('pausing and deleting a saved search require matching owner', async (t) => {
+  const userId = '507f1f77bcf86cd799439001';
+  const id = '507f1f77bcf86cd799439002';
+  const patchStub = t.mock.method(SavedSearch, 'findOneAndUpdate', async (filter, update) => {
+    assert.deepEqual(filter, { _id: id, userId });
+    assert.equal(update.$set.isActive, false);
+    return { _id: id, userId, isActive: false };
+  });
+
+  const result = await setSavedSearchActive(userId, id, false);
+  assert.equal(result.isActive, false);
+  assert.equal(patchStub.mock.callCount(), 1);
+  patchStub.mock.restore();
+
+  const deleteStub = t.mock.method(SavedSearch, 'findOneAndDelete', async (filter) => {
+    assert.deepEqual(filter, { _id: id, userId });
+    return null; // Belongs to another user or is missing.
+  });
+  await assert.rejects(() => deleteSavedSearch(userId, id), (error) =>
+    error.statusCode === 404 && error.code === 'SAVED_SEARCH_NOT_FOUND');
+  assert.equal(deleteStub.mock.callCount(), 1);
+});
+
+test('saved searches declare a per-user unique index', () => {
+  const index = SavedSearch.schema.indexes().find(([keys]) =>
+    keys.userId === 1 && keys.queryNormalized === 1 && keys.contentType === 1 && keys.areaId === 1);
+  assert.equal(index?.[1]?.unique, true);
+});
+
+
+test('opt-in alert worker is disabled by default, even if maintenance jobs are enabled', () => {
+  assert.equal(env.SAVED_SEARCH_ALERTS_ENABLED, false);
+});
+
+test('all pause/resume operations invalidate an existing scan lease', async (t) => {
+  const id = '507f1f77bcf86cd799439012';
+  const userId = '507f1f77bcf86cd799439013';
+  const stub = t.mock.method(SavedSearch, 'findOneAndUpdate', async (_filter, update) => {
+    assert.equal(update.$set.scanLeaseToken, null);
+    assert.equal(update.$set.scanLeaseUntil, null);
+    return { _id: id, userId, isActive: update.$set.isActive };
+  });
+  for (const active of [false, true]) {
+    assert.equal((await setSavedSearchActive(userId, id, active)).isActive, active);
+  }
+  assert.equal(stub.mock.callCount(), 2);
+});

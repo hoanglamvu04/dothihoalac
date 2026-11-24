@@ -27,6 +27,7 @@ import Avatar from '../../components/common/Avatar';
 import ContentImage from '../../components/content/ContentImage';
 import ContentMeta from '../../components/content/ContentMeta';
 import { searchApi } from '../../api/content.api';
+import SaveSearchButton from '../../components/search/SaveSearchButton';
 import { contentPath } from '../../utils/content';
 import { truncate } from '../../utils/formatters';
 import {
@@ -250,6 +251,8 @@ export default function SearchPage() {
   const searchInputRef = useRef(null);
 
   const q = searchParams.get('q')?.trim() || '';
+  const area = searchParams.get('area')?.trim() || '';
+  const hasCriteria = Boolean(q || area);
   const requestedType = searchParams.get('type') || 'all';
   const type = SEARCH_TYPES.some((item) => item.value === requestedType)
     ? requestedType
@@ -272,7 +275,7 @@ export default function SearchPage() {
   }, [q]);
 
   useEffect(() => {
-    if (!q) {
+    if (!hasCriteria) {
       setResult(EMPTY_RESULT);
       setLoading(false);
       setError(null);
@@ -284,14 +287,16 @@ export default function SearchPage() {
     setError(null);
 
     try {
-      saveRecentSearch(q);
-      setRecentSearches(loadRecentSearches());
+      if (q) {
+        saveRecentSearch(q);
+        setRecentSearches(loadRecentSearches());
+      }
     } catch {
       // Lịch sử tìm kiếm chỉ là tiện ích phụ.
     }
 
     searchApi
-      .run({ q, type, sort, page, limit: PAGE_LIMIT })
+      .run({ q, area: area || undefined, type, sort, page, limit: PAGE_LIMIT })
       .then((response) => {
         if (active) setResult(normalizeResult(response));
       })
@@ -307,7 +312,7 @@ export default function SearchPage() {
     return () => {
       active = false;
     };
-  }, [page, q, reloadKey, sort, type]);
+  }, [area, hasCriteria, page, q, reloadKey, sort, type]);
 
   const contents = result.data.contents || [];
   const users = result.data.users || [];
@@ -325,6 +330,7 @@ export default function SearchPage() {
     ({ nextQuery = q, nextType = type, nextSort = sort, nextPage = 1 } = {}) => {
       const params = {
         q: nextQuery,
+        ...(area ? { area } : {}),
         type: nextType,
         page: String(nextPage),
       };
@@ -332,7 +338,7 @@ export default function SearchPage() {
       if (nextSort !== 'relevance') params.sort = nextSort;
       return params;
     },
-    [q, sort, type],
+    [area, q, sort, type],
   );
 
   const scrollToResults = useCallback(() => {
@@ -375,21 +381,21 @@ export default function SearchPage() {
 
   const changeType = useCallback(
     (value) => {
-      if (!q) return;
+      if (!hasCriteria) return;
       setSearchParams(buildParams({ nextType: value, nextPage: 1 }));
       scrollToResults();
     },
-    [buildParams, q, scrollToResults, setSearchParams],
+    [buildParams, hasCriteria, scrollToResults, setSearchParams],
   );
 
   const changeSort = useCallback(
     (event) => {
-      if (!q) return;
+      if (!hasCriteria) return;
       const nextSort = event.target.value === 'newest' ? 'newest' : 'relevance';
       setSearchParams(buildParams({ nextSort, nextPage: 1 }));
       scrollToResults();
     },
-    [buildParams, q, scrollToResults, setSearchParams],
+    [buildParams, hasCriteria, scrollToResults, setSearchParams],
   );
 
   const changePage = useCallback(
@@ -419,7 +425,7 @@ export default function SearchPage() {
   return (
     <main className="search-page">
       <Seo
-        title={q ? `Tìm kiếm: ${q}` : 'Tìm kiếm'}
+        title={hasCriteria ? `Tìm kiếm: ${q || area}` : 'Tìm kiếm'}
         description="Tìm tin tức, bất động sản, việc làm, cộng đồng, thành viên và khu vực trên Đô Thị Hòa Lạc."
         noindex
       />
@@ -429,7 +435,7 @@ export default function SearchPage() {
           <div className="search-hero__content">
             <div className="search-page-title">
               <span>Tìm kiếm</span>
-              <h1>{q ? `Kết quả cho “${q}”` : 'Bạn đang cần tìm gì?'}</h1>
+              <h1>{hasCriteria ? `Kết quả cho “${q || area}”` : 'Bạn đang cần tìm gì?'}</h1>
               <p>
                 Tìm thấy những nội dung hữu ích về Hòa Lạc và khu vực lân cận phù hợp với từ khóa của bạn.
               </p>
@@ -443,6 +449,7 @@ export default function SearchPage() {
                 autoComplete="off"
                 aria-label="Từ khóa tìm kiếm"
                 placeholder="Tin tức, quy hoạch, nhà đất, việc làm..."
+                maxLength={100}
                 onChange={(event) => setQuery(event.target.value)}
               />
               {query ? (
@@ -474,7 +481,7 @@ export default function SearchPage() {
       </section>
 
       <div className="search-page-container search-page-content">
-        {!q ? (
+        {!hasCriteria ? (
           <section className="search-start">
             {recentSearches.length ? (
               <div className="search-start__card">
@@ -531,11 +538,14 @@ export default function SearchPage() {
                       : error
                         ? 'Không thể tải kết quả.'
                         : hasResults
-                          ? <><strong>{displayTotal.toLocaleString('vi-VN')}</strong> kết quả cho <b>“{q}”</b></>
-                          : <>Không tìm thấy kết quả cho <b>“{q}”</b>.</>}
+                          ? <><strong>{displayTotal.toLocaleString('vi-VN')}</strong> kết quả cho <b>“{q || area}”</b></>
+                          : <>Không tìm thấy kết quả cho <b>“{q || area}”</b>.</>}
                   </p>
                   <div>
-                    <span>{selectedType.label}</span>
+                    {type !== 'user' && type !== 'area' ? (
+                      <SaveSearchButton query={q} contentType={type} area={area} />
+                    ) : null}
+                     <span>{selectedType.label}</span>
                     {contentSortEnabled ? (
                       <label className="search-sort-control">
                         <span>Sắp xếp</span>
@@ -609,7 +619,7 @@ export default function SearchPage() {
                   <div className="search-empty">
                     <EmptyState
                       title="Không tìm thấy kết quả"
-                      description={`Không có dữ liệu phù hợp với “${q}”. Thử đổi nhóm hoặc dùng từ khóa ngắn hơn.`}
+                      description={`Không có dữ liệu phù hợp với “${q || area}”. Thử đổi nhóm hoặc dùng từ khóa ngắn hơn.`}
                     />
                     <div className="search-empty__suggestions">
                       <strong><SearchX size={17} /> Gợi ý khác</strong>

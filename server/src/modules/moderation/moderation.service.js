@@ -1,4 +1,5 @@
 import Content from '../contents/content.model.js';
+import { annotateModerationQueue } from './moderationRisk.service.js';
 import User from '../users/user.model.js';
 import Report from '../reports/report.model.js';
 import ModerationAction from './moderationAction.model.js';
@@ -108,7 +109,7 @@ export async function queue(q, auth) {
       .lean(),
     Content.countDocuments(f),
   ]);
-  return { items, meta: buildPaginationMeta({ page, limit, total }) };
+  return { items: await annotateModerationQueue(items, allowedTypes), meta: buildPaginationMeta({ page, limit, total }) };
 }
 
 export async function action(admin, auth, contentId, actionType, data, ip) {

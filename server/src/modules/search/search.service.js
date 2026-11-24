@@ -1,8 +1,10 @@
+import mongoose from 'mongoose';
 import Content from '../contents/content.model.js';
 import User from '../users/user.model.js';
 import Area from '../taxonomy/area.model.js';
 import { parsePagination, buildPaginationMeta } from '../../utils/pagination.js';
-import { escapeRegex } from '../../utils/escapeRegex.js';
+import { foldVietnamese, normalizeSearchQuery, vietnameseSearchRegex } from '../../utils/vietnameseSearch.js';
+import ApiError from '../../utils/ApiError.js';
 
 const CONTENT_TYPES = ['article', 'community', 'property', 'job'];
 const CONTENT_TYPE_SET = new Set(CONTENT_TYPES);
@@ -21,8 +23,8 @@ function buildContentFilter({ q, regex, useTextIndex, area }) {
 
   if (useTextIndex) {
     filter.$text = { $search: q };
-  } else {
-    filter.$or = [{ title: regex }, { summary: regex }];
+  } else if (regex) {
+    filter.$or = [{ title: regex }, { summary: regex }, { bodyText: regex }];
   }
 
   if (area) filter.primaryAreaId = area;
@@ -59,9 +61,18 @@ function buildAreaFilter(regex) {
 
 export async function search(query) {
   const q = String(query.q || '').trim();
+  if (q.length > 100) throw new ApiError(422, 'Từ khóa quá dài.', 'SEARCH_QUERY_TOO_LONG');
+
+  const areaInput = String(query.area || '').trim();
+  if (areaInput.length > 100) throw new ApiError(422, 'Khu vực không hợp lệ.', 'SEARCH_AREA_INVALID');
+  const area = areaInput
+    ? mongoose.isValidObjectId(areaInput)
+      ? areaInput
+      : (await Area.findOne({ slug: areaInput.toLowerCase(), isActive: true }).select('_id').lean())?._id
+    : null;
   const { page, limit, skip } = parsePagination(query);
 
-  if (!q) {
+  if (!q && !areaInput) {
     return {
       items: [],
       users: [],
@@ -80,23 +91,34 @@ export async function search(query) {
     };
   }
 
-  const regex = new RegExp(escapeRegex(q), 'i');
+  const expanded = normalizeSearchQuery(q);
+  // Punctuation-only requests must not become unrestricted public content queries.
+  if (q && !expanded) {
+    throw new ApiError(422, 'Từ khóa không hợp lệ.', 'SEARCH_QUERY_INVALID');
+  }
+  const regex = q ? vietnameseSearchRegex(q) : null;
   const requestedType = String(query.type || 'all');
   const sort = normalizeSort(query.sort);
   const searchesContent = requestedType === 'all' || CONTENT_TYPE_SET.has(requestedType);
-  const useTextIndex = q.length >= 2;
+  // Mongo text-index search is the fast path. A bounded, escaped Vietnamese
+  // regex fallback handles prefix searches and older content that text search misses.
+  const useTextIndex = Boolean(searchesContent && q && expanded === foldVietnamese(q) && expanded.length >= 2 && await Content.exists({
+    status: 'published', visibility: 'public', deletedAt: null,
+    ...(area ? { primaryAreaId: area } : {}),
+    $text: { $search: expanded },
+  }));
 
   const baseContentFilter = buildContentFilter({
-    q,
+    q: expanded,
     regex,
     useTextIndex,
-    area: query.area,
+    area: areaInput ? area || new mongoose.Types.ObjectId('000000000000000000000000') : null,
   });
   const selectedContentFilter = CONTENT_TYPE_SET.has(requestedType)
     ? { ...baseContentFilter, contentType: requestedType }
     : baseContentFilter;
-  const userFilter = buildUserFilter(regex);
-  const areaFilter = buildAreaFilter(regex);
+  const userFilter = q ? buildUserFilter(regex) : null;
+  const areaFilter = q ? buildAreaFilter(regex) : null;
 
   const contentPromise = searchesContent
     ? Content.find(selectedContentFilter)
@@ -121,10 +143,10 @@ export async function search(query) {
     Content.countDocuments({ ...baseContentFilter, contentType }),
   );
 
-  const userTotalPromise = User.countDocuments(userFilter);
-  const areaTotalPromise = Area.countDocuments(areaFilter);
+  const userTotalPromise = q ? User.countDocuments(userFilter) : Promise.resolve(0);
+  const areaTotalPromise = q ? Area.countDocuments(areaFilter) : Promise.resolve(0);
 
-  const usersPromise = requestedType === 'all' || requestedType === 'user'
+  const usersPromise = q && (requestedType === 'all' || requestedType === 'user')
     ? User.find(userFilter)
         .select('username displayName emailVerifiedAt phoneVerifiedAt')
         .sort({ displayName: 1, username: 1, _id: 1 })
@@ -133,7 +155,7 @@ export async function search(query) {
         .lean()
     : Promise.resolve([]);
 
-  const areasPromise = requestedType === 'all' || requestedType === 'area'
+  const areasPromise = q && (requestedType === 'all' || requestedType === 'area')
     ? Area.find(areaFilter)
         .select('name slug areaType parentId description')
         .sort({ name: 1, _id: 1 })
@@ -192,6 +214,7 @@ export async function search(query) {
     areas,
     facets,
     sort,
+    suggestion: q && expanded !== foldVietnamese(q) ? expanded : null,
     meta: buildPaginationMeta({
       page,
       limit,
