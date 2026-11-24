@@ -202,6 +202,8 @@ export const jobApi = {
 };
 
 export const searchApi = {
+  suggest: async (q, config = {}) =>
+    unwrap(await api.get('/search/suggest', { ...config, params: { q } })),
   run: async (params = {}, config = {}) => {
     const response = await getList('/search', params, config);
     return { data: response.data.data, meta: response.data.meta };

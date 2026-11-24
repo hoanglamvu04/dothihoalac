@@ -114,6 +114,7 @@ function normalizeResult(value) {
         ...rawFacets,
       },
       sort: data.sort === 'newest' ? 'newest' : 'relevance',
+      suggestion: typeof data.suggestion === 'string' ? data.suggestion : null,
     },
     meta: value?.meta && typeof value.meta === 'object' ? value.meta : {},
   };
@@ -269,10 +270,35 @@ export default function SearchPage() {
   const [error, setError] = useState(null);
   const [reloadKey, setReloadKey] = useState(0);
   const [recentSearches, setRecentSearches] = useState(loadRecentSearches);
+  const [typeahead, setTypeahead] = useState([]);
+  const [correction, setCorrection] = useState(null);
 
   useEffect(() => {
     setQuery(q);
   }, [q]);
+
+  useEffect(() => {
+    const typed = query.trim();
+    if (typed.length < 2) {
+      setTypeahead([]);
+      setCorrection(null);
+      return undefined;
+    }
+    let active = true;
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => {
+      searchApi.suggest(typed.slice(0, 60), { signal: controller.signal })
+        .then((response) => {
+          if (!active) return;
+          setTypeahead(Array.isArray(response?.items) ? response.items : []);
+          setCorrection(response?.correction || null);
+        })
+        .catch(() => {
+          if (active) { setTypeahead([]); setCorrection(null); }
+        });
+    }, 200);
+    return () => { active = false; window.clearTimeout(timer); controller.abort(); };
+  }, [query]);
 
   useEffect(() => {
     if (!hasCriteria) {
@@ -357,6 +383,7 @@ export default function SearchPage() {
         return;
       }
 
+      setTypeahead([]);
       setSearchParams(buildParams({ nextQuery: normalizedQuery, nextPage: 1 }));
     },
     [buildParams, query, setSearchParams],
@@ -368,6 +395,7 @@ export default function SearchPage() {
       if (!normalizedTerm) return;
 
       setQuery(normalizedTerm);
+      setTypeahead([]);
       setSearchParams(
         buildParams({
           nextQuery: normalizedTerm,
@@ -467,6 +495,27 @@ export default function SearchPage() {
                 <span>Tìm kiếm</span>
               </button>
             </form>
+            {typeahead.length > 0 ? (
+              <div className="search-typeahead" aria-label="Gợi ý từ khóa và nội dung">
+                <strong>Gợi ý cho bạn</strong>
+                <ul>
+                  {typeahead.slice(0, 6).map((item) => (
+                    <li key={item.type + ':' + item.href}>
+                      <Link to={item.href} onClick={() => setTypeahead([])}>
+                        <Search size={14} />
+                        <span>{item.label}</span>
+                        <small>{item.type === 'area' ? 'Khu vực' : 'Nội dung'}</small>
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : correction && query.trim().length >= 3 ? (
+              <p className="search-typeahead-correction">
+                Có phải bạn muốn tìm{' '}
+                <button type="button" onClick={() => searchTerm(correction)}>{correction}</button>?
+              </p>
+            ) : null}
           </div>
 
           <div className="search-hero__visual" aria-hidden="true">
@@ -622,6 +671,14 @@ export default function SearchPage() {
                       description={`Không có dữ liệu phù hợp với “${q || area}”. Thử đổi nhóm hoặc dùng từ khóa ngắn hơn.`}
                     />
                     <div className="search-empty__suggestions">
+                      {result.data.suggestion ? (
+                        <p className="search-empty__correction">
+                          Có phải bạn muốn tìm{' '}
+                          <button type="button" onClick={() => searchTerm(result.data.suggestion)}>
+                            {result.data.suggestion}
+                          </button>?
+                        </p>
+                      ) : null}
                       <strong><SearchX size={17} /> Gợi ý khác</strong>
                       <div className="search-chip-list">
                         {SUGGESTED_SEARCHES.slice(0, 5).map((term) => (
