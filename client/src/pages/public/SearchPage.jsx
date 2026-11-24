@@ -74,6 +74,9 @@ const SEARCH_TYPES = [
 const SORT_OPTIONS = [
   { value: 'relevance', label: 'Liên quan' },
   { value: 'newest', label: 'Mới nhất' },
+  { value: 'popular', label: 'Xem nhiều' },
+  { value: 'price_asc', label: 'Giá thấp đến cao' },
+  { value: 'price_desc', label: 'Giá cao đến thấp' },
 ];
 
 const SUGGESTED_SEARCHES = [
@@ -113,7 +116,7 @@ function normalizeResult(value) {
         ...EMPTY_FACETS,
         ...rawFacets,
       },
-      sort: data.sort === 'newest' ? 'newest' : 'relevance',
+      sort: SORT_OPTIONS.some((item) => item.value === data.sort) ? data.sort : 'relevance',
       suggestion: typeof data.suggestion === 'string' ? data.suggestion : null,
     },
     meta: value?.meta && typeof value.meta === 'object' ? value.meta : {},
@@ -253,7 +256,10 @@ export default function SearchPage() {
 
   const q = searchParams.get('q')?.trim() || '';
   const area = searchParams.get('area')?.trim() || '';
-  const hasCriteria = Boolean(q || area);
+  const hasAdvancedCriteria = ['days', 'propertyType', 'transactionType',
+    'minPrice', 'maxPrice', 'minArea', 'maxArea']
+    .some((key) => Boolean(searchParams.get(key)));
+  const hasCriteria = Boolean(q || area || hasAdvancedCriteria);
   const requestedType = searchParams.get('type') || 'all';
   const type = SEARCH_TYPES.some((item) => item.value === requestedType)
     ? requestedType
@@ -272,10 +278,27 @@ export default function SearchPage() {
   const [recentSearches, setRecentSearches] = useState(loadRecentSearches);
   const [typeahead, setTypeahead] = useState([]);
   const [correction, setCorrection] = useState(null);
+  const [propertyForm, setPropertyForm] = useState({
+    propertyType: '', transactionType: '',
+    minPrice: '', maxPrice: '', minArea: '', maxArea: '',
+  });
 
   useEffect(() => {
     setQuery(q);
   }, [q]);
+
+  useEffect(() => {
+    setPropertyForm({
+      propertyType: searchParams.get('propertyType') || '',
+      transactionType: searchParams.get('transactionType') || '',
+      minPrice: searchParams.get('minPrice')
+        ? String(Number(searchParams.get('minPrice')) / 1e6) : '',
+      maxPrice: searchParams.get('maxPrice')
+        ? String(Number(searchParams.get('maxPrice')) / 1e6) : '',
+      minArea: searchParams.get('minArea') || '',
+      maxArea: searchParams.get('maxArea') || '',
+    });
+  }, [searchParams]);
 
   useEffect(() => {
     const typed = query.trim();
@@ -354,17 +377,22 @@ export default function SearchPage() {
 
   const buildParams = useCallback(
     ({ nextQuery = q, nextType = type, nextSort = sort, nextPage = 1 } = {}) => {
-      const params = {
-        q: nextQuery,
-        ...(area ? { area } : {}),
-        type: nextType,
-        page: String(nextPage),
-      };
-
-      if (nextSort !== 'relevance') params.sort = nextSort;
+      const params = Object.fromEntries(searchParams.entries());
+      params.q = nextQuery;
+      if (area) params.area = area;
+      params.type = nextType;
+      params.page = String(nextPage);
+      if (nextType !== 'property') {
+        for (const field of ['propertyType', 'transactionType',
+          'minPrice', 'maxPrice', 'minArea', 'maxArea']) delete params[field];
+      }
+      const effectiveSort = nextType !== 'property' && nextSort.startsWith('price_')
+        ? 'relevance' : nextSort;
+      if (effectiveSort !== 'relevance') params.sort = effectiveSort;
+      else delete params.sort;
       return params;
     },
-    [area, q, sort, type],
+    [area, q, searchParams, sort, type],
   );
 
   const scrollToResults = useCallback(() => {
@@ -378,7 +406,7 @@ export default function SearchPage() {
       event.preventDefault();
       const normalizedQuery = query.trim();
 
-      if (!normalizedQuery) {
+      if (!normalizedQuery && !hasAdvancedCriteria && !area) {
         searchInputRef.current?.focus();
         return;
       }
@@ -386,7 +414,7 @@ export default function SearchPage() {
       setTypeahead([]);
       setSearchParams(buildParams({ nextQuery: normalizedQuery, nextPage: 1 }));
     },
-    [buildParams, query, setSearchParams],
+    [area, buildParams, hasAdvancedCriteria, query, setSearchParams],
   );
 
   const searchTerm = useCallback(
@@ -435,6 +463,26 @@ export default function SearchPage() {
     [buildParams, scrollToResults, setSearchParams],
   );
 
+  const applyPropertyFilters = useCallback((event) => {
+    event.preventDefault();
+    const params = buildParams({ nextType: 'property', nextPage: 1 });
+    for (const key of ['propertyType', 'transactionType', 'minPrice', 'maxPrice', 'minArea', 'maxArea']) {
+      delete params[key];
+      const value = String(propertyForm[key] || '').trim();
+      if (value) params[key] = key.endsWith('Price')
+        ? String(Number(value) * 1e6) : value;
+    }
+    setSearchParams(params);
+    scrollToResults();
+  }, [buildParams, propertyForm, scrollToResults, setSearchParams]);
+
+  const changeWindow = useCallback((event) => {
+    const params = buildParams({ nextPage: 1 });
+    if (event.target.value === '0') delete params.days;
+    else params.days = event.target.value;
+    setSearchParams(params);
+  }, [buildParams, setSearchParams]);
+
   const clearSearch = useCallback(() => {
     setQuery('');
     setResult(EMPTY_RESULT);
@@ -453,7 +501,7 @@ export default function SearchPage() {
   return (
     <main className="search-page">
       <Seo
-        title={hasCriteria ? `Tìm kiếm: ${q || area}` : 'Tìm kiếm'}
+        title={hasCriteria ? `Tìm kiếm: ${q || area || 'Bất động sản'}` : 'Tìm kiếm'}
         description="Tìm tin tức, bất động sản, việc làm, cộng đồng, thành viên và khu vực trên Đô Thị Hòa Lạc."
         noindex
       />
@@ -463,7 +511,7 @@ export default function SearchPage() {
           <div className="search-hero__content">
             <div className="search-page-title">
               <span>Tìm kiếm</span>
-              <h1>{hasCriteria ? `Kết quả cho “${q || area}”` : 'Bạn đang cần tìm gì?'}</h1>
+              <h1>{hasCriteria ? `Kết quả cho “${q || area || 'Bộ lọc đã chọn'}”` : 'Bạn đang cần tìm gì?'}</h1>
               <p>
                 Tìm thấy những nội dung hữu ích về Hòa Lạc và khu vực lân cận phù hợp với từ khóa của bạn.
               </p>
@@ -592,14 +640,16 @@ export default function SearchPage() {
                   </p>
                   <div>
                     {type !== 'user' && type !== 'area' ? (
-                      <SaveSearchButton query={q} contentType={type} area={area} />
+                      {!['minPrice', 'maxPrice', 'minArea', 'maxArea', 'propertyType', 'transactionType'].some((key) => searchParams.has(key)) ? (
+                        <SaveSearchButton query={q} contentType={type} area={area} />
+                      ) : null}
                     ) : null}
                      <span>{selectedType.label}</span>
                     {contentSortEnabled ? (
                       <label className="search-sort-control">
                         <span>Sắp xếp</span>
                         <select value={sort} onChange={changeSort} aria-label="Sắp xếp kết quả">
-                          {SORT_OPTIONS.map((item) => (
+                          {SORT_OPTIONS.filter((item) => type === 'property' || !item.value.startsWith('price_')).map((item) => (
                             <option key={item.value} value={item.value}>{item.label}</option>
                           ))}
                         </select>
