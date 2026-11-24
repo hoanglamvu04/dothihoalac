@@ -62,7 +62,7 @@ export default function SavedSearchesPage() {
           q: item.query || undefined,
           area: item.areaSlug || undefined,
           type: item.contentType,
-          sort: 'newest', page: 1, limit: 6,
+          sort: 'newest', page: 1, limit: 6, preview: 'saved-search',
         }),
       ));
       const seen = new Set();

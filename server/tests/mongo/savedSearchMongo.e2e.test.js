@@ -25,6 +25,7 @@ test('MongoDB E2E: saved searches, index constraints, tenant isolation, alerts',
         Content: (await import('../../src/modules/contents/content.model.js')).default,
         SavedSearch: (await import('../../src/modules/savedSearches/savedSearch.model.js')).default,
         PropertyListing: (await import('../../src/modules/properties/propertyListing.model.js')).default,
+        UserActivity: (await import('../../src/modules/users/userActivity.model.js')).default,
         Notification: (await import('../../src/modules/notifications/notification.model.js')).default,
         NotificationPreference: (await import('../../src/modules/notifications/notificationPreference.model.js')).default,
       })),
@@ -33,7 +34,7 @@ test('MongoDB E2E: saved searches, index constraints, tenant isolation, alerts',
 
   await mongoose.connect(uri, { serverSelectionTimeoutMS: 15000 });
   t.after(async () => { await mongoose.disconnect(); });
-  const { User, Area, Content, SavedSearch, Notification, NotificationPreference, PropertyListing } = models;
+  const { User, Area, Content, SavedSearch, Notification, NotificationPreference, PropertyListing, UserActivity } = models;
   for (const model of [User, Area, Content, SavedSearch, Notification, NotificationPreference, PropertyListing]) {
     await model.init();
   }
@@ -452,6 +453,20 @@ test('MongoDB E2E: saved searches, index constraints, tenant isolation, alerts',
     const byTime = await request(app).get('/api/v1/search')
       .query({ q: 'Đất nền Thạch Thất', type: 'property', days: 7 }).expect(200);
     assert.ok(byTime.body.data.contents.some((item) => item.slug === 'v2-search-sale-two-billion'));
+  });
+
+  await t.test('on-demand saved-search preview does not create implicit search-history events', async () => {
+    const before = await UserActivity.countDocuments({
+      userId: userB._id, activityType: 'search',
+    });
+    await request(app).get('/api/v1/search').set(b).query({
+      q: 'Đất nền Thạch Thất', type: 'property',
+      preview: 'saved-search', sort: 'newest',
+    }).expect(200);
+    const after = await UserActivity.countDocuments({
+      userId: userB._id, activityType: 'search',
+    });
+    assert.equal(after, before);
   });
 
   await t.test('related properties only return active published public cards without contact PII', async () => {

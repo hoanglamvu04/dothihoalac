@@ -6,7 +6,9 @@ import { sendSuccess } from '../../utils/apiResponse.js';
 export async function run(req, res) {
   const r = await search(req.query);
 
-  if (req.user && String(req.query.q || '').trim()) {
+  // A user-requested preview of saved filters should not create another
+  // search-history event. Ordinary user-initiated search history is unchanged.
+  if (req.user && req.query.preview !== 'saved-search' && String(req.query.q || '').trim()) {
     await recordSearchActivity(req.user._id, req.query).catch(() => null);
   }
 
