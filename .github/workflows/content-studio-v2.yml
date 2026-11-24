@@ -222,3 +222,40 @@ jobs:
         run: bash -n scripts/ensure-mongodb-database-tools.sh
 
       - run: npm test
+
+
+  mongo-e2e:
+    name: MongoDB saved-search acceptance (isolated DB)
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:7.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "mongosh --quiet --eval 'db.adminCommand({ping:1})'"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 15
+    defaults:
+      run:
+        working-directory: server
+    env:
+      NODE_ENV: test
+      DTHL_MONGO_E2E: 'true'
+      MONGO_URI: mongodb://127.0.0.1:27017/dthl_pr78_ci
+      JWT_ACCESS_SECRET: e2e-test-access-secret-000000000000000000000000
+      JWT_REFRESH_SECRET: e2e-test-refresh-secret-00000000000000000000000
+      ADMIN_PASSWORD: e2e-test-admin-password
+      UPLOAD_PROVIDER: local
+      CLOUDINARY_URL: cloudinary://123456789012345:test-api-secret@ci-e2e
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      - run: npm ci --no-audit --no-fund
+      - name: Verify real MongoDB indexes, auth, isolation, alerts and dedupe
+        run: node --test --test-reporter=spec tests/mongo/savedSearchMongo.e2e.test.js
