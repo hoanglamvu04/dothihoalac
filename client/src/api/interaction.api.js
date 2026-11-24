@@ -45,7 +45,7 @@ export const notificationApi = {
   remove: async (id) => unwrap(await api.delete(`/notifications/${id}`)),
   preferences: async () => unwrap(await api.get('/notification-preferences')),
   updatePreferences: async (items) =>
-    unwrap(await api.patch('/notification-preferences', items)),
+    unwrap(await api.patch('/notification-preferences', { preferences: items })),
 };
 
 export const reportApi = {

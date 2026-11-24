@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { Fragment, useCallback, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Bell,
@@ -58,13 +58,19 @@ export default function NotificationsPage() {
   const [loading, setLoading] = useState(true);
   const [working, setWorking] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [followAlertsEnabled, setFollowAlertsEnabled] = useState(true);
+  const [preferencesLoading, setPreferencesLoading] = useState(true);
 
   const load = useCallback(async () => {
     setLoading(true);
 
     try {
       const [result, unread] = await Promise.all([
-        notificationApi.list({ page, limit: 20, unread: filter === 'unread' ? 'true' : undefined }),
+        notificationApi.list({
+          page, limit: 20,
+          unread: filter === 'unread' ? 'true' : undefined,
+          type: filter === 'saved-search' ? 'saved_search_match' : undefined,
+        }),
         notificationApi.unreadCount(),
       ]);
       setItems(result.items || []);
@@ -80,6 +86,41 @@ export default function NotificationsPage() {
   useEffect(() => {
     load();
   }, [load]);
+
+  useEffect(() => {
+    let active = true;
+    notificationApi.preferences()
+      .then((preferences) => {
+        if (!active) return;
+        const saved = (Array.isArray(preferences) ? preferences : [])
+          .find((item) => item.notificationType === 'saved_search_match');
+        setFollowAlertsEnabled(saved ? saved.inAppEnabled !== false : true);
+      })
+      .catch(() => {
+        // Keep the default until the authenticated API is accessible.
+      })
+      .finally(() => {
+        if (active) setPreferencesLoading(false);
+      });
+    return () => { active = false; };
+  }, []);
+
+  const toggleFollowAlerts = async () => {
+    if (working || preferencesLoading) return;
+    setWorking(true);
+    try {
+      const enabled = !followAlertsEnabled;
+      await notificationApi.updatePreferences([
+        { notificationType: 'saved_search_match', inAppEnabled: enabled },
+      ]);
+      setFollowAlertsEnabled(enabled);
+      toast.success(enabled ? 'Đã bật thông báo theo dõi.' : 'Đã tắt thông báo theo dõi.');
+    } catch (error) {
+      toast.error(apiErrorMessage(error));
+    } finally {
+      setWorking(false);
+    }
+  };
 
   // The API now paginates the active filter instead of filtering one page locally.
   const visibleItems = items;
@@ -205,6 +246,28 @@ export default function NotificationsPage() {
         >
           Chưa đọc ({unreadCount})
         </button>
+        <button
+          type="button"
+          className={filter === 'saved-search' ? 'is-active' : ''}
+          onClick={() => { setPage(1); setFilter('saved-search'); }}
+        >
+          Tin theo dõi
+        </button>
+      </div>
+
+      <div className="notification-follow-controls">
+        <div>
+          <strong>Thông báo từ tìm kiếm đã lưu</strong>
+          <p>Chỉ hiển thị thông báo trong tài khoản; bạn có thể tạm dừng bất kỳ lúc nào.</p>
+        </div>
+        <button
+          type="button"
+          aria-pressed={followAlertsEnabled}
+          disabled={working || preferencesLoading}
+          onClick={toggleFollowAlerts}
+        >
+          {followAlertsEnabled ? 'Đang bật · Tắt' : 'Đang tắt · Bật'}
+        </button>
       </div>
 
       <section className="account-page-card">
@@ -212,7 +275,16 @@ export default function NotificationsPage() {
           <LoadingBlock />
         ) : visibleItems.length ? (
           <div className="account-notification-list">
-            {visibleItems.map((item) => (
+            {visibleItems.map((item, index) => (
+              <Fragment key={item._id}>
+                {(index === 0 || new Date(item.createdAt).toLocaleDateString('vi-VN') !==
+                  new Date(visibleItems[index - 1].createdAt).toLocaleDateString('vi-VN')) ? (
+                  <h3 className="notification-day-heading">
+                    {new Date(item.createdAt).toLocaleDateString('vi-VN', {
+                      day: 'numeric', month: 'long', year: 'numeric',
+                    })}
+                  </h3>
+                ) : null}
               <article
                 key={item._id}
                 className={`account-notification-item ${item.readAt ? '' : 'is-unread'}`}
@@ -240,6 +312,7 @@ export default function NotificationsPage() {
                   <Trash2 size={17} />
                 </button>
               </article>
+              </Fragment>
             ))}
           </div>
         ) : (
