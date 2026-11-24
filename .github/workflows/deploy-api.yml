@@ -1,9 +1,9 @@
 name: Deploy Do Thi Hoa Lac VPS
 
+# Deploy only after an explicit manual GitHub Actions dispatch.
+# Merging code to main must NOT change the production VPS before smoke tests,
+# backup/index preflight and X-HUB source approval.
 on:
-  push:
-    branches:
-      - main
   workflow_dispatch:
     inputs:
       confirm:
