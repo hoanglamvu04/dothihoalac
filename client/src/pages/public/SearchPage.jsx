@@ -780,6 +780,58 @@ export default function SearchPage() {
                   </div>
                 </section>
 
+                <section className="search-sidebar-card search-advanced-filter">
+                  <h2>Bộ lọc thời gian</h2>
+                  <label>
+                    <span>Thời điểm đăng</span>
+                    <select value={searchParams.get('days') || '0'} onChange={changeWindow}>
+                      <option value="0">Mọi thời điểm</option>
+                      <option value="7">7 ngày gần đây</option>
+                      <option value="30">30 ngày gần đây</option>
+                      <option value="90">90 ngày gần đây</option>
+                    </select>
+                  </label>
+                </section>
+                {type === 'property' ? (
+                  <form className="search-sidebar-card search-advanced-filter" onSubmit={applyPropertyFilters}>
+                    <h2>Lọc bất động sản</h2>
+                    <label><span>Giao dịch</span>
+                      <select value={propertyForm.transactionType} onChange={(event) => setPropertyForm((v) => ({ ...v, transactionType: event.target.value }))}>
+                        <option value="">Tất cả</option>
+                        <option value="sale">Bán</option>
+                        <option value="rent">Cho thuê</option>
+                      </select>
+                    </label>
+                    <label><span>Loại hình</span>
+                      <select value={propertyForm.propertyType} onChange={(event) => setPropertyForm((v) => ({ ...v, propertyType: event.target.value }))}>
+                        <option value="">Tất cả</option>
+                        <option value="land">Đất</option>
+                        <option value="residential_land">Đất ở</option>
+                        <option value="house">Nhà ở</option>
+                        <option value="apartment">Căn hộ</option>
+                        <option value="room">Phòng trọ</option>
+                      </select>
+                    </label>
+                    <div className="search-advanced-filter__pair">
+                      <label><span>Giá từ (triệu ₫)</span>
+                        <input type="number" min="0" step="10" value={propertyForm.minPrice} onChange={(event) => setPropertyForm((v) => ({ ...v, minPrice: event.target.value }))} />
+                      </label>
+                      <label><span>Đến (triệu ₫)</span>
+                        <input type="number" min="0" step="10" value={propertyForm.maxPrice} onChange={(event) => setPropertyForm((v) => ({ ...v, maxPrice: event.target.value }))} />
+                      </label>
+                    </div>
+                    <div className="search-advanced-filter__pair">
+                      <label><span>Diện tích từ (m²)</span>
+                        <input type="number" min="0" value={propertyForm.minArea} onChange={(event) => setPropertyForm((v) => ({ ...v, minArea: event.target.value }))} />
+                      </label>
+                      <label><span>Đến (m²)</span>
+                        <input type="number" min="0" value={propertyForm.maxArea} onChange={(event) => setPropertyForm((v) => ({ ...v, maxArea: event.target.value }))} />
+                      </label>
+                    </div>
+                    <small>Khoảng giá áp dụng cho tổng giá (VND); không áp dụng giá thỏa thuận, giá/m² hay thuê theo tháng.</small>
+                    <button type="submit" className="search-advanced-filter__apply">Áp dụng bộ lọc</button>
+                  </form>
+                ) : null}
                 <section className="search-sidebar-card search-suggestion-card">
                   <h2>Gợi ý tìm kiếm</h2>
                   <div>
