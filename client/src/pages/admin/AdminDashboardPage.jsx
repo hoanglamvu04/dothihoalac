@@ -48,6 +48,8 @@ export default function AdminDashboardPage() {
   const { user } = useAuth();
   const [data, setData] = useState(null);
   const [ops, setOps] = useState(null);
+  const [discovery, setDiscovery] = useState(null);
+  const [discoveryDays, setDiscoveryDays] = useState(30);
   const [error, setError] = useState(null);
 
   const canManageSystem = hasAnyPermission(user, ['manage_system']);
@@ -68,14 +70,18 @@ export default function AdminDashboardPage() {
       canManageSystem
         ? adminApi.operationsOverview({ hours: 24 }).catch(() => null)
         : Promise.resolve(null),
+      canManageSystem
+        ? adminApi.discoveryOverview({ days: discoveryDays }).catch(() => null)
+        : Promise.resolve(null),
     ])
-      .then(([dashboard, projects, operations]) => {
+      .then(([dashboard, projects, operations, discoveryData]) => {
         if (!active) return;
         setData({
           ...dashboard,
           projectSummary: projects?.meta?.summary || {},
         });
         setOps(operations);
+        setDiscovery(discoveryData);
       })
       .catch((nextError) => {
         if (active) setError(nextError);
@@ -84,7 +90,7 @@ export default function AdminDashboardPage() {
     return () => {
       active = false;
     };
-  }, [canManageSystem]);
+  }, [canManageSystem, discoveryDays]);
 
   const cards = useMemo(() => {
     if (!data) return [];
@@ -248,6 +254,54 @@ export default function AdminDashboardPage() {
               </dl>
             </div>
           </div>
+        </section>
+      ) : null}
+
+      {canManageSystem && discovery ? (
+        <section className="admin-ops-card" aria-labelledby="admin-discovery-title">
+          <div className="admin-row-actions" style={{ justifyContent: 'space-between', gap: 16, flexWrap: 'wrap' }}>
+            <div>
+              <h2 id="admin-discovery-title">Chất lượng dữ liệu &amp; khám phá</h2>
+              <p>Chỉ thống kê tổng hợp. Không đọc từ khóa cá nhân, IP hay thông tin liên hệ.</p>
+            </div>
+            <label>Khoảng thời gian{' '}
+              <select aria-label="Khoảng thời gian thống kê" value={discoveryDays} onChange={(event) => setDiscoveryDays(Number(event.target.value))}>
+                <option value={7}>7 ngày</option>
+                <option value={30}>30 ngày</option>
+                <option value={90}>90 ngày</option>
+              </select>
+            </label>
+          </div>
+          <div className="admin-stat-grid" style={{ marginTop: 16 }}>
+            {[
+              ['Đã xuất bản', discovery.published],
+              ['Đang chờ duyệt', discovery.pendingReview],
+              ['Thiếu ảnh', discovery.missingImage],
+              ['Thiếu khu vực', discovery.missingArea],
+              ['Thiếu tóm tắt', discovery.missingSummary],
+              ['Bộ lọc đang theo dõi', discovery.activeSavedSearches],
+              ['Thông báo đã tạo', discovery.deliveredAlerts],
+            ].map(([label, count]) => (
+              <article key={label} className="admin-stat-card">
+                <strong>{Number(count || 0).toLocaleString('vi-VN')}</strong>
+                <span>{label}</span>
+              </article>
+            ))}
+          </div>
+          {discovery.topAreas?.length ? (
+            <div style={{ marginTop: 16 }}>
+              <h3>Khu vực có nội dung công khai mới</h3>
+              <ul>
+                {discovery.topAreas.map((area) => (
+                  <li key={area.slug}>
+                    <Link to={'/khu-vuc/' + encodeURIComponent(area.slug)}>
+                      {area.name} ({Number(area.count).toLocaleString('vi-VN')})
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
         </section>
       ) : null}
 

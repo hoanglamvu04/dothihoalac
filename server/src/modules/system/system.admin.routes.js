@@ -25,6 +25,7 @@ r.patch('/banners/:id/toggle', asyncHandler(c.toggleBanner));
 r.delete('/banners/:id', asyncHandler(c.deleteBanner));
 
 r.get('/operations', asyncHandler(c.operationsOverview));
+r.get('/discovery-overview', asyncHandler(c.discoveryMetrics));
 r.patch('/errors/:id/resolve', asyncHandler(c.resolveSystemError));
 
 r.get('/activity-logs', asyncHandler(c.logs));
