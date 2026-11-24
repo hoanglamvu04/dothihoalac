@@ -54,14 +54,14 @@ export async function suggestSearch(input = '') {
   // All suggestions are explicitly projected, public and approved.
   const [areas, contents] = await Promise.all([
     Area.find({ isActive: true, name: regex })
-      .select('name slug').sort({ name: 1 }).limit(4).lean(),
+      .select('name slug').sort({ name: 1 }).limit(4).maxTimeMS(2500).lean(),
     Content.find({
       status: 'published', visibility: 'public', deletedAt: null,
       contentType: { $in: Object.keys(PATHS) },
       $or: [{ title: regex }, { summary: regex }],
     })
       .select('title slug contentType')
-      .sort({ publishedAt: -1, _id: -1 }).limit(8).lean(),
+      .sort({ publishedAt: -1, _id: -1 }).limit(8).maxTimeMS(2500).lean(),
   ]);
 
   const seen = new Set();
