@@ -454,6 +454,16 @@ test('MongoDB E2E: saved searches, index constraints, tenant isolation, alerts',
     assert.ok(byTime.body.data.contents.some((item) => item.slug === 'v2-search-sale-two-billion'));
   });
 
+  await t.test('related properties only return active published public cards without contact PII', async () => {
+    const response = await request(app)
+      .get('/api/v1/properties/v2-search-sale-two-billion/related').expect(200);
+    const cards = response.body.data || [];
+    assert.ok(cards.some((entry) => entry.slug === 'v2-search-sale-four-billion'));
+    assert.ok(cards.every((entry) =>
+      entry.slug !== 'v2-search-private-secret' &&
+      !entry.property?.contactPhone && !entry.property?.contactEmail));
+  });
+
   await t.test('same-user duplicate subscriptions are rejected by MongoDB index, not only application code', async () => {
     const existing = await SavedSearch.findById(savedB._id).lean();
     await assert.rejects(
