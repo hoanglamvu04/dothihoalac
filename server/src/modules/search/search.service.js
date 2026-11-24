@@ -5,6 +5,7 @@ import Area from '../taxonomy/area.model.js';
 import { parsePagination, buildPaginationMeta } from '../../utils/pagination.js';
 import { foldVietnamese, normalizeSearchQuery, vietnameseSearchRegex } from '../../utils/vietnameseSearch.js';
 import ApiError from '../../utils/ApiError.js';
+import { spellingSuggestion } from './search.suggestions.js';
 
 const CONTENT_TYPES = ['article', 'community', 'property', 'job'];
 const CONTENT_TYPE_SET = new Set(CONTENT_TYPES);
@@ -214,7 +215,9 @@ export async function search(query) {
     areas,
     facets,
     sort,
-    suggestion: q && expanded !== foldVietnamese(q) ? expanded : null,
+    suggestion: q && expanded !== foldVietnamese(q)
+      ? expanded
+      : q && selectedTotal === 0 ? spellingSuggestion(q) : null,
     meta: buildPaginationMeta({
       page,
       limit,

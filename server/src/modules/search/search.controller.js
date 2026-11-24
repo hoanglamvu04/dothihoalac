@@ -1,4 +1,5 @@
 import { search } from './search.service.js';
+import { suggestSearch } from './search.suggestions.js';
 import { recordSearchActivity } from '../../services/userActivity.service.js';
 import { sendSuccess } from '../../utils/apiResponse.js';
 
@@ -20,4 +21,9 @@ export async function run(req, res) {
     },
     meta: r.meta,
   });
+}
+
+export async function suggest(req, res) {
+  res.set('Cache-Control', 'public, max-age=15, stale-while-revalidate=30');
+  return sendSuccess(res, { data: await suggestSearch(req.query.q) });
 }
