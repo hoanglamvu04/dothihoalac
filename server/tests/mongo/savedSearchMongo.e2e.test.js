@@ -63,10 +63,6 @@ test('MongoDB E2E: saved searches, index constraints, tenant isolation, alerts',
   ]);
 
   const app = createApp();
-  function client(user) {
-    const jwt = tokens.signAccessToken({ sub: String(user._id), sid: String(new mongoose.Types.ObjectId()) });
-    return request(app).get('/health').set('Authorization', 'Bearer ' + jwt);
-  }
   function auth(user) {
     const jwt = tokens.signAccessToken({ sub: String(user._id), sid: String(new mongoose.Types.ObjectId()) });
     return { Authorization: 'Bearer ' + jwt };
@@ -87,7 +83,8 @@ test('MongoDB E2E: saved searches, index constraints, tenant isolation, alerts',
     }
   });
 
-  const savedA = await t.test('account A creates a followed filter and synonyms resolve to the same filter', async () => {
+  let savedA;
+  await t.test('account A creates a followed filter and synonyms resolve to the same filter', async () => {
     const body = { query: 'BĐS', contentType: 'property', area: area.slug };
     const first = await request(app).post(endpoint).set(a).send(body).expect(201);
     assert.equal(first.body.data.queryNormalized, 'bat dong san');
@@ -97,9 +94,10 @@ test('MongoDB E2E: saved searches, index constraints, tenant isolation, alerts',
     }).expect(201);
     assert.equal(second.body.data._id, first.body.data._id);
     assert.equal(await SavedSearch.countDocuments({ userId: userA._id }), 1);
-    return first.body.data;
+    savedA = first.body.data;
   });
-  const savedB = await t.test('account B owns an independent copy of that search', async () => {
+  let savedB;
+  await t.test('account B owns an independent copy of that search', async () => {
     const created = await request(app).post(endpoint).set(b).send({
       query: 'BĐS', contentType: 'property', area: area.slug,
     }).expect(201);
@@ -109,7 +107,7 @@ test('MongoDB E2E: saved searches, index constraints, tenant isolation, alerts',
     assert.equal(listA.body.data.length, 1);
     assert.equal(listB.body.data.length, 1);
     assert.notEqual(listA.body.data[0]._id, listB.body.data[0]._id);
-    return created.body.data;
+    savedB = created.body.data;
   });
 
   await t.test('a second user cannot update or delete the first user’s search', async () => {
