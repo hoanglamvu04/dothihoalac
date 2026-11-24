@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Button from '../common/Button';
 import FormField from '../common/FormField';
 import { leadApi } from '../../api/lead.api';
@@ -7,6 +7,7 @@ import { useAuth } from '../../context/AuthContext';
 import { useTaxonomy } from '../../context/TaxonomyContext';
 import { useToast } from '../../context/ToastContext';
 import { LEAD_TYPES } from '../../utils/constants';
+import { trackXHubEvent } from '../../utils/xhubAnalytics.mjs';
 
 export default function LeadForm({
   presetType = 'architecture_design',
@@ -30,8 +31,15 @@ export default function LeadForm({
     consent: false,
   });
   const [loading, setLoading] = useState(false);
+  const startedRef = useRef(false);
 
-  const change = (key, value) => setForm((current) => ({ ...current, [key]: value }));
+  const change = (key, value) => {
+    if (!startedRef.current) {
+      startedRef.current = true;
+      trackXHubEvent('form_started');
+    }
+    setForm((current) => ({ ...current, [key]: value }));
+  };
   const submit = async (event) => {
     event.preventDefault();
     setLoading(true);
@@ -43,6 +51,7 @@ export default function LeadForm({
         sourcePage: window.location.pathname,
         assignedBrand,
       });
+      startedRef.current = false;
       toast.success('Đã gửi yêu cầu. Bộ phận phụ trách sẽ liên hệ với bạn.');
       setForm((current) => ({ ...current, message: '', consent: false }));
       onSuccess?.();

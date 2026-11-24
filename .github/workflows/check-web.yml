@@ -31,7 +31,7 @@ jobs:
         working-directory: client
 
       - name: Test article images and featured news
-        run: node --test tests/articleMedia.test.mjs tests/homeHero.test.mjs tests/propertyMap.test.mjs tests/sitemapOutputDir.test.mjs tests/savedSearchMatch.test.mjs tests/notificationNavigation.test.mjs
+        run: node --test tests/articleMedia.test.mjs tests/homeHero.test.mjs tests/propertyMap.test.mjs tests/sitemapOutputDir.test.mjs tests/savedSearchMatch.test.mjs tests/notificationNavigation.test.mjs tests/xhubWa002.test.mjs
         working-directory: client
 
       - name: Validate safe production sitemap refresh script
@@ -45,3 +45,10 @@ jobs:
           SITEMAP_SKIP_DYNAMIC_FETCH: 'true'
         run: npm run build
         working-directory: client
+      - name: Verify no backend-only X-HUB config names appear in frontend assets
+        working-directory: client
+        run: |
+          if grep -R -E 'XHUB_WEB_ANALYTICS_SITE_TOKEN|XHUB_ANALYTICS_READ_KEY' dist/assets; then
+            echo 'Unexpected backend-only field found in frontend assets'
+            exit 1
+          fi

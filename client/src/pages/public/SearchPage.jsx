@@ -27,6 +27,7 @@ import Avatar from '../../components/common/Avatar';
 import ContentImage from '../../components/content/ContentImage';
 import ContentMeta from '../../components/content/ContentMeta';
 import { searchApi } from '../../api/content.api';
+import { trackXHubEvent } from '../../utils/xhubAnalytics.mjs';
 import SaveSearchButton from '../../components/search/SaveSearchButton';
 import { contentPath } from '../../utils/content';
 import { truncate } from '../../utils/formatters';
@@ -412,6 +413,7 @@ export default function SearchPage() {
       }
 
       setTypeahead([]);
+      if (normalizedQuery) trackXHubEvent('search_used');
       setSearchParams(buildParams({ nextQuery: normalizedQuery, nextPage: 1 }));
     },
     [area, buildParams, hasAdvancedCriteria, query, setSearchParams],
@@ -424,6 +426,7 @@ export default function SearchPage() {
 
       setQuery(normalizedTerm);
       setTypeahead([]);
+      trackXHubEvent('search_used');
       setSearchParams(
         buildParams({
           nextQuery: normalizedTerm,
@@ -438,6 +441,7 @@ export default function SearchPage() {
   const changeType = useCallback(
     (value) => {
       if (!hasCriteria) return;
+      trackXHubEvent('filter_used');
       setSearchParams(buildParams({ nextType: value, nextPage: 1 }));
       scrollToResults();
     },
@@ -447,7 +451,9 @@ export default function SearchPage() {
   const changeSort = useCallback(
     (event) => {
       if (!hasCriteria) return;
-      const nextSort = event.target.value === 'newest' ? 'newest' : 'relevance';
+      const nextSort = SORT_OPTIONS.some((item) => item.value === event.target.value)
+        ? event.target.value : 'relevance';
+      trackXHubEvent('filter_used');
       setSearchParams(buildParams({ nextSort, nextPage: 1 }));
       scrollToResults();
     },
@@ -472,6 +478,7 @@ export default function SearchPage() {
       if (value) params[key] = key.endsWith('Price')
         ? String(Number(value) * 1e6) : value;
     }
+    trackXHubEvent('filter_used');
     setSearchParams(params);
     scrollToResults();
   }, [buildParams, propertyForm, scrollToResults, setSearchParams]);

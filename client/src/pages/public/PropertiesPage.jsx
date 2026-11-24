@@ -46,6 +46,7 @@ import ContentImage from '../../components/content/ContentImage';
 import PropertyLocationMap from './PropertyLocationMap';
 
 import { propertyApi } from '../../api/content.api';
+import { trackXHubEvent } from '../../utils/xhubAnalytics.mjs';
 import { useListPage } from '../../hooks/useListPage';
 import { useTaxonomy } from '../../context/TaxonomyContext';
 import {
@@ -491,6 +492,7 @@ export default function PropertiesPage() {
 
   const update = useCallback(
     (key, value, options = {}) => {
+      if (key !== 'page' && key !== 'q') trackXHubEvent('filter_used');
       setUrlParams(
         (next) => {
           if (value !== undefined && value !== null && String(value).trim() !== '') {
@@ -508,6 +510,9 @@ export default function PropertiesPage() {
 
   const updateMultiple = useCallback(
     (values) => {
+      if (Object.keys(values).some((key) => key !== 'page' && key !== 'q')) {
+        trackXHubEvent('filter_used');
+      }
       setUrlParams((next) => {
         Object.entries(values).forEach(([key, value]) => {
           if (value !== undefined && value !== null && String(value).trim() !== '') {
@@ -951,6 +956,7 @@ export default function PropertiesPage() {
                   className="properties-results__search"
                   onSubmit={(event) => {
                     event.preventDefault();
+                    if (searchInput.trim()) trackXHubEvent('search_used');
                     update('q', searchInput.trim());
                   }}
                 >

@@ -34,6 +34,7 @@ import ErrorState from '../../components/common/ErrorState';
 import EmptyState from '../../components/common/EmptyState';
 import { LoadingBlock } from '../../components/common/Loading';
 import { articleApi } from '../../api/content.api';
+import { trackXHubEvent } from '../../utils/xhubAnalytics.mjs';
 import { useListPage } from '../../hooks/useListPage';
 import { useTaxonomy } from '../../context/TaxonomyContext';
 import { contentPath } from '../../utils/content';
@@ -628,6 +629,8 @@ export default function ArticlesPage() {
 
   const updateUrl = useCallback(
     (values) => {
+      // Track only the action, never category, area, date or search values.
+      if (Object.keys(values).some((key) => key !== 'q')) trackXHubEvent('filter_used');
       setSearchParams((current) => {
         const next = new URLSearchParams(current);
 
@@ -711,6 +714,7 @@ export default function ArticlesPage() {
 
   const submitSearch = (event) => {
     event.preventDefault();
+    if (searchDraft.trim()) trackXHubEvent('search_used');
     updateUrl({ q: searchDraft.trim() });
   };
 

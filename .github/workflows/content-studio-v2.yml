@@ -54,6 +54,12 @@ jobs:
           src/components/layout/AdminLayout.jsx
           src/components/layout/AdminLayoutImpl.jsx
           src/components/layout/PublicLayout.jsx
+          src/components/layout/SiteFooter.jsx
+          src/components/layout/XHubConsentControls.jsx
+          src/components/forms/LeadForm.jsx
+          src/api/lead.api.js
+          src/pages/public/ContactPage.jsx
+          src/pages/public/PropertiesPage.jsx
           src/components/studio/ContentEditorShell.jsx
           src/context/AuthContext.jsx
           src/context/TaxonomyContext.jsx
@@ -102,7 +108,7 @@ jobs:
           src/components/community/CommunitySocialEditor.jsx
           src/components/forms/PropertyGalleryUploader.jsx
       - name: Test article images and featured news
-        run: node --test tests/articleMedia.test.mjs tests/homeHero.test.mjs tests/propertyMap.test.mjs tests/sitemapOutputDir.test.mjs tests/savedSearchMatch.test.mjs tests/notificationNavigation.test.mjs
+        run: node --test tests/articleMedia.test.mjs tests/homeHero.test.mjs tests/propertyMap.test.mjs tests/sitemapOutputDir.test.mjs tests/savedSearchMatch.test.mjs tests/notificationNavigation.test.mjs tests/xhubWa002.test.mjs
 
       - name: Validate safe production sitemap refresh script
         run: bash -n scripts/refresh-sitemap-production.sh
@@ -175,6 +181,12 @@ jobs:
           src/modules/jobs/job.service.js
           src/modules/jobs/job.publicList.service.js
           src/modules/jobs/jobPost.model.js
+          src/app.js
+          src/config/env.js
+          src/integrations/xhub-consented-metrics.mjs
+          src/integrations/xhub-pull-analytics.mjs
+          src/integrations/xhub-site-analytics.mjs
+          src/integrations/xhub-site-event-validation.mjs
           src/modules/articles/article.related.service.js
           src/modules/articles/article.quality.js
           src/modules/articles/article.seoAudit.js

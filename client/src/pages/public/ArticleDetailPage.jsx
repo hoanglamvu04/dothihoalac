@@ -33,6 +33,7 @@ import ErrorState from '../../components/common/ErrorState';
 import { PageLoading } from '../../components/common/Loading';
 
 import { articleApi } from '../../api/content.api';
+import { trackXHubEvent } from '../../utils/xhubAnalytics.mjs';
 import { formatDateTime } from '../../utils/formatters';
 import { mediaUrl } from '../../utils/media';
 import { bodyContainsVisibleMediaId } from '../../utils/articleMedia';
@@ -241,6 +242,13 @@ export default function ArticleDetailPage() {
       active = false;
     };
   }, [slug]);
+
+  useEffect(() => {
+    // Only track successfully loaded public articles, never draft previews.
+    if (item?.slug && item.slug === slug) {
+      trackXHubEvent('content_view', { entityKey: item.slug });
+    }
+  }, [item?.slug, slug]);
 
   useEffect(() => {
     if (!item?._id) return undefined;
