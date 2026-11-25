@@ -7,7 +7,7 @@
 - **Phạm vi:** thêm `AGENTS.md`, `luu-y-code/README.md`, `STATUS.md`, `ROADMAP.md`, `HANDOFF.md`, `CHANGELOG.md`; thêm kiểm tra CI Code Notes Gate và bộ test cho điều kiện bắt buộc cập nhật tài liệu.
 - **Tác dụng:** ChatGPT khác đọc được bối cảnh, tình trạng thực, kế hoạch và nhiệm vụ tiếp theo từ Git; hạn chế bàn giao đứt đoạn; PR sửa code phải sửa STATUS + CHANGELOG.
 - **Chứng cứ code:** commit khởi tạo chính là commit chứa ghi chú này. Xem GitHub History của thư mục và workflow `.github/workflows/code-notes-gate.yml`.
-- **Kiểm thử:** chưa khẳng định `CI_PASS` cho commit này cho đến khi GitHub Actions chạy xong. Sau đó phiên phát triển cập nhật STATUS và mục này nếu cần.
+- **Kiểm thử xác minh:** **CI_PASS** trên commit tài liệu `fdc41b44ce1d07d93d4834084a60e05e76ab04be`: [Code Notes Gate](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45533204875) **7/7 test PASS**, xác nhận 2 file trạng thái/nhật ký cùng diff; [DTHL application checks](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45533204899) backend **90 PASS, 1 SKIP**, frontend **31 PASS**, MongoDB E2E **18 PASS**, 0 FAIL. Bằng chứng chỉ trên CI, chưa phải staging.
 - **Giới hạn:** CI có thể đánh dấu vi phạm trên PR/push, nhưng để *ngăn merge* bắt buộc phải bật required status check trong branch ruleset/protection của GitHub.
 
 ## 2026-11-24/25 — DTHL-P77/P78/P79/P80 — Merge công việc vào main

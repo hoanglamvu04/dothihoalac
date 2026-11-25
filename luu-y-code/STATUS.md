@@ -3,6 +3,7 @@
 **Cập nhật lần đầu:** 2026-11-25 (Asia/Bangkok, UTC+07).  
 **Repository:** `hoanglamvu04/dothihoalac`  
 **Mốc GitHub đã đối chiếu:** `main` tại `e926774dd62e6e1e22d1238255349f987fc5993b` (**trước khi commit bộ tài liệu này**; kiểm tra `main` mới nhất khi đọc).  
+**Mốc tài liệu đã được CI kiểm tra:** `fdc41b44ce1d07d93d4834084a60e05e76ab04be` ngày 2026-11-25 (có thể đã có commit tài liệu mới hơn).
 **Trạng thái tổng thể:** `CODE_MERGED` + `CI_PASS`; **STAGING_CHƯA_NGHIỆM_THU**; **PRODUCTION_CHƯA_TRIỂN_KHAI_BẢN_MỚI**.
 
 ## 1. Bằng chứng có thể kiểm tra
@@ -16,6 +17,8 @@
 | CI ứng dụng trên `main` sau cả 4 PR | **SUCCESS** (server/client/MongoDB E2E) | [Run 45451224478](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45451224478) |
 | CI frontend trên `main` | **SUCCESS** | [Run 45451223715](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45451223715) |
 | Triển khai VPS từ commit trên | **CHƯA thực hiện trong các lượt merge**; cần kiểm tra riêng trạng thái môi trường thực | [Deploy workflow](https://github.com/hoanglamvu04/dothihoalac/actions/workflows/deploy-api.yml) |
+| DTHL-DOC01 — Code Notes Gate & tài liệu bàn giao | **CI_PASS**: 7/7 test, kiểm tra đủ STATUS + CHANGELOG | [Run 45533204875](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45533204875) |
+| DTHL-DOC01 — ứng dụng không bị ảnh hưởng | **CI_PASS** trên mốc `fdc41b4`: backend 90 PASS/1 SKIP; frontend 31 PASS; Mongo E2E 18 PASS | [Run 45533204899](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45533204899) |
 
 ## 2. Thành phần đã có code trong main
 
@@ -45,7 +48,7 @@
 
 ## 5. Mục đang thực hiện và bước tiếp theo
 
-**DTHL-DOC01** — Thiết lập thư mục `luu-y-code/`, `AGENTS.md`, CI Code Notes Gate để tất cả ChatGPT tiếp tục dùng và cập nhật cùng code. Trạng thái ban đầu: **CODE_DONE**, xác nhận CI của commit tài liệu sau khi GitHub chạy.
+**DTHL-DOC01** — Thiết lập thư mục `luu-y-code/`, `AGENTS.md`, CI Code Notes Gate để tất cả ChatGPT tiếp tục dùng và cập nhật cùng code. Trạng thái: **CI_PASS** (đã xác minh run `45533204875` + `45533204899` trên SHA `fdc41b4`). Mọi PR đổi code cần cập nhật STATUS + CHANGELOG; chủ repo vẫn cần đặt check thành **required** trong Branch Rulesets để chặn merge khi có vi phạm.
 
 **Ưu tiên sau đó:** DTHL-R01 → DTHL-R02 → DTHL-R03 → DTHL-R04 → DTHL-R05. Chi tiết và tiêu chí nghiệm thu xem [ROADMAP.md](ROADMAP.md).
 

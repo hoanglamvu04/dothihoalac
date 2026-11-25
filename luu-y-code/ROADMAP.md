@@ -49,7 +49,7 @@ Mọi task có thể có nhiều nhãn; ví dụ code `CI_PASS` nhưng phát hà
 
 | ID | Priority | Trạng thái | Tiêu chí |
 | --- | --- | --- | --- |
-| DTHL-DOC01 | P0 | CODE_DONE | Có `AGENTS.md`, thư mục `luu-y-code/`, CI kiểm tra STATUS + CHANGELOG trên PR/push, test CI mới |
+| DTHL-DOC01 | P0 | CI_PASS | Có `AGENTS.md`, thư mục `luu-y-code/`, Code Notes Gate trên PR/push và test **7/7 PASS** tại [run 45533204875](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45533204875) |
 | DTHL-DOC02 | P1 | TODO | Chủ repo bật GitHub Branch Protection/Ruleset yêu cầu **Code Notes Gate** pass trước khi merge để không ai bỏ qua |
 | DTHL-DOC03 | P1 | TODO | Sau mỗi sprint kiểm tra link/chứng cứ trong STATUS không lỗi thời, bàn giao tới AI mới theo HANDOFF |
 
