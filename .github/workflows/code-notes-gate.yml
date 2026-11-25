@@ -1,0 +1,33 @@
+name: Code Notes Gate
+
+# Requires STATUS.md and CHANGELOG.md updates alongside source/config/CI edits.
+# GitHub branch rules must mark this job required to BLOCK merge.
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  require-code-notes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout full history for diff verification
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Unit test the Code Notes Gate
+        run: node --test scripts/check-code-notes.test.mjs
+      - name: Verify implementation changes update both notes
+        env:
+          NOTES_BASE: ${{ github.event_name == 'pull_request' && github.event.pull_request.base.sha || github.event.before }}
+          NOTES_EVENT: ${{ github.event_name }}
+        run: node scripts/check-code-notes.mjs "$NOTES_BASE" "$NOTES_EVENT"

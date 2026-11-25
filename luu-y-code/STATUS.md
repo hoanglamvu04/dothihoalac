@@ -1,0 +1,52 @@
+# STATUS — Trạng thái thực tế dự án DTHL
+
+**Cập nhật lần đầu:** 2026-11-25 (Asia/Bangkok, UTC+07).  
+**Repository:** `hoanglamvu04/dothihoalac`  
+**Mốc GitHub đã đối chiếu:** `main` tại `e926774dd62e6e1e22d1238255349f987fc5993b` (**trước khi commit bộ tài liệu này**; kiểm tra `main` mới nhất khi đọc).  
+**Trạng thái tổng thể:** `CODE_MERGED` + `CI_PASS`; **STAGING_CHƯA_NGHIỆM_THU**; **PRODUCTION_CHƯA_TRIỂN_KHAI_BẢN_MỚI**.
+
+## 1. Bằng chứng có thể kiểm tra
+
+| Hạng mục | Tình trạng đã xác minh | Tham chiếu |
+| --- | --- | --- |
+| PR #80 — deployment chạy thủ công | **MERGED** vào `main` | [PR #80](https://github.com/hoanglamvu04/dothihoalac/pull/80) |
+| PR #78 — tìm kiếm P0/P1, saved searches, alerts | **MERGED** vào `main` | [PR #78](https://github.com/hoanglamvu04/dothihoalac/pull/78) |
+| PR #79 — Search V2, Data Trust V2, dashboard | **MERGED** vào `main` | [PR #79](https://github.com/hoanglamvu04/dothihoalac/pull/79) |
+| PR #77 — WA-002/WA-005 consent-gated analytics | **MERGED**, giữ mặc định OFF | [PR #77](https://github.com/hoanglamvu04/dothihoalac/pull/77) |
+| CI ứng dụng trên `main` sau cả 4 PR | **SUCCESS** (server/client/MongoDB E2E) | [Run 45451224478](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45451224478) |
+| CI frontend trên `main` | **SUCCESS** | [Run 45451223715](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45451223715) |
+| Triển khai VPS từ commit trên | **CHƯA thực hiện trong các lượt merge**; cần kiểm tra riêng trạng thái môi trường thực | [Deploy workflow](https://github.com/hoanglamvu04/dothihoalac/actions/workflows/deploy-api.yml) |
+
+## 2. Thành phần đã có code trong main
+
+- **Nền tảng:** CMS/CRM/đăng nhập/role hiện hành (không tự nhận đã kiểm thử production trong đợt nâng cấp này).
+- **Search & Discovery:** tiếng Việt không dấu/có dấu, alias, tìm theo khu vực, autocomplete, lỗi gõ phạm vi từ điển, bộ lọc giá/diện tích/thời gian, xếp hạng theo quy tắc, tìm kiếm đã lưu.
+- **Notifications:** inbox, ưu tiên quyền riêng tư, saved-search alerts có dedupe và database lease; yêu cầu đúng unique indexes trên DB thực trước khi bật worker.
+- **Data Trust & Recommendations:** cảnh báo gần trùng dạng heuristic, phân biệt căn khác mã, điểm đủ thông tin (không phải xác minh pháp lý), bài viết/BĐS liên quan theo các quy tắc có sẵn.
+- **Operations:** dashboard chất lượng dữ liệu theo quyền quản trị, giới hạn API, SEO/trang khu vực sẵn có.
+- **X-HUB:** code WA-002/WA-005 dùng consent/feature flags; chưa có nghiệm thu nguồn X-HUB thực tế để kích hoạt.
+
+## 3. Cổng phát hành và cấu hình
+
+- `.github/workflows/deploy-api.yml`: chỉ `workflow_dispatch` với xác nhận `DEPLOY_DTHL`; **push `main` không tự deploy full-stack**.
+- Mặc định ở `server/.env.example`: `SAVED_SEARCH_ALERTS_ENABLED=false`, `XHUB_WEB_ANALYTICS_ENABLED=false`, `XHUB_ANALYTICS_PULL_ENABLED=false`.
+- **Không suy ra giá trị .env đang chạy trên VPS** từ file .env.example. Cần kiểm tra nguồn cài đặt thật trước thao tác production.
+- Các workflow lịch/monitor/backup của repo vẫn có thể hoạt động độc lập với deploy full-stack.
+
+## 4. BLOCKERS cần giải quyết
+
+| ID | Vấn đề | Hậu quả / việc cần |
+| --- | --- | --- |
+| DTHL-R01 | Chưa có bằng chứng backup/restore và preflight MongoDB staging thật | Không bật alerts/migration nếu index/dữ liệu trùng chưa được xác nhận |
+| DTHL-R02 | Chưa chạy smoke/E2E trên VPS staging với tài khoản A/B, quyền Admin, mobile | CI pass không chứng minh môi trường thực pass |
+| DTHL-R03 | Chưa load test/EXPLAIN query tại staging và kiểm tra rollback | Có rủi ro latency/index, chưa đủ release gate |
+| DTHL-R04 | X-HUB chưa nghiệm thu org/workspace/source, consent, secrets/issuer/host | Không bật WA-002/WA-005 |
+| DTHL-R05 | Chưa kiểm tra SEO/crawler và hành vi sau triển khai trên public domain | Chưa khẳng định performance/SEO production đạt |
+
+## 5. Mục đang thực hiện và bước tiếp theo
+
+**DTHL-DOC01** — Thiết lập thư mục `luu-y-code/`, `AGENTS.md`, CI Code Notes Gate để tất cả ChatGPT tiếp tục dùng và cập nhật cùng code. Trạng thái ban đầu: **CODE_DONE**, xác nhận CI của commit tài liệu sau khi GitHub chạy.
+
+**Ưu tiên sau đó:** DTHL-R01 → DTHL-R02 → DTHL-R03 → DTHL-R04 → DTHL-R05. Chi tiết và tiêu chí nghiệm thu xem [ROADMAP.md](ROADMAP.md).
+
+**Nguyên tắc:** sau mỗi lượt code, người thực hiện **thay thế mốc SHA và thông tin đã kiểm chứng**, không ghi “đã xong” cho công việc đang chờ access hoặc approval.
