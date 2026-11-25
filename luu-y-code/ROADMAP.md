@@ -56,6 +56,7 @@ Mọi task có thể có nhiều nhãn; ví dụ code `CI_PASS` nhưng phát hà
 | DTHL-DOC01 | P0 | CI_PASS | Có `AGENTS.md`, thư mục `luu-y-code/`, Code Notes Gate trên PR/push và test **7/7 PASS** tại [run 45533204875](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45533204875) |
 | DTHL-DOC02 | P1 | TODO | Chủ repo bật GitHub Branch Protection/Ruleset yêu cầu **Code Notes Gate** pass trước khi merge để không ai bỏ qua |
 | DTHL-DOC03 | P1 | TODO | Sau mỗi sprint kiểm tra link/chứng cứ trong STATUS không lỗi thời, bàn giao tới AI mới theo HANDOFF |
+| DTHL-OPS02 | P1 | CODE_DONE / CI_PENDING; VPS_NOT_RUN | Bổ sung `scripts/vps-health-report.sh` chỉ đọc: PM2, API ready, homepage, sitemap, mã nguồn SHA; `scripts/vps-health-report.test.mjs` kiểm tra syntax/help/safety. Cần CI trên PR và chạy thật từ `/var/www/dothihoalac`; kết quả HTTP không thay thế staging smoke và index audit. |
 | DTHL-OPS01 | P0 | CODE_MERGED / CI_PASS; VPS_NOT_RUN | [PR #83](https://github.com/hoanglamvu04/dothihoalac/pull/83) đã merge; `VPS_COMMANDS.md` và `scripts/vps-update.sh` có 3/3 test PASS ở [run 45572808174](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45572808174). **VPS thật chưa được thao tác; release qua workflow thủ công sau approval** |
 
 ### Khi nhận task mới
