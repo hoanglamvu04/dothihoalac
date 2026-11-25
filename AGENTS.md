@@ -4,7 +4,7 @@
 
 ## Trước khi sửa code
 
-1. Đọc lần lượt [README](luu-y-code/README.md), [STATUS](luu-y-code/STATUS.md), [ROADMAP](luu-y-code/ROADMAP.md), [HANDOFF](luu-y-code/HANDOFF.md) và các mục mới nhất của [CHANGELOG](luu-y-code/CHANGELOG.md).
+1. Đọc lần lượt [README](luu-y-code/README.md), [STATUS](luu-y-code/STATUS.md), [ROADMAP](luu-y-code/ROADMAP.md), [HANDOFF](luu-y-code/HANDOFF.md), [VPS_COMMANDS](luu-y-code/VPS_COMMANDS.md) và các mục mới nhất của [CHANGELOG](luu-y-code/CHANGELOG.md).
 2. Kiểm tra `main`, PR đang mở, CI, tài liệu và source thực tế; **không coi STATUS là dữ liệu chạy thời gian thực**. Xác minh thông tin có thể đã đổi từ ngày ghi nhận.
 3. Chọn đúng task ID trong ROADMAP hoặc tạo task ID mới; ghi rõ điều kiện hoàn thành, rủi ro và thành phần bị ảnh hưởng trước khi bắt đầu.
 4. Không ghi secrets, API key, token, dữ liệu người dùng hay thông tin nhạy cảm vào commit/tài liệu/log.
@@ -21,6 +21,7 @@
 ## Cổng an toàn môi trường
 
 - `main` **không tự deploy VPS**: workflow `.github/workflows/deploy-api.yml` chỉ chạy thủ công. **Không tự kích hoạt** khi người dùng chỉ yêu cầu push code.
+- Đường dẫn VPS được xác nhận từ workflow: `/var/www/dothihoalac`. Xem `luu-y-code/VPS_COMMANDS.md`; script `scripts/vps-update.sh` chỉ có pull/diagnostics/preflight, tuyệt đối không reload/deploy.
 - Luồng saved-search alerts phải qua preflight MongoDB/staging trước khi bật `SAVED_SEARCH_ALERTS_ENABLED`.
 - WA-002/WA-005 X-HUB phải có consent hợp lệ, nghiệm thu nguồn và secret cấu hình server; giữ cờ tính năng mặc định tắt nếu chưa đủ điều kiện.
 - Không đánh dấu nghiệm thu staging hoặc production nếu chưa có bằng chứng trên môi trường tương ứng.

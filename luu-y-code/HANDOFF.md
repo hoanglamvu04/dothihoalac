@@ -94,3 +94,13 @@ Cuối lượt trả lời commit, PR, kết quả test đúng SHA, phần còn 
 ## 7. F07 — Search filter transport
 
 Khi chỉnh trang `/tim-kiem`, dùng `client/src/utils/searchQueryParams.mjs` đưa các giá trị URL `days`, `propertyType`, `transactionType`, `minPrice`, `maxPrice`, `minArea`, `maxArea` vào `GET /api/v1/search`; chỉ gửi trường BĐS khi `type=property`. Đổi URL filters phải re-fetch API. CI frontend chạy `client/tests/searchQueryParams.test.mjs`. Trên staging cần kiểm tra kết quả lọc thật và thao tác mobile/keyboard.
+
+
+## 8. F08 / OPS01 — UI và lệnh VPS chuẩn
+
+- UI active filters: helper `client/src/utils/searchActiveFilters.mjs`; test `client/tests/searchActiveFilters.test.mjs`; không hiển thị bộ lọc BĐS ở tab khác. Xóa chip giữ query/area/type nhưng reset page; giá nhập triệu VND, API nhận VND.
+- **VPS:** đường dẫn chính thức theo workflow `/var/www/dothihoalac`. Đọc [VPS_COMMANDS.md](VPS_COMMANDS.md).
+- Lệnh lần đầu: `cd /var/www/dothihoalac && git pull --ff-only origin main && bash scripts/vps-update.sh --status`.
+- Lần sau: `cd /var/www/dothihoalac && bash scripts/vps-update.sh --pull && bash scripts/vps-update.sh --status`.
+- Script không chạy npm build, PM2 reload, migration hoặc deploy. Phải nghiệm thu R01–R04 trước khi chạy manual GitHub Actions `Deploy Do Thi Hoa Lac VPS` với `DEPLOY_DTHL`.
+- Khi user yêu cầu "kéo lên VPS", phân biệt **đưa code lên GitHub** và **user SSH vào VPS chạy lệnh**. Không tuyên bố đã thay đổi VPS khi chưa có bằng chứng.

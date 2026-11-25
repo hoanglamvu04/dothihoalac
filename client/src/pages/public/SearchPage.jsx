@@ -28,6 +28,12 @@ import ContentImage from '../../components/content/ContentImage';
 import ContentMeta from '../../components/content/ContentMeta';
 import { searchApi } from '../../api/content.api';
 import { buildSearchRequestParams } from '../../utils/searchQueryParams.mjs';
+import {
+  listActiveSearchFilters,
+  removeSearchFilter,
+  clearAdvancedSearchFilters,
+  validatePropertyFilterForm,
+} from '../../utils/searchActiveFilters.mjs';
 import { trackXHubEvent } from '../../utils/xhubAnalytics.mjs';
 import SaveSearchButton from '../../components/search/SaveSearchButton';
 import { contentPath } from '../../utils/content';
@@ -258,14 +264,13 @@ export default function SearchPage() {
 
   const q = searchParams.get('q')?.trim() || '';
   const area = searchParams.get('area')?.trim() || '';
-  const hasAdvancedCriteria = ['days', 'propertyType', 'transactionType',
-    'minPrice', 'maxPrice', 'minArea', 'maxArea']
-    .some((key) => Boolean(searchParams.get(key)));
-  const hasCriteria = Boolean(q || area || hasAdvancedCriteria);
   const requestedType = searchParams.get('type') || 'all';
   const type = SEARCH_TYPES.some((item) => item.value === requestedType)
     ? requestedType
     : 'all';
+  const activeFilters = listActiveSearchFilters(searchParams, type);
+  const hasAdvancedCriteria = activeFilters.length > 0;
+  const hasCriteria = Boolean(q || area || hasAdvancedCriteria);
   const requestedSort = searchParams.get('sort') || 'relevance';
   const sort = SORT_OPTIONS.some((item) => item.value === requestedSort)
     ? requestedSort
@@ -281,6 +286,7 @@ export default function SearchPage() {
   const [typeahead, setTypeahead] = useState([]);
   const [correction, setCorrection] = useState(null);
   const [suggestionsDismissed, setSuggestionsDismissed] = useState(false);
+  const [filterError, setFilterError] = useState('');
   const [propertyForm, setPropertyForm] = useState({
     propertyType: '', transactionType: '',
     minPrice: '', maxPrice: '', minArea: '', maxArea: '',
@@ -302,6 +308,10 @@ export default function SearchPage() {
       maxArea: searchParams.get('maxArea') || '',
     });
   }, [searchParams]);
+
+  useEffect(() => {
+    setFilterError('');
+  }, [propertyForm]);
 
   useEffect(() => {
     const typed = query.trim();
@@ -475,17 +485,32 @@ export default function SearchPage() {
 
   const applyPropertyFilters = useCallback((event) => {
     event.preventDefault();
-    const params = buildParams({ nextType: 'property', nextPage: 1 });
-    for (const key of ['propertyType', 'transactionType', 'minPrice', 'maxPrice', 'minArea', 'maxArea']) {
-      delete params[key];
-      const value = String(propertyForm[key] || '').trim();
-      if (value) params[key] = key.endsWith('Price')
-        ? String(Number(value) * 1e6) : value;
+    const { values, error: validationError } = validatePropertyFilterForm(propertyForm);
+    if (validationError) {
+      setFilterError(validationError);
+      return;
     }
+    setFilterError('');
+    const params = buildParams({ nextType: 'property', nextPage: 1 });
+    for (const key of ['propertyType', 'transactionType',
+      'minPrice', 'maxPrice', 'minArea', 'maxArea']) {
+      delete params[key];
+    }
+    Object.assign(params, values);
     trackXHubEvent('filter_used');
     setSearchParams(params);
     scrollToResults();
   }, [buildParams, propertyForm, scrollToResults, setSearchParams]);
+
+  const removeActiveFilter = useCallback((key) => {
+    setSearchParams(removeSearchFilter(searchParams, key));
+    scrollToResults();
+  }, [scrollToResults, searchParams, setSearchParams]);
+
+  const clearAdvancedFilters = useCallback(() => {
+    setSearchParams(clearAdvancedSearchFilters(searchParams));
+    scrollToResults();
+  }, [scrollToResults, searchParams, setSearchParams]);
 
   const changeWindow = useCallback((event) => {
     const params = buildParams({ nextPage: 1 });
@@ -693,6 +718,32 @@ export default function SearchPage() {
                   </div>
                 </div>
 
+                {activeFilters.length > 0 ? (
+                  <div className="search-active-filters" role="group"
+                    aria-label="Bộ lọc đang áp dụng">
+                    <span className="search-active-filters__label">Đang lọc</span>
+                    {activeFilters.map((filter) => (
+                      <button
+                        type="button"
+                        key={filter.key}
+                        className="search-active-filters__chip"
+                        aria-label={'Bỏ bộ lọc: ' + filter.label}
+                        onClick={() => removeActiveFilter(filter.key)}
+                      >
+                        {filter.label}
+                        <X size={13} aria-hidden="true" />
+                      </button>
+                    ))}
+                    <button
+                      type="button"
+                      className="search-active-filters__clear"
+                      onClick={clearAdvancedFilters}
+                    >
+                      Bỏ tất cả bộ lọc
+                    </button>
+                  </div>
+                ) : null}
+
                 {loading ? (
                   <ResultSkeleton />
                 ) : error ? (
@@ -862,6 +913,9 @@ export default function SearchPage() {
                       </label>
                     </div>
                     <small>Khoảng giá áp dụng cho tổng giá (VND); không áp dụng giá thỏa thuận, giá/m² hay thuê theo tháng.</small>
+                    {filterError ? (
+                      <p className="search-filter-error" role="alert">{filterError}</p>
+                    ) : null}
                     <button type="submit" className="search-advanced-filter__apply">Áp dụng bộ lọc</button>
                   </form>
                 ) : null}
