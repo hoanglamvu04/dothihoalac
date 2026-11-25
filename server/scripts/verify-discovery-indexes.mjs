@@ -39,6 +39,7 @@ async function main() {
       notificationCollectionExists: collections.has('notifications'),
       savedSearchUnique: checks.savedSearchUnique,
       notificationDedupeUnique: checks.notificationDedupeUnique,
+      savedSearchFairScanIndex: checks.savedSearchFairScanIndex,
     }, null, 2) + '\n');
     if (!checks.pass) process.exitCode = 1;
   } catch (error) {

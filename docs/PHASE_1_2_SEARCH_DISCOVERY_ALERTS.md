@@ -83,3 +83,43 @@ Output chỉ có trạng thái PASS/FAIL và **số lượng**, tuyệt đối k
 **Fail closed:** worker `sendSavedSearchAlerts` cũng kiểm tra hai index thực ở mỗi lượt chạy. Nếu thiếu index hoặc DB chưa sẵn sàng, bỏ qua lượt phát thông báo **không thay đổi cursor**. Sau khi index được khôi phục, lượt chạy tiếp theo tiếp tục quét an toàn. Tất cả được kiểm thử trên MongoDB 7 riêng của GitHub Actions bằng cách gỡ/khôi phục index **chỉ trong CI**, không đụng production.
 
 `SAVED_SEARCH_ALERTS_ENABLED=false` vẫn là mặc định. Preflight PASS trên MongoDB CI không có nghĩa index của MongoDB staging/VPS đã được nghiệm thu.
+
+
+## Sprint F01 — fair scheduling and stricter release indexes (2026-11-25)
+
+When there are more than 80 active subscriptions, sorting ONLY by `lastScannedAt`
+can keep selecting the same searches whose matching content backlog never ends.
+The scheduler now atomically claims the oldest `lastScanAttemptAt` value,
+independently from the `lastScannedAt + lastScannedContentId` content cursor.
+Each 5-minute run claims at most 80 **distinct** subscriptions. MongoDB
+leases prevent parallel PM2 processes claiming the same subscription; failed
+or interrupted work retries in later cycles without advancing the content
+cursor. New subscriptions and subscriptions explicitly resumed have null
+attempt time and are eligible promptly.
+
+**Required physical MongoDB indexes before enabling alerts:**
+
+1. Unique `saved_search_per_user_unique`: `userId + queryNormalized + contentType + areaId`.
+2. Partial unique `unique_notification_dedupe`: `recipientId + dedupeKey` where dedupeKey is a string.
+3. Non-unique `saved_search_fair_scan_order`:
+   `{ isActive: 1, lastScanAttemptAt: 1, _id: 1 }`.
+
+The read-only `node scripts/preflight-discovery-release.mjs` and
+`node scripts/verify-discovery-indexes.mjs` report `savedSearchFairScanIndex`
+and FAIL if any required index is absent/malformed. Existing records with
+missing `lastScanAttemptAt` are handled as null; **no backfill is required**.
+Worker checks index definitions each tick and refuses to claim when missing.
+
+**Staging-only DBA step, after approved backup and duplicate audit** (not
+run by preflight, never invoke against production without a change plan):
+
+```javascript
+db.savedsearches.createIndex(
+  { isActive: 1, lastScanAttemptAt: 1, _id: 1 },
+  { name: "saved_search_fair_scan_order" }
+);
+```
+
+Re-run read-only preflight and MongoDB staging acceptance before
+`SAVED_SEARCH_ALERTS_ENABLED=true`. The CI simulation uses an isolated
+localhost database `dthl_pr78_ci`; it is not a production readiness result.

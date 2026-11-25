@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { readDiscoveryPreflight } from '../../src/modules/savedSearches/discoveryReadiness.js';
+import { claimNextSavedSearch } from '../../src/jobs/savedSearchAlerts.job.js';
 
 const enabled = process.env.DTHL_MONGO_E2E === 'true';
 
@@ -508,6 +509,107 @@ test('MongoDB E2E: saved searches, index constraints, tenant isolation, alerts',
     }).expect(200);
     const read = await request(app).get(prefUrl).set(b).expect(200);
     assert.ok(read.body.data.some((p) => p.notificationType === 'saved_search_match' && p.inAppEnabled === true));
+  });
+
+  await t.test('fairness index missing fails closed, leaves scan cursor and attempts untouched', async () => {
+    const before = await SavedSearch.findById(savedB._id)
+      .select('+lastScanAttemptAt').lean();
+    await SavedSearch.collection.dropIndex('saved_search_fair_scan_order');
+    try {
+      await sendSavedSearchAlerts();
+      const current = await SavedSearch.findById(savedB._id)
+        .select('+lastScanAttemptAt').lean();
+      assert.equal(current.lastScannedAt.getTime(), before.lastScannedAt.getTime());
+      assert.equal(
+        current.lastScanAttemptAt?.getTime() ?? null,
+        before.lastScanAttemptAt?.getTime() ?? null,
+      );
+      const report = await readDiscoveryPreflight(mongoose.connection.db);
+      assert.equal(report.status, 'FAIL');
+      assert.equal(report.savedSearchFairScanIndex, false);
+      assert.equal(report.savedSearchUnique, true);
+      assert.equal(report.notificationDedupeUnique, true);
+    } finally {
+      await SavedSearch.collection.createIndex(
+        { isActive: 1, lastScanAttemptAt: 1, _id: 1 },
+        { name: 'saved_search_fair_scan_order' },
+      );
+    }
+    assert.equal((await readDiscoveryPreflight(mongoose.connection.db)).status, 'PASS');
+  });
+
+  await t.test('fair scheduler rotates through 100 filters and atomic PM2-like claims do not collide', async () => {
+    const oldActive = await SavedSearch.find({ isActive: true }).select('_id').lean();
+    const oldIds = oldActive.map((row) => row._id);
+    await SavedSearch.updateMany({ _id: { $in: oldIds } }, { $set: { isActive: false } });
+    const extraUsers = await User.insertMany(Array.from({ length: 5 }, (_, i) => ({
+      email: 'fair-' + i + '@example.invalid',
+      username: 'fairtestuser' + i,
+      displayName: 'Fair scan CI ' + i,
+      passwordHash: 'test-only-hash',
+    })));
+    let created = [];
+    try {
+      const initialCursor = new Date(Date.now() - 120_000);
+      created = await SavedSearch.insertMany(extraUsers.flatMap((user, userIndex) =>
+        Array.from({ length: 20 }, (_, i) => ({
+          userId: user._id,
+          query: 'fair scan ' + userIndex + ' ' + i,
+          queryNormalized: 'fair scan ' + userIndex + ' ' + i,
+          contentType: 'job',
+          isActive: true,
+          lastScannedAt: initialCursor,
+          // No legacy attempt stamp: old subscriptions also start at null.
+          lastScanAttemptAt: null,
+        })),
+      ));
+      const ids = created.map((row) => row._id);
+      assert.equal(await SavedSearch.countDocuments({ _id: { $in: ids } }), 100);
+
+      await sendSavedSearchAlerts();
+      const firstAttempted = await SavedSearch.countDocuments({
+        _id: { $in: ids }, lastScanAttemptAt: { $type: 'date' },
+      });
+      assert.equal(firstAttempted, 80, 'one scan must claim at most 80 distinct filters');
+
+      // Keep the first 80 content cursors deliberately old to simulate a
+      // continuously backlogged feed. Fair scheduling must still reach the 20.
+      await SavedSearch.updateMany({
+        _id: { $in: ids }, lastScanAttemptAt: { $type: 'date' },
+      }, { $set: { lastScannedAt: initialCursor } });
+
+      await sendSavedSearchAlerts();
+      const allAttempted = await SavedSearch.countDocuments({
+        _id: { $in: ids }, lastScanAttemptAt: { $type: 'date' },
+      });
+      assert.equal(allAttempted, 100, 'remaining filters must be scanned on the next run');
+
+      // Two different workers call the SAME atomic claim concurrently. Even
+      // when both start together, neither can own the same active DB lease.
+      const runStartedAt = new Date();
+      const [left, right] = await Promise.all([
+        claimNextSavedSearch(runStartedAt),
+        claimNextSavedSearch(runStartedAt),
+      ]);
+      assert.ok(left && right);
+      assert.notEqual(String(left._id), String(right._id));
+      assert.ok(left.scanLeaseToken && right.scanLeaseToken);
+      assert.notEqual(left.scanLeaseToken, right.scanLeaseToken);
+      const leased = await SavedSearch.countDocuments({
+        _id: { $in: [left._id, right._id] },
+        scanLeaseUntil: { $gt: new Date() },
+      });
+      assert.equal(leased, 2);
+
+      const scoped = await request(app).get(endpoint).set(b).expect(200);
+      assert.ok(scoped.body.data.every((entry) =>
+        !Object.hasOwn(entry, 'lastScanAttemptAt') &&
+        !Object.hasOwn(entry, 'scanLeaseToken')));
+    } finally {
+      await SavedSearch.deleteMany({ _id: { $in: created.map((row) => row._id) } });
+      await User.deleteMany({ _id: { $in: extraUsers.map((user) => user._id) } });
+      await SavedSearch.updateMany({ _id: { $in: oldIds } }, { $set: { isActive: true } });
+    }
   });
 
   await t.test('same-user duplicate subscriptions are rejected by MongoDB index, not only application code', async () => {

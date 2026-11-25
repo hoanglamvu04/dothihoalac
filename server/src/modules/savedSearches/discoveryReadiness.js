@@ -1,25 +1,46 @@
 // Read-only release preflight for saved-search notifications.
 // Do not load models or create indexes in this module.
+// Require exact key order AND shape: an additional key on a unique index
+// weakens deduplication because different extras can bypass its constraint.
+function hasExactlyTheseKeys(index, expected) {
+  const actual = Object.entries(index?.key || {});
+  const wanted = Object.entries(expected);
+  return actual.length === wanted.length &&
+    actual.every(([key, direction], i) =>
+      key === wanted[i][0] && direction === wanted[i][1]);
+}
+
+function hasOnlyDedupeStringPartial(index) {
+  const filter = index?.partialFilterExpression;
+  const predicate = filter?.dedupeKey;
+  return filter && Object.keys(filter).length === 1 &&
+    predicate && Object.keys(predicate).length === 1 &&
+    predicate.$type === 'string';
+}
+
 export function verifyDiscoveryIndexes(savedIndexes = [], notificationIndexes = []) {
   const savedSearchUnique = savedIndexes.some((index) =>
     index.name === 'saved_search_per_user_unique' &&
-    index.unique === true &&
-    index.key?.userId === 1 &&
-    index.key?.queryNormalized === 1 &&
-    index.key?.contentType === 1 &&
-    index.key?.areaId === 1
+    index.unique === true && index.sparse !== true &&
+    !index.partialFilterExpression && index.hidden !== true &&
+    hasExactlyTheseKeys(index, { userId: 1, queryNormalized: 1, contentType: 1, areaId: 1 })
   );
   const notificationDedupeUnique = notificationIndexes.some((index) =>
     index.name === 'unique_notification_dedupe' &&
-    index.unique === true &&
-    index.key?.recipientId === 1 &&
-    index.key?.dedupeKey === 1 &&
-    index.partialFilterExpression?.dedupeKey?.$type === 'string'
+    index.unique === true && index.sparse !== true && index.hidden !== true &&
+    hasExactlyTheseKeys(index, { recipientId: 1, dedupeKey: 1 }) &&
+    hasOnlyDedupeStringPartial(index)
+  );
+  const savedSearchFairScanIndex = savedIndexes.some((index) =>
+    index.name === 'saved_search_fair_scan_order' &&
+    index.hidden !== true && !index.partialFilterExpression &&
+    hasExactlyTheseKeys(index, { isActive: 1, lastScanAttemptAt: 1, _id: 1 })
   );
   return {
     savedSearchUnique,
     notificationDedupeUnique,
-    pass: savedSearchUnique && notificationDedupeUnique,
+    savedSearchFairScanIndex,
+    pass: savedSearchUnique && notificationDedupeUnique && savedSearchFairScanIndex,
   };
 }
 
@@ -81,6 +102,7 @@ export async function readDiscoveryPreflight(db) {
     notificationCollectionExists,
     savedSearchUnique: indexes.savedSearchUnique,
     notificationDedupeUnique: indexes.notificationDedupeUnique,
+    savedSearchFairScanIndex: indexes.savedSearchFairScanIndex,
     savedSearchDuplicates,
     notificationDuplicates,
   };
