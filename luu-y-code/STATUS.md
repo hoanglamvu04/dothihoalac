@@ -62,3 +62,11 @@
 **Ưu tiên sau đó:** DTHL-R01 backup/index preflight Mongo staging → DTHL-R02 smoke auth, tìm kiếm, mobile, RBAC → DTHL-R03 đo tải → DTHL-R04 nghiệm thu X-HUB → DTHL-R05 SEO → DTHL-F09/F10 E2E mobile/staging. Chi tiết và tiêu chí nghiệm thu xem [ROADMAP.md](ROADMAP.md).
 
 **Nguyên tắc:** sau mỗi lượt code, người thực hiện **thay thế mốc SHA và thông tin đã kiểm chứng**, không ghi “đã xong” cho công việc đang chờ access hoặc approval.
+
+## DTHL-OPS02 — Báo cáo sức khỏe VPS (2026-11-25)
+
+- Trạng thái: **CODE_DONE / CI_PENDING / VPS_NOT_RUN** trên nhánh `feat/dthl-ops02-vps-health-report-20261125`; chưa merge main, chưa SSH vào VPS.
+- Thêm `scripts/vps-health-report.sh` để kiểm tra chỉ đọc PM2 `dothihoalac-api`, local API readiness, public homepage và sitemap HTTP 200, chỉ in mã trạng thái/short SHA (không in response body, cookie, URI DB).
+- Thêm `scripts/vps-health-report.test.mjs`; kiểm tra CI còn chờ. Kết quả kiểm tra runtime không xác minh được revision đang deploy, accessibility, nghiệp vụ hoặc MongoDB indexes.
+- Lệnh khi đã kéo code: `cd /var/www/dothihoalac && bash scripts/vps-health-report.sh`.
+- Ưu tiên tiếp: R01 backup/index preflight → R02 staging auth/mobile/RBAC → R03 latency/rollback → R05 SEO; không bật alerts/X-HUB và không tự deploy.
