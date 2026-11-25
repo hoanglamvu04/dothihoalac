@@ -56,3 +56,19 @@ Không in `server/.env`, token, cookie hay URI MongoDB vào tin nhắn/log. Ch�
 ## 6. Quy tắc tiếp tục phát triển
 
 Khi nâng cấp code phải cập nhật `luu-y-code/STATUS.md` và `luu-y-code/CHANGELOG.md` cùng PR; khi thay đổi kế hoạch hoặc cách triển khai, cập nhật `ROADMAP.md`, `HANDOFF.md` và file VPS này.
+
+## 7. Lệnh kiểm tra toàn bộ sức khỏe VPS (chỉ đọc, không reload)
+
+Sau khi `main` đã chứa OPS02 và pull source về VPS:
+
+```bash
+cd /var/www/dothihoalac && bash scripts/vps-update.sh --pull && bash scripts/vps-health-report.sh
+```
+
+Muốn lưu báo cáo để tiện tra cứu và tránh đưa vào Git:
+
+```bash
+cd /var/www/dothihoalac && mkdir -p /var/log/dothihoalac && bash scripts/vps-health-report.sh | tee /var/log/dothihoalac/health-$(date -u +%Y%m%dT%H%M%SZ).log
+```
+
+Chỉ sử dụng `/var/log/dothihoalac` nếu tài khoản có quyền ghi. Báo cáo chỉ in short SHA, trạng thái PM2, mã HTTP; không in nội dung API, token hoặc .env. Exit code 1 nếu smoke FAIL, 2 nếu sai tham số/thư mục/repo. **PASS không chứng minh mã đang deploy là HEAD mới, không thay thế smoke business staging, preflight index và approval phát hành.** Nếu cần kiểm tra Nginx: `sudo nginx -t` (chỉ kiểm cấu hình); không reload tự động.
