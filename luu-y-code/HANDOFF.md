@@ -9,6 +9,7 @@
 - `main` là nhánh tích hợp. PR #77 (WA-002/WA-005), #78 (Search P0/P1), #79 (Sprint 4–6), #80 (manual deploy) đã merge vào `main` ngày 24–25/11/2026.
 - Có CI app + frontend + MongoDB 7 isolated E2E; CI PASS chưa thay thế staging và production acceptance.
 - Tính năng X-HUB và saved-search alert mặc định **OFF**, không đọc `.env.example` để đoán `.env` của VPS.
+- Đợt DTHL-F01 thêm `lastScanAttemptAt` và index không unique `saved_search_fair_scan_order` (`isActive:1,lastScanAttemptAt:1,_id:1`) để quét công bằng. **Cần 3 index vật lý** gồm 2 unique cũ và index xếp lịch mới. Thứ tự migration: backup → preflight read-only → xem duplicate/schema/index → DBA tạo index được duyệt → preflight read-only PASS → staging acceptance. Không tạo index tại production trong ChatGPT.
 
 ## 2. Quy trình bắt buộc cho ChatGPT khác
 

@@ -16,6 +16,9 @@ const schema = new mongoose.Schema({
   isActive: { type: Boolean, default: true },
   lastScannedAt: { type: Date, default: Date.now },
   lastScannedContentId: { type: mongoose.Schema.Types.ObjectId, default: null },
+  // Scheduling fairness only; independent from the content delivery cursor.
+  // select:false prevents this operational field from appearing in user APIs.
+  lastScanAttemptAt: { type: Date, default: null, select: false },
   // Cross-process best-effort scan lease. Expiry recovers from worker crashes.
   scanLeaseToken: { type: String, default: null, select: false },
   scanLeaseUntil: { type: Date, default: null, select: false },
@@ -26,4 +29,8 @@ schema.index(
   { unique: true, name: 'saved_search_per_user_unique' },
 );
 schema.index({ isActive: 1, lastScannedAt: 1, _id: 1 });
+schema.index(
+  { isActive: 1, lastScanAttemptAt: 1, _id: 1 },
+  { name: 'saved_search_fair_scan_order' },
+);
 export default getOrCreateModel('SavedSearch', schema, 'savedsearches');

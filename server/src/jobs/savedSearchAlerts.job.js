@@ -43,23 +43,33 @@ export function buildSavedSearchContentFilter(search, now = new Date()) {
   };
 }
 
-async function acquireLease(search) {
+// Atomic cross-worker claim. The scan-attempt clock is deliberately independent
+// of the published-content cursor: an oversized backlog must not monopolize the
+// first 80 subscriptions on every five-minute scheduler tick.
+export async function claimNextSavedSearch(runStartedAt = new Date()) {
   const now = new Date();
   const token = randomUUID();
   return SavedSearch.findOneAndUpdate(
     {
-      _id: search._id,
-      userId: search.userId,
       isActive: true,
-      $or: [{ scanLeaseUntil: null }, { scanLeaseUntil: { $lte: now } }],
+      $and: [
+        { $or: [{ scanLeaseUntil: null }, { scanLeaseUntil: { $lte: now } }] },
+        // This comparison excludes documents already claimed in THIS run.
+        // A missing field is treated as null for pre-existing subscriptions.
+        { $or: [
+          { lastScanAttemptAt: null },
+          { lastScanAttemptAt: { $lt: runStartedAt } },
+        ] },
+      ],
     },
     {
       $set: {
+        lastScanAttemptAt: now,
         scanLeaseToken: token,
         scanLeaseUntil: new Date(now.getTime() + LEASE_MS),
       },
     },
-    { new: true },
+    { new: true, sort: { lastScanAttemptAt: 1, _id: 1 } },
   ).select('+scanLeaseToken +scanLeaseUntil').lean();
 }
 
@@ -102,19 +112,17 @@ export async function sendSavedSearchAlerts() {
       return 0;
     }
     if (!indexChecks.pass) {
-      logger.warn('Saved search alerts paused: unique MongoDB indexes are missing');
+      logger.warn(indexChecks, 'Saved search alerts paused: required MongoDB indexes are missing or malformed');
       return 0;
     }
-    const searches = await SavedSearch.find({ isActive: true })
-      .sort({ lastScannedAt: 1, _id: 1 })
-      .limit(SEARCHES_PER_RUN)
-      .lean();
-
-    for (const snapshot of searches) {
+    const runStartedAt = new Date();
+    for (let claimed = 0; claimed < SEARCHES_PER_RUN; claimed += 1) {
       let search = null;
       try {
-        search = await acquireLease(snapshot);
-        if (!search) continue;
+        // Never select the same subscription twice in one run. Concurrent
+        // PM2 workers atomically claim different unlocked subscriptions.
+        search = await claimNextSavedSearch(runStartedAt);
+        if (!search) break;
 
         const now = new Date();
         const matches = await Content.find(buildSavedSearchContentFilter(search, now))
@@ -171,14 +179,16 @@ export async function sendSavedSearchAlerts() {
           },
         );
       } catch (error) {
-        logger.warn({ err: error, savedSearchId: snapshot._id }, 'Saved search alert check failed');
-        // The cursor is unchanged on failure. Notification dedupe handles retry.
+        logger.warn({ errorName: error?.name, savedSearchId: search?._id }, 'Saved search alert check failed');
+        // Do not perform 80 failing DB claims if the DB is unavailable.
+        if (!search) throw error;
+        // The content cursor is unchanged on failure; a later run retries.
       } finally {
         if (search) {
           try {
             await releaseLease(search);
           } catch (error) {
-            logger.warn({ err: error, savedSearchId: snapshot._id }, 'Saved search scan lease release failed');
+            logger.warn({ errorName: error?.name, savedSearchId: search._id }, 'Saved search scan lease release failed');
             // Lease expires automatically after LEASE_MS.
           }
         }

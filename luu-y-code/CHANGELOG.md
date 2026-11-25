@@ -2,6 +2,15 @@
 
 **Quy tắc:** nhật ký mới nhất trên cùng; không xóa lịch sử cũ; ghi link PR/commit/CI thật, không điền PASS khi chưa chạy. Mọi PR sửa code/config/workflow phải **cập nhật cùng PR file này + STATUS.md**.
 
+## 2026-11-25 — DTHL-F01 — Fair scan & index hardening (đang code)
+
+- **Task:** DTHL-F01 / branch `feat/dthl-f01-fair-saved-search-worker-20261125`, trạng thái ban đầu `CODE_DONE / CI_PENDING` trong nhánh; **chưa merge hoặc deploy** ở thời điểm soạn nhật ký.
+- **Thay đổi:** worker claim nguyên tử từng subscription theo `lastScanAttemptAt` thay vì lấy 80 `lastScannedAt` cũ nhất; độc lập với cursor nội dung để backlog không gây đói lượt quét. Khi bắt đầu quét đánh dấu thời điểm claim; một bộ lọc không được claim hai lần cùng run. Tiếp tục chống trùng đa PM2 bằng lease token, xử lý quá hạn và unique notification key.
+- **Schema/release:** thêm field internal `lastScanAttemptAt` và index MongoDB `saved_search_fair_scan_order`; audit và worker **fail-closed** nếu thiếu index. Kiểm tra chính xác số trường/thứ tự key trên unique/partial index để từ chối index sai cấu trúc.
+- **Tests bổ sung:** unit audit index giả/trùng và MongoDB CI 100 subscription/5 account, 80→100 lượt, claim đồng thời 2 worker mô phỏng, dropped index và restore chỉ trong DB cô lập. **Chưa ghi PASS trước khi xem CI thực tế**.
+- **Ảnh hưởng:** có thêm index cần nghiệm thu trên staging; `SAVED_SEARCH_ALERTS_ENABLED=false` vẫn mặc định. Preflight chỉ đọc không chạy DDL và không tự bật worker; X-HUB không thay đổi.
+- **Bước tiếp:** chạy CI → xử lý lỗi (nếu có) → review/merge khi PASS → staging index audit/preflight/backup trước khi bật tính năng.
+
 ## 2026-11-25 — DTHL-DOC01 — Khởi tạo “LƯU Ý CODE”
 
 - **Phạm vi:** thêm `AGENTS.md`, `luu-y-code/README.md`, `STATUS.md`, `ROADMAP.md`, `HANDOFF.md`, `CHANGELOG.md`; thêm kiểm tra CI Code Notes Gate và bộ test cho điều kiện bắt buộc cập nhật tài liệu.

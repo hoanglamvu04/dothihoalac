@@ -3,7 +3,7 @@
 **Cập nhật lần đầu:** 2026-11-25 (Asia/Bangkok, UTC+07).  
 **Repository:** `hoanglamvu04/dothihoalac`  
 **Mốc GitHub đã đối chiếu:** `main` tại `e926774dd62e6e1e22d1238255349f987fc5993b` (**trước khi commit bộ tài liệu này**; kiểm tra `main` mới nhất khi đọc).  
-**Mốc tài liệu đã được CI kiểm tra:** `fdc41b44ce1d07d93d4834084a60e05e76ab04be` ngày 2026-11-25 (có thể đã có commit tài liệu mới hơn).
+**Mốc CI tài liệu và ứng dụng gần nhất đã xác minh:** `f6b03318f926e65cc274120b1aa19e4ad10b5046` ([application CI](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45533350948), [Code Notes Gate](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45533350892)); **mốc mới F01 đang chờ CI**.
 **Trạng thái tổng thể:** `CODE_MERGED` + `CI_PASS`; **STAGING_CHƯA_NGHIỆM_THU**; **PRODUCTION_CHƯA_TRIỂN_KHAI_BẢN_MỚI**.
 
 ## 1. Bằng chứng có thể kiểm tra
@@ -24,7 +24,7 @@
 
 - **Nền tảng:** CMS/CRM/đăng nhập/role hiện hành (không tự nhận đã kiểm thử production trong đợt nâng cấp này).
 - **Search & Discovery:** tiếng Việt không dấu/có dấu, alias, tìm theo khu vực, autocomplete, lỗi gõ phạm vi từ điển, bộ lọc giá/diện tích/thời gian, xếp hạng theo quy tắc, tìm kiếm đã lưu.
-- **Notifications:** inbox, ưu tiên quyền riêng tư, saved-search alerts có dedupe và database lease; yêu cầu đúng unique indexes trên DB thực trước khi bật worker.
+- **Notifications:** inbox, ưu tiên quyền riêng tư, saved-search alerts có dedupe và database lease. Đợt F01 bổ sung phân lượt công bằng theo thời điểm nhận quét; cần 2 index unique và 1 index xếp lịch trên DB thực trước khi bật worker.
 - **Data Trust & Recommendations:** cảnh báo gần trùng dạng heuristic, phân biệt căn khác mã, điểm đủ thông tin (không phải xác minh pháp lý), bài viết/BĐS liên quan theo các quy tắc có sẵn.
 - **Operations:** dashboard chất lượng dữ liệu theo quyền quản trị, giới hạn API, SEO/trang khu vực sẵn có.
 - **X-HUB:** code WA-002/WA-005 dùng consent/feature flags; chưa có nghiệm thu nguồn X-HUB thực tế để kích hoạt.
@@ -50,6 +50,10 @@
 
 **DTHL-DOC01** — Thiết lập thư mục `luu-y-code/`, `AGENTS.md`, CI Code Notes Gate để tất cả ChatGPT tiếp tục dùng và cập nhật cùng code. Trạng thái: **CI_PASS** (đã xác minh run `45533204875` + `45533204899` trên SHA `fdc41b4`). Mọi PR đổi code cần cập nhật STATUS + CHANGELOG; chủ repo vẫn cần đặt check thành **required** trong Branch Rulesets để chặn merge khi có vi phạm.
 
-**Ưu tiên sau đó:** DTHL-R01 → DTHL-R02 → DTHL-R03 → DTHL-R04 → DTHL-R05. Chi tiết và tiêu chí nghiệm thu xem [ROADMAP.md](ROADMAP.md).
+**Đang phát triển 2026-11-25: DTHL-F01** — xử lý fairness/starvation của job quét tìm kiếm đã lưu. Branch `feat/dthl-f01-fair-saved-search-worker-20261125`; trạng thái `IN_PROGRESS / CI_PENDING` cho đến khi kiểm thử chính thức trên GitHub. Cơ chế mới: claim nguyên tử theo `lastScanAttemptAt`, tối đa 80 lượt riêng biệt/run và index `saved_search_fair_scan_order` để tránh worker quét lặp cùng 80 subscription khi backlog dày. API người dùng không lộ timestamp nội bộ. **Chưa merge, chưa staging hay deploy** theo mốc tạo bản ghi này.
+
+**Cổng phát hành mới:** cần 3 index MongoDB tồn tại vật lý trước khi bật worker (2 unique cũ + `saved_search_fair_scan_order`). Công cụ audit chỉ đọc sẽ FAIL nếu thiếu index mới. Không tự tạo/repair index production.
+
+**Ưu tiên sau đó:** Hoàn tất CI F01 → DTHL-R01 → DTHL-R02 → DTHL-R03 → DTHL-R04 → DTHL-R05 → DTHL-F02. Chi tiết và tiêu chí nghiệm thu xem [ROADMAP.md](ROADMAP.md).
 
 **Nguyên tắc:** sau mỗi lượt code, người thực hiện **thay thế mốc SHA và thông tin đã kiểm chứng**, không ghi “đã xong” cho công việc đang chờ access hoặc approval.
