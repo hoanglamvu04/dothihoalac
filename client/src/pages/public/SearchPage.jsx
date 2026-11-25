@@ -264,13 +264,15 @@ export default function SearchPage() {
 
   const q = searchParams.get('q')?.trim() || '';
   const area = searchParams.get('area')?.trim() || '';
+  const hasAdvancedCriteria = ['days', 'propertyType', 'transactionType',
+    'minPrice', 'maxPrice', 'minArea', 'maxArea']
+    .some((key) => Boolean(searchParams.get(key)));
+  const hasCriteria = Boolean(q || area || hasAdvancedCriteria);
   const requestedType = searchParams.get('type') || 'all';
   const type = SEARCH_TYPES.some((item) => item.value === requestedType)
     ? requestedType
     : 'all';
   const activeFilters = listActiveSearchFilters(searchParams, type);
-  const hasAdvancedCriteria = activeFilters.length > 0;
-  const hasCriteria = Boolean(q || area || hasAdvancedCriteria);
   const requestedSort = searchParams.get('sort') || 'relevance';
   const sort = SORT_OPTIONS.some((item) => item.value === requestedSort)
     ? requestedSort
