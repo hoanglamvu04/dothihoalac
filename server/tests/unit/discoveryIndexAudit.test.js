@@ -6,6 +6,9 @@ const saved = [{
   name: 'saved_search_per_user_unique',
   key: { userId: 1, queryNormalized: 1, contentType: 1, areaId: 1 },
   unique: true,
+}, {
+  name: 'saved_search_fair_scan_order',
+  key: { isActive: 1, lastScanAttemptAt: 1, _id: 1 },
 }];
 const notification = [{
   name: 'unique_notification_dedupe',
@@ -18,11 +21,13 @@ test('release index audit accepts exact partial and compound unique indexes', ()
   assert.deepEqual(verifyDiscoveryIndexes(saved, notification), {
     savedSearchUnique: true,
     notificationDedupeUnique: true,
+    savedSearchFairScanIndex: true,
     pass: true,
   });
 });
 test('release index audit fails closed on missing or nonunique indexes', () => {
   assert.equal(verifyDiscoveryIndexes([], notification).pass, false);
+  assert.equal(verifyDiscoveryIndexes([saved[0]], notification).pass, false);
   assert.equal(verifyDiscoveryIndexes(saved, [{ ...notification[0], unique: false }]).pass, false);
   assert.equal(verifyDiscoveryIndexes(saved, [{
     ...notification[0], partialFilterExpression: {},
