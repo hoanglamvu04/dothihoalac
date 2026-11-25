@@ -1256,3 +1256,13 @@
 .search-advanced-filter__pair { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
 .search-advanced-filter small { color: var(--search-text); line-height: 1.4; }
 .search-advanced-filter__apply { padding: 10px 12px; color: white; background: var(--search-green); border: 0; border-radius: 8px; font-weight: 700; }
+
+/* Screen-reader-only status and shortcut hint; remain readable to assistive tech. */
+.search-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

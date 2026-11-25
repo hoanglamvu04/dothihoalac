@@ -3,7 +3,7 @@
 **Cập nhật lần đầu:** 2026-11-25 (Asia/Bangkok, UTC+07).  
 **Repository:** `hoanglamvu04/dothihoalac`  
 **Mốc GitHub đã đối chiếu:** `main` tại `e926774dd62e6e1e22d1238255349f987fc5993b` (**trước khi commit bộ tài liệu này**; kiểm tra `main` mới nhất khi đọc).  
-**Mốc CI tài liệu và ứng dụng gần nhất đã xác minh:** `f6b03318f926e65cc274120b1aa19e4ad10b5046` ([application CI](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45533350948), [Code Notes Gate](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45533350892)); **mốc mới F01 đang chờ CI**.
+**Mốc CI tài liệu và ứng dụng gần nhất đã xác minh:** `f6b03318f926e65cc274120b1aa19e4ad10b5046` ([application CI](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45533350948), [Code Notes Gate](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45533350892)); **F01 đã CI_PASS và merge #81 vào main**.
 **Trạng thái tổng thể:** `CODE_MERGED` + `CI_PASS`; **STAGING_CHƯA_NGHIỆM_THU**; **PRODUCTION_CHƯA_TRIỂN_KHAI_BẢN_MỚI**.
 
 ## 1. Bằng chứng có thể kiểm tra
@@ -50,10 +50,12 @@
 
 **DTHL-DOC01** — Thiết lập thư mục `luu-y-code/`, `AGENTS.md`, CI Code Notes Gate để tất cả ChatGPT tiếp tục dùng và cập nhật cùng code. Trạng thái: **CI_PASS** (đã xác minh run `45533204875` + `45533204899` trên SHA `fdc41b4`). Mọi PR đổi code cần cập nhật STATUS + CHANGELOG; chủ repo vẫn cần đặt check thành **required** trong Branch Rulesets để chặn merge khi có vi phạm.
 
-**Đang phát triển 2026-11-25: DTHL-F01** — xử lý fairness/starvation của job quét tìm kiếm đã lưu. Branch `feat/dthl-f01-fair-saved-search-worker-20261125`; trạng thái `IN_PROGRESS / CI_PENDING` cho đến khi kiểm thử chính thức trên GitHub. Cơ chế mới: claim nguyên tử theo `lastScanAttemptAt`, tối đa 80 lượt riêng biệt/run và index `saved_search_fair_scan_order` để tránh worker quét lặp cùng 80 subscription khi backlog dày. API người dùng không lộ timestamp nội bộ. **Chưa merge, chưa staging hay deploy** theo mốc tạo bản ghi này.
+**F01 — CODE_MERGED / CI_PASS:** [PR #81](https://github.com/hoanglamvu04/dothihoalac/pull/81) đã merge vào `main` tại `cf0d4d58154701401e50936e8df6d721a2728dc1`; [CI PR 45535284175](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45535284175) backend 94 PASS/1 SKIP, frontend 31 PASS, Mongo E2E 20 PASS. Chưa nghiệm thu staging hoặc deploy.
+
+**F07 — CODE_DONE / CI_PENDING:** phát hiện lỗi bộ lọc nâng cao trên trang tìm kiếm có hiển thị nhưng chưa gửi `days`, `propertyType`, `transactionType`, giá và diện tích tới API; effect cũng không refetch khi chỉ đổi URL filter. Nhánh `fix/dthl-f07-search-filter-requests-20261125` sửa whitelist tham số URL → API, thêm test frontend và cải thiện keyboard/aria-live. Chưa xác nhận CI trên commit F07.
 
 **Cổng phát hành mới:** cần 3 index MongoDB tồn tại vật lý trước khi bật worker (2 unique cũ + `saved_search_fair_scan_order`). Công cụ audit chỉ đọc sẽ FAIL nếu thiếu index mới. Không tự tạo/repair index production.
 
-**Ưu tiên sau đó:** Hoàn tất CI F01 → DTHL-R01 → DTHL-R02 → DTHL-R03 → DTHL-R04 → DTHL-R05 → DTHL-F02. Chi tiết và tiêu chí nghiệm thu xem [ROADMAP.md](ROADMAP.md).
+**Ưu tiên sau đó:** Hoàn tất CI F07 → DTHL-R01 → DTHL-R02 → DTHL-R03 → DTHL-R04 → DTHL-R05 → DTHL-F02. Chi tiết và tiêu chí nghiệm thu xem [ROADMAP.md](ROADMAP.md).
 
 **Nguyên tắc:** sau mỗi lượt code, người thực hiện **thay thế mốc SHA và thông tin đã kiểm chứng**, không ghi “đã xong” cho công việc đang chờ access hoặc approval.

@@ -27,6 +27,7 @@ import Avatar from '../../components/common/Avatar';
 import ContentImage from '../../components/content/ContentImage';
 import ContentMeta from '../../components/content/ContentMeta';
 import { searchApi } from '../../api/content.api';
+import { buildSearchRequestParams } from '../../utils/searchQueryParams.mjs';
 import { trackXHubEvent } from '../../utils/xhubAnalytics.mjs';
 import SaveSearchButton from '../../components/search/SaveSearchButton';
 import { contentPath } from '../../utils/content';
@@ -279,6 +280,7 @@ export default function SearchPage() {
   const [recentSearches, setRecentSearches] = useState(loadRecentSearches);
   const [typeahead, setTypeahead] = useState([]);
   const [correction, setCorrection] = useState(null);
+  const [suggestionsDismissed, setSuggestionsDismissed] = useState(false);
   const [propertyForm, setPropertyForm] = useState({
     propertyType: '', transactionType: '',
     minPrice: '', maxPrice: '', minArea: '', maxArea: '',
@@ -346,7 +348,9 @@ export default function SearchPage() {
     }
 
     searchApi
-      .run({ q, area: area || undefined, type, sort, page, limit: PAGE_LIMIT })
+      .run(buildSearchRequestParams(searchParams, {
+        q, area: area || undefined, type, sort, page, limit: PAGE_LIMIT,
+      }))
       .then((response) => {
         if (active) setResult(normalizeResult(response));
       })
@@ -362,7 +366,7 @@ export default function SearchPage() {
     return () => {
       active = false;
     };
-  }, [area, hasCriteria, page, q, reloadKey, sort, type]);
+  }, [area, hasCriteria, page, q, reloadKey, searchParams, sort, type]);
 
   const contents = result.data.contents || [];
   const users = result.data.users || [];
@@ -499,6 +503,9 @@ export default function SearchPage() {
   }, [setSearchParams]);
 
   const hasResults = visibleCount > 0;
+  const showSuggestions = !suggestionsDismissed && typeahead.length > 0;
+  const showCorrection = !suggestionsDismissed && !showSuggestions &&
+    correction && query.trim().length >= 3;
 
   const countForType = useCallback(
     (value) => Number(facets[value] || 0),
@@ -531,9 +538,21 @@ export default function SearchPage() {
                 value={query}
                 autoComplete="off"
                 aria-label="Từ khóa tìm kiếm"
+                aria-describedby="search-keyboard-hint"
+                aria-controls={showSuggestions ? 'search-suggestion-results' : undefined}
                 placeholder="Tin tức, quy hoạch, nhà đất, việc làm..."
                 maxLength={100}
-                onChange={(event) => setQuery(event.target.value)}
+                onChange={(event) => {
+                  setQuery(event.target.value);
+                  setSuggestionsDismissed(false);
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === 'Escape') {
+                    setSuggestionsDismissed(true);
+                    setTypeahead([]);
+                    setCorrection(null);
+                  }
+                }}
               />
               {query ? (
                 <button
@@ -550,8 +569,15 @@ export default function SearchPage() {
                 <span>Tìm kiếm</span>
               </button>
             </form>
-            {typeahead.length > 0 ? (
-              <div className="search-typeahead" aria-label="Gợi ý từ khóa và nội dung">
+            <p id="search-keyboard-hint" className="search-sr-only">
+              Nhấn Tab để chọn gợi ý tìm kiếm; nhấn Escape để đóng gợi ý.
+            </p>
+            <p role="status" aria-live="polite" className="search-sr-only">
+              {showSuggestions ? `Có ${Math.min(typeahead.length, 6)} gợi ý tìm kiếm.` : ''}
+            </p>
+            {showSuggestions ? (
+              <div id="search-suggestion-results" role="region"
+                className="search-typeahead" aria-label="Gợi ý từ khóa và nội dung">
                 <strong>Gợi ý cho bạn</strong>
                 <ul>
                   {typeahead.slice(0, 6).map((item) => (
@@ -565,7 +591,7 @@ export default function SearchPage() {
                   ))}
                 </ul>
               </div>
-            ) : correction && query.trim().length >= 3 ? (
+            ) : showCorrection ? (
               <p className="search-typeahead-correction">
                 Có phải bạn muốn tìm{' '}
                 <button type="button" onClick={() => searchTerm(correction)}>{correction}</button>?
@@ -612,7 +638,7 @@ export default function SearchPage() {
             </div>
           </section>
         ) : (
-          <section ref={resultsRef} className="search-results">
+          <section ref={resultsRef} className="search-results" aria-busy={loading}>
             <nav className="search-tabs" aria-label="Nhóm kết quả tìm kiếm">
               {SEARCH_TYPES.map((item) => {
                 const Icon = item.icon;
@@ -623,6 +649,7 @@ export default function SearchPage() {
                     type="button"
                     key={item.value}
                     className={type === item.value ? 'is-active' : ''}
+                    aria-pressed={type === item.value}
                     onClick={() => changeType(item.value)}
                   >
                     <Icon size={16} />
@@ -636,7 +663,7 @@ export default function SearchPage() {
             <div className="search-workspace">
               <div className="search-results-main">
                 <div className="search-results-summary">
-                  <p>
+                  <p role="status" aria-live="polite">
                     {loading
                       ? 'Đang tìm kiếm…'
                       : error
@@ -775,6 +802,7 @@ export default function SearchPage() {
                           type="button"
                           key={item.value}
                           className={type === item.value ? 'is-active' : ''}
+                          aria-pressed={type === item.value}
                           onClick={() => changeType(item.value)}
                         >
                           <span><Icon size={16} /> {item.label}</span>

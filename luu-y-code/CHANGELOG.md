@@ -2,12 +2,18 @@
 
 **Quy tắc:** nhật ký mới nhất trên cùng; không xóa lịch sử cũ; ghi link PR/commit/CI thật, không điền PASS khi chưa chạy. Mọi PR sửa code/config/workflow phải **cập nhật cùng PR file này + STATUS.md**.
 
-## 2026-11-25 — DTHL-F01 — Fair scan & index hardening (đang code)
+## 2026-11-25 — DTHL-F07 — Sửa tham số lọc từ UI đến API (CI_PENDING)
 
-- **Task:** DTHL-F01 / branch `feat/dthl-f01-fair-saved-search-worker-20261125`, trạng thái ban đầu `CODE_DONE / CI_PENDING` trong nhánh; **chưa merge hoặc deploy** ở thời điểm soạn nhật ký.
+- **Nguyên nhân:** `SearchPage.jsx` trước đó chỉ gửi q/area/type/sort/page/limit, bỏ lọt tham số URL cho giá/diện tích/loại/giao dịch BĐS và khoảng ngày; effect không refetch khi chỉ đổi bộ lọc URL.
+- **Code:** `client/src/utils/searchQueryParams.mjs` xây dựng whitelist tham số cho API, `SearchPage.jsx` gọi helper và theo dõi searchParams; cải thiện keyboard Escape/Tab, aria-live loading/results, pressed state. Test frontend mới trong `client/tests/searchQueryParams.test.mjs`, cập nhật workflow CI.
+- **Trạng thái:** CODE_DONE/CI_PENDING trên nhánh `fix/dthl-f07-search-filter-requests-20261125` tại thời điểm soạn; chưa merge, staging hay deploy. Không đổi X-HUB/alerts.
+
+## 2026-11-25 — DTHL-F01 — Fair scan & index hardening (CI_PASS / MERGED)
+
+- **Task:** DTHL-F01, [PR #81](https://github.com/hoanglamvu04/dothihoalac/pull/81) **MERGED** vào `main` SHA `cf0d4d58154701401e50936e8df6d721a2728dc1`; vẫn chưa staging/production.
 - **Thay đổi:** worker claim nguyên tử từng subscription theo `lastScanAttemptAt` thay vì lấy 80 `lastScannedAt` cũ nhất; độc lập với cursor nội dung để backlog không gây đói lượt quét. Khi bắt đầu quét đánh dấu thời điểm claim; một bộ lọc không được claim hai lần cùng run. Tiếp tục chống trùng đa PM2 bằng lease token, xử lý quá hạn và unique notification key.
 - **Schema/release:** thêm field internal `lastScanAttemptAt` và index MongoDB `saved_search_fair_scan_order`; audit và worker **fail-closed** nếu thiếu index. Kiểm tra chính xác số trường/thứ tự key trên unique/partial index để từ chối index sai cấu trúc.
-- **Tests bổ sung:** unit audit index giả/trùng và MongoDB CI 100 subscription/5 account, 80→100 lượt, claim đồng thời 2 worker mô phỏng, dropped index và restore chỉ trong DB cô lập. **Chưa ghi PASS trước khi xem CI thực tế**.
+- **Tests:** [Run 45535284175](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45535284175) **PASS** backend 94/94 (1 skip khác), frontend 31/31, MongoDB 20/20; [Code Notes Gate](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45535284291) PASS. Đã cập nhật test unit cũ từ 2 lên 3 index sau một CI ban đầu fail.
 - **Ảnh hưởng:** có thêm index cần nghiệm thu trên staging; `SAVED_SEARCH_ALERTS_ENABLED=false` vẫn mặc định. Preflight chỉ đọc không chạy DDL và không tự bật worker; X-HUB không thay đổi.
 - **Bước tiếp:** chạy CI → xử lý lỗi (nếu có) → review/merge khi PASS → staging index audit/preflight/backup trước khi bật tính năng.
 
