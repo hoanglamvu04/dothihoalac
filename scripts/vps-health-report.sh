@@ -20,7 +20,7 @@ if [[ "$ROOT" != "$EXPECTED" ]] || [[ "$(git -C "$ROOT" rev-parse --show-topleve
   echo "REFUSED: script must run from $EXPECTED repository" >&2
   exit 2
 fi
-if ! git -C "$ROOT" remote get-url origin 2>/dev/null | grep -Eq '(^|[:/])hoanglamvu04/dothihoalac(\\.git)?$'; then
+if ! git -C "$ROOT" remote get-url origin 2>/dev/null | grep -Fq 'hoanglamvu04/dothihoalac'; then
   echo "REFUSED: unexpected Git origin" >&2
   exit 2
 fi
