@@ -38,12 +38,13 @@ Mọi task có thể có nhiều nhãn; ví dụ code `CI_PASS` nhưng phát hà
 
 | ID | Priority | Trạng thái | Đích & tiêu chí chấp nhận |
 | --- | --- | --- | --- |
-| DTHL-F01 | P1 | IN_PROGRESS / CI_PENDING | Bổ sung lượt claim công bằng theo `lastScanAttemptAt` độc lập cursor, atomic lease đa worker, index xếp lịch + fail-closed. Test MongoDB >80 bộ lọc, tranh chấp claim, tạm dừng/resume và thiếu index. Đợi CI đúng SHA và staging release gate trước khi coi đã phát hành |
+| DTHL-F01 | P1 | CODE_MERGED / CI_PASS; STAGING_BLOCKED | [PR #81](https://github.com/hoanglamvu04/dothihoalac/pull/81) merge; [CI 45535284175](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45535284175) backend 94 PASS, frontend 31 PASS, MongoDB 20 PASS; chưa tạo/kiểm tra fair-scan index trên staging |
 | DTHL-F02 | P1 | TODO | QA / accessibility: keyboard navigation, aria-live, focus, empty-state/slow network, lỗi mạng frontend |
 | DTHL-F03 | P1 | TODO | Dashboard vận hành: cảnh báo lỗi và độ trễ tổng hợp, không để lộ người dùng/truy vấn riêng tư |
 | DTHL-F04 | P2 | TODO | Trùng ảnh nâng cao: **chỉ sau khi có quyền xử lý ảnh và mẫu dữ liệu đánh giá**; metric false-positive/false-negative, không chặn tự động |
 | DTHL-F05 | P2 | TODO | Search ML/language ranking: thử nghiệm offline trước, không hứa hẹn thuật toán AI khi mới chỉ có heuristic |
 | DTHL-F06 | P2 | TODO | Analytics phát triển dựa trên consent hợp lệ và dữ liệu WA-005 đã được nghiệm thu |
+| DTHL-F07 | P0 | CODE_DONE / CI_PENDING | Sửa bug UI bộ lọc `days`, giá, diện tích, loại/giao dịch BĐS có chọn nhưng API chưa nhận; URL filter thay phải refetch; không gửi filter BĐS cho tab khác. Test helper URL→request, build/lint và staging smoke. Bổ sung a11y status, phím Escape, `aria-pressed` |
 
 ## Mốc D — Quy trình tài liệu cho mọi phiên
 

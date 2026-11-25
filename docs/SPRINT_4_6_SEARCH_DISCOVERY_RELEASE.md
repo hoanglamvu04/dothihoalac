@@ -62,3 +62,7 @@
 7. Khi mọi gate đạt, merge PR #78 trước, sau đó rebase/retarget PR #79, chạy lại toàn bộ CI và staging E2E rồi mới được merge PR #79. Rollout theo từng flag kèm giám sát log/metrics và quy trình rollback.
 
 Các API hiện tại chỉ dùng MongoDB truy vấn nội bộ; **không tự gửi sự kiện tracking mới sang X-HUB**. Tham chiếu checklist P0/P1 cũ: \`docs/PHASE_1_2_SEARCH_DISCOVERY_ALERTS.md\`.
+
+## F07 — Client search filter request (2026-11-25)
+
+Khắc phục UI có bộ lọc nâng cao nhưng request tìm kiếm thiếu các query params. Frontend gửi whitelist `days` và trường giá/diện tích/loại/giao dịch BĐS đúng tab; thay URL chỉ filters phải tải kết quả mới. Unit test frontend xác minh chuyển URL sang API, còn staging E2E vẫn cần kiểm tra với dữ liệu thật. Không thay đổi analytics X-HUB hay dữ liệu production.

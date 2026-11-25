@@ -90,3 +90,7 @@ Cuối lượt trả lời commit, PR, kết quả test đúng SHA, phần còn 
 - Không suy ra tài khoản/cấu hình X-HUB đã có quyền đọc dữ liệu thật từ file ví dụ.
 - Không coi check của CI trên MongoDB cô lập là kiểm tra DB staging/production.
 - Không hứa tiếp tục code tự động ngoài cuộc trò chuyện nếu không có automation.
+
+## 7. F07 — Search filter transport
+
+Khi chỉnh trang `/tim-kiem`, dùng `client/src/utils/searchQueryParams.mjs` đưa các giá trị URL `days`, `propertyType`, `transactionType`, `minPrice`, `maxPrice`, `minArea`, `maxArea` vào `GET /api/v1/search`; chỉ gửi trường BĐS khi `type=property`. Đổi URL filters phải re-fetch API. CI frontend chạy `client/tests/searchQueryParams.test.mjs`. Trên staging cần kiểm tra kết quả lọc thật và thao tác mobile/keyboard.
