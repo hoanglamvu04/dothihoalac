@@ -392,8 +392,7 @@ export default function SearchPage() {
     SEARCH_TYPES.find((item) => item.value === type) || SEARCH_TYPES[0];
   const contentSortEnabled = type !== 'user' && type !== 'area';
 
-  const buildParams = useCallback(
-    ({ nextQuery = q, nextType = type, nextSort = sort, nextPage = 1 } = {}) => {
+  const buildParams = ({ nextQuery = q, nextType = type, nextSort = sort, nextPage = 1 } = {}) => {
       const params = Object.fromEntries(searchParams.entries());
       params.q = nextQuery;
       if (area) params.area = area;
@@ -408,9 +407,7 @@ export default function SearchPage() {
       if (effectiveSort !== 'relevance') params.sort = effectiveSort;
       else delete params.sort;
       return params;
-    },
-    [area, q, searchParams, sort, type],
-  );
+  };
 
   const scrollToResults = useCallback(() => {
     window.setTimeout(() => {
@@ -418,8 +415,7 @@ export default function SearchPage() {
     }, 20);
   }, []);
 
-  const submit = useCallback(
-    (event) => {
+  const submit = (event) => {
       event.preventDefault();
       const normalizedQuery = query.trim();
 
@@ -431,12 +427,9 @@ export default function SearchPage() {
       setTypeahead([]);
       if (normalizedQuery) trackXHubEvent('search_used');
       setSearchParams(buildParams({ nextQuery: normalizedQuery, nextPage: 1 }));
-    },
-    [area, buildParams, hasAdvancedCriteria, query, setSearchParams],
-  );
+  };
 
-  const searchTerm = useCallback(
-    (term, nextType = 'all') => {
+  const searchTerm = (term, nextType = 'all') => {
       const normalizedTerm = String(term || '').trim();
       if (!normalizedTerm) return;
 
@@ -450,42 +443,31 @@ export default function SearchPage() {
           nextPage: 1,
         }),
       );
-    },
-    [buildParams, setSearchParams],
-  );
+  };
 
-  const changeType = useCallback(
-    (value) => {
+  const changeType = (value) => {
       if (!hasCriteria) return;
       trackXHubEvent('filter_used');
       setSearchParams(buildParams({ nextType: value, nextPage: 1 }));
       scrollToResults();
-    },
-    [buildParams, hasCriteria, scrollToResults, setSearchParams],
-  );
+  };
 
-  const changeSort = useCallback(
-    (event) => {
+  const changeSort = (event) => {
       if (!hasCriteria) return;
       const nextSort = SORT_OPTIONS.some((item) => item.value === event.target.value)
         ? event.target.value : 'relevance';
       trackXHubEvent('filter_used');
       setSearchParams(buildParams({ nextSort, nextPage: 1 }));
       scrollToResults();
-    },
-    [buildParams, hasCriteria, scrollToResults, setSearchParams],
-  );
+  };
 
-  const changePage = useCallback(
-    (value) => {
+  const changePage = (value) => {
       const nextPage = Math.max(Number(value) || 1, 1);
       setSearchParams(buildParams({ nextPage }));
       scrollToResults();
-    },
-    [buildParams, scrollToResults, setSearchParams],
-  );
+  };
 
-  const applyPropertyFilters = useCallback((event) => {
+  const applyPropertyFilters = (event) => {
     event.preventDefault();
     const { values, error: validationError } = validatePropertyFilterForm(propertyForm);
     if (validationError) {
@@ -502,32 +484,32 @@ export default function SearchPage() {
     trackXHubEvent('filter_used');
     setSearchParams(params);
     scrollToResults();
-  }, [buildParams, propertyForm, scrollToResults, setSearchParams]);
+  };
 
-  const removeActiveFilter = useCallback((key) => {
+  const removeActiveFilter = (key) => {
     setSearchParams(removeSearchFilter(searchParams, key));
     scrollToResults();
-  }, [scrollToResults, searchParams, setSearchParams]);
+  };
 
-  const clearAdvancedFilters = useCallback(() => {
+  const clearAdvancedFilters = () => {
     setSearchParams(clearAdvancedSearchFilters(searchParams));
     scrollToResults();
-  }, [scrollToResults, searchParams, setSearchParams]);
+  };
 
-  const changeWindow = useCallback((event) => {
+  const changeWindow = (event) => {
     const params = buildParams({ nextPage: 1 });
     if (event.target.value === '0') delete params.days;
     else params.days = event.target.value;
     setSearchParams(params);
-  }, [buildParams, setSearchParams]);
+  };
 
-  const clearSearch = useCallback(() => {
+  const clearSearch = () => {
     setQuery('');
     setResult(EMPTY_RESULT);
     setError(null);
     setSearchParams({});
     window.setTimeout(() => searchInputRef.current?.focus(), 0);
-  }, [setSearchParams]);
+  };
 
   const hasResults = visibleCount > 0;
   const showSuggestions = !suggestionsDismissed && typeahead.length > 0;
