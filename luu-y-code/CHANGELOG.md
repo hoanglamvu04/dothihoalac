@@ -2,14 +2,14 @@
 
 **Quy tắc:** nhật ký mới nhất trên cùng; không xóa lịch sử cũ; ghi link PR/commit/CI thật, không điền PASS khi chưa chạy. Mọi PR sửa code/config/workflow phải **cập nhật cùng PR file này + STATUS.md**.
 
-## 2026-11-25 — DTHL-F08 / DTHL-OPS01 — Bộ lọc linh hoạt và lệnh VPS an toàn (CODE_DONE / CI_PENDING)
+## 2026-11-25 — DTHL-F08 / DTHL-OPS01 — Bộ lọc linh hoạt và lệnh VPS an toàn (MERGED / CI_PASS)
 
-- **Branch:** `feat/dthl-f08-search-chips-vps-ops-20261125`. Mốc code ban đầu: `main` SHA `0353d9666a13b6b167f40273f033a23801d5d732`; chưa merge, CI chưa có kết quả khi soạn.
+- **Git:** [PR #83](https://github.com/hoanglamvu04/dothihoalac/pull/83) **MERGED** vào `main` commit `345404c9ac8cb3980b3b059938767796e2ead41b`. Source branch: `feat/dthl-f08-search-chips-vps-ops-20261125`.
 - **Frontend:** thêm helper thuần `searchActiveFilters.mjs` hiển thị các điều kiện lọc bằng tiếng Việt với nút xóa từng chip hoặc bỏ tất cả, giữ nguyên `q`/`area`/`type` và reset phân trang. Thêm kiểm tra khoảng giá/diện tích đảo ngược, số âm hoặc không phải số; lỗi hiển thị với `role=alert` thay vì gửi request sai.
 - **VPS:** thêm `luu-y-code/VPS_COMMANDS.md` và helper `scripts/vps-update.sh` với `--pull` fast-forward, `--status` in SHA và kiểm tra PM2/ready, `--preflight` MongoDB chỉ đọc. Không có `--deploy`/PM2 restart/`git reset --hard`; workflow deploy production vẫn chạy thủ công sau nghiệm thu.
-- **Tests:** thêm `client/tests/searchActiveFilters.test.mjs` và `scripts/vps-update.test.mjs`; bổ sung các bước kiểm thử ở workflow frontend + application. Chưa ghi PASS trước khi GitHub Actions trên đúng commit hoàn tất.
+- **Tests và CI đã xác minh:** [main DTHL application checks run 45572808174](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45572808174) **4/4 PASS** (backend 94 PASS/1 SKIP, frontend 41 PASS, Mongo E2E 20 PASS, VPS helper 3 PASS); [Check DTHL Frontend run 45572808311](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45572808311) PASS; [Code Notes Gate 45572808211](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45572808211) PASS. React Compiler lint ban đầu lỗi memoization trước khi tối giản các event handlers; sau sửa CI cuối đã PASS.
 - **Giới hạn:** code mới chỉ lên GitHub khi được merge; không được hiểu nhầm thư mục `/var/www/dothihoalac` trên VPS đã được sửa. Không bật WA-002/WA-005, saved-search alerts hoặc đụng DB thực.
-- **Tiếp theo:** CI → review/merge → cập nhật bằng chứng/commit vào STATUS/ROADMAP → staging acceptance và phát hành riêng nếu được duyệt.
+- **Tiếp theo:** chủ VPS kéo code theo `VPS_COMMANDS.md` (chỉ pull), nghiệm thu R01–R05 trên staging; phát hành production/PM2 restart chỉ qua workflow thủ công sau phê duyệt. **Chưa có xác nhận người dùng đã kéo VPS**.
 
 ## 2026-11-25 — DTHL-F07 — Sửa tham số lọc từ UI đến API (CI_PASS / MERGED)
 

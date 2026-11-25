@@ -45,7 +45,7 @@ Mọi task có thể có nhiều nhãn; ví dụ code `CI_PASS` nhưng phát hà
 | DTHL-F05 | P2 | TODO | Search ML/language ranking: thử nghiệm offline trước, không hứa hẹn thuật toán AI khi mới chỉ có heuristic |
 | DTHL-F06 | P2 | TODO | Analytics phát triển dựa trên consent hợp lệ và dữ liệu WA-005 đã được nghiệm thu |
 | DTHL-F07 | P0 | CODE_MERGED / CI_PASS; STAGING_BLOCKED | [PR #82](https://github.com/hoanglamvu04/dothihoalac/pull/82) merge; [CI 45535697220](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45535697220) backend 94, frontend 35, Mongo 20 PASS. CI push merge [45535845423](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45535845423) PASS; cần kiểm tra lọc BĐS thật, UX mobile và keyboard trên staging trước production |
-| DTHL-F08 | P1 | CODE_DONE / CI_PENDING | Thêm chip bộ lọc có thể xóa từng phần/reset, validation giá/diện tích, test frontend và script VPS pull/check/preflight read-only; cần CI PASS, review, merge. Không tự reload PM2 hoặc deploy production |
+| DTHL-F08 | P1 | CODE_MERGED / CI_PASS; STAGING_BLOCKED | [PR #83](https://github.com/hoanglamvu04/dothihoalac/pull/83) đã merge, [CI main 45572808174](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45572808174) PASS 4/4. Chip bộ lọc, bỏ từng/tất cả, validation giá/diện tích. Còn test UI trên staging/mobile |
 | DTHL-F09 | P1 | TODO | Smoke mobile và aria-live/screen reader trên staging với bộ lọc trống, lỗi API, thao tác phím, tìm kiếm có dấu và chia sẻ URL; ghi bugs kèm bằng chứng |
 | DTHL-F10 | P1 | TODO | Chạy E2E staging: bộ lọc giá/diện tích, phân trang, search-only và filter-only; xác nhận dữ liệu API thống nhất UI + network failure/retry. Không dùng tài khoản production thật trong CI |
 
@@ -56,7 +56,7 @@ Mọi task có thể có nhiều nhãn; ví dụ code `CI_PASS` nhưng phát hà
 | DTHL-DOC01 | P0 | CI_PASS | Có `AGENTS.md`, thư mục `luu-y-code/`, Code Notes Gate trên PR/push và test **7/7 PASS** tại [run 45533204875](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45533204875) |
 | DTHL-DOC02 | P1 | TODO | Chủ repo bật GitHub Branch Protection/Ruleset yêu cầu **Code Notes Gate** pass trước khi merge để không ai bỏ qua |
 | DTHL-DOC03 | P1 | TODO | Sau mỗi sprint kiểm tra link/chứng cứ trong STATUS không lỗi thời, bàn giao tới AI mới theo HANDOFF |
-| DTHL-OPS01 | P0 | CODE_DONE / CI_PENDING; VPS_NOT_RUN | Thêm `luu-y-code/VPS_COMMANDS.md` và `scripts/vps-update.sh`: lệnh `cd /var/www/dothihoalac`, pull fast-forward, PM2/ready, read-only Mongo preflight; test shell. **VPS thật chưa chạy; release vẫn phải dùng workflow thủ công sau staging approval** |
+| DTHL-OPS01 | P0 | CODE_MERGED / CI_PASS; VPS_NOT_RUN | [PR #83](https://github.com/hoanglamvu04/dothihoalac/pull/83) đã merge; `VPS_COMMANDS.md` và `scripts/vps-update.sh` có 3/3 test PASS ở [run 45572808174](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45572808174). **VPS thật chưa được thao tác; release qua workflow thủ công sau approval** |
 
 ### Khi nhận task mới
 
