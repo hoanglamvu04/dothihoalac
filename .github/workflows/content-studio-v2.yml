@@ -12,6 +12,17 @@ permissions:
   contents: read
 
 jobs:
+  vps-helper:
+    name: Safe VPS helper checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Shell validation, help and fail-closed commands
+        run: node --test scripts/vps-update.test.mjs
+
   client:
     runs-on: ubuntu-latest
     defaults:
@@ -97,6 +108,7 @@ jobs:
           src/utils/projects.js
           src/utils/imageUpload.js
           src/utils/searchQueryParams.mjs
+          src/utils/searchActiveFilters.mjs
           src/utils/savedSearchMatch.mjs
           src/utils/notificationNavigation.mjs
           src/utils/articleMedia.js
@@ -109,7 +121,7 @@ jobs:
           src/components/community/CommunitySocialEditor.jsx
           src/components/forms/PropertyGalleryUploader.jsx
       - name: Test article images and featured news
-        run: node --test tests/articleMedia.test.mjs tests/homeHero.test.mjs tests/propertyMap.test.mjs tests/sitemapOutputDir.test.mjs tests/savedSearchMatch.test.mjs tests/notificationNavigation.test.mjs tests/xhubWa002.test.mjs tests/searchQueryParams.test.mjs
+        run: node --test tests/articleMedia.test.mjs tests/homeHero.test.mjs tests/propertyMap.test.mjs tests/sitemapOutputDir.test.mjs tests/savedSearchMatch.test.mjs tests/notificationNavigation.test.mjs tests/xhubWa002.test.mjs tests/searchQueryParams.test.mjs tests/searchActiveFilters.test.mjs
 
       - name: Validate safe production sitemap refresh script
         run: bash -n scripts/refresh-sitemap-production.sh

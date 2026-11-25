@@ -10,6 +10,7 @@
 | [ROADMAP.md](ROADMAP.md) | Kế hoạch các sprint, ưu tiên, task ID và điều kiện nghiệm thu | Mỗi khi thay đổi tiến độ, phạm vi, mức độ ưu tiên |
 | [CHANGELOG.md](CHANGELOG.md) | Nhật ký thay đổi theo ngày/commit/PR, test và kết quả | **MỖI PR sửa code**; mục mới đặt trên cùng |
 | [HANDOFF.md](HANDOFF.md) | Quy trình và hướng dẫn cho ChatGPT khác tiếp tục code | Khi đổi quy trình, công cụ, triển khai, hợp đồng API |
+| [VPS_COMMANDS.md](VPS_COMMANDS.md) | Lệnh SSH `cd /var/www/dothihoalac`, pull, trạng thái, MongoDB preflight và release thủ công | Khi thay đổi scripts, đường dẫn, PM2 hoặc cách triển khai |
 | [`../AGENTS.md`](../AGENTS.md) | Quy tắc ở gốc repo để AI coding agent dễ phát hiện | Khi quy ước chung thay đổi |
 
 ## Quy tắc làm việc bắt buộc

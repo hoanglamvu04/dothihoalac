@@ -28,6 +28,12 @@ import ContentImage from '../../components/content/ContentImage';
 import ContentMeta from '../../components/content/ContentMeta';
 import { searchApi } from '../../api/content.api';
 import { buildSearchRequestParams } from '../../utils/searchQueryParams.mjs';
+import {
+  listActiveSearchFilters,
+  removeSearchFilter,
+  clearAdvancedSearchFilters,
+  validatePropertyFilterForm,
+} from '../../utils/searchActiveFilters.mjs';
 import { trackXHubEvent } from '../../utils/xhubAnalytics.mjs';
 import SaveSearchButton from '../../components/search/SaveSearchButton';
 import { contentPath } from '../../utils/content';
@@ -266,6 +272,7 @@ export default function SearchPage() {
   const type = SEARCH_TYPES.some((item) => item.value === requestedType)
     ? requestedType
     : 'all';
+  const activeFilters = listActiveSearchFilters(searchParams, type);
   const requestedSort = searchParams.get('sort') || 'relevance';
   const sort = SORT_OPTIONS.some((item) => item.value === requestedSort)
     ? requestedSort
@@ -281,6 +288,7 @@ export default function SearchPage() {
   const [typeahead, setTypeahead] = useState([]);
   const [correction, setCorrection] = useState(null);
   const [suggestionsDismissed, setSuggestionsDismissed] = useState(false);
+  const [filterError, setFilterError] = useState('');
   const [propertyForm, setPropertyForm] = useState({
     propertyType: '', transactionType: '',
     minPrice: '', maxPrice: '', minArea: '', maxArea: '',
@@ -302,6 +310,10 @@ export default function SearchPage() {
       maxArea: searchParams.get('maxArea') || '',
     });
   }, [searchParams]);
+
+  useEffect(() => {
+    setFilterError('');
+  }, [propertyForm]);
 
   useEffect(() => {
     const typed = query.trim();
@@ -380,8 +392,7 @@ export default function SearchPage() {
     SEARCH_TYPES.find((item) => item.value === type) || SEARCH_TYPES[0];
   const contentSortEnabled = type !== 'user' && type !== 'area';
 
-  const buildParams = useCallback(
-    ({ nextQuery = q, nextType = type, nextSort = sort, nextPage = 1 } = {}) => {
+  const buildParams = ({ nextQuery = q, nextType = type, nextSort = sort, nextPage = 1 } = {}) => {
       const params = Object.fromEntries(searchParams.entries());
       params.q = nextQuery;
       if (area) params.area = area;
@@ -396,9 +407,7 @@ export default function SearchPage() {
       if (effectiveSort !== 'relevance') params.sort = effectiveSort;
       else delete params.sort;
       return params;
-    },
-    [area, q, searchParams, sort, type],
-  );
+  };
 
   const scrollToResults = useCallback(() => {
     window.setTimeout(() => {
@@ -406,8 +415,7 @@ export default function SearchPage() {
     }, 20);
   }, []);
 
-  const submit = useCallback(
-    (event) => {
+  const submit = (event) => {
       event.preventDefault();
       const normalizedQuery = query.trim();
 
@@ -419,12 +427,9 @@ export default function SearchPage() {
       setTypeahead([]);
       if (normalizedQuery) trackXHubEvent('search_used');
       setSearchParams(buildParams({ nextQuery: normalizedQuery, nextPage: 1 }));
-    },
-    [area, buildParams, hasAdvancedCriteria, query, setSearchParams],
-  );
+  };
 
-  const searchTerm = useCallback(
-    (term, nextType = 'all') => {
+  const searchTerm = (term, nextType = 'all') => {
       const normalizedTerm = String(term || '').trim();
       if (!normalizedTerm) return;
 
@@ -438,69 +443,73 @@ export default function SearchPage() {
           nextPage: 1,
         }),
       );
-    },
-    [buildParams, setSearchParams],
-  );
+  };
 
-  const changeType = useCallback(
-    (value) => {
+  const changeType = (value) => {
       if (!hasCriteria) return;
       trackXHubEvent('filter_used');
       setSearchParams(buildParams({ nextType: value, nextPage: 1 }));
       scrollToResults();
-    },
-    [buildParams, hasCriteria, scrollToResults, setSearchParams],
-  );
+  };
 
-  const changeSort = useCallback(
-    (event) => {
+  const changeSort = (event) => {
       if (!hasCriteria) return;
       const nextSort = SORT_OPTIONS.some((item) => item.value === event.target.value)
         ? event.target.value : 'relevance';
       trackXHubEvent('filter_used');
       setSearchParams(buildParams({ nextSort, nextPage: 1 }));
       scrollToResults();
-    },
-    [buildParams, hasCriteria, scrollToResults, setSearchParams],
-  );
+  };
 
-  const changePage = useCallback(
-    (value) => {
+  const changePage = (value) => {
       const nextPage = Math.max(Number(value) || 1, 1);
       setSearchParams(buildParams({ nextPage }));
       scrollToResults();
-    },
-    [buildParams, scrollToResults, setSearchParams],
-  );
+  };
 
-  const applyPropertyFilters = useCallback((event) => {
+  const applyPropertyFilters = (event) => {
     event.preventDefault();
-    const params = buildParams({ nextType: 'property', nextPage: 1 });
-    for (const key of ['propertyType', 'transactionType', 'minPrice', 'maxPrice', 'minArea', 'maxArea']) {
-      delete params[key];
-      const value = String(propertyForm[key] || '').trim();
-      if (value) params[key] = key.endsWith('Price')
-        ? String(Number(value) * 1e6) : value;
+    const { values, error: validationError } = validatePropertyFilterForm(propertyForm);
+    if (validationError) {
+      setFilterError(validationError);
+      return;
     }
+    setFilterError('');
+    const params = buildParams({ nextType: 'property', nextPage: 1 });
+    for (const key of ['propertyType', 'transactionType',
+      'minPrice', 'maxPrice', 'minArea', 'maxArea']) {
+      delete params[key];
+    }
+    Object.assign(params, values);
     trackXHubEvent('filter_used');
     setSearchParams(params);
     scrollToResults();
-  }, [buildParams, propertyForm, scrollToResults, setSearchParams]);
+  };
 
-  const changeWindow = useCallback((event) => {
+  const removeActiveFilter = (key) => {
+    setSearchParams(removeSearchFilter(searchParams, key));
+    scrollToResults();
+  };
+
+  const clearAdvancedFilters = () => {
+    setSearchParams(clearAdvancedSearchFilters(searchParams));
+    scrollToResults();
+  };
+
+  const changeWindow = (event) => {
     const params = buildParams({ nextPage: 1 });
     if (event.target.value === '0') delete params.days;
     else params.days = event.target.value;
     setSearchParams(params);
-  }, [buildParams, setSearchParams]);
+  };
 
-  const clearSearch = useCallback(() => {
+  const clearSearch = () => {
     setQuery('');
     setResult(EMPTY_RESULT);
     setError(null);
     setSearchParams({});
     window.setTimeout(() => searchInputRef.current?.focus(), 0);
-  }, [setSearchParams]);
+  };
 
   const hasResults = visibleCount > 0;
   const showSuggestions = !suggestionsDismissed && typeahead.length > 0;
@@ -693,6 +702,32 @@ export default function SearchPage() {
                   </div>
                 </div>
 
+                {activeFilters.length > 0 ? (
+                  <div className="search-active-filters" role="group"
+                    aria-label="Bộ lọc đang áp dụng">
+                    <span className="search-active-filters__label">Đang lọc</span>
+                    {activeFilters.map((filter) => (
+                      <button
+                        type="button"
+                        key={filter.key}
+                        className="search-active-filters__chip"
+                        aria-label={'Bỏ bộ lọc: ' + filter.label}
+                        onClick={() => removeActiveFilter(filter.key)}
+                      >
+                        {filter.label}
+                        <X size={13} aria-hidden="true" />
+                      </button>
+                    ))}
+                    <button
+                      type="button"
+                      className="search-active-filters__clear"
+                      onClick={clearAdvancedFilters}
+                    >
+                      Bỏ tất cả bộ lọc
+                    </button>
+                  </div>
+                ) : null}
+
                 {loading ? (
                   <ResultSkeleton />
                 ) : error ? (
@@ -862,6 +897,9 @@ export default function SearchPage() {
                       </label>
                     </div>
                     <small>Khoảng giá áp dụng cho tổng giá (VND); không áp dụng giá thỏa thuận, giá/m² hay thuê theo tháng.</small>
+                    {filterError ? (
+                      <p className="search-filter-error" role="alert">{filterError}</p>
+                    ) : null}
                     <button type="submit" className="search-advanced-filter__apply">Áp dụng bộ lọc</button>
                   </form>
                 ) : null}

@@ -2,9 +2,9 @@
 
 **Cập nhật lần đầu:** 2026-11-25 (Asia/Bangkok, UTC+07).  
 **Repository:** `hoanglamvu04/dothihoalac`  
-**Mốc GitHub đối chiếu:** `main` tại `1718426fd7155cec3a7852343aeb92c4bcf4fd0b` sau khi merge F01/F07 (kiểm tra lại `main` khi đọc).  
+**Mốc GitHub đối chiếu:** `main` tại `0353d9666a13b6b167f40273f033a23801d5d732` trước đợt F08 (kiểm tra lại `main` khi đọc).  
 **Mốc CI PR gần nhất đã xác minh:** F01 [45535284175](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45535284175) PASS; F07 [45535697220](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45535697220) PASS. CI push `main` commit merge #82 **PASS toàn bộ**: [ứng dụng run 45535845423](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45535845423) (server/client/MongoDB), [frontend 45535845436](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45535845436), [Code Notes Gate 45535845546](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45535845546).
-**Trạng thái tổng thể:** `CODE_MERGED` + `CI_PASS`; **STAGING_CHƯA_NGHIỆM_THU**; **PRODUCTION_CHƯA_TRIỂN_KHAI_BẢN_MỚI**.
+**Trạng thái tổng thể:** F01/F07 `CODE_MERGED` + `CI_PASS`; F08 `CODE_DONE / CI_PENDING` trên nhánh chưa merge; **STAGING_CHƯA_NGHIỆM_THU**; **PRODUCTION_CHƯA_TRIỂN_KHAI_BẢN_MỚI**.
 
 ## 1. Bằng chứng có thể kiểm tra
 
@@ -19,6 +19,7 @@
 | Triển khai VPS từ commit trên | **CHƯA thực hiện trong các lượt merge**; cần kiểm tra riêng trạng thái môi trường thực | [Deploy workflow](https://github.com/hoanglamvu04/dothihoalac/actions/workflows/deploy-api.yml) |
 | DTHL-DOC01 — Code Notes Gate & tài liệu bàn giao | **CI_PASS**: 7/7 test, kiểm tra đủ STATUS + CHANGELOG | [Run 45533204875](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45533204875) |
 | DTHL-DOC01 — ứng dụng không bị ảnh hưởng | **CI_PASS** trên mốc `fdc41b4`: backend 90 PASS/1 SKIP; frontend 31 PASS; Mongo E2E 18 PASS | [Run 45533204899](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45533204899) |
+| DTHL-F08 — Bộ lọc chủ động + VPS helper | **CODE_DONE / CI_PENDING** trên branch `feat/dthl-f08-search-chips-vps-ops-20261125`; CI/PR chưa xác minh tại thời điểm ghi | [Nhật ký](CHANGELOG.md) |
 
 ## 2. Thành phần đã có code trong main
 
@@ -56,6 +57,8 @@
 
 **Cổng phát hành mới:** cần 3 index MongoDB tồn tại vật lý trước khi bật worker (2 unique cũ + `saved_search_fair_scan_order`). Công cụ audit chỉ đọc sẽ FAIL nếu thiếu index mới. Không tự tạo/repair index production.
 
-**Ưu tiên sau đó:** Smoke bộ lọc trên staging → DTHL-R01 → DTHL-R02 → DTHL-R03 → DTHL-R04 → DTHL-R05 → DTHL-F02. Chi tiết và tiêu chí nghiệm thu xem [ROADMAP.md](ROADMAP.md).
+**F08 — đang phát triển:** Trang tìm kiếm có chip các bộ lọc đã áp dụng, xóa từng/bỏ toàn bộ mà vẫn giữ từ khóa và khu vực; kiểm tra giá/diện tích ngược và số không hợp lệ trước khi gọi API. Thêm script `scripts/vps-update.sh` chỉ để pull fast-forward, kiểm tra PM2/API và MongoDB preflight read-only; **không có chế độ deploy**. Lệnh VPS chuẩn tại [VPS_COMMANDS.md](VPS_COMMANDS.md). Test frontend/unit và GitHub Actions đang chờ kết quả.
+
+**Ưu tiên sau đó:** CI/merge F08 → DTHL-R01 backup/index preflight trên staging → DTHL-R02 smoke auth, tìm kiếm, mobile, RBAC → DTHL-R03 đo tải → DTHL-R04 nghiệm thu X-HUB → DTHL-R05 SEO → DTHL-F09/F10. Chi tiết và tiêu chí nghiệm thu xem [ROADMAP.md](ROADMAP.md).
 
 **Nguyên tắc:** sau mỗi lượt code, người thực hiện **thay thế mốc SHA và thông tin đã kiểm chứng**, không ghi “đã xong” cho công việc đang chờ access hoặc approval.
