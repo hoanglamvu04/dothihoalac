@@ -104,3 +104,9 @@ Khi chỉnh trang `/tim-kiem`, dùng `client/src/utils/searchQueryParams.mjs` đ
 - Lần sau: `cd /var/www/dothihoalac && bash scripts/vps-update.sh --pull && bash scripts/vps-update.sh --status`.
 - Script không chạy npm build, PM2 reload, migration hoặc deploy. Phải nghiệm thu R01–R04 trước khi chạy manual GitHub Actions `Deploy Do Thi Hoa Lac VPS` với `DEPLOY_DTHL`.
 - Khi user yêu cầu "kéo lên VPS", phân biệt **đưa code lên GitHub** và **user SSH vào VPS chạy lệnh**. Không tuyên bố đã thay đổi VPS khi chưa có bằng chứng.
+
+## 9. OPS02 — Runtime smoke read-only trên VPS
+
+- Sau khi OPS02 merge vào main và chủ VPS pull, chạy `cd /var/www/dothihoalac && bash scripts/vps-health-report.sh`. Kiểm tra API port 5000, PM2 `dothihoalac-api`, trang chủ và sitemap public.
+- Script cố ý chỉ đọc; `--deploy` bị từ chối. Không kết luận production deploy mới khi chỉ có Git SHA.
+- Kiểm tra test `node --test scripts/vps-health-report.test.mjs` và CI trước merge. Khắc phục staging/DB release gates trước khi chạy workflow deploy thủ công.
