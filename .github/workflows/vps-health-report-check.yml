@@ -1,0 +1,25 @@
+name: DTHL VPS Read-only Health Report Tests
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/vps-health-report.sh'
+      - 'scripts/vps-health-report.test.mjs'
+      - '.github/workflows/vps-health-report-check.yml'
+  pull_request:
+    paths:
+      - 'scripts/vps-health-report.sh'
+      - 'scripts/vps-health-report.test.mjs'
+      - '.github/workflows/vps-health-report-check.yml'
+
+jobs:
+  safety-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Read-only helper safety tests
+        run: node --test scripts/vps-health-report.test.mjs
