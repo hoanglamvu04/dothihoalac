@@ -44,7 +44,7 @@ Mọi task có thể có nhiều nhãn; ví dụ code `CI_PASS` nhưng phát hà
 | DTHL-F04 | P2 | TODO | Trùng ảnh nâng cao: **chỉ sau khi có quyền xử lý ảnh và mẫu dữ liệu đánh giá**; metric false-positive/false-negative, không chặn tự động |
 | DTHL-F05 | P2 | TODO | Search ML/language ranking: thử nghiệm offline trước, không hứa hẹn thuật toán AI khi mới chỉ có heuristic |
 | DTHL-F06 | P2 | TODO | Analytics phát triển dựa trên consent hợp lệ và dữ liệu WA-005 đã được nghiệm thu |
-| DTHL-F07 | P0 | CODE_DONE / CI_PENDING | Sửa bug UI bộ lọc `days`, giá, diện tích, loại/giao dịch BĐS có chọn nhưng API chưa nhận; URL filter thay phải refetch; không gửi filter BĐS cho tab khác. Test helper URL→request, build/lint và staging smoke. Bổ sung a11y status, phím Escape, `aria-pressed` |
+| DTHL-F07 | P0 | CODE_MERGED / CI_PASS; STAGING_BLOCKED | [PR #82](https://github.com/hoanglamvu04/dothihoalac/pull/82) merge; [CI 45535697220](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45535697220) backend 94, frontend 35, Mongo 20 PASS. CI push merge [45535845423](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45535845423) PASS; cần kiểm tra lọc BĐS thật, UX mobile và keyboard trên staging trước production |
 
 ## Mốc D — Quy trình tài liệu cho mọi phiên
 

@@ -2,8 +2,8 @@
 
 **Cập nhật lần đầu:** 2026-11-25 (Asia/Bangkok, UTC+07).  
 **Repository:** `hoanglamvu04/dothihoalac`  
-**Mốc GitHub đã đối chiếu:** `main` tại `e926774dd62e6e1e22d1238255349f987fc5993b` (**trước khi commit bộ tài liệu này**; kiểm tra `main` mới nhất khi đọc).  
-**Mốc CI tài liệu và ứng dụng gần nhất đã xác minh:** `f6b03318f926e65cc274120b1aa19e4ad10b5046` ([application CI](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45533350948), [Code Notes Gate](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45533350892)); **F01 đã CI_PASS và merge #81 vào main**.
+**Mốc GitHub đối chiếu:** `main` tại `1718426fd7155cec3a7852343aeb92c4bcf4fd0b` sau khi merge F01/F07 (kiểm tra lại `main` khi đọc).  
+**Mốc CI PR gần nhất đã xác minh:** F01 [45535284175](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45535284175) PASS; F07 [45535697220](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45535697220) PASS. CI push `main` commit merge #82 **PASS toàn bộ**: [ứng dụng run 45535845423](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45535845423) (server/client/MongoDB), [frontend 45535845436](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45535845436), [Code Notes Gate 45535845546](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45535845546).
 **Trạng thái tổng thể:** `CODE_MERGED` + `CI_PASS`; **STAGING_CHƯA_NGHIỆM_THU**; **PRODUCTION_CHƯA_TRIỂN_KHAI_BẢN_MỚI**.
 
 ## 1. Bằng chứng có thể kiểm tra
@@ -52,10 +52,10 @@
 
 **F01 — CODE_MERGED / CI_PASS:** [PR #81](https://github.com/hoanglamvu04/dothihoalac/pull/81) đã merge vào `main` tại `cf0d4d58154701401e50936e8df6d721a2728dc1`; [CI PR 45535284175](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45535284175) backend 94 PASS/1 SKIP, frontend 31 PASS, Mongo E2E 20 PASS. Chưa nghiệm thu staging hoặc deploy.
 
-**F07 — CODE_DONE / CI_PENDING:** phát hiện lỗi bộ lọc nâng cao trên trang tìm kiếm có hiển thị nhưng chưa gửi `days`, `propertyType`, `transactionType`, giá và diện tích tới API; effect cũng không refetch khi chỉ đổi URL filter. Nhánh `fix/dthl-f07-search-filter-requests-20261125` sửa whitelist tham số URL → API, thêm test frontend và cải thiện keyboard/aria-live. Chưa xác nhận CI trên commit F07.
+**F07 — CODE_MERGED / CI_PASS:** [PR #82](https://github.com/hoanglamvu04/dothihoalac/pull/82) merge SHA `1718426fd7155cec3a7852343aeb92c4bcf4fd0b`. Đã sửa bộ lọc `days`, loại/giao dịch BĐS, giá/diện tích được gửi tới API, refetch khi URL đổi; bổ sung a11y keyboard/aria-live. [CI PR 45535697220](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45535697220) backend 94 PASS/1 SKIP, frontend 35 PASS, Mongo 20 PASS. **Chưa thử staging hoặc deploy VPS**.
 
 **Cổng phát hành mới:** cần 3 index MongoDB tồn tại vật lý trước khi bật worker (2 unique cũ + `saved_search_fair_scan_order`). Công cụ audit chỉ đọc sẽ FAIL nếu thiếu index mới. Không tự tạo/repair index production.
 
-**Ưu tiên sau đó:** Hoàn tất CI F07 → DTHL-R01 → DTHL-R02 → DTHL-R03 → DTHL-R04 → DTHL-R05 → DTHL-F02. Chi tiết và tiêu chí nghiệm thu xem [ROADMAP.md](ROADMAP.md).
+**Ưu tiên sau đó:** Smoke bộ lọc trên staging → DTHL-R01 → DTHL-R02 → DTHL-R03 → DTHL-R04 → DTHL-R05 → DTHL-F02. Chi tiết và tiêu chí nghiệm thu xem [ROADMAP.md](ROADMAP.md).
 
 **Nguyên tắc:** sau mỗi lượt code, người thực hiện **thay thế mốc SHA và thông tin đã kiểm chứng**, không ghi “đã xong” cho công việc đang chờ access hoặc approval.

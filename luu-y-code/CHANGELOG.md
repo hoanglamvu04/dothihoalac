@@ -2,11 +2,11 @@
 
 **Quy tắc:** nhật ký mới nhất trên cùng; không xóa lịch sử cũ; ghi link PR/commit/CI thật, không điền PASS khi chưa chạy. Mọi PR sửa code/config/workflow phải **cập nhật cùng PR file này + STATUS.md**.
 
-## 2026-11-25 — DTHL-F07 — Sửa tham số lọc từ UI đến API (CI_PENDING)
+## 2026-11-25 — DTHL-F07 — Sửa tham số lọc từ UI đến API (CI_PASS / MERGED)
 
 - **Nguyên nhân:** `SearchPage.jsx` trước đó chỉ gửi q/area/type/sort/page/limit, bỏ lọt tham số URL cho giá/diện tích/loại/giao dịch BĐS và khoảng ngày; effect không refetch khi chỉ đổi bộ lọc URL.
 - **Code:** `client/src/utils/searchQueryParams.mjs` xây dựng whitelist tham số cho API, `SearchPage.jsx` gọi helper và theo dõi searchParams; cải thiện keyboard Escape/Tab, aria-live loading/results, pressed state. Test frontend mới trong `client/tests/searchQueryParams.test.mjs`, cập nhật workflow CI.
-- **Trạng thái:** CODE_DONE/CI_PENDING trên nhánh `fix/dthl-f07-search-filter-requests-20261125` tại thời điểm soạn; chưa merge, staging hay deploy. Không đổi X-HUB/alerts.
+- **Trạng thái:** [PR #82](https://github.com/hoanglamvu04/dothihoalac/pull/82) MERGED vào `main` SHA `1718426fd7155cec3a7852343aeb92c4bcf4fd0b`. [DTHL CI 45535697220](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45535697220) PASS server 94/94 + 1 skip, frontend 35/35, Mongo 20/20; [Frontend check 45535697131](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45535697131) PASS; [Code Notes Gate 45535697177](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45535697177) PASS. CI trên `main` sau merge [45535845423](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45535845423), [45535845436](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45535845436) và [45535845546](https://github.com/hoanglamvu04/dothihoalac/actions/runs/45535845546) đều PASS. Chưa staging hay deploy. Không đổi X-HUB/alerts.
 
 ## 2026-11-25 — DTHL-F01 — Fair scan & index hardening (CI_PASS / MERGED)
 
