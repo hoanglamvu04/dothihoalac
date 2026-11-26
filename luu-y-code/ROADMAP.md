@@ -61,3 +61,10 @@ Mọi task có thể có nhiều nhãn; ví dụ code `CI_PASS` nhưng phát hà
 ### Khi nhận task mới
 
 Giữ task ID cũ nếu là tiếp tục cùng phạm vi. Nếu mới, tạo `DTHL-F07` ... trong bảng, mô tả acceptance criteria và phụ thuộc, ghi vào CHANGELOG; cập nhật STATUS khi bắt đầu/kết thúc.
+
+
+## SEO — kế hoạch nội dung
+
+- DTHL-SEO01: 15/15 bản thảo; chủ dự án phản hồi lệnh nhập thành công, chưa kiểm chứng URL live.
+- DTHL-SEO02: 20/20 bản thảo, chuẩn bị helper và lệnh VPS; chưa nhập CMS. Tổng 35/100 bản thảo.
+- DTHL-SEO03: 20 bài đời sống/tiện ích/giáo dục (TODO). Theo dõi nguồn, trùng bài, ảnh có quyền, URL thực và sitemap; không hứa index/traffic.

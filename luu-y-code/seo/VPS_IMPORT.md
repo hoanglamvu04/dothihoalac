@@ -9,3 +9,13 @@ cd /var/www/dothihoalac && git fetch origin content/seo-dthl-01-20261125 && tmp=
 Bỏ `--only 01` để nhập cả đợt; bỏ `--publish` để tạo nháp. Script quét bài tồn tại, bỏ qua trùng ID/title/slug, in gợi ý bài cùng chủ đề, yêu cầu người dùng xác nhận IMPORT/PUBLISH. Không cập nhật bài cũ; lỗi HTTP dừng, không tự retry POST. Không chạy nhiều lượt đồng thời. Nếu bài đã tạo nháp, duyệt và xuất bản từ CMS thay vì chạy lại importer. Kiểm tra danh sách tin tức và URL public thực. Sitemap chạy refresh theo workflow hiện hành; không khẳng định đã index.
 
 Kiểm thử: chưa thực thi script trên VPS hoặc API thật; `--check` xác thực nội dung offline trước lần chạy. Nếu lỗi, gửi output đã bỏ dữ liệu nhạy cảm. Không dùng seed demo hoặc reset DB để xử lý.
+
+## Đợt 2 — 20 bài quy hoạch, giao thông và hạ tầng
+
+Nhánh `content/seo-dthl-02-20261126` chứa cả hồ sơ đợt trước và đợt mới. Lệnh sau chỉ lấy dữ liệu và helper, không checkout hoặc thay đổi nhánh runtime.
+
+```bash
+cd /var/www/dothihoalac && git fetch origin content/seo-dthl-02-20261126 && tmp=$(mktemp -d) && git archive FETCH_HEAD luu-y-code/seo | tar -x -C "$tmp" && python3 "$tmp/luu-y-code/seo/import-dot-02.py" --check && python3 "$tmp/luu-y-code/seo/import-dot-02.py" --publish
+```
+
+Đăng nhập CMS bằng tài khoản có quyền xuất bản, kiểm tra báo cáo trùng/nguồn, xác nhận PUBLISH. Thêm `--only 01` sau `--publish` nếu muốn thử một bài. Dùng `--check` trước khi chạy thực. URL thật do CMS sinh ra. Không tự chạy deploy, PM2 hay demo seed; chưa kiểm chứng thực thi đợt 2.

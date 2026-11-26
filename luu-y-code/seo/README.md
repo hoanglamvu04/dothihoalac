@@ -5,7 +5,8 @@
 - [Chiến lược](SEO_STRATEGY.md)
 - [Kế hoạch 100 bài](CONTENT_PLAN.md)
 - [Trạng thái](CONTENT_STATUS.md)
-- [Danh mục metadata](manifest-dot-01.json)
-- [15 bản thảo đầy đủ](articles/dot-01/)
+- Đợt 1: [15 bài](articles/dot-01/) · [manifest](manifest-dot-01.json)
+- Đợt 2: [20 bài](articles/dot-02/) · [manifest](manifest-dot-02.json)
+- [Lệnh VPS nhập bài qua CMS](VPS_IMPORT.md)
 
 Quy trình: kiểm tra bài trùng trên CMS, kiểm tra nguồn còn hiệu lực, duyệt biên tập và ảnh có quyền sử dụng, nhập vào CMS bằng quyền hợp lệ, xác minh URL/canonical/sitemap. Không dùng demo seed production. Mọi slug trong manifest chỉ là đề xuất; liên kết giữa các bài mới chỉ gắn khi URL thật được xác nhận. Không ghi PASS hoặc live khi chưa có chứng cứ.

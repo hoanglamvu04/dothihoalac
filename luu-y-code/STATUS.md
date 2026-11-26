@@ -62,3 +62,8 @@
 **Ưu tiên sau đó:** DTHL-R01 backup/index preflight Mongo staging → DTHL-R02 smoke auth, tìm kiếm, mobile, RBAC → DTHL-R03 đo tải → DTHL-R04 nghiệm thu X-HUB → DTHL-R05 SEO → DTHL-F09/F10 E2E mobile/staging. Chi tiết và tiêu chí nghiệm thu xem [ROADMAP.md](ROADMAP.md).
 
 **Nguyên tắc:** sau mỗi lượt code, người thực hiện **thay thế mốc SHA và thông tin đã kiểm chứng**, không ghi “đã xong” cho công việc đang chờ access hoặc approval.
+
+
+## SEO — DTHL-SEO02 (26/11/2026)
+
+Nhánh `content/seo-dthl-02-20261126`: 35/100 bản thảo (15 + 20), 20 bài đợt 2 đã kiểm tra cấu trúc từ Git. Chưa nhập CMS đợt 2, chưa kiểm chứng URL/ảnh bìa/Google index. Chủ dự án phản hồi lệnh đợt 1 đã được; cần xác minh danh sách bài trên CMS. [Hồ sơ SEO](seo/README.md) và [lệnh VPS](seo/VPS_IMPORT.md). Chỉ thay hồ sơ nội dung/helper, không thay app/runtime hoặc các cổng release R01–R04.

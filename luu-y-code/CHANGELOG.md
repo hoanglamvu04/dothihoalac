@@ -53,3 +53,8 @@
 - Rủi ro và rollback: ảnh hưởng hệ thống, cờ bật/tắt.
 - Chưa làm / bước tiếp: nêu rõ người/đầu mối nếu đã được xác nhận.
 ```
+
+
+## SEO — 26/11/2026 — DTHL-SEO02
+
+20 bài hoàn chỉnh về quy hoạch, giao thông và hạ tầng; nhánh `content/seo-dthl-02-20261126`, kiểm tra lại 20 file Markdown, metadata và unique slug toàn bộ 35 bài. Thêm manifest và helper CMS có xác thực; chưa chạy trên VPS hoặc xuất bản. Xem [SEO_CHANGELOG](seo/SEO_CHANGELOG.md). Không deploy.
