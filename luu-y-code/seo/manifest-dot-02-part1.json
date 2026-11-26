@@ -1,0 +1,211 @@
+[
+  {
+    "id": "DTHL-SEO02-01",
+    "title": "Hòa Lạc trong quy hoạch Thủ đô tầm nhìn 100 năm: Vai trò và cơ hội",
+    "slug": "hoa-lac-quy-hoach-thu-do-tam-nhin-100-nam",
+    "category": "quy-hoach",
+    "articleType": "analysis",
+    "primaryKeyword": "Hòa Lạc trong quy hoạch Thủ đô 100 năm",
+    "metaDescription": "Tìm hiểu vị trí Hòa Lạc trong Quy hoạch tổng thể Thủ đô năm 2026, định hướng khoa học công nghệ, kết nối phía Tây và các mốc cần theo dõi.",
+    "summary": "Quy hoạch tổng thể Thủ đô năm 2026 đặt Hòa Lạc trong cấu trúc phát triển nhiều trung tâm. Người dân cần hiểu vai trò mới của khu vực và phân biệt định hướng dài hạn với dự án đã triển khai.",
+    "editorialStatus": "draft_ready_for_review",
+    "researchDate": "2026-11-26",
+    "relatedIds": [
+      "02",
+      "06",
+      "07"
+    ],
+    "path": "luu-y-code/seo/articles/dot-02/01-hoa-lac-quy-hoach-thu-do-tam-nhin-100-nam.md",
+    "words": 463,
+    "headings": 4
+  },
+  {
+    "id": "DTHL-SEO02-02",
+    "title": "Quy hoạch phân khu HL3 Hòa Lạc: Vị trí và cách đọc hồ sơ",
+    "slug": "quy-hoach-phan-khu-hl3-hoa-lac",
+    "category": "quy-hoach",
+    "articleType": "guide",
+    "primaryKeyword": "quy hoạch HL3 Hòa Lạc",
+    "metaDescription": "Tìm hiểu phạm vi đồ án HL3 Hòa Lạc, tỷ lệ 1/2.000, địa danh trong hồ sơ năm 2024 và cách kiểm tra vị trí cụ thể.",
+    "summary": "Đồ án HL3 là một phần của hệ thống quy hoạch phân khu Hòa Lạc được phê duyệt năm 2024. Bài viết giải thích những thông tin cần xem trước khi áp dụng bản đồ vào một vị trí.",
+    "editorialStatus": "draft_ready_for_review",
+    "researchDate": "2026-11-26",
+    "relatedIds": [
+      "03",
+      "06",
+      "07",
+      "09"
+    ],
+    "path": "luu-y-code/seo/articles/dot-02/02-quy-hoach-phan-khu-hl3-hoa-lac.md",
+    "words": 451,
+    "headings": 4
+  },
+  {
+    "id": "DTHL-SEO02-03",
+    "title": "Quy hoạch HL4 Hòa Lạc: Không gian sinh thái và hạ tầng đầu mối",
+    "slug": "quy-hoach-phan-khu-hl4-hoa-lac",
+    "category": "quy-hoach",
+    "articleType": "guide",
+    "primaryKeyword": "quy hoạch HL4 Hòa Lạc",
+    "metaDescription": "Giải thích đồ án phân khu HL4 năm 2024, các nhóm chức năng, kết nối giao thông và điều cần kiểm tra khi đọc bản đồ khu vực.",
+    "summary": "Phân khu HL4 được tổ chức với nhiều nhóm chức năng, từ khu ở đến hạ tầng và không gian cảnh quan. Việc hiểu các lớp thông tin sẽ giúp tránh nhầm quy hoạch với hiện trạng.",
+    "editorialStatus": "draft_ready_for_review",
+    "researchDate": "2026-11-26",
+    "relatedIds": [
+      "02",
+      "04",
+      "05",
+      "06",
+      "13"
+    ],
+    "path": "luu-y-code/seo/articles/dot-02/03-quy-hoach-phan-khu-hl4-hoa-lac.md",
+    "words": 446,
+    "headings": 4
+  },
+  {
+    "id": "DTHL-SEO02-04",
+    "title": "Quy hoạch HL5 Hòa Lạc: Cảnh quan, khu dân cư và phát triển quanh ga",
+    "slug": "quy-hoach-phan-khu-hl5-hoa-lac",
+    "category": "quy-hoach",
+    "articleType": "guide",
+    "primaryKeyword": "quy hoạch HL5 Hòa Lạc",
+    "metaDescription": "Tìm hiểu đồ án HL5 Hòa Lạc, các khu vực phát triển gắn cảnh quan, định hướng nhà ở và mô hình TOD trong hồ sơ năm 2024.",
+    "summary": "HL5 kết hợp định hướng phát triển đô thị với các yếu tố địa hình, mặt nước và khu dân cư hiện hữu. Đọc đúng hồ sơ giúp đánh giá những gì mới chỉ là định hướng.",
+    "editorialStatus": "draft_ready_for_review",
+    "researchDate": "2026-11-26",
+    "relatedIds": [
+      "03",
+      "05",
+      "06",
+      "13"
+    ],
+    "path": "luu-y-code/seo/articles/dot-02/04-quy-hoach-phan-khu-hl5-hoa-lac.md",
+    "words": 456,
+    "headings": 4
+  },
+  {
+    "id": "DTHL-SEO02-05",
+    "title": "Quy hoạch HL6 Hòa Lạc: Cửa ngõ phía Nam và không gian dịch vụ",
+    "slug": "quy-hoach-phan-khu-hl6-hoa-lac",
+    "category": "quy-hoach",
+    "articleType": "guide",
+    "primaryKeyword": "quy hoạch HL6 Hòa Lạc",
+    "metaDescription": "Tìm hiểu phân khu HL6, phạm vi gần Quốc lộ 21 và Đại lộ Thăng Long, định hướng dịch vụ, nhà ở và hạ tầng theo đồ án năm 2024.",
+    "summary": "HL6 được định hướng phát triển đô thị tại khu vực cửa ngõ phía Nam Hòa Lạc. Người đọc nên phân biệt tính chất quy hoạch với tiến độ thực hiện từng công trình.",
+    "editorialStatus": "draft_ready_for_review",
+    "researchDate": "2026-11-26",
+    "relatedIds": [
+      "03",
+      "04",
+      "06",
+      "16"
+    ],
+    "path": "luu-y-code/seo/articles/dot-02/05-quy-hoach-phan-khu-hl6-hoa-lac.md",
+    "words": 440,
+    "headings": 4
+  },
+  {
+    "id": "DTHL-SEO02-06",
+    "title": "So sánh HL3, HL4, HL5 và HL6: Cách chọn đúng hồ sơ quy hoạch Hòa Lạc",
+    "slug": "so-sanh-phan-khu-hl3-hl4-hl5-hl6",
+    "category": "quy-hoach",
+    "articleType": "analysis",
+    "primaryKeyword": "so sánh HL3 HL4 HL5 HL6",
+    "metaDescription": "Đối chiếu bốn phân khu HL3, HL4, HL5, HL6 theo quyết định năm 2024 và hướng dẫn xác định đồ án áp dụng cho vị trí cần tìm.",
+    "summary": "Bốn đồ án phân khu có số quyết định, phạm vi và các nhóm chức năng riêng. So sánh đúng mục đích giúp người đọc tìm hồ sơ phù hợp mà không đánh đồng các khu vực.",
+    "editorialStatus": "draft_ready_for_review",
+    "researchDate": "2026-11-26",
+    "relatedIds": [
+      "02",
+      "03",
+      "04",
+      "05",
+      "07"
+    ],
+    "path": "luu-y-code/seo/articles/dot-02/06-so-sanh-phan-khu-hl3-hl4-hl5-hl6.md",
+    "words": 430,
+    "headings": 4
+  },
+  {
+    "id": "DTHL-SEO02-07",
+    "title": "Cách đọc màu sắc và ký hiệu trên bản đồ quy hoạch Hòa Lạc",
+    "slug": "cach-doc-ky-hieu-ban-do-quy-hoach-hoa-lac",
+    "category": "quy-hoach",
+    "articleType": "guide",
+    "primaryKeyword": "ký hiệu bản đồ quy hoạch Hòa Lạc",
+    "metaDescription": "Hướng dẫn xem chú giải bản đồ quy hoạch Hòa Lạc, màu chức năng đất, ranh giới, đường quy hoạch và những lỗi thường gặp.",
+    "summary": "Màu trên bản đồ chỉ có nghĩa khi được đối chiếu đúng chú giải, tỷ lệ và phiên bản. Đây là cách đọc có hệ thống trước khi tra cứu thông tin cụ thể.",
+    "editorialStatus": "draft_ready_for_review",
+    "researchDate": "2026-11-26",
+    "relatedIds": [
+      "06",
+      "08",
+      "09",
+      "10"
+    ],
+    "path": "luu-y-code/seo/articles/dot-02/07-cach-doc-ky-hieu-ban-do-quy-hoach-hoa-lac.md",
+    "words": 440,
+    "headings": 4
+  },
+  {
+    "id": "DTHL-SEO02-08",
+    "title": "Địa giới Hòa Lạc sau sắp xếp: Cách đối chiếu tên xã cũ và mới",
+    "slug": "dia-gioi-moi-hoa-lac-va-ten-cu-tren-ban-do",
+    "category": "hanh-chinh",
+    "articleType": "guide",
+    "primaryKeyword": "địa giới Hòa Lạc sau sáp nhập",
+    "metaDescription": "Cách đối chiếu địa danh Thạch Hòa, Tân Xã, Bình Yên và các tên cũ khi tìm hồ sơ quy hoạch, địa chỉ tại xã Hòa Lạc hiện nay.",
+    "summary": "Sau sắp xếp đơn vị hành chính năm 2025, nhiều hồ sơ và tin đăng vẫn sử dụng tên địa bàn trước đây. Cần xác định đúng phạm vi để tránh nhầm lẫn khi tra cứu.",
+    "editorialStatus": "draft_ready_for_review",
+    "researchDate": "2026-11-26",
+    "relatedIds": [
+      "01",
+      "06",
+      "07",
+      "09"
+    ],
+    "path": "luu-y-code/seo/articles/dot-02/08-dia-gioi-moi-hoa-lac-va-ten-cu-tren-ban-do.md",
+    "words": 426,
+    "headings": 4
+  },
+  {
+    "id": "DTHL-SEO02-09",
+    "title": "Xin thông tin, dữ liệu đất đai tại Hòa Lạc: Chuẩn bị những gì?",
+    "slug": "xin-thong-tin-du-lieu-dat-dai-hoa-lac",
+    "category": "hanh-chinh",
+    "articleType": "guide",
+    "primaryKeyword": "xin thông tin đất đai Hòa Lạc",
+    "metaDescription": "Hướng dẫn chuẩn bị yêu cầu cung cấp dữ liệu đất đai, xác định thửa, thông tin cần hỏi và nơi tra cứu thủ tục chính thức tại Hà Nội.",
+    "summary": "Khi cần thông tin đất đai có căn cứ, người dân nên chuẩn bị hồ sơ yêu cầu cụ thể thay vì chỉ hỏi một địa danh hoặc gửi ảnh bản đồ.",
+    "editorialStatus": "draft_ready_for_review",
+    "researchDate": "2026-11-26",
+    "relatedIds": [
+      "07",
+      "08",
+      "10"
+    ],
+    "path": "luu-y-code/seo/articles/dot-02/09-xin-thong-tin-du-lieu-dat-dai-hoa-lac.md",
+    "words": 422,
+    "headings": 4
+  },
+  {
+    "id": "DTHL-SEO02-10",
+    "title": "Trước khi xây nhà tại Hòa Lạc cần kiểm tra quy hoạch gì?",
+    "slug": "kiem-tra-quy-hoach-truoc-khi-xay-nha-hoa-lac",
+    "category": "du-an-dtxd",
+    "articleType": "guide",
+    "primaryKeyword": "kiểm tra quy hoạch trước khi xây nhà Hòa Lạc",
+    "metaDescription": "Checklist kiểm tra địa chỉ, chức năng đất, đường tiếp cận, hồ sơ quy hoạch và điều kiện xây dựng trước khi thiết kế nhà ở Hòa Lạc.",
+    "summary": "Một phương án thiết kế đẹp cần phù hợp với điều kiện đất và quy định xây dựng. Kiểm tra hồ sơ ngay từ đầu giúp hạn chế chỉnh sửa thiết kế và chi phí phát sinh.",
+    "editorialStatus": "draft_ready_for_review",
+    "researchDate": "2026-11-26",
+    "relatedIds": [
+      "07",
+      "09",
+      "19"
+    ],
+    "path": "luu-y-code/seo/articles/dot-02/10-kiem-tra-quy-hoach-truoc-khi-xay-nha-hoa-lac.md",
+    "words": 433,
+    "headings": 4
+  }
+]
